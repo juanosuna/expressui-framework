@@ -1,0 +1,454 @@
+<!--
+  ~ Copyright (c) 2011 Brown Bag Consulting.
+  ~ This file is part of the ExpressUI project.
+  ~ Author: Juan Osuna
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License Version 3
+  ~ as published by the Free Software Foundation with the addition of the
+  ~ following permission added to Section 15 as permitted in Section 7(a):
+  ~ FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+  ~ Brown Bag Consulting, Brown Bag Consulting DISCLAIMS THE WARRANTY OF
+  ~ NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ The interactive user interfaces in modified source and object code versions
+  ~ of this program must display Appropriate Legal Notices, as required under
+  ~ Section 5 of the GNU Affero General Public License.
+  ~
+  ~ You can be released from the requirements of the license by purchasing
+  ~ a commercial license. Buying such a license is mandatory as soon as you
+  ~ develop commercial activities involving the ExpressUI software without
+  ~ disclosing the source code of your own applications. These activities
+  ~ include: offering paid services to customers as an ASP, providing
+  ~ services from a web application, shipping ExpressUI with a closed
+  ~ source product.
+  ~
+  ~ For more information, please contact Brown Bag Consulting at this
+  ~ address: juan@brownbagconsulting.com.
+  -->
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.expressui</groupId>
+        <artifactId>expressui-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
+    <description>ExpressUI Web Application Parent</description>
+    <groupId>com.expressui</groupId>
+    <artifactId>expressui-app-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+
+    <properties>
+        <DB>prod</DB>
+        <TEST_DATA_INITIALIZER_TEST>TestDataInitializerTest.java</TEST_DATA_INITIALIZER_TEST>
+    </properties>
+
+    <profiles>
+        <profile>
+            <id>developmentDB</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <DB>dev</DB>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>regenerateDDL</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>regenerateDDL</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>hibernate3-maven-plugin</artifactId>
+                        <configuration>
+                            <components>
+                                <component>
+                                    <name>hbm2ddl</name>
+                                    <outputDirectory>src/main/sql</outputDirectory>
+                                    <implementation>jpaconfiguration</implementation>
+                                </component>
+                            </components>
+                            <componentProperties>
+                                <propertyfile>${project.basedir}/src/main/resources/database.${DB}.properties
+                                </propertyfile>
+                                <export>false</export>
+                                <drop>false</drop>
+                                <create>true</create>
+                                <update>false</update>
+                                <jdk5>true</jdk5>
+                                <ejb3>true</ejb3>
+                                <format>true</format>
+                                <namingstrategy>${hibernate.naming_strategy}</namingstrategy>
+                                <outputfilename>create-schema.${DB}.sql</outputfilename>
+                                <scan-classes>true</scan-classes>
+                                <persistenceunit>persistence-unit</persistenceunit>
+                            </componentProperties>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>test-compile</phase>
+                                <id>schema.${DB}.sql</id>
+                                <goals>
+                                    <goal>hbm2ddl</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>regenerateDB</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>regenerateDB</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <properties>
+                <regenerateDB>true</regenerateDB>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <configuration>
+                            <filesets>
+                                <fileset>
+                                    <directory>${user.home}</directory>
+                                    <includes>
+                                        <include>*.db</include>
+                                    </includes>
+                                </fileset>
+                            </filesets>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>sql-maven-plugin</artifactId>
+
+                        <configuration>
+                            <driver>${hibernate.connection.driver_class}</driver>
+                            <url>${hibernate.connection.url.test}</url>
+                            <username>${hibernate.connection.username}</username>
+                            <password>${hibernate.connection.password}</password>
+                            <delimiter>;</delimiter>
+                            <delimiterType>normal</delimiterType>
+                            <autocommit>true</autocommit>
+                            <onError>abort</onError>
+                            <orderFile>ascending</orderFile>
+                            <keepFormat>false</keepFormat>
+                        </configuration>
+
+                        <executions>
+                            <execution>
+                                <id>drop-db-before-test-if-any</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <srcFiles>
+                                        <srcFile>${project.basedir}/src/main/sql/drop-db.${DB}.sql</srcFile>
+                                    </srcFiles>
+                                    <onError>continue</onError>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>create-db</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <srcFiles>
+                                        <srcFile>${project.basedir}/src/main/sql/create-db.${DB}.sql</srcFile>
+                                    </srcFiles>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>create-schema</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <srcFiles>
+                                        <srcFile>${project.basedir}/src/main/sql/create-schema.${DB}.sql</srcFile>
+                                    </srcFiles>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>create-other</id>
+                                <phase>process-test-classes</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <srcFiles>
+                                        <srcFile>${project.basedir}/src/main/sql/create-other.${DB}.sql</srcFile>
+                                    </srcFiles>
+                                </configuration>
+                            </execution>
+
+                            <execution>
+                                <id>create-data</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <autocommit>false</autocommit>
+                                    <orderFile>ascending</orderFile>
+                                    <fileset>
+                                        <basedir>${project.basedir}</basedir>
+                                        <includes>
+                                            <include>src/main/sql/create-data.${DB}.sql</include>
+                                        </includes>
+                                    </fileset>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>create-data-from-unit-test</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>test</goal>
+                                </goals>
+                                <configuration>
+                                    <systemProperties>
+                                        <property>
+                                            <name>DB</name>
+                                            <value>${DB}</value>
+                                        </property>
+                                    </systemProperties>
+                                    <excludes>
+                                        <exclude>none</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>**/${TEST_DATA_INITIALIZER_TEST}</include>
+                                    </includes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>com.expressui</groupId>
+            <artifactId>expressui-core</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.expressui</groupId>
+            <artifactId>expressui-domain</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-servlet_2.5_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-jsp_2.1_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- This is also used by gwt-maven-plugin to deduce GWT version number. -->
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Testing Dependencies -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>${project.basedir}/src/main/resources/database.${DB}.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>DB</name>
+                            <value>${DB}</value>
+                        </property>
+                    </systemProperties>
+                    <excludes>
+                        <exclude>**/${TEST_DATA_INITIALIZER_TEST}</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <configuration>
+
+                    <stopPort>9999</stopPort>
+                    <stopKey>${project.artifactId}</stopKey>
+                    <!-- Redeploy every x seconds if changes are detected, 0 for no automatic redeployment -->
+                    <scanIntervalSeconds>10</scanIntervalSeconds>
+                    <webAppConfig>
+                        <contextPath>/${project.artifactId}</contextPath>
+
+                        <resourceBases implementation="org.eclipse.jetty.util.resource.ResourceCollection">
+                            <resourceBase>${project.basedir}/src/main/webapp</resourceBase>
+                            <resourceBase>${project.build.directory}/${project.build.finalName}</resourceBase>
+                        </resourceBases>
+                    </webAppConfig>
+                    <systemProperties>
+                        <!--<systemProperty>-->
+                        <!--<name>http.proxyHost</name>-->
+                        <!--<value>proxy.expressui.com</value>-->
+                        <!--</systemProperty>-->
+                        <!--<systemProperty>-->
+                        <!--<name>http.proxyPort</name>-->
+                        <!--<value>8080</value>-->
+                        <!--</systemProperty>-->
+                        <systemProperty>
+                            <name>jetty.port</name>
+                            <value>8080</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>DB</name>
+                            <value>${DB}</value>
+                        </systemProperty>
+                    </systemProperties>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <configuration>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-javadoc-plugin</artifactId>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-jxr-plugin</artifactId>
+                            <configuration>
+                                <aggregate>true</aggregate>
+                            </configuration>
+                        </plugin>
+
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-report-plugin</artifactId>
+                        </plugin>
+
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>cobertura-maven-plugin</artifactId>
+                            <configuration>
+                                <formats>
+                                    <format>xml</format>
+                                    <format>html</format>
+                                </formats>
+                            </configuration>
+                        </plugin>
+
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-checkstyle-plugin</artifactId>
+                        </plugin>
+
+                        <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>findbugs-maven-plugin</artifactId>
+                        </plugin>
+
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-pmd-plugin</artifactId>
+                            <configuration>
+                                <targetJdk>1.6</targetJdk>
+                            </configuration>
+                        </plugin>
+                    </reportPlugins>
+                </configuration>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+</project>
