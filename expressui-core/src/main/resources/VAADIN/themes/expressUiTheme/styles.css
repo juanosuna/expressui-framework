@@ -138,3 +138,9 @@
   .v-select-option.v-radiobutton {
     padding-right: 10px;
 }
+
+
+/* Fixes problem with Firefox 7 where icons don't show up in buttons */
+.v-ff7 .v-button-wrap {
+    overflow: visible;
+}

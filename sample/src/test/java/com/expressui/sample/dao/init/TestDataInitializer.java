@@ -199,7 +199,7 @@ public class TestDataInitializer {
 
     private void initializeAccount(Contact contact, int i) {
         Account account = new Account();
-        account.setName("Brown Bag Consulting" + i);
+        account.setName("Brown Bag" + i);
         contact.setAccount(account);
         account.setWebsite("http://www.brownbagconsulting.com");
         account.setTickerSymbol("EXPUI");
