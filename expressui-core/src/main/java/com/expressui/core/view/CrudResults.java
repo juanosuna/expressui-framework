@@ -78,6 +78,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     private Button deleteButton;
 
     private Object currentItemId;
+    private int previousSelectionCount;
 
     protected CrudResults() {
         super();
@@ -176,7 +177,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
      */
     public void create() {
         getEntityForm().setViewMode(false);
-        applyViewMode();
+        getEntityForm().applyViewMode();
         getEntityForm().create();
         EntityFormWindow entityFormWindow = EntityFormWindow.open(getEntityForm());
         entityFormWindow.addCloseListener(this, "search");
@@ -226,15 +227,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         BeanItem beanItem = getResultsTable().getContainerDataSource().getItem(itemId);
         getEntityForm().load((WritableEntity) beanItem.getBean(), selectFirstTab);
 
-        applyViewMode();
-    }
-
-    private void applyViewMode() {
-        if (getEntityForm().isViewMode()) {
-            getEntityForm().setReadOnly(true);
-        } else {
-            getEntityForm().applySecurityIsEditable();
-        }
+        getEntityForm().applyViewMode();
     }
 
     @Override
@@ -308,10 +301,8 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
                 });
     }
 
-    private int previousSelectionCount;
-
     public void selectionChanged(Property.ValueChangeEvent event) {
-        Collection itemIds = (Collection) getResultsTable().getValue();
+        Collection itemIds = (Collection) getSelectedValue();
 
         if (itemIds.size() == previousSelectionCount) {
             return;

@@ -38,17 +38,19 @@
 package com.expressui.core.view.tomanyrelationship;
 
 import com.expressui.core.entity.WritableEntity;
+import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.assertion.Assert;
+import com.expressui.core.view.EntityForm;
 import com.expressui.core.view.EntityFormWindow;
 import com.expressui.core.view.ResultsConnectedEntityForm;
 import com.expressui.core.view.WalkableResults;
-import com.expressui.core.view.EntityForm;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.util.Collection;
 
 public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRelationshipResults<T> implements WalkableResults {
@@ -60,6 +62,10 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
     private Object currentItemId;
 
     private ResultsConnectedEntityForm resultsConnectedEntityForm;
+    private int previousSelectionCount;
+
+    @Resource
+    private SecurityService securityService;
 
     @PostConstruct
     @Override
@@ -84,6 +90,23 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
         super.postWire();
 
         getEntityForm().postWire();
+    }
+
+    @Override
+    public void applySecurityIsEditable() {
+        super.applySecurityIsEditable();
+        boolean isEditable = securityService.getCurrentUser().isEditAllowed(getParentEntityType().getName());
+        editButton.setVisible(isEditable);
+
+        selectionChanged();
+    }
+
+    @Override
+    public void setReadOnly(boolean isReadOnly) {
+        super.setReadOnly(isReadOnly);
+        editButton.setVisible(!isReadOnly);
+
+        selectionChanged();
     }
 
     @Override
@@ -167,22 +190,35 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
 
     @Override
     public void selectionChanged() {
-        Collection itemIds = (Collection) getResultsTable().getValue();
+        Collection itemIds = (Collection) getSelectedValue();
+
+        if (itemIds.size() == previousSelectionCount && !itemIds.isEmpty()) {
+            return;
+        } else {
+            previousSelectionCount = itemIds.size();
+        }
+
+        boolean isParentPropertyEditable = securityService.getCurrentUser().isEditAllowed(getParentEntityType().getName(),
+                getChildPropertyId());
+        boolean isEditAllowed = securityService.getCurrentUser().isEditAllowed(getEntityType().getName());
+
         if (itemIds.size() == 1) {
-            actionContextMenu.setActionEnabled("entityResults.edit", true);
-            actionContextMenu.setActionEnabled("entityResults.remove", true);
+            actionContextMenu.setActionEnabled("entityResults.edit", isEditAllowed && !isViewMode());
+            actionContextMenu.setActionEnabled("entityResults.remove", isParentPropertyEditable && !isViewMode());
             getResultsTable().removeActionHandler(actionContextMenu);
             getResultsTable().addActionHandler(actionContextMenu);
             editButton.setEnabled(true);
             removeButton.setEnabled(true);
         } else if (itemIds.size() > 1) {
             actionContextMenu.setActionEnabled("entityResults.edit", false);
-            actionContextMenu.setActionEnabled("entityResults.remove", true);
+            actionContextMenu.setActionEnabled("entityResults.remove", isParentPropertyEditable && !isViewMode());
             getResultsTable().removeActionHandler(actionContextMenu);
             getResultsTable().addActionHandler(actionContextMenu);
             editButton.setEnabled(false);
             removeButton.setEnabled(true);
         } else {
+            actionContextMenu.setActionEnabled("entityResults.edit", false);
+            actionContextMenu.setActionEnabled("entityResults.remove", false);
             getResultsTable().removeActionHandler(actionContextMenu);
             editButton.setEnabled(false);
             removeButton.setEnabled(false);

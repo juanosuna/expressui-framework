@@ -227,6 +227,14 @@ public abstract class EntityForm<T> extends FormComponent<T> {
         return isViewMode;
     }
 
+    void applyViewMode() {
+        if (isViewMode()) {
+            setReadOnly(true);
+        } else {
+            applySecurityIsEditable();
+        }
+    }
+
     /**
      * Set if this form is in read/view-only mode. Note that this action does not immediately change
      * fields to read-only or restore them to writable. It just sets the mode for the next time
@@ -236,6 +244,10 @@ public abstract class EntityForm<T> extends FormComponent<T> {
      */
     public void setViewMode(boolean viewMode) {
         isViewMode = viewMode;
+        List<ToManyRelationship> toManyRelationships = getToManyRelationships();
+        for (ToManyRelationship toManyRelationship : toManyRelationships) {
+            toManyRelationship.getResults().setViewMode(viewMode);
+        }
     }
 
     /**
@@ -245,6 +257,7 @@ public abstract class EntityForm<T> extends FormComponent<T> {
      */
     @Override
     public void setReadOnly(boolean isReadOnly) {
+        super.setReadOnly(isReadOnly);
         getFormFields().setReadOnly(isReadOnly);
 
         saveAndCloseButton.setVisible(!isReadOnly);
@@ -362,6 +375,7 @@ public abstract class EntityForm<T> extends FormComponent<T> {
                 toManyRelationship.getResults().getEntityQuery().clear();
                 toManyRelationship.getResults().getEntityQuery().setParent(parent);
                 toManyRelationship.getResults().search();
+                toManyRelationship.getResults().selectionChanged();
 
             }
             toManyRelationshipTabs.setVisible(true);

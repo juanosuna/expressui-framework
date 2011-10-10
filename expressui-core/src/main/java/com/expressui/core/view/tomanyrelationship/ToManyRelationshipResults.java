@@ -42,9 +42,9 @@ import com.expressui.core.dao.ToManyRelationshipQuery;
 import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.BeanPropertyType;
 import com.expressui.core.util.assertion.Assert;
-import com.expressui.core.view.util.MessageSource;
 import com.expressui.core.view.Results;
 import com.expressui.core.view.menu.ActionContextMenu;
+import com.expressui.core.view.util.MessageSource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -72,6 +72,8 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
 
     private Button addButton;
     protected Button removeButton;
+
+    private boolean isViewMode;
 
     protected ToManyRelationshipResults() {
         super();
@@ -114,7 +116,7 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         getResultsTable().setMultiSelect(true);
 
         actionContextMenu.addAction("entityResults.remove", this, "remove");
-        actionContextMenu.setActionEnabled("entityResults.remove", true);
+//        actionContextMenu.setActionEnabled("entityResults.remove", true);
         addSelectionChangedListener(this, "selectionChanged");
     }
 
@@ -144,21 +146,38 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         }
     }
 
+    public Class getParentEntityType() {
+        BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getEntityType(), getParentPropertyId());
+        return beanPropertyType.getContainerType();
+    }
+
     public void setReadOnly(boolean isReadOnly) {
+        super.setReadOnly(isReadOnly);
         addButton.setVisible(!isReadOnly);
         removeButton.setVisible(!isReadOnly);
+        if (isReadOnly) {
+            actionContextMenu.setActionEnabled("entityResults.remove", false);
+            getResultsTable().removeActionHandler(actionContextMenu);
+        } else {
+            actionContextMenu.setActionEnabled("entityResults.remove", true);
+            getResultsTable().addActionHandler(actionContextMenu);
+        }
     }
 
     public void applySecurityIsEditable() {
-        boolean isEditable = securityService.getCurrentUser().isEditAllowed(getEntityType().getName(), getChildPropertyId());
+        boolean isEditable = securityService.getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId());
         addButton.setVisible(isEditable);
         removeButton.setVisible(isEditable);
 
         if (isEditable) {
+            actionContextMenu.setActionEnabled("entityResults.remove", true);
             getResultsTable().addActionHandler(actionContextMenu);
         } else {
+            actionContextMenu.setActionEnabled("entityResults.remove", false);
             getResultsTable().removeActionHandler(actionContextMenu);
         }
+
+        selectionChanged();
     }
 
     public void valuesRemoved(T... values) {
@@ -200,13 +219,25 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
     }
 
     public void selectionChanged() {
+        boolean isEditable = securityService.getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId());
+
         Collection itemIds = (Collection) getResultsTable().getValue();
-        if (itemIds.size() > 0) {
+        if (itemIds.size() > 0 && isEditable && !isViewMode()) {
+            actionContextMenu.setActionEnabled("entityResults.remove", true);
             getResultsTable().addActionHandler(actionContextMenu);
             removeButton.setEnabled(true);
         } else {
+            actionContextMenu.setActionEnabled("entityResults.remove", false);
             getResultsTable().removeActionHandler(actionContextMenu);
             removeButton.setEnabled(false);
         }
+    }
+
+    public boolean isViewMode() {
+        return isViewMode;
+    }
+
+    public void setViewMode(boolean viewMode) {
+        isViewMode = viewMode;
     }
 }

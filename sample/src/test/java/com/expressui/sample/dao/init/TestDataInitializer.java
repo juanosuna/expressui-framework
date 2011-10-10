@@ -132,7 +132,7 @@ public class TestDataInitializer {
 
     public void initializeRoles() {
         Role role = new Role("ROLE_USER");
-        role.setDescription("This role belongs to all users and is allows to login.");
+        role.setDescription("This role belongs to all users and allows user to login.");
         role.setAllowOrDenyByDefault(AllowOrDeny.DENY);
         roleDao.persist(role);
 
@@ -141,28 +141,43 @@ public class TestDataInitializer {
         roleDao.persist(role);
 
         role = new Role("ROLE_GUEST");
-        role.setDescription("This role demonstrates limited access.");
+        role.setDescription("This role demonstrates full access to entities but only view access to security entities.");
         role.setAllowOrDenyByDefault(AllowOrDeny.ALLOW);
         roleDao.persist(role);
         Permission permission = new Permission(Role.class.getName());
         permission.setRole(role);
-        permission.setView(false);
+        permission.setView(true);
+        permission.setEdit(false);
+        permission.setDelete(false);
+        permission.setCreate(false);
         permissionDao.persist(permission);
         permission = new Permission(User.class.getName());
         permission.setRole(role);
-        permission.setView(false);
+        permission.setView(true);
+        permission.setEdit(false);
+        permission.setDelete(false);
+        permission.setCreate(false);
         permissionDao.persist(permission);
         permission = new Permission(Contact.class.getName());
         permission.setRole(role);
         permission.setView(true);
+        permission.setEdit(true);
+        permission.setDelete(true);
+        permission.setCreate(true);
         permissionDao.persist(permission);
         permission = new Permission(Account.class.getName());
         permission.setRole(role);
         permission.setView(true);
+        permission.setEdit(true);
+        permission.setDelete(true);
+        permission.setCreate(true);
         permissionDao.persist(permission);
         permission = new Permission(Opportunity.class.getName());
         permission.setRole(role);
         permission.setView(true);
+        permission.setEdit(true);
+        permission.setDelete(true);
+        permission.setCreate(true);
         permissionDao.persist(permission);
 
         roleDao.flush();
