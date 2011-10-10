@@ -47,6 +47,9 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Security role that can be assigned to Users
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table
@@ -74,6 +77,10 @@ public abstract class AbstractRole extends WritableEntity {
         this.name = name;
     }
 
+    /**
+     * Get the name of this role
+     * @return name of this role
+     */
     @NotBlank
     @NotNull
     @Size(min = 4, max = 64)
@@ -81,43 +88,91 @@ public abstract class AbstractRole extends WritableEntity {
         return name;
     }
 
+    /**
+     * Set the name of this role
+     * @param name name of this role, must be between 4 and 64 characters
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * Get the default permission logic, i.e. allow or deny
+     *
+     * @return AllowOrDeny.ALLOW or AllowOrDeny.DENY
+     */
     public AllowOrDeny getAllowOrDenyByDefault() {
         return allowOrDenyByDefault;
     }
 
+    /**
+     * Set the default permission logic, i.e. allow or deny
+     * @param allowOrDenyByDefault AllowOrDeny.ALLOW or AllowOrDeny.DENY
+     */
     public void setAllowOrDenyByDefault(AllowOrDeny allowOrDenyByDefault) {
         this.allowOrDenyByDefault = allowOrDenyByDefault;
     }
 
+    /**
+     * Get description of this role.
+     *
+     * @return user-friendly description
+     */
     @Size(min = 4, max = 255)
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Set the description for this role.
+     *
+     * @param description user-friendly description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * Get user-role association entities.
+     *
+     * @return user-role association entities
+     */
     public Set<AbstractUserRole> getUserRoles() {
         return userRoles;
     }
 
+    /**
+     * Set user-role association entities.
+     * @param userRoles user-role association entities
+     */
     public void setUserRoles(Set<AbstractUserRole> userRoles) {
         this.userRoles = userRoles;
     }
 
+    /**
+     * Get access permissions assigned to this role.
+     *
+     * @return permissions assigned to this role
+     */
     public Set<AbstractPermission> getPermissions() {
         return permissions;
     }
 
+    /**
+     * Set access permissions assigned to this role.
+     * @param permissions permissions assigned to this role
+     */
     public void setPermissions(Set<AbstractPermission> permissions) {
         this.permissions = permissions;
     }
 
+    /**
+     * Get permission for accessing given entity type.
+     *
+     * @param entityType entity type for which permission is retrieved
+     *
+     * @return permission for accessing given entity type
+     */
     public AbstractPermission getPermission(String entityType) {
         Set<? extends AbstractPermission> permissions = getPermissions();
 
@@ -133,6 +188,13 @@ public abstract class AbstractRole extends WritableEntity {
         return foundPermission;
     }
 
+    /**
+     * Get permission for accessing given entity type and field (property)
+     *
+     * @param entityType entity type
+     * @param field field (property) of the entity type
+     * @return permission for field within entity type
+     */
     public AbstractPermission getPermission(String entityType, String field) {
         Set<? extends AbstractPermission> permissions = getPermissions();
 
@@ -149,32 +211,70 @@ public abstract class AbstractRole extends WritableEntity {
         return foundPermission;
     }
 
+    /**
+     * Ask if view access is allowed for given entity type
+     *
+     * @param entityType entity type
+     * @return true if view access is allowed
+     */
     public boolean isViewAllowed(String entityType) {
         return getPermission(entityType) == null ? allowOrDenyByDefault == AllowOrDeny.ALLOW
                 : getPermission(entityType).isView();
     }
 
+    /**
+     * Ask if edit access is allowed for given entity type
+     *
+     * @param entityType entity type
+     * @return true if edit access is allowed
+     */
     public boolean isEditAllowed(String entityType) {
         return getPermission(entityType) == null ? allowOrDenyByDefault == AllowOrDeny.ALLOW
                 : getPermission(entityType).isEdit();
     }
 
+    /**
+     * Ask if create access is allowed for given entity type
+     *
+     * @param entityType entity type
+     * @return true if create access is allowed
+     */
     public boolean isCreateAllowed(String entityType) {
         return getPermission(entityType) == null ? allowOrDenyByDefault == AllowOrDeny.ALLOW
                 : getPermission(entityType).isCreate();
     }
 
+    /**
+     * Ask if delete access is allowed for given entity type
+     *
+     * @param entityType entity type
+     * @return true if delete access is allowed
+     */
     public boolean isDeleteAllowed(String entityType) {
         return getPermission(entityType) == null ? allowOrDenyByDefault == AllowOrDeny.ALLOW
                 : getPermission(entityType).isDelete();
     }
 
+    /**
+     * Ask if view access is allowed for given field (property) within given entity type
+     *
+     * @param entityType entity type
+     * @param field field
+     * @return true if view access is allowed
+     */
     public boolean isViewAllowed(String entityType, String field) {
         return getPermission(entityType, field) == null ?
                 allowOrDenyByDefault == AllowOrDeny.ALLOW && isViewAllowed(entityType)
                 : getPermission(entityType, field).isView();
     }
 
+    /**
+     * Ask if edit access is allowed for given field (property) within given entity type
+     *
+     * @param entityType entity type
+     * @param field field
+     * @return true if edit access is allowed
+     */
     public boolean isEditAllowed(String entityType, String field) {
         return getPermission(entityType, field) == null ?
                 allowOrDenyByDefault == AllowOrDeny.ALLOW && isEditAllowed(entityType)

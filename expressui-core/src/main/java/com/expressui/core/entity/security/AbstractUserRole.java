@@ -44,6 +44,9 @@ import org.hibernate.annotations.Index;
 import javax.persistence.*;
 import java.io.Serializable;
 
+/**
+ * Association entity that relates user and role
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table
@@ -64,6 +67,11 @@ public abstract class AbstractUserRole extends AuditableEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private AbstractRole role;
 
+    /**
+     * Construct relationship between user and role
+     * @param userId primary key of related user
+     * @param roleId primary key of related role
+     */
     public AbstractUserRole(Long userId, Long roleId) {
         id.userId = userId;
         id.roleId = roleId;
@@ -72,24 +80,45 @@ public abstract class AbstractUserRole extends AuditableEntity {
     public AbstractUserRole() {
     }
 
+    /**
+     * Construct relationship between user and role
+     * @param user related user
+     * @param role related role
+     */
     public AbstractUserRole(AbstractUser user, AbstractRole role) {
         this(user.getId(), role.getId());
         this.user = user;
         this.role = role;
     }
 
+    /**
+     * Get primary composition key
+     * @return composition key comprised of user id and role id
+     */
     public Id getId() {
         return id;
     }
 
+    /**
+     * Get related user.
+     *
+     * @return related user
+     */
     public AbstractUser getUser() {
         return user;
     }
 
+    /**
+     * Get related role.
+     * @return related role
+     */
     public AbstractRole getRole() {
         return role;
     }
 
+    /**
+     * Composition primary key, comprised of related user id and role id
+     */
     @Embeddable
     public static class Id implements Serializable {
         @Column(name = "USER_ID")
@@ -100,6 +129,11 @@ public abstract class AbstractUserRole extends AuditableEntity {
         public Id() {
         }
 
+        /**
+         * Construct composition key with related user id and role id
+         * @param userId related user id
+         * @param roleId related role id
+         */
         public Id(Long userId, Long roleId) {
             this.userId = userId;
             this.roleId = roleId;

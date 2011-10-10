@@ -81,6 +81,11 @@ public abstract class AbstractPermission extends WritableEntity {
         this.entityType = entityType;
     }
 
+    /**
+     * Get type for entity this permission applies to.
+     *
+     * @return name of the entity class type
+     */
     @NotBlank
     @NotNull
     @Size(min = 1, max = 64)
@@ -88,50 +93,106 @@ public abstract class AbstractPermission extends WritableEntity {
         return entityType;
     }
 
+    /**
+     * Set the type of entity this permission applies to.
+     *
+     * @param entityType name of the entity class type
+     */
     public void setEntityType(String entityType) {
         this.entityType = entityType;
     }
 
+    /**
+     * Get the field name this permission applies to.
+     *
+     * @return name of the field (bean property), null if this permission applies to type only
+     */
     public String getField() {
         return field;
     }
 
+    /**
+     * Set the field name this permission applies to.
+     *
+     * @param field name of the field (bean property), null if this permission applies to type only
+     */
     public void setField(String field) {
         this.field = field;
     }
 
+    /**
+     * Ask if this permission grants view access
+     *
+     * @return true to grant view access
+     */
     public boolean isView() {
         return view;
     }
 
+    /**
+     * Set if this permission grants view access
+     * @param view true to grant view access
+     */
     public void setView(boolean view) {
         this.view = view;
     }
 
+    /**
+     * Ask if this permission grants create access
+     *
+     * @return true to grant create access
+     */
     public boolean isCreate() {
         return create;
     }
 
+    /**
+     * Set if this permission grants create access
+     * @param create true to grant create access
+     */
     public void setCreate(boolean create) {
         this.create = create;
     }
 
+    /**
+     * Ask if this permission grants edit access
+     *
+     * @return true to grant edit access
+     */
     public boolean isEdit() {
         return edit;
     }
 
+    /**
+     * Set if this permission grants edit access
+     * @param edit true to grant edit access
+     */
     public void setEdit(boolean edit) {
         this.edit = edit;
     }
 
+    /**
+     * Ask if this permission grants delete access
+     *
+     * @return true to grant delete access
+     */
     public boolean isDelete() {
         return delete;
     }
 
+    /**
+     * Set if this permission grants delete access
+     * @param delete true to grant delete access
+     */
     public void setDelete(boolean delete) {
         this.delete = delete;
     }
 
+    /**
+     * Get display-friend list of create, view, edit, delete permissions
+     *
+     * @return comma-delimited list for display to end user
+     */
     public String getPermissions() {
         StringBuilder permissions = new StringBuilder();
         if (isCreate()) {
@@ -159,6 +220,11 @@ public abstract class AbstractPermission extends WritableEntity {
         return permissions.toString();
     }
 
+    /**
+     * Get the user-friendly display label for references the entity type
+     *
+     * @return user-friendly label, displayed in UI
+     */
     public String getEntityTypeLabel() {
         if (getEntityType() == null) {
             return null;
@@ -167,6 +233,11 @@ public abstract class AbstractPermission extends WritableEntity {
         }
     }
 
+    /**
+     * Get the user-friendly display label for references the field
+     *
+     * @return user-friendly label, displayed in UI
+     */
     public String getFieldLabel() {
         if (getEntityType() == null || getField() == null) {
             return null;
@@ -175,10 +246,19 @@ public abstract class AbstractPermission extends WritableEntity {
         }
     }
 
+    /**
+     * Get the role that this permission compositionally belong to
+     *
+     * @return parent Role
+     */
     public AbstractRole getRole() {
         return role;
     }
 
+    /**
+     * Set the role that this permission compositionally belong to
+     * @param role parent Role
+     */
     public void setRole(AbstractRole role) {
         this.role = role;
     }

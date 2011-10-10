@@ -50,12 +50,12 @@ public enum AllowOrDeny {
         this.displayName = displayName;
     }
 
+    /**
+     * Get name for displaying to end user
+     * @return name for displaying to end user
+     */
     public String getDisplayName() {
         return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
     }
 
     @Override

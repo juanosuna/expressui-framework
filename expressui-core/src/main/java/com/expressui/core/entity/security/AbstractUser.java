@@ -47,6 +47,9 @@ import javax.validation.constraints.Size;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * End user account
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table
@@ -65,11 +68,22 @@ public abstract class AbstractUser extends WritableEntity {
     public AbstractUser() {
     }
 
+    /**
+     * Construct user with login name and password
+     *
+     * @param loginName     login name
+     * @param loginPassword password
+     */
     public AbstractUser(String loginName, String loginPassword) {
         this.loginName = loginName;
         this.loginPassword = loginPassword;
     }
 
+    /**
+     * Get login name.
+     *
+     * @return login name
+     */
     @NotBlank
     @NotNull
     @Size(min = 4, max = 16)
@@ -77,10 +91,20 @@ public abstract class AbstractUser extends WritableEntity {
         return loginName;
     }
 
+    /**
+     * Set login name.
+     *
+     * @param loginName login name, must be between 4 and 16 characters
+     */
     public void setLoginName(String loginName) {
         this.loginName = loginName;
     }
 
+    /**
+     * Get password.
+     *
+     * @return password
+     */
     @NotBlank
     @NotNull
     @Size(min = 4, max = 16)
@@ -88,54 +112,114 @@ public abstract class AbstractUser extends WritableEntity {
         return loginPassword;
     }
 
+    /**
+     * Set password.
+     *
+     * @param loginPassword password, must be between 4 and 16 characters
+     */
     public void setLoginPassword(String loginPassword) {
         this.loginPassword = loginPassword;
     }
 
+    /**
+     * Ask if user account is expired.
+     *
+     * @return true if user account is expired
+     */
     public boolean isAccountExpired() {
         return accountExpired;
     }
 
+    /**
+     * Set whether or not account is expired
+     *
+     * @param accountExpired true if account is expired
+     */
     public void setAccountExpired(boolean accountExpired) {
         this.accountExpired = accountExpired;
     }
 
+    /**
+     * Ask if user account is locked.
+     *
+     * @return true if user account is locked
+     */
     public boolean isAccountLocked() {
         return accountLocked;
     }
 
+    /**
+     * Set whether or not account is locked.
+     *
+     * @param accountLocked true if account is locked
+     */
     public void setAccountLocked(boolean accountLocked) {
         this.accountLocked = accountLocked;
     }
 
+    /**
+     * Ask if credentials have expired.
+     *
+     * @return true if credentials have expired
+     */
     public boolean isCredentialsExpired() {
         return credentialsExpired;
     }
 
+    /**
+     * Set whether or not credentials have expired.
+     *
+     * @param credentialsExpired true if credentials have expired
+     */
     public void setCredentialsExpired(boolean credentialsExpired) {
         this.credentialsExpired = credentialsExpired;
     }
 
+    /**
+     * Ask if user account is enabled
+     *
+     * @return true if user account is enabled
+     */
     public boolean isEnabled() {
         return enabled;
     }
 
+    /**
+     * Set whether or not user account is enabled
+     *
+     * @param enabled true if enabled
+     */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
+    /**
+     * Get user-role association entities.
+     *
+     * @return user-role association entities
+     */
     public Set<AbstractUserRole> getUserRoles() {
         return userRoles;
     }
 
+    /**
+     * Set user-role association entities.
+     *
+     * @param userRoles user-role association entities
+     */
     public void setUserRoles(Set<AbstractUserRole> userRoles) {
         this.userRoles = userRoles;
     }
 
+    /**
+     * Get all roles assigned to this user.
+     *
+     * @return all roles assigned to this user
+     */
     public Set<AbstractRole> getRoles() {
         Set<AbstractRole> roles = new HashSet<AbstractRole>();
 
-        Set<AbstractUserRole> userRoles = (Set<AbstractUserRole>) getUserRoles();
+        Set<AbstractUserRole> userRoles = getUserRoles();
         for (AbstractUserRole userRole : userRoles) {
             roles.add(userRole.getRole());
         }
@@ -143,8 +227,14 @@ public abstract class AbstractUser extends WritableEntity {
         return roles;
     }
 
+    /**
+     * Ask if view access is allowed for given entity type
+     *
+     * @param entityType entity type
+     * @return true if view access is allowed
+     */
     public boolean isViewAllowed(String entityType) {
-        Set<AbstractUserRole> roles = (Set<AbstractUserRole>) getUserRoles();
+        Set<AbstractUserRole> roles = getUserRoles();
         for (AbstractUserRole role : roles) {
             if (role.getRole().isViewAllowed(entityType)) {
                 return true;
@@ -154,8 +244,14 @@ public abstract class AbstractUser extends WritableEntity {
         return false;
     }
 
+    /**
+     * Ask if edit access is allowed for given entity type
+     *
+     * @param entityType entity type
+     * @return true if edit access is allowed
+     */
     public boolean isEditAllowed(String entityType) {
-        Set<AbstractUserRole> roles = (Set<AbstractUserRole>) getUserRoles();
+        Set<AbstractUserRole> roles = getUserRoles();
         for (AbstractUserRole role : roles) {
             if (role.getRole().isEditAllowed(entityType)) {
                 return true;
@@ -165,8 +261,14 @@ public abstract class AbstractUser extends WritableEntity {
         return false;
     }
 
+    /**
+     * Ask if create access is allowed for given entity type
+     *
+     * @param entityType entity type
+     * @return true if create access is allowed
+     */
     public boolean isCreateAllowed(String entityType) {
-        Set<AbstractUserRole> roles = (Set<AbstractUserRole>) getUserRoles();
+        Set<AbstractUserRole> roles = getUserRoles();
         for (AbstractUserRole role : roles) {
             if (role.getRole().isCreateAllowed(entityType)) {
                 return true;
@@ -176,8 +278,14 @@ public abstract class AbstractUser extends WritableEntity {
         return false;
     }
 
+    /**
+     * Ask if delete access is allowed for given entity type
+     *
+     * @param entityType entity type
+     * @return true if delete access is allowed
+     */
     public boolean isDeleteAllowed(String entityType) {
-        Set<AbstractUserRole> roles = (Set<AbstractUserRole>) getUserRoles();
+        Set<AbstractUserRole> roles = getUserRoles();
         for (AbstractUserRole role : roles) {
             if (role.getRole().isDeleteAllowed(entityType)) {
                 return true;
@@ -187,8 +295,15 @@ public abstract class AbstractUser extends WritableEntity {
         return false;
     }
 
+    /**
+     * Ask if view access is allowed for given field (property) within given entity type
+     *
+     * @param entityType entity type
+     * @param field      field
+     * @return true if view access is allowed
+     */
     public boolean isViewAllowed(String entityType, String field) {
-        Set<AbstractUserRole> roles = (Set<AbstractUserRole>) getUserRoles();
+        Set<AbstractUserRole> roles = getUserRoles();
         for (AbstractUserRole role : roles) {
             if (role.getRole().isViewAllowed(entityType, field)) {
                 return true;
@@ -198,8 +313,15 @@ public abstract class AbstractUser extends WritableEntity {
         return false;
     }
 
+    /**
+     * Ask if edit access is allowed for given field (property) within given entity type
+     *
+     * @param entityType entity type
+     * @param field      field
+     * @return true if edit access is allowed
+     */
     public boolean isEditAllowed(String entityType, String field) {
-        Set<AbstractUserRole> roles = (Set<AbstractUserRole>) getUserRoles();
+        Set<AbstractUserRole> roles = getUserRoles();
         for (AbstractUserRole role : roles) {
             if (role.getRole().isEditAllowed(entityType, field)) {
                 return true;
