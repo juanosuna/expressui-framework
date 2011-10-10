@@ -37,8 +37,10 @@
 
 package com.expressui.sample.view;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.view.MainEntryPoint;
 import com.expressui.core.view.MainEntryPoints;
+import com.expressui.domain.ecbfx.EcbfxService;
 import com.expressui.sample.view.account.AccountEntryPoint;
 import com.expressui.sample.view.contact.ContactEntryPoint;
 import com.expressui.sample.view.opportunity.OpportunityEntryPoint;
@@ -48,6 +50,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +74,10 @@ public class SampleEntryPoints extends MainEntryPoints {
     @Resource
     private RoleEntryPoint roleEntryPoint;
 
+    @Resource
+    @Transient
+    private EcbfxService ecbfxService;
+
     @Override
     public List<MainEntryPoint> getEntryPoints() {
         List<MainEntryPoint> entryPoints = new ArrayList<MainEntryPoint>();
@@ -86,5 +93,18 @@ public class SampleEntryPoints extends MainEntryPoints {
     @Override
     public String getTheme() {
         return "sampleTheme";
+    }
+
+    @Override
+    public void postWire() {
+        super.postWire();
+
+        try {
+            ecbfxService.getFXRates();
+        } catch (Exception e) {
+            MainApplication.getInstance().showWarning("I can't seem to fetch FX rates from an external REST service hosted at European" +
+                    " Central Bank. Please see application.properties. You may need to set an HTTP proxy address." +
+                    " In the meantime, click this box to make it disappear.");
+        }
     }
 }

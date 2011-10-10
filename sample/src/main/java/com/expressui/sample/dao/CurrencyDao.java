@@ -57,6 +57,27 @@ public class CurrencyDao extends EntityDao<Currency, String> {
 
     @Override
     public List<Currency> findAll() {
+
+        List<Currency> currencies;
+
+        try {
+            currencies = findAllWithFxRates();
+        } catch (Exception e) {
+            currencies = findAllWithoutFxRates();
+        }
+
+        return currencies;
+    }
+
+    private List<Currency> findAllWithoutFxRates() {
+        Query query = getEntityManager().createQuery("SELECT c FROM Currency c ORDER BY c.displayName");
+
+        setReadOnly(query);
+
+        return query.getResultList();
+    }
+
+    private List<Currency> findAllWithFxRates() {
         Query query = getEntityManager().createQuery("SELECT c FROM Currency c " +
                 " WHERE c.id in :currenciesWithFxRates ORDER BY c.displayName");
 

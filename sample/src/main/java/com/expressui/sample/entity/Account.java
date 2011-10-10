@@ -226,7 +226,7 @@ public class Account extends WritableEntity {
             try {
                 BigDecimal annualRevenueInUSD = ecbfxService.convert(getAnnualRevenue(), getCurrency().getId(), "USD");
                 return annualRevenueInUSD.setScale(0, RoundingMode.HALF_EVEN);
-            } catch (IllegalCurrencyException e) {
+            } catch (Exception e) {
                 return null;
             }
         }

@@ -197,7 +197,7 @@ public class Opportunity extends WritableEntity {
                 amountInUSD = amountInUSD.setScale(0, RoundingMode.HALF_EVEN);
                 BigDecimal amountWeightedInUSD = amountInUSD.multiply(new BigDecimal(getProbability()));
                 return amountWeightedInUSD.setScale(0, RoundingMode.HALF_EVEN);
-            } catch (IllegalCurrencyException e) {
+            } catch (Exception e) {
                 return null;
             }
         }
