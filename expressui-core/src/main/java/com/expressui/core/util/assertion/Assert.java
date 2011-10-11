@@ -37,6 +37,9 @@
 
 package com.expressui.core.util.assertion;
 
+/**
+ * Utility class for making assertions based on the classification of the error.
+ */
 public class Assert {
 
     /**

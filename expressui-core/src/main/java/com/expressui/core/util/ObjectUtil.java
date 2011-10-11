@@ -40,10 +40,19 @@ package com.expressui.core.util;
 import java.util.Collection;
 
 /**
- * User: Juan
- * Date: 8/5/11
+ * Utility class for managing objects.
  */
 public class ObjectUtil {
+
+    /**
+     * Ask if two args are equal. Differs from Object.equals in that method returns true if
+     * both args are null or returns false if only one is null (without throwing a
+     * NullPointerException).
+     *
+     * @param a first object to compare
+     * @param b second object to compare
+     * @return true if they are equal
+     */
     public static boolean isEqual(Object a, Object b) {
         if (a == null && b == null) return true;
         if (a == null && b != null) return false;
@@ -52,6 +61,15 @@ public class ObjectUtil {
         return a.equals(b);
     }
 
+    /**
+     * Ask if two collections are equal by comparing them deeply.
+     * Returns true if both args are null or returns false if only one is null
+     * (without throwing a NullPointerException).
+     *
+     * @param a first collection to compare
+     * @param b second collection to compare
+     * @return true if they are equal
+     */
     public static boolean isEqualDeep(Collection a, Collection b) {
         if (a == null && b == null) return true;
         if (a == null && b != null) return false;
@@ -66,10 +84,17 @@ public class ObjectUtil {
         return true;
     }
 
-    public static int hashCodeDeep(Collection a) {
+    /**
+     * Calculate the hashCode of a collection by summing up the hashcodes of all its members.
+     * This assures that any two collections with exactly the same members have the same hashCode.
+     *
+     * @param collection collection from which to extract hashCode
+     * @return sum of all member hashCodes
+     */
+    public static int hashCodeDeep(Collection collection) {
         int hashCode = 0;
 
-        for (Object o : a) {
+        for (Object o : collection) {
             hashCode += o.hashCode();
         }
 

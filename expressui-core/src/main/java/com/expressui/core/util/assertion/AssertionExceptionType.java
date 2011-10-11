@@ -40,6 +40,10 @@ package com.expressui.core.util.assertion;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * Represents in the different types of exceptions, classified by their nature
+ * and what kind of person needs to fix them.
+ */
 public enum AssertionExceptionType {
     CONFIGURATION_EXCEPTION(ConfigurationException.class),
     PROGRAMMING_EXCEPTION(ProgrammingException.class),

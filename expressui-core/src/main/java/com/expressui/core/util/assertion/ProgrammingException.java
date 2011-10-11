@@ -38,6 +38,10 @@
 package com.expressui.core.util.assertion;
 
 
+/**
+ * Represents programming error that should never happen in production. Any such error
+ * is a bug.
+ */
 public class ProgrammingException extends AssertionException {
     public ProgrammingException() {
     }

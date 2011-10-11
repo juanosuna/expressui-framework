@@ -40,6 +40,10 @@ package com.expressui.core.util;
 import org.hibernate.AssertionFailure;
 import org.hibernate.cfg.DefaultComponentSafeNamingStrategy;
 
+/**
+ * Hibernate strategy for generating DLL, making sure that all table and column names
+ * are upper-cased and words are separated by underscores.
+ */
 public class UpperCaseAndUnderscoresNamingStrategy extends DefaultComponentSafeNamingStrategy {
 
     public static final String TABLE_PREFIX = "";

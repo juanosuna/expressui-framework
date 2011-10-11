@@ -50,6 +50,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URL;
 
+/**
+ * A servlet for launching Vaadin application with Spring dependency injection.
+ */
 public class SpringApplicationServlet extends ApplicationServlet {
 
     private final Logger log = Logger.getLogger(getClass());

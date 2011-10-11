@@ -42,6 +42,9 @@ import org.apache.commons.lang.StringUtils;
 import javax.swing.*;
 import java.awt.*;
 
+/**
+ * Utility class for managing Strings
+ */
 public class StringUtil {
 
     public static final FontMetrics FONT_METRICS;
@@ -52,7 +55,12 @@ public class StringUtil {
         FONT_METRICS = jTextField.getFontMetrics(font);
     }
 
-
+    /**
+     * Ask if the given String is equal to any of the other args
+     * @param s string to query for
+     * @param args strings to query in
+     * @return true if string is found
+     */
     public static boolean isEqual(String s, String... args) {
         for (String arg : args) {
             if (s.equals(arg)) {
@@ -63,14 +71,30 @@ public class StringUtil {
         return false;
     }
 
+    /**
+     * Get the approximate column width in EM units of the given string
+     * @param s string to measure
+     * @return width in EM units
+     */
     public static int approximateColumnWidth(String s) {
         return (int) Math.ceil(FONT_METRICS.stringWidth(s) * 0.1) + 1;
     }
 
+    /**
+     * Get the approximate column width in pixels of the given string
+     * @param s string to measure
+     * @return width in pixels
+     */
     public static int approximateColumnPixelWidth(String s) {
         return FONT_METRICS.stringWidth(s) + 30;
     }
 
+    /**
+     * Extract part of string after last period.
+     *
+     * @param str string to extract from
+     * @return last part of string, after period, just returns str if no period found
+     */
     public static String extractAfterPeriod(String str) {
         int periodIndex = str.indexOf(".");
         if (periodIndex < 0) {
@@ -80,16 +104,32 @@ public class StringUtil {
         }
     }
 
+    /**
+     * Converts camel case to human-readable form, i.e. spaced-delimited words with each first
+     * letter capitalized
+     * @param camelCase string in camel case
+     * @return
+     */
     public static String humanizeCamelCase(String camelCase) {
         String[] camelCaseParts = StringUtils.splitByCharacterTypeCamelCase(camelCase);
         String joined = StringUtils.join(camelCaseParts, " ");
         return capitaliseFirstLetter(joined);
     }
 
+    /**
+     * Capitalize first letter of given string
+     * @param str string to capitalize first letter of
+     * @return new String with first letter capitalized
+     */
     public static String capitaliseFirstLetter(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
+    /**
+     * Ask if the given arg is empty, i.e. null or empty string
+     * @param s any object
+     * @return true if arg is null or empty string
+     */
     public static boolean isEmpty(Object s) {
         if (s != null && s instanceof String) {
             return ((String) s).isEmpty();

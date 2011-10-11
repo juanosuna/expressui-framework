@@ -42,6 +42,9 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * Copies specific Spring-loaded properties into System properties, as needed by framework.
+ */
 @Configuration
 public class ConfigureSystemProperties {
 
@@ -51,10 +54,20 @@ public class ConfigureSystemProperties {
     @Value("${http.proxyPort}")
     private Integer httpProxyPort;
 
+    /**
+     * Get the HTTP proxy hostname
+     *
+     * @return HTTP proxy hostname
+     */
     public String getHttpProxyHost() {
         return httpProxyHost;
     }
 
+    /**
+     * Get the HTTP proxy port
+     *
+     * @return HTTP proxy port
+     */
     public Integer getHttpProxyPort() {
         return httpProxyPort;
     }

@@ -40,11 +40,15 @@ package com.expressui.core.util;
 import java.util.Collection;
 
 /**
- * User: Juan
- * Date: 5/9/11
- * Time: 9:26 PM
+ * Utility class for managing collections
  */
 public class CollectionsUtil {
+    /**
+     * Convert collection to a string array by calling toString on each member
+     *
+     * @param collection collection to convert
+     * @return string array
+     */
     public static String[] toStringArray(Collection collection) {
         String[] stringArray = new String[collection.size()];
 

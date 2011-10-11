@@ -50,11 +50,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * User: Juan
- * Date: 5/9/11
- * Time: 2:09 PM
+ * Reflection utlity class
  */
 public class ReflectionUtil {
+
+    /**
+     * Create new instance from the given type.
+     *
+     * @param type class to reflectively instantiate
+     * @param <T> type of the class
+     * @return new instance
+     */
     public static <T> T newInstance(Class<T> type) {
         try {
             return type.newInstance();
@@ -65,10 +71,46 @@ public class ReflectionUtil {
         }
     }
 
+    /**
+     * Create new instance from the given type, based on given parameter types and args.
+     *
+     * @param type class to reflectively instantiate
+     * @param <T> type of the class
+     * @param parameterTypes used to find the right constructor
+     * @param args passed to constructor
+     * @return new instance
+     */
+    public static <T> T newInstance(Class<T> type, Class[] parameterTypes, Object[] args) {
+        try {
+            Constructor constructor = type.getDeclaredConstructor(parameterTypes);
+            constructor.setAccessible(true);
+            return (T) constructor.newInstance(args);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Get the first generic argument of the given class
+     * @param clazz class from which to extract generic argument
+     * @return type of generic argument
+     */
     public static Class getGenericArgumentType(Class clazz) {
         return getGenericArgumentType(clazz, 0);
     }
 
+    /**
+     * Get a generic argument of the given class, based on arg index
+     * @param clazz class from which to extract generic argument
+     * @param argIndex index of the declared argument type
+     * @return type of generic argument
+     */
     public static Class getGenericArgumentType(Class clazz, int argIndex) {
         Type type = clazz.getGenericSuperclass();
 
@@ -83,6 +125,12 @@ public class ReflectionUtil {
         }
     }
 
+    /**
+     * Get the value type of the given collection, as declared by the collection property type
+     * @param beanType bean class
+     * @param beanProperty name of property, which must be a collection
+     * @return generic type declared for collection members
+     */
     public static Class getCollectionValueType(Class beanType, String beanProperty) {
         PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(beanType, beanProperty);
         Class propertyType = descriptor.getPropertyType();
@@ -107,22 +155,14 @@ public class ReflectionUtil {
         return collectionValueType;
     }
 
-    public static <T> T newInstance(Class<T> type, Class[] parameterTypes, Object[] args) {
-        try {
-            Constructor constructor = type.getDeclaredConstructor(parameterTypes);
-            constructor.setAccessible(true);
-            return (T) constructor.newInstance(args);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
+    /**
+     * Ask if the bean's properties are empty. boolean properties that are false and numbers
+     * that are zero are considered empty. String values that are zero-length are considered empty.
+     * All other property types must be null to be considered empty.
+     *
+     * @param bean bean to check
+     * @return true if bean has no values
+     */
     public static boolean isBeanEmpty(Object bean) {
         if (bean == null) {
             return true;
@@ -156,6 +196,13 @@ public class ReflectionUtil {
         return true;
     }
 
+    /**
+     * Find all properties in the bean that are complex, i.e. not BeanUtils.isSimpleValueType
+     *
+     * @see BeanUtils.isSimpleValueType()
+     * @param bean
+     * @return
+     */
     public static Collection<String> findComplexProperties(Object bean) {
         Collection<String> complexProperties = new ArrayList<String>();
 
@@ -172,6 +219,19 @@ public class ReflectionUtil {
         return complexProperties;
     }
 
+    /**
+     * Convert object value to given type. Converts primitives to their wrappers.
+     * Converts strings to numbers.
+     *
+     * @param value value to convert
+     * @param type type to convert to
+     * @param <T> type
+     * @return
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws NoSuchMethodException
+     */
     public static <T> T convertValue(Object value, Class<T> type) throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
         Class clazz;
         if (type.isPrimitive()) {
@@ -189,6 +249,12 @@ public class ReflectionUtil {
         return constructor.newInstance(new Object[]{value.toString()});
     }
 
+    /**
+     * Ask if given type is a number type.
+     *
+     * @param type type to check
+     * @return true if a number
+     */
     public static boolean isNumberType(Class type) {
         Class clazz;
         if (type.isPrimitive()) {
@@ -200,6 +266,14 @@ public class ReflectionUtil {
         return Number.class.isAssignableFrom(clazz);
     }
 
+    /**
+     * Find a method on a class.
+     *
+     * @param type class containing the method
+     * @param methodName name of the method to search for
+     * @param parameterTypes parameter types declared in the method signature
+     * @return found method
+     */
     public static Method getMethod(Class type, String methodName, Class<?>... parameterTypes) {
         Method method = null;
         Class currentType = type;
@@ -216,6 +290,12 @@ public class ReflectionUtil {
         return method;
     }
 
+    /**
+     * Find field on a given type
+     * @param type class containing the field
+     * @param fieldName name of field to search for
+     * @return found field
+     */
     public static Field getField(Class type, String fieldName) {
         Field field = null;
         Class currentType = type;

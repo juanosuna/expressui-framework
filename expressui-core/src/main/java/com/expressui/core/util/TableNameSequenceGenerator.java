@@ -45,8 +45,12 @@ import org.hibernate.type.Type;
 
 import java.util.Properties;
 
+/**
+ * Generates database table names that contain sequences
+ */
 public class TableNameSequenceGenerator extends SequenceGenerator {
-     public void configure(Type type, Properties params, Dialect dialect) throws MappingException {
+    @Override
+    public void configure(Type type, Properties params, Dialect dialect) throws MappingException {
         if(params.getProperty(SEQUENCE) == null || params.getProperty(SEQUENCE).length() == 0) {
             String tableName = params.getProperty(PersistentIdentifierGenerator.TABLE);
             if(tableName != null) {

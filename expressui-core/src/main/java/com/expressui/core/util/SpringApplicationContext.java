@@ -47,34 +47,74 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Wraps Spring's Application Context, providing some extra logic for finding beans.
+ */
 @Component
 public class SpringApplicationContext implements ApplicationContextAware {
 
     private static ApplicationContext applicationContext;
 
+    /**
+     * Set Spring's application context
+     *
+     * @param context context to set
+     * @throws BeansException
+     */
     public void setApplicationContext(ApplicationContext context) throws BeansException {
         applicationContext = context;
     }
 
+    /**
+     * Get Spring's application context.
+     *
+     * @return Spring's application context
+     */
     public static ApplicationContext getApplicationContext() {
         return applicationContext;
     }
 
+    /**
+     * Look up a bean in the context by name.
+     *
+     * @param beanName name of the bean to lookup
+     * @return bean found in the context
+     */
     public static Object getBean(String beanName) {
         return applicationContext.getBean(beanName);
     }
 
+    /**
+     * If the application context has been set, autowire the given target.
+     * This is a helpful utility method for injecting Spring beans into a non-Spring-bean.
+     *
+     * @param target non-Spring-bean for injecting
+     */
     public static void autowire(Object target) {
         if (getApplicationContext() != null && getApplicationContext().getAutowireCapableBeanFactory() != null) {
             SpringApplicationContext.getApplicationContext().getAutowireCapableBeanFactory().autowireBean(target);
         }
     }
 
+    /**
+     * Find all beans of a given type in the application context.
+     *
+     * @param type type to search for
+     * @param <T>
+     * @return
+     */
     public static <T> Set<T> getBeansByType(Class<T> type) {
         Map beans = BeanFactoryUtils.beansOfTypeIncludingAncestors(applicationContext, type);
         return new HashSet(beans.values());
     }
 
+    /**
+     * Find bean of a given type, declared with given generic argument type.
+     * @param type type to search for
+     * @param genericArgumentType generic argument type declared on the bean
+     * @param <T>
+     * @return found bean
+     */
     public static <T> T getBeanByTypeAndGenericArgumentType(Class<T> type, Class genericArgumentType) {
         Set<T> beans = getBeansByType(type);
 
@@ -99,6 +139,13 @@ public class SpringApplicationContext implements ApplicationContextAware {
         }
     }
 
+    /**
+     * Find all beans of a given type, declared with given generic argument type.
+     * @param type type to search for
+     * @param genericArgumentType generic argument type declared on the bean
+     * @param <T>
+     * @return found beans
+     */
     public static <T> Set<T> getBeansByTypeAndGenericArgumentType(Class<T> type, Class genericArgumentType) {
         Set<T> beans = getBeansByType(type);
         Set<T> beansWithGenericArgumentType = new HashSet<T>();

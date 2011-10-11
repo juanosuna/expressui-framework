@@ -37,8 +37,15 @@
 
 package com.expressui.core.util;
 
+/**
+ * Sets any default system properties that have not been already set elsewhere.
+ * Sets DB to "dev" so that development database is used by default.
+ */
 public class DefaultSystemProperties {
 
+    /**
+     * Initialize any default system properties.
+     */
     public void initialize() {
         if (System.getProperty("DB") == null) {
             System.setProperty("DB", "dev");

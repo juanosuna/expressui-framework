@@ -43,12 +43,14 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * User: Juan
- * Date: 7/12/11
- * Time: 3:51 PM
+ * Utility class for managing currencies.
  */
 public class CurrencyUtil {
 
+    /**
+     * Get a list of available currencies from the JDK from all locales.
+     * @return list of all currencies supported by the JDK
+     */
     public static List<Currency> getAvailableCurrencies() {
         List<Currency> currencies = new ArrayList<Currency>();
         Locale[] locales = Locale.getAvailableLocales();

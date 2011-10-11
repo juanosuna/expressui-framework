@@ -38,6 +38,10 @@
 package com.expressui.core.util.assertion;
 
 
+/**
+ * Represents failure in business logic, an event that may happen in production because
+ * of user error.
+ */
 public class BusinessException extends AssertionException {
     public BusinessException() {
     }

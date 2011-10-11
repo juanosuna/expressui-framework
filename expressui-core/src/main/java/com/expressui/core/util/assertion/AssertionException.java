@@ -37,7 +37,9 @@
 
 package com.expressui.core.util.assertion;
 
-
+/**
+ * Represents an assertion failure.
+ */
 public class AssertionException extends RuntimeException {
     public AssertionException() {
     }

@@ -38,10 +38,16 @@
 package com.expressui.core.util;
 
 /**
- * User: Juan
- * Date: 7/29/11
+ * Utility class for managing Math operations.
  */
 public class MathUtil {
+
+    /**
+     * Get the maximum integer, ignoring if one arg is null.
+     * @param a first integer
+     * @param b second integer
+     * @return maximum integer
+     */
     public static Integer maxIgnoreNull(Integer a, Integer b) {
         if (a == null) return b;
         if (b == null) return a;
@@ -49,6 +55,12 @@ public class MathUtil {
         return Math.max(a, b);
     }
 
+    /**
+     * Get the minimum integer, ignoring if one arg is null.
+     * @param a first integer
+     * @param b second integer
+     * @return minimum integer
+     */
     public static Integer minIgnoreNull(Integer a, Integer b) {
         if (a == null) return b;
         if (b == null) return a;
@@ -56,16 +68,27 @@ public class MathUtil {
         return Math.min(a, b);
     }
 
+    /**
+     * Get the maximum integer, returning null if any arg is null
+     * @param a first integer
+     * @param b second integer
+     * @return maximum integer, or null if any arg is null
+     */
     public static Integer maxDisallowNull(Integer a, Integer b) {
         if (a == null || b == null) return null;
 
         return Math.max(a, b);
     }
 
+    /**
+     * Get the minimum integer, returning null if any arg is null
+     * @param a first integer
+     * @param b second integer
+     * @return minimum integer, or null if any arg is null
+     */
     public static Integer minDisallowNull(Integer a, Integer b) {
         if (a == null || b == null) return null;
 
         return Math.min(a, b);
     }
-
 }

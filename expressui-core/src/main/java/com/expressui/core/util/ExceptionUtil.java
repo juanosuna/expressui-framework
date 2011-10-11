@@ -38,16 +38,23 @@
 package com.expressui.core.util;
 
 /**
- * User: Juan
- * Date: 8/2/11
+ * Utility class for managing exceptions.
  */
 public class ExceptionUtil {
 
-    public static <T> T findThrowableInChain(Throwable throwable, Class<? extends Throwable> throwableClass) {
-        Throwable currentThrowable = throwable;
+    /**
+     * Find given throwable within a tree of chained throwables
+     *
+     * @param rootThrowable throwable to traverse/search
+     * @param queryThrowableType throwable type to query for
+     * @param <T> type of throwable to query for
+     * @return found throwable instance, or null if not found
+     */
+    public static <T> T findThrowableInChain(Throwable rootThrowable, Class<? extends Throwable> queryThrowableType) {
+        Throwable currentThrowable = rootThrowable;
 
         while (currentThrowable != null) {
-            if (throwableClass.isAssignableFrom(currentThrowable.getClass())) {
+            if (queryThrowableType.isAssignableFrom(currentThrowable.getClass())) {
                 return (T) currentThrowable;
             } else {
                 currentThrowable = currentThrowable.getCause();

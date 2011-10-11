@@ -38,6 +38,10 @@
 package com.expressui.core.util.assertion;
 
 
+/**
+ * Represents configuration error, which may happen because of error introduced during
+ * deployment.
+ */
 public class ConfigurationException extends AssertionException {
     public ConfigurationException() {
     }

@@ -43,14 +43,20 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * User: Juan
- * Date: 6/4/11
- * Time: 11:25 PM
+ * A type for representing a method on a specific instance.
+ * Can be used for invoking method on a target.
  */
 public class MethodDelegate {
     private Object target;
     private Method method;
 
+    /**
+     * Construct method delegate on a given target with given method name and parameter types.
+     *
+     * @param target instance for later executing the method
+     * @param methodName name of the method
+     * @param parameterTypes parameter types defined in the method signature
+     */
     public MethodDelegate(Object target, String methodName, Class<?>... parameterTypes) {
         this.target = target;
         method = ReflectionUtil.getMethod(target.getClass(), methodName, parameterTypes);
@@ -58,6 +64,13 @@ public class MethodDelegate {
                 +"." + methodName + parameterTypes == null ? "" : " (" + parameterTypes + ")");
     }
 
+    /**
+     * Execute the method with the give arguments.
+     *
+     * @param args arguments for passing to the method
+     *
+     * @return value returned by the method
+     */
     public Object execute(Object... args) {
         try {
             method.setAccessible(true);

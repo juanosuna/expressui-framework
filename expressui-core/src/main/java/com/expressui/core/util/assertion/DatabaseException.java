@@ -37,7 +37,9 @@
 
 package com.expressui.core.util.assertion;
 
-
+/**
+ * Represents data error in the database.
+ */
 public class DatabaseException extends AssertionException {
     public DatabaseException() {
     }
