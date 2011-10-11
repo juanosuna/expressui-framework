@@ -45,10 +45,7 @@
 <body>
 <h2 align="center">Login</h2>
 
-<p align="center">For full demo, please log in as username "admin" with password "admin."</p>
-
-<p align="center">To see how a role limits access, login as username "guest" with password "guest."
-</p>
+<p align="center">Please log in as user "guest" with password "guest."</p>
 
 <form name="f" action="<c:url value='/j_spring_security_check'/>" method="POST">
     <table align="center">
