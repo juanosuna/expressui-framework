@@ -35,33 +35,15 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.sample.service;
+package com.expressui.domain.service;
 
-import com.expressui.domain.ecbfx.EcbfxService;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
-
-import java.math.BigDecimal;
-import java.util.Map;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
-/**
- * User: Juan
- * Date: 7/30/11
- */
-@Ignore
-public class EcbfxServiceTest extends AbstractServiceTest {
-    @Resource
-    private EcbfxService ecbfxService;
-
-    @Test
-    public void getFXRates() {
-        Map<String, BigDecimal> fxRates = ecbfxService.getFXRates();
-        assertNotNull(fxRates);
-        assertTrue(fxRates.size() > 0);
-    }
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {
+        "classpath:/spring/applicationContext-scan.xml"
+})
+public abstract class AbstractServiceTest {
 }

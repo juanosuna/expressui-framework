@@ -35,15 +35,14 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.sample.service;
+package com.expressui.domain.service;
 
-import com.expressui.domain.geoplanet.GeoPlanetService;
+import com.expressui.domain.geonames.GeoNamesService;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.annotation.Resource;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -53,25 +52,21 @@ import static org.junit.Assert.assertTrue;
  * Date: 7/30/11
  */
 @Ignore
-public class GeoPlanetServiceTest extends AbstractServiceTest {
+public class GeoNamesServiceTest extends AbstractServiceTest {
     @Resource
-    private GeoPlanetService geoPlanetService;
+    private GeoNamesService geoNamesService;
 
     @Test
     public void getCountries() {
-        Set<GeoPlanetService.CountryInfo> countries = geoPlanetService.getCountries();
+        Map<String,GeoNamesService.CountryInfo> countries = geoNamesService.getCountries();
         assertNotNull(countries);
         assertTrue(countries.size() > 0);
     }
 
     @Test
     public void getCurrencyCodes() {
-        Set<String> countriesWithStates = new HashSet<String>();
-        countriesWithStates.add("US");
-        countriesWithStates.add("CA");
-
-        Set<GeoPlanetService.Place> states = geoPlanetService.getStates(countriesWithStates);
-        assertNotNull(states);
-        assertTrue(states.size() > 0);
+        Map<String, String> currencyCodes = geoNamesService.getCurrencyCodes();
+        assertNotNull(currencyCodes);
+        assertTrue(currencyCodes.size() > 0);
     }
 }

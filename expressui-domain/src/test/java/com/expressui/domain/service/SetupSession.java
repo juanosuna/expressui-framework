@@ -35,7 +35,7 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.sample.util;
+package com.expressui.domain.service;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.mock.web.MockHttpServletRequest;

@@ -46,7 +46,7 @@
         <property name="scopes">
             <map>
                 <entry key="session">
-                    <bean class="com.expressui.sample.util.SetupSession"/>
+                    <bean class="com.expressui.domain.service.SetupSession"/>
                 </entry>
             </map>
         </property>

@@ -35,13 +35,15 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.sample.service;
+package com.expressui.domain.service;
 
-import com.expressui.domain.geonames.GeoNamesService;
+import com.expressui.domain.ecbfx.EcbfxService;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.annotation.Resource;
+
+import java.math.BigDecimal;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
@@ -52,21 +54,14 @@ import static org.junit.Assert.assertTrue;
  * Date: 7/30/11
  */
 @Ignore
-public class GeoNamesServiceTest extends AbstractServiceTest {
+public class EcbfxServiceTest extends AbstractServiceTest {
     @Resource
-    private GeoNamesService geoNamesService;
+    private EcbfxService ecbfxService;
 
     @Test
-    public void getCountries() {
-        Map<String,GeoNamesService.CountryInfo> countries = geoNamesService.getCountries();
-        assertNotNull(countries);
-        assertTrue(countries.size() > 0);
-    }
-
-    @Test
-    public void getCurrencyCodes() {
-        Map<String, String> currencyCodes = geoNamesService.getCurrencyCodes();
-        assertNotNull(currencyCodes);
-        assertTrue(currencyCodes.size() > 0);
+    public void getFXRates() {
+        Map<String, BigDecimal> fxRates = ecbfxService.getFXRates();
+        assertNotNull(fxRates);
+        assertTrue(fxRates.size() > 0);
     }
 }

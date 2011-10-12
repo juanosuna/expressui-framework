@@ -35,15 +35,43 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.sample.service;
+package com.expressui.domain.service;
 
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import com.expressui.domain.geoplanet.GeoPlanetService;
+import org.junit.Ignore;
+import org.junit.Test;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {
-        "classpath:/spring/applicationContext-scan.xml"
-})
-public abstract class AbstractServiceTest {
+import javax.annotation.Resource;
+import java.util.HashSet;
+import java.util.Set;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+/**
+ * User: Juan
+ * Date: 7/30/11
+ */
+@Ignore
+public class GeoPlanetServiceTest extends AbstractServiceTest {
+    @Resource
+    private GeoPlanetService geoPlanetService;
+
+    @Test
+    public void getCountries() {
+        Set<GeoPlanetService.CountryInfo> countries = geoPlanetService.getCountries();
+        assertNotNull(countries);
+        assertTrue(countries.size() > 0);
+    }
+
+    @Test
+    public void getCurrencyCodes() {
+        Set<String> countriesWithStates = new HashSet<String>();
+        countriesWithStates.add("US");
+        countriesWithStates.add("CA");
+
+        Set<GeoPlanetService.Place> states = geoPlanetService.getStates(countriesWithStates);
+        assertNotNull(states);
+        assertTrue(states.size() > 0);
+    }
 }
