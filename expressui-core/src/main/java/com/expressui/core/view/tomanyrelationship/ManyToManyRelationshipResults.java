@@ -44,10 +44,22 @@ import com.expressui.core.util.assertion.Assert;
 
 import java.io.Serializable;
 
+/**
+ * Results of related entities in a many-to-many, aggregation relationship.
+ *
+ * @param <T> type of related entity
+ * @param <A> type of association entity that links the two sides of the relationship
+ */
 public abstract class ManyToManyRelationshipResults<T, A extends IdentifiableEntity> extends ToManyAggregationRelationshipResults<T> {
 
+    /**
+     * Get the DAO for accessing entities of the association type.
+     *
+     * @return association DAO
+     */
     public abstract EntityDao<A, ? extends Serializable> getAssociationDao();
 
+    @Override
     public void setReferencesToParentAndPersist(T... values) {
         for (T value : values) {
             BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getEntityType(), getParentPropertyId());
@@ -61,7 +73,8 @@ public abstract class ManyToManyRelationshipResults<T, A extends IdentifiableEnt
         }
     }
 
-    public void valuesRemoved(T... values) {
+    @Override
+    public void removeConfirmed(T... values) {
         for (T value : values) {
             BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getEntityType(), getParentPropertyId());
             Assert.PROGRAMMING.assertTrue(beanPropertyType.isCollectionType(),
@@ -74,5 +87,10 @@ public abstract class ManyToManyRelationshipResults<T, A extends IdentifiableEnt
         removeButton.setEnabled(false);
     }
 
+    /**
+     * Implementation should create the appropriate associate entity for linking the given value to the parent
+     * @param value entity to add to the relationship
+     * @return the newly created association entity
+     */
     public abstract A createAssociationEntity(T value);
 }

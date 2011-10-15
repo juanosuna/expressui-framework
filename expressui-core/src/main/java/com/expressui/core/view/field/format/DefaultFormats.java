@@ -44,6 +44,9 @@ import java.text.Format;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 
+/**
+ * Defines some default formats, e.g. dates.
+ */
 @Component
 public class DefaultFormats {
 
@@ -64,18 +67,38 @@ public class DefaultFormats {
         this.numberFormat = numberFormat;
     }
 
+    /**
+     * Get default date format.
+     *
+     * @return default date format
+     */
     public PropertyFormatter getDateFormat() {
         return new JDKFormatPropertyFormatter(dateFormat);
     }
 
+    /**
+     * Set default date format
+     *
+     * @param dateFormat default date format
+     */
     public void setDateFormat(Format dateFormat) {
         this.dateFormat = dateFormat;
     }
 
+    /**
+     * Get default date-time format.
+     *
+     * @return default date-time format
+     */
     public PropertyFormatter getDateTimeFormat() {
         return new JDKFormatPropertyFormatter(dateTimeFormat);
     }
 
+    /**
+     * Set default date-time format.
+     *
+     * @param dateTimeFormat default date-time format
+     */
     public void setDateTimeFormat(Format dateTimeFormat) {
         this.dateTimeFormat = dateTimeFormat;
     }

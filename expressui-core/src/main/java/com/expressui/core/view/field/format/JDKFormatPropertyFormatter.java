@@ -41,14 +41,25 @@ import com.vaadin.data.util.PropertyFormatter;
 
 import java.text.Format;
 
+/**
+ * Integrates Vaadin PropertyFormatter with JDK formatter by wrapping it.
+ */
 public class JDKFormatPropertyFormatter extends PropertyFormatter {
 
     private Format format;
 
+    /**
+     * Construct with the JDK format to wrap
+     * @param format JDK format
+     */
     public JDKFormatPropertyFormatter(Format format) {
         this.format = format;
     }
 
+    /**
+     * Get the JDK format
+     * @return JDK format
+     */
     public Format getFormat() {
         return format;
     }

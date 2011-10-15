@@ -50,6 +50,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Context menu (right-mouse click) for handling any actions
+ */
 @Scope("prototype")
 @Component
 public class ActionContextMenu implements Action.Handler {
@@ -59,6 +62,13 @@ public class ActionContextMenu implements Action.Handler {
 
     private Map<String, ContextMenuAction> actions = new LinkedHashMap<String, ContextMenuAction>();
 
+    /**
+     * Add action to the context menu.
+     *
+     * @param caption capture for display context menu item
+     * @param target target object to invoke when user selects action
+     * @param methodName target method to invoke when user selects action
+     */
     public void addAction(String caption, Object target, String methodName) {
         Action action = new Action(uiMessageSource.getMessage(caption));
         MethodDelegate methodDelegate = new MethodDelegate(target, methodName);
@@ -66,6 +76,12 @@ public class ActionContextMenu implements Action.Handler {
         actions.put(caption, contextMenuAction);
     }
 
+    /**
+     * Sets whether or not this given action is enabled.
+     *
+     * @param caption caption for identifying the menu item
+     * @param enabled true to enable
+     */
     public void setActionEnabled(String caption, boolean enabled) {
         actions.get(caption).setEnabled(enabled);
     }
@@ -93,23 +109,6 @@ public class ActionContextMenu implements Action.Handler {
         }
     }
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (o == null || getClass() != o.getClass()) return false;
-//
-//        ActionContextMenu that = (ActionContextMenu) o;
-//
-//        if (!ObjectUtil.isEqualDeep(actions.values(), that.actions.values())) return false;
-//
-//        return true;
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return ObjectUtil.hashCodeDeep(actions.values());
-//    }
-
     private static class ContextMenuAction {
         private Action action;
         private boolean enabled = false;
@@ -135,28 +134,6 @@ public class ActionContextMenu implements Action.Handler {
         public void setEnabled(boolean enabled) {
             this.enabled = enabled;
         }
-
-//        @Override
-//        public boolean equals(Object o) {
-//            if (this == o) return true;
-//            if (o == null || getClass() != o.getClass()) return false;
-//
-//            ContextMenuAction that = (ContextMenuAction) o;
-//
-//            if (enabled != that.enabled) return false;
-//            if (!action.equals(that.action)) return false;
-//            if (!methodDelegate.equals(that.methodDelegate)) return false;
-//
-//            return true;
-//        }
-//
-//        @Override
-//        public int hashCode() {
-//            int result = action.hashCode();
-//            result = 31 * result + (enabled ? 1 : 0);
-//            result = 31 * result + methodDelegate.hashCode();
-//            return result;
-//        }
     }
 }
 

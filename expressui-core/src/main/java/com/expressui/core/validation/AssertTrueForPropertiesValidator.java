@@ -40,6 +40,11 @@ package com.expressui.core.validation;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * Validator for AssertTrueForProperties annotation.
+ *
+ * @see AssertTrueForProperties
+ */
 public class AssertTrueForPropertiesValidator implements ConstraintValidator<AssertTrueForProperties, Object> {
 
     private AssertTrueForProperties assertTrueForProperties;

@@ -47,6 +47,12 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 
+/**
+ * Asserts that the annotated method must return true, or else validation error will be thrown
+ * for the bean containing the annotated method.
+ * This annotation should be used in cases where the assertion method validates multiple properties
+ * in a bean.
+ */
 @Target({METHOD})
 @Retention(RUNTIME)
 @Constraint(validatedBy = AssertTrueForPropertiesValidator.class)
@@ -58,5 +64,12 @@ public @interface AssertTrueForProperties {
 
     Class<? extends Payload>[] payload() default {};
 
+    /**
+     * Specifies which property should be associated with the error message, from a user perspective.
+     * For example, if zipCode is not consistent with selected country, then setting errorProperty
+     * to zipCode would cause the validation error to be displayed with the zipCode field rather
+     * than country field.
+     * @return property associated with error, from end-user perspective
+     */
     String errorProperty();
 }

@@ -53,9 +53,11 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Collection;
 
+/**
+ * Results containing entities in a to-many composition relationship.
+ * @param <T> type of the entities in the results
+ */
 public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRelationshipResults<T> implements WalkableResults {
-
-    public abstract EntityForm<T> getEntityForm();
 
     private Button editButton;
 
@@ -66,6 +68,12 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
 
     @Resource
     private SecurityService securityService;
+
+    /**
+     * Get the EntityForm used for creating a new entity to add to relationship.
+     * @return EntityForm component for entering new values into new entity
+     */
+    public abstract EntityForm<T> getEntityForm();
 
     @PostConstruct
     @Override
@@ -119,14 +127,17 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
         setReferenceToParent(value);
     }
 
+    /**
+     * Invoked when user clicks edit action to edit an existing entity in the results table
+     */
     public void edit() {
         Collection itemIds = (Collection) getResultsTable().getValue();
         Assert.PROGRAMMING.assertTrue(itemIds.size() == 1);
         editImpl(itemIds.iterator().next());
     }
 
-    public void editImpl(Object itemId) {
-        loadItem(itemId);
+    private void editImpl(Object itemId) {
+        loadItem(itemId, true);
         EntityFormWindow entityFormWindow = EntityFormWindow.open(resultsConnectedEntityForm);
         entityFormWindow.addCloseListener(this, "search");
         if (!getEntityForm().getViewableToManyRelationships().isEmpty()) {
@@ -134,16 +145,13 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
         }
     }
 
-    public void loadItem(Object itemId) {
-        loadItem(itemId, true);
-    }
-
-    public void loadItem(Object itemId, boolean selectFirstTab) {
+    private void loadItem(Object itemId, boolean selectFirstTab) {
         currentItemId = itemId;
         BeanItem beanItem = getResultsTable().getContainerDataSource().getItem(itemId);
         getEntityForm().load((WritableEntity) beanItem.getBean(), selectFirstTab);
     }
 
+    @Override
     public void editOrViewPreviousItem() {
         Object previousItemId = getResultsTable().getContainerDataSource().prevItemId(currentItemId);
         if (previousItemId == null && getEntityQuery().hasPreviousPage()) {
@@ -155,11 +163,13 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
         }
     }
 
+    @Override
     public boolean hasPreviousItem() {
         Object previousItemId = getResultsTable().getContainerDataSource().prevItemId(currentItemId);
         return previousItemId != null || getEntityQuery().hasPreviousPage();
     }
 
+    @Override
     public void editOrViewNextItem() {
         Object nextItemId = getResultsTable().getContainerDataSource().nextItemId(currentItemId);
         if (nextItemId == null && getEntityQuery().hasNextPage()) {
@@ -172,13 +182,14 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
         }
     }
 
+    @Override
     public boolean hasNextItem() {
         Object nextItemId = getResultsTable().getContainerDataSource().nextItemId(currentItemId);
         return nextItemId != null || getEntityQuery().hasNextPage();
     }
 
     @Override
-    public void valuesRemoved(T... values) {
+    public void removeConfirmed(T... values) {
         for (T value : values) {
             getEntityDao().remove(value);
         }
@@ -225,7 +236,7 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
         }
     }
 
-    public class DoubleClickListener implements ItemClickEvent.ItemClickListener {
+    private class DoubleClickListener implements ItemClickEvent.ItemClickListener {
         public void itemClick(ItemClickEvent event) {
             if (event.isDoubleClick()) {
                 editImpl(event.getItemId());

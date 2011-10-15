@@ -578,10 +578,10 @@ public class FormField extends DisplayField {
     /**
      * Set whether or not field is enabled.
      *
-     * @param enabled true if enabled
+     * @param isEnabled true if enabled
      */
-    public void setEnabled(boolean enabled) {
-        getField().setEnabled(enabled);
+    public void setEnabled(boolean isEnabled) {
+        getField().setEnabled(isEnabled);
     }
 
     /**

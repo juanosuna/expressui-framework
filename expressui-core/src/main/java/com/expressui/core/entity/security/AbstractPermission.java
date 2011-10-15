@@ -38,7 +38,7 @@
 package com.expressui.core.entity.security;
 
 import com.expressui.core.entity.WritableEntity;
-import com.expressui.core.view.field.LabelDepot;
+import com.expressui.core.view.field.LabelRegistry;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.constraints.NotBlank;
@@ -58,7 +58,7 @@ public abstract class AbstractPermission extends WritableEntity {
 
     @Transient
     @Resource
-    private LabelDepot labelDepot;
+    private LabelRegistry labelDepot;
 
     private String entityType;
     private String field;

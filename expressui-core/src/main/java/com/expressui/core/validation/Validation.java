@@ -50,6 +50,9 @@ import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * Service for validating beans against JSR-303 validator implementation.
+ */
 @Service
 public class Validation {
     private Validator validator;

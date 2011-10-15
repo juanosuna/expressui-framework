@@ -48,6 +48,11 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Collection;
 
+/**
+ * Results component embedded in EntitySelect popup.
+ *
+ * @param <T> type of entity displayed in the results
+ */
 public abstract class EntitySelectResults<T> extends Results<T> {
 
     @Resource(name = "uiMessageSource")
@@ -82,6 +87,9 @@ public abstract class EntitySelectResults<T> extends Results<T> {
         getCrudButtons().setComponentAlignment(crudButtons, Alignment.MIDDLE_LEFT);
     }
 
+    /**
+     * Invoked when the user selects an entity in the results.
+     */
     public void selectionChanged() {
         Object itemId = getResultsTable().getValue();
         if (itemId instanceof Collection) {
@@ -103,6 +111,12 @@ public abstract class EntitySelectResults<T> extends Results<T> {
         }
     }
 
+    /**
+     * Set a listener to be invoked when use selects entity.
+     *
+     * @param target target object to be invoked
+     * @param methodName listener method to be invoked
+     */
     public void setSelectButtonListener(Object target, String methodName) {
         selectButton.removeListener(Button.ClickEvent.class, target, methodName);
         selectButton.addListener(Button.ClickEvent.class, target, methodName);

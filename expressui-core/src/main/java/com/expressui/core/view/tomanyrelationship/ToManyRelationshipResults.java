@@ -57,34 +57,56 @@ import javax.annotation.Resource;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
+/**
+ * Results containing entities in a to-many relationship.
+ * @param <T> type of the entities in the results
+ */
 public abstract class ToManyRelationshipResults<T> extends Results<T> {
 
     @Resource(name = "uiMessageSource")
-    protected MessageSource uiMessageSource;
+    MessageSource uiMessageSource;
 
     @Resource
-    protected ActionContextMenu actionContextMenu;
+    ActionContextMenu actionContextMenu;
 
     @Resource
     private SecurityService securityService;
 
-    protected HorizontalLayout crudButtons;
+    HorizontalLayout crudButtons;
 
     private Button addButton;
-    protected Button removeButton;
+    Button removeButton;
 
     private boolean isViewMode;
 
-    protected ToManyRelationshipResults() {
+    ToManyRelationshipResults() {
         super();
     }
 
+    /**
+     * Get display caption for this results component.
+     *
+     * @return display caption
+     */
     public abstract String getEntityCaption();
 
+    /**
+     * Get the property id in the parent entity for referencing the child entity
+     * @return child property id
+     */
     public abstract String getChildPropertyId();
 
+    /**
+     * Get the property id in the child entity for referencing the parent entity
+     * @return parent property id
+     */
     public abstract String getParentPropertyId();
 
+    /**
+     * Get the entity query that generates these results.
+     *
+     * @return entity query
+     */
     @Override
     public abstract ToManyRelationshipQuery getEntityQuery();
 
@@ -116,12 +138,20 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         getResultsTable().setMultiSelect(true);
 
         actionContextMenu.addAction("entityResults.remove", this, "remove");
-//        actionContextMenu.setActionEnabled("entityResults.remove", true);
         addSelectionChangedListener(this, "selectionChanged");
     }
 
+    /**
+     * Invoked when user clicks to add an entity to the to-many relationship. Implementation should
+     * take appropriate action, depending on type of relationships, aggregation, composition.
+     */
     public abstract void add();
 
+    /**
+     * Set references in given values to the parent and then persists all values.
+     *
+     * @param values values in which to set reference
+     */
     public void setReferencesToParentAndPersist(T... values) {
         for (T value : values) {
             T referenceValue = getEntityDao().getReference(value);
@@ -131,6 +161,11 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         searchImpl(false);
     }
 
+    /**
+     * Set reference inside single given value to the parent in the to-many relationship.
+     *
+     * @param value value in which to set reference
+     */
     public void setReferenceToParent(T value) {
         try {
             BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getEntityType(), getParentPropertyId());
@@ -146,11 +181,20 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         }
     }
 
+    /**
+     * Get the type of the parent entity in this relationship
+     * @return type of parent entity
+     */
     public Class getParentEntityType() {
         BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getEntityType(), getParentPropertyId());
         return beanPropertyType.getContainerType();
     }
 
+    /**
+     * Set this results component to read-only or writable.
+     *
+     * @param isReadOnly true if read only
+     */
     public void setReadOnly(boolean isReadOnly) {
         super.setReadOnly(isReadOnly);
         addButton.setVisible(!isReadOnly);
@@ -164,6 +208,9 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         }
     }
 
+    /**
+     * Reads current security rules and applies them to this results component, i.e. making CRUD buttons (in)visible
+     */
     public void applySecurityIsEditable() {
         boolean isEditable = securityService.getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId());
         addButton.setVisible(isEditable);
@@ -180,7 +227,31 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         selectionChanged();
     }
 
-    public void valuesRemoved(T... values) {
+    /**
+     * Invoked when user clicks action to remove selected entities.
+     */
+    public void remove() {
+        ConfirmDialog.show(MainApplication.getInstance().getMainWindow(),
+                uiMessageSource.getMessage("entityResults.confirmationCaption"),
+                uiMessageSource.getMessage("entityResults.confirmationPrompt"),
+                uiMessageSource.getMessage("entityResults.confirmationYes"),
+                uiMessageSource.getMessage("entityResults.confirmationNo"),
+                new ConfirmDialog.Listener() {
+                    public void onClose(ConfirmDialog dialog) {
+                        if (dialog.isConfirmed()) {
+                            Collection<T> selectedValues = getSelectedValues();
+                            removeConfirmed((T[]) selectedValues.toArray());
+                        }
+                    }
+                });
+    }
+
+    /**
+     * Invoked when user confirms that she really wants to remove values.
+     *
+     * @param values values to be removed
+     */
+    public void removeConfirmed(T... values) {
         for (T value : values) {
             value = getEntityDao().getReference(value);
             try {
@@ -198,26 +269,9 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         removeButton.setEnabled(false);
     }
 
-    public void removeImpl() {
-        Collection<T> selectedValues = getSelectedValues();
-        valuesRemoved((T[]) selectedValues.toArray());
-    }
-
-    public void remove() {
-        ConfirmDialog.show(MainApplication.getInstance().getMainWindow(),
-                uiMessageSource.getMessage("entityResults.confirmationCaption"),
-                uiMessageSource.getMessage("entityResults.confirmationPrompt"),
-                uiMessageSource.getMessage("entityResults.confirmationYes"),
-                uiMessageSource.getMessage("entityResults.confirmationNo"),
-                new ConfirmDialog.Listener() {
-                    public void onClose(ConfirmDialog dialog) {
-                        if (dialog.isConfirmed()) {
-                            removeImpl();
-                        }
-                    }
-                });
-    }
-
+    /**
+     * Invoked whenever user changes selection of rows in results table.
+     */
     public void selectionChanged() {
         boolean isEditable = securityService.getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId());
 
@@ -233,10 +287,19 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         }
     }
 
+    /**
+     * Ask if this component is in view-only mode.
+     * @return true if in view-only mode
+     */
     public boolean isViewMode() {
         return isViewMode;
     }
 
+    /**
+     * Set whether or not this component is in view-only mode.
+     *
+     * @param viewMode true to set in view-only mode
+     */
     public void setViewMode(boolean viewMode) {
         isViewMode = viewMode;
     }

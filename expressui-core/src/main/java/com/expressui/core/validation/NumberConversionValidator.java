@@ -46,6 +46,9 @@ import com.vaadin.data.util.PropertyFormatter;
 import java.text.Format;
 import java.text.ParsePosition;
 
+/**
+ * Validates that value can be converted to a number.
+ */
 public class NumberConversionValidator extends AbstractConversionValidator {
 
     public NumberConversionValidator(FormField formField, String errorMessage) {

@@ -44,6 +44,14 @@ import com.vaadin.ui.Window;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * A popup component for soliciting a entity selection from the user in a form.
+ * This is useful in many-to-one relationships, where the user must search among
+ * a large number of available entities and select one for assignment in a
+ * many-to-one relationship.
+ *
+ * @param <T> type of entity to be selected
+ */
 public abstract class EntitySelect<T> extends EntryPoint<T> {
 
     private Window popupWindow;
@@ -52,6 +60,11 @@ public abstract class EntitySelect<T> extends EntryPoint<T> {
         super();
     }
 
+    /**
+     * Get the results component presented to user for selection.
+     *
+     * @return results from which entity is selected
+     */
     public abstract EntitySelectResults<T> getResults();
 
     public void configurePopupWindow(Window popupWindow) {
@@ -81,6 +94,9 @@ public abstract class EntitySelect<T> extends EntryPoint<T> {
         addComponent(getResults());
     }
 
+    /**
+     * Open a popup window with this component
+     */
     public void open() {
         popupWindow = new Window(getEntityCaption());
         popupWindow.addStyleName("p-entity-select-window");
@@ -102,6 +118,9 @@ public abstract class EntitySelect<T> extends EntryPoint<T> {
         MainApplication.getInstance().getMainWindow().addWindow(popupWindow);
     }
 
+    /**
+     * Close this popup
+     */
     public void close() {
         MainApplication.getInstance().getMainWindow().removeWindow(popupWindow);
     }

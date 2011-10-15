@@ -50,25 +50,43 @@ import com.vaadin.ui.Label;
  */
 public class LeftLabelGridLayout extends FormGridLayout {
 
+    /**
+     * Construct layout with given number of columns and rows
+     * @param columns number of columns
+     * @param rows number of rows
+     */
     public LeftLabelGridLayout(int columns, int rows) {
         super(columns * 3, rows);
     }
 
-    public LeftLabelGridLayout() {
-    }
-
+    @Override
     public void setFormColumns(int columns) {
         setColumns(columns * 3);
     }
 
+    /**
+     * Get the column coordinate of label for the given field
+     * @param formField field to find label coordinate
+     * @return label coordinate
+     */
     public int getLabelColumn(FormField formField) {
         return (formField.getColumnStart() - 1) * 3;
     }
 
+    /**
+     * Get the column coordinate of the given field.
+     * @param formField field to find column coordinate
+     * @return field column coordinate
+     */
     public int getFieldColumn(FormField formField) {
         return getLabelColumn(formField) + 1;
     }
 
+    /**
+     * Get the column coordinate of spacer for the given field
+     * @param formField field to find spacer coordinate
+     * @return spacer coordinate
+     */
     public int getSpacerColumn(FormField formField) {
         if (formField.getColumnEnd() == null) {
             return getFieldColumn(formField) + 1;
@@ -77,6 +95,11 @@ public class LeftLabelGridLayout extends FormGridLayout {
         }
     }
 
+    /**
+     * Get the column end coordinate for given field
+     * @param formField field to find column end coordinate
+     * @return column end coordinate
+     */
     public Integer getColumnEnd(FormField formField) {
         if (formField.getColumnEnd() == null) {
             return null;
@@ -86,14 +109,25 @@ public class LeftLabelGridLayout extends FormGridLayout {
         }
     }
 
+    /**
+     * Get the start row coordinate of given field
+     * @param formField field to find start row coordinate
+     * @return start row coordinate
+     */
     public int getRowStart(FormField formField) {
         return formField.getRowStart() - 1;
     }
 
+    /**
+     * Get the end row coordinate of given field
+     * @param formField field to find end row coordinate
+     * @return end row coordinate
+     */
     public int getRowEnd(FormField formField) {
         return formField.getRowEnd() - 1;
     }
 
+    @Override
     public void addField(FormField formField) {
         HorizontalLayout fieldLayout = (HorizontalLayout) getComponent(getFieldColumn(formField), getRowStart(formField));
         if (fieldLayout == null) {
@@ -147,6 +181,7 @@ public class LeftLabelGridLayout extends FormGridLayout {
         setComponentAlignment(spacer, Alignment.TOP_LEFT);
     }
 
+    @Override
     public void removeField(FormField formField) {
         removeComponent(getLabelColumn(formField), getRowStart(formField));
         removeComponent(getFieldColumn(formField), getRowStart(formField));

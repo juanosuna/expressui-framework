@@ -56,6 +56,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
+/**
+ * Collection of fields for display in a form component, along with configuration information about
+ * how to position and display these fields.
+ */
 @Component
 @Scope("prototype")
 public class FormFields extends DisplayFields {
@@ -64,21 +68,40 @@ public class FormFields extends DisplayFields {
     private SecurityService securityService;
 
     private FormComponent form;
-    private Map<String, AddRemoveMethodDelegate> optionalTabs = new HashMap<String, AddRemoveMethodDelegate>();
+    private Map<String, AddRemoveTabMethodDelegate> optionalTabs = new HashMap<String, AddRemoveTabMethodDelegate>();
 
+    /**
+     * Get form component that contains these fields
+     * @return form component containing these fields
+     */
     public FormComponent getForm() {
         return form;
     }
 
+    /**
+     * Set the form component that contains these fields.
+     *
+     * @param form component containing these fields
+     */
     public void setForm(FormComponent form) {
         this.form = form;
         setEntityType(form.getEntityType());
     }
 
+    /**
+     * Get number of columns in this form.
+     *
+     * @return number of columns in this form
+     */
     public int getColumns() {
         return getColumns("");
     }
 
+    /**
+     * Get number of columns in this form's tab
+     * @param tabName name of tab
+     * @return number of columns in this form's tab
+     */
     public int getColumns(String tabName) {
         int columns = 0;
         Collection<DisplayField> fields = getFields();
@@ -95,10 +118,20 @@ public class FormFields extends DisplayFields {
         return ++columns;
     }
 
+    /**
+     * Get number of rows in this form.
+     *
+     * @return number of rows in this form
+     */
     public int getRows() {
         return getRows("");
     }
 
+    /**
+     * Get number of rows in this form's tab
+     * @param tabName name of tab
+     * @return number of rows in this form's tab
+     */
     public int getRows(String tabName) {
         int rows = 0;
         Collection<DisplayField> fields = getFields();
@@ -115,14 +148,28 @@ public class FormFields extends DisplayFields {
         return ++rows;
     }
 
-    public GridLayout createGridLayout() {
-        return createGridLayout(getFirstTabName());
-    }
-
+    /**
+     * Get the name of the first tab in this form.
+     *
+     * @return name of first tab
+     */
     public String getFirstTabName() {
         return getTabNames().iterator().next();
     }
 
+    /**
+     * Create form grid layout for containing form fields
+     * @return form grid layout
+     */
+    public GridLayout createGridLayout() {
+        return createGridLayout(getFirstTabName());
+    }
+
+    /**
+     * Create form grid layout for containing form fields in given tab
+     * @param tabName tab subsection of form
+     * @return grid layout for tab
+     */
     public GridLayout createGridLayout(String tabName) {
         GridLayout gridLayout;
         if (form instanceof EntityForm) {
@@ -142,18 +189,52 @@ public class FormFields extends DisplayFields {
         return new FormField(this, propertyId);
     }
 
+    /**
+     * Set the position of a field in the form. Field occupies just one cell.
+     *
+     * @param tabName tab to place field
+     * @param propertyId property id in entity to be bound to field
+     * @param rowStart row start coordinate
+     * @param columnStart column start coordinate
+     */
     public void setPosition(String tabName, String propertyId, int rowStart, int columnStart) {
         setPosition(tabName, propertyId, rowStart, columnStart, null, null);
     }
 
+    /**
+     * Set the position of a field in the form. Field occupies just one cell in form without tabs.
+     *
+     * @param propertyId property id in entity to be bound to field
+     * @param rowStart row start coordinate
+     * @param columnStart column start coordinate
+     */
     public void setPosition(String propertyId, int rowStart, int columnStart) {
         setPosition(propertyId, rowStart, columnStart, null, null);
     }
 
+    /**
+     * Set the position of a field in the form without tabs.
+     *
+     * @param propertyId property id in entity to be bound to field
+     * @param rowStart row start coordinate
+     * @param columnStart column start coordinate
+     * @param rowEnd row end coordinate, field height is stretched to row end coordinate
+     * @param columnEnd column end coordinate, field width is stretched to column end coordinate
+     */
     public void setPosition(String propertyId, int rowStart, int columnStart, Integer rowEnd, Integer columnEnd) {
         setPosition("", propertyId, rowStart, columnStart, rowEnd, columnEnd);
     }
 
+    /**
+     * Set the position of a field in the form.
+     *
+     * @param tabName tab to place field
+     * @param propertyId property id in entity to be bound to field
+     * @param rowStart row start coordinate
+     * @param columnStart column start coordinate
+     * @param rowEnd row end coordinate, field height is stretched to row end coordinate
+     * @param columnEnd column end coordinate, field width is stretched to column end coordinate
+     */
     public void setPosition(String tabName, String propertyId, int rowStart, int columnStart, Integer rowEnd, Integer columnEnd) {
         Assert.PROGRAMMING.assertTrue(rowStart > 0,
                 "rowStart arg must be greater than 0 for property " + propertyId + (tabName.isEmpty() ? "" : ", for tab " + tabName));
@@ -168,6 +249,12 @@ public class FormFields extends DisplayFields {
         formField.setRowEnd(rowEnd);
     }
 
+    /**
+     * Find FormField based on the Vaadin field it contains.
+     *
+     * @param field Vaadin field for looking up FormField
+     * @return FormField
+     */
     public FormField findByField(Field field) {
         Collection<DisplayField> displayFields = getFields();
         for (DisplayField displayField : displayFields) {
@@ -180,42 +267,91 @@ public class FormFields extends DisplayFields {
         return null;
     }
 
-    public AddRemoveMethodDelegate getTabAddRemoveDelegate(String tabName) {
+    /**
+     *  Get method delegate that listens for adding and removing tab.
+     *
+     * @param tabName name of tab to trigger the delegate
+     * @return delegate
+     */
+    public AddRemoveTabMethodDelegate getTabAddRemoveDelegate(String tabName) {
         return optionalTabs.get(tabName);
     }
 
+    /**
+     * Ask if the given tab is optional.
+     *
+     * @param tabName name of tab
+     * @return true if optional
+     */
     public boolean isTabOptional(String tabName) {
         return optionalTabs.containsKey(tabName);
     }
 
+    /**
+     * Ask if form contains any optional tabs.
+     *
+     * @return true if form contains optional tabs
+     */
     public boolean hasOptionalTabs() {
         return !optionalTabs.isEmpty();
     }
 
+    /**
+     * Set a tab as optional.
+     *
+     * @param tabName name of tab to set
+     * @param addTarget target object to invoke method on, when tab is added
+     * @param addMethod method to invoke, when tab is added
+     * @param removeTarget target object to invoke method on, when tab is removed
+     * @param removeMethod method to invoke, when tab is removed
+     */
     public void setTabOptional(String tabName, Object addTarget, String addMethod,
                                Object removeTarget, String removeMethod) {
 
         MethodDelegate addMethodDelegate = new MethodDelegate(addTarget, addMethod);
         MethodDelegate removeMethodDelegate = new MethodDelegate(removeTarget, removeMethod);
-        AddRemoveMethodDelegate addRemoveMethodDelegate = new AddRemoveMethodDelegate(addMethodDelegate,
+        AddRemoveTabMethodDelegate addRemoveTabMethodDelegate = new AddRemoveTabMethodDelegate(addMethodDelegate,
                 removeMethodDelegate);
 
-        optionalTabs.put(tabName, addRemoveMethodDelegate);
+        optionalTabs.put(tabName, addRemoveTabMethodDelegate);
     }
 
+    /**
+     * Get FormField bound to given property.
+     * @param propertyId property id (name)
+     * @return FormField bound to property
+     */
     public FormField getFormField(String propertyId) {
         return (FormField) getField(propertyId);
     }
 
+    /**
+     * Set Vaadin field to be displayed.
+     *
+     * @param propertyId property id to identify FormField
+     * @param field Vaadin field
+     */
     public void setField(String propertyId, Field field) {
         FormField formField = (FormField) getField(propertyId);
         formField.setField(field);
     }
 
+    /**
+     * Ask if this form contains property in the given tab.
+     *
+     * @param tabName name of tab
+     * @param propertyId property id
+     * @return true if this form contains property in the given tab
+     */
     public boolean containsPropertyId(String tabName, String propertyId) {
         return containsPropertyId(propertyId) && getFormField(propertyId).getTabName().equals(tabName);
     }
 
+    /**
+     * Get all the FormFields positioned in given tab.
+     * @param tabName name of tab
+     * @return all the FormField under the tab
+     */
     public Set<FormField> getFormFields(String tabName) {
         Set<FormField> formFields = new HashSet<FormField>();
         Collection<DisplayField> displayFields = getFields();
@@ -229,6 +365,10 @@ public class FormFields extends DisplayFields {
         return formFields;
     }
 
+    /**
+     * Get all the FormFields.
+     * @return all FormFields
+     */
     public Set<FormField> getFormFields() {
         Set<FormField> formFields = new HashSet<FormField>();
         Collection<DisplayField> displayFields = getFields();
@@ -240,6 +380,10 @@ public class FormFields extends DisplayFields {
         return formFields;
     }
 
+    /**
+     * Clear all errors associated with all fields
+     * @param clearConversionErrors true to clear conversion errors as well
+     */
     public void clearErrors(boolean clearConversionErrors) {
         Collection<DisplayField> fields = getFields();
         for (DisplayField field : fields) {
@@ -248,13 +392,11 @@ public class FormFields extends DisplayFields {
         }
     }
 
-    public void clearErrors(String tabName, boolean clearConversionErrors) {
-        Set<FormField> formFields = getFormFields(tabName);
-        for (FormField formField : formFields) {
-            formField.clearError(clearConversionErrors);
-        }
-    }
-
+    /**
+     * Ask if any field has an error in given tab.
+     * @param tabName name of tab
+     * @return true if any field has an error in given tab
+     */
     public boolean hasError(String tabName) {
         Set<FormField> formFields = getFormFields(tabName);
         for (FormField formField : formFields) {
@@ -266,6 +408,11 @@ public class FormFields extends DisplayFields {
         return false;
     }
 
+    /**
+     * Get names of all tabs in this form.
+     *
+     * @return names of all tabs
+     */
     public Set<String> getTabNames() {
         Set<String> tabNames = new LinkedHashSet<String>();
         Collection<DisplayField> displayFields = getFields();
@@ -277,10 +424,18 @@ public class FormFields extends DisplayFields {
         return tabNames;
     }
 
+    /**
+     * Ask if this form has tabs.
+     * @return true if this form has tabs
+     */
     public boolean hasTabs() {
         return getTabNames().size() > 1;
     }
 
+    /**
+     * Get all tabs that are viewable, based on security rules.
+     * @return all viewable tabs
+     */
     public Set<String> getViewableTabNames() {
         if (getForm() instanceof SearchForm) return getTabNames();
 
@@ -299,6 +454,10 @@ public class FormFields extends DisplayFields {
         return viewableTabNames;
     }
 
+    /**
+     * Get all viewable FormFields, based on security rules
+     * @return all viewable form fields
+     */
     public Set<FormField> getViewableFormFields() {
         if (getForm() instanceof SearchForm) return getFormFields();
 
@@ -314,6 +473,10 @@ public class FormFields extends DisplayFields {
         return viewableFormFields;
     }
 
+    /**
+     * Get all editable FormFields, based on security rules
+     * @return all editable form fields
+     */
     public Set<FormField> getEditableFormFields() {
         if (getForm() instanceof SearchForm) return getFormFields();
 
@@ -343,18 +506,35 @@ public class FormFields extends DisplayFields {
         ((FormField) getField(propertyId)).setFieldLabel(label);
     }
 
-    public float getWidth(String propertyId) {
-        return getFormField(propertyId).getWidth();
-    }
-
+    /**
+     * Manually set width of the field and turn off auto width adjustment.
+     *
+     * @param propertyId property id to identify field to set
+     * @param width size of width
+     * @param unit unit of measurement defined in Sizeable
+     *
+     * @see com.vaadin.terminal.Sizeable
+     */
     public void setWidth(String propertyId, float width, int unit) {
         getFormField(propertyId).setWidth(width, unit);
     }
 
+    /**
+     * Set height of the field.
+     *
+     * @param propertyId property id to identify field to set
+     * @param height size of width
+     * @param unit unit of measurement defined in Sizeable
+     *
+     * @see com.vaadin.terminal.Sizeable
+     */
     public void setHeight(String propertyId, float height, int unit) {
         getFormField(propertyId).setHeight(height, unit);
     }
 
+    /**
+     * Automatically adjust widths of fields based on their value contents.
+     */
     public void autoAdjustWidths() {
         Set<FormField> formFields = getFormFields();
         for (FormField formField : formFields) {
@@ -366,10 +546,21 @@ public class FormFields extends DisplayFields {
         }
     }
 
-    public void setAutoAdjustWidthMode(String propertyId, FormField.AutoAdjustWidthMode mode) {
-        getFormField(propertyId).setAutoAdjustWidthMode(mode);
+    /**
+     * Set auto-adjust-width mode
+     *
+     * @param propertyId property id to identify field to set
+     * @param autoAdjustWidthMode auto-adjust-width mode
+     */
+    public void setAutoAdjustWidthMode(String propertyId, FormField.AutoAdjustWidthMode autoAdjustWidthMode) {
+        getFormField(propertyId).setAutoAdjustWidthMode(autoAdjustWidthMode);
     }
 
+    /**
+     * Add validator to field.
+     * @param propertyId property id to identify field to set
+     * @param validatorClass class of the validator that to be instantiated and set on the field
+     */
     public void addValidator(String propertyId, Class<? extends Validator> validatorClass) {
         try {
             Constructor<? extends Validator> constructor = validatorClass.getConstructor(FormField.class);
@@ -386,46 +577,105 @@ public class FormFields extends DisplayFields {
         }
     }
 
+    /**
+     * Get the description displayed during mouse-over/hovering
+     * @param propertyId property id to identify field to set
+     * @return description displayed to user
+     */
     public String getDescription(String propertyId) {
         return getFormField(propertyId).getDescription();
     }
 
+    /**
+     * Set the description displayed during mouse-over/hovering
+     * @param propertyId property id to identify field to set
+     * @param description description displayed to user
+     */
     public void setDescription(String propertyId, String description) {
         getFormField(propertyId).setDescription(description);
     }
 
+    /**
+     * Set the menu options in a select.
+     *
+     * @param propertyId property id to identify field to set
+     * @param items list of items
+     *
+     * @see FormField.DEFAULT_DISPLAY_PROPERTY_ID
+     */
     public void setSelectItems(String propertyId, List items) {
         getFormField(propertyId).setSelectItems(items);
     }
 
+    /**
+     * Set menu options in a select.
+     * @param propertyId property id to identify field to set
+     * @param items map of items where key is bound to entity and value is the display caption
+     */
     public void setSelectItems(String propertyId, Map<Object, String> items) {
         getFormField(propertyId).setSelectItems(items);
     }
 
+    /**
+     * Set menu options in a select.
+     * @param propertyId property id to identify field to set
+     * @param items map of items where key is bound to entity and value is the display caption
+     * @param nullCaption caption displayed to represent null or no selection
+     */
     public void setSelectItems(String propertyId, Map<Object, String> items, String nullCaption) {
         getFormField(propertyId).setSelectItems(items, nullCaption);
     }
 
+    /**
+     * Set the dimensions of a multi-select menu
+     * @param propertyId property id to identify field to set
+     * @param rows height
+     * @param columns width
+     */
     public void setMultiSelectDimensions(String propertyId, int rows, int columns) {
         getFormField(propertyId).setMultiSelectDimensions(rows, columns);
     }
 
+    /**
+     * Set the visibility of this field and label
+     * @param propertyId property id to identify field to set
+     * @param isVisible true if visible
+     */
     public void setVisible(String propertyId, boolean isVisible) {
         getFormField(propertyId).setVisible(isVisible);
     }
 
+    /**
+     * Set whether or not this field is required
+     * @param propertyId property id to identify field to set
+     * @param isRequired true if required
+     */
     public void setRequired(String propertyId, boolean isRequired) {
         getFormField(propertyId).setRequired(isRequired);
     }
 
+    /**
+     * Set whether or not field is enabled.
+     * @param propertyId property id to identify field to set
+     * @param isEnabled true if enabled
+     */
     public void setEnabled(String propertyId, boolean isEnabled) {
         getFormField(propertyId).setEnabled(isEnabled);
     }
 
+    /**
+     * Set whether or not field is read-only.
+     * @param propertyId property id to identify field to set
+     * @param isReadOnly true if read-only
+     */
     public void setReadOnly(String propertyId, boolean isReadOnly) {
         getFormField(propertyId).setReadOnly(isReadOnly);
     }
 
+    /**
+     * Set whether or not all fields are read-only.
+     * @param isReadOnly true if read-only
+     */
     public void setReadOnly(boolean isReadOnly) {
         Collection<FormField> formFields = getFormFields();
         for (FormField formField : formFields) {
@@ -433,6 +683,9 @@ public class FormFields extends DisplayFields {
         }
     }
 
+    /**
+     * Restore read-only setting for all fields
+     */
     public void restoreIsReadOnly() {
         Collection<FormField> formFields = getFormFields();
         for (FormField formField : formFields) {
@@ -440,6 +693,9 @@ public class FormFields extends DisplayFields {
         }
     }
 
+    /**
+     * Apply security is-editable rules to all fields
+     */
     public void applySecurityIsEditable() {
         Collection<FormField> formFields = getFormFields();
         for (FormField formField : formFields) {
@@ -469,10 +725,21 @@ public class FormFields extends DisplayFields {
         }
     }
 
+    /**
+     * Set the value of the field.
+     *
+     * @param value value of field
+     */
     public void setValue(String propertyId, Object value) {
         getFormField(propertyId).setValue(value);
     }
 
+    /**
+     * Set component error.
+     *
+     * @param propertyId property id to identify field to set
+     * @param errorMessage error message
+     */
     public void setComponentError(String propertyId, ErrorMessage errorMessage) {
         Assert.PROGRAMMING.assertTrue(getFormField(propertyId).getField() instanceof AbstractComponent,
                 "field is not of the right type");
@@ -481,30 +748,51 @@ public class FormFields extends DisplayFields {
         abstractComponent.setComponentError(errorMessage);
     }
 
+    /**
+     * Add change listener to field
+     * @param propertyId property id to identify field to set
+     * @param target
+     * @param methodName
+     */
     public void addValueChangeListener(String propertyId, Object target, String methodName) {
         FormField formField = (FormField) getField(propertyId);
         formField.addValueChangeListener(target, methodName);
     }
 
+    /**
+     * Ask if this form is EntityForm
+     * @return true if EntityForm
+     */
     public boolean isEntityForm() {
         return form instanceof EntityForm;
     }
 
-    public static class AddRemoveMethodDelegate {
-        private MethodDelegate addMethodDelegate;
-        private MethodDelegate removeMethodDelegate;
+    /**
+     * Delegate that contains methods for handling add and remove actions
+     */
+    public static class AddRemoveTabMethodDelegate {
+        private MethodDelegate addTabMethodDelegate;
+        private MethodDelegate removeTabMethodDelegate;
 
-        private AddRemoveMethodDelegate(MethodDelegate addMethodDelegate, MethodDelegate removeMethodDelegate) {
-            this.addMethodDelegate = addMethodDelegate;
-            this.removeMethodDelegate = removeMethodDelegate;
+        private AddRemoveTabMethodDelegate(MethodDelegate addTabMethodDelegate, MethodDelegate removeTabMethodDelegate) {
+            this.addTabMethodDelegate = addTabMethodDelegate;
+            this.removeTabMethodDelegate = removeTabMethodDelegate;
         }
 
-        public MethodDelegate getAddMethodDelegate() {
-            return addMethodDelegate;
+        /**
+         * Get delegate for handling add tab action
+         * @return delegate for handling add tab action
+         */
+        public MethodDelegate getAddTabMethodDelegate() {
+            return addTabMethodDelegate;
         }
 
-        public MethodDelegate getRemoveMethodDelegate() {
-            return removeMethodDelegate;
+        /**
+         * Get delegate for handling remove tab action
+         * @return delegate for handling remove tab action
+         */
+        public MethodDelegate getRemoveTabMethodDelegate() {
+            return removeTabMethodDelegate;
         }
     }
 }

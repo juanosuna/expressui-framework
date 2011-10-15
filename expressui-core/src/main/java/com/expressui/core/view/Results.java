@@ -42,7 +42,7 @@ import com.expressui.core.dao.EntityQuery;
 import com.expressui.core.util.ReflectionUtil;
 import com.expressui.core.view.util.MessageSource;
 import com.expressui.core.view.field.DisplayFields;
-import com.expressui.core.view.field.LabelDepot;
+import com.expressui.core.view.field.LabelRegistry;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.MethodProperty;
 import com.vaadin.data.validator.IntegerValidator;
@@ -67,7 +67,7 @@ public abstract class Results<T> extends CustomComponent {
     private MessageSource uiMessageSource;
 
     @Resource
-    private LabelDepot labelDepot;
+    private LabelRegistry labelDepot;
 
     private ResultsTable resultsTable;
     private DisplayFields displayFields;
@@ -174,7 +174,7 @@ public abstract class Results<T> extends CustomComponent {
 
         setCustomSizeUndefined();
 
-        labelDepot.trackLabels(displayFields);
+        labelDepot.registerLabels(displayFields);
     }
 
     private void setCustomSizeUndefined() {

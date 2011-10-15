@@ -42,28 +42,58 @@ import com.expressui.core.view.EntityForm;
 import com.expressui.core.view.field.FormField;
 import com.vaadin.data.Validator;
 
+/**
+ * Superclass for implementing conversion validators, that validate whether a user-entered value
+ * is convertible to specific data type.
+ */
 public abstract class AbstractConversionValidator implements Validator {
     private String errorMessage;
     private FormField formField;
 
+    /**
+     * Construct validator based on the form field is bound to and error message
+     * @param formField form field that this conversion validator is bound to
+     * @param errorMessage error message to display to user if validation fails
+     */
     public AbstractConversionValidator(FormField formField, String errorMessage) {
         this.formField = formField;
         this.errorMessage = errorMessage;
     }
 
+    /**
+     * Construct validator based on the form field is bound to
+     * @param formField form field that this conversion validator is bound to
+     */
     protected AbstractConversionValidator(FormField formField) {
         this.formField = formField;
     }
 
+    /**
+     * Get error message that is displayed to user if validation fails. If error message is null, then this
+     * class uses the message contained in any validation exception
+     *
+     * @return error message
+     */
     public String getErrorMessage() {
         return errorMessage;
     }
 
+    /**
+     * Get form field that this validator is bound to
+     *
+     * @return form field
+     */
     public FormField getFormField() {
         return formField;
     }
 
-    public abstract void validateImpl(Object value) throws Exception;
+    /**
+     * Subclass implementation should throw exception if validation fails.
+     *
+     * @param value value to be validated
+     * @throws Exception signifies validation failed, should contain message that is displayed to end user
+     */
+    protected abstract void validateImpl(Object value) throws Exception;
 
     public void validate(Object value) throws InvalidValueException {
         try {
@@ -91,5 +121,4 @@ public abstract class AbstractConversionValidator implements Validator {
             return false;
         }
     }
-
 }

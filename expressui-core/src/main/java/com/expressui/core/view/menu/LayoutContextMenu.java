@@ -45,10 +45,17 @@ import org.vaadin.peter.contextmenu.ContextMenu;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Context menu that can be added to any layout.
+ */
 public class LayoutContextMenu extends ContextMenu implements LayoutEvents.LayoutClickListener, ContextMenu.ClickListener {
 
     private Map<String, ContextMenuAction> actions = new LinkedHashMap<String, ContextMenuAction>();
 
+    /**
+     * Construct this context menu on given layout.
+     * @param layout layout for adding the context menu to
+     */
     public LayoutContextMenu(AbstractOrderedLayout layout) {
         super();
         layout.addListener(this);
@@ -56,6 +63,13 @@ public class LayoutContextMenu extends ContextMenu implements LayoutEvents.Layou
         addListener(this);
     }
 
+    /**
+     * Add action to the context menu.
+     *
+     * @param caption capture for display context menu item
+     * @param target target object to invoke when user selects action
+     * @param methodName target method to invoke when user selects action
+     */
     public ContextMenu.ContextMenuItem addAction(String caption, Object target, String methodName) {
         ContextMenu.ContextMenuItem item = super.addItem(caption);
 
@@ -66,10 +80,21 @@ public class LayoutContextMenu extends ContextMenu implements LayoutEvents.Layou
         return item;
     }
 
+    /**
+     * Get the context menu item identified by caption
+     * @param caption caption for identifying the context menu item
+     * @return context menu item
+     */
     public ContextMenu.ContextMenuItem getContextMenuItem(String caption) {
         return actions.get(caption).getItem();
     }
 
+    /**
+     * Ask if this context menu contains item associated with given caption.
+     *
+     * @param caption caption for identifying the context menu item
+     * @return true if context menu contains item with caption
+     */
     public boolean containsItem(String caption) {
         return actions.containsKey(caption);
     }
@@ -88,7 +113,7 @@ public class LayoutContextMenu extends ContextMenu implements LayoutEvents.Layou
         }
     }
 
-    public static class ContextMenuAction {
+    private static class ContextMenuAction {
         private ContextMenu.ContextMenuItem item;
         private MethodDelegate methodDelegate;
 

@@ -41,24 +41,46 @@ import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+/**
+ * A registry for managing UI display labels.
+ */
 @Component
-public class LabelDepot {
+public class LabelRegistry {
     private Map<String, String> entityTypeLabels = new TreeMap<String, String>();
     private Map<String, Set<String>> entityTypePropertyIds = new HashMap<String, Set<String>>();
     private Map<String, Set<DisplayLabel>> labels = new HashMap<String, Set<DisplayLabel>>();
 
+    /**
+     * Put entity label into registry.
+     * @param entityType type of entity
+     * @param label label
+     */
     public void putEntityLabel(String entityType, String label) {
         entityTypeLabels.put(entityType, label);
     }
 
+    /**
+     * Get entity label associated with entity type
+     * @param entityType entity type for looking up label
+     * @return label
+     */
     public String getEntityLabel(String entityType) {
         return entityTypeLabels.get(entityType);
     }
 
+    /**
+     * Get Map of all entity type labels keyed by entity type
+     * @return map of all entity type labels
+     */
     public Map<String, String> getEntityTypeLabels() {
         return entityTypeLabels;
     }
 
+    /**
+     * Get all property ids that have been registered
+     * @param entityType
+     * @return
+     */
     public Map<Object, String> getPropertyIds(String entityType) {
         Map<Object, String> fieldItems = new LinkedHashMap<Object, String>();
 
@@ -70,6 +92,13 @@ public class LabelDepot {
         return fieldItems;
     }
 
+    /**
+     * Field (property) label into registry
+     * @param entityType entity type for the label
+     * @param propertyId property id of the field
+     * @param section section of field (tab)
+     * @param label label to put into registry
+     */
     public void putFieldLabel(String entityType, String propertyId, String section, String label) {
         if (!entityTypePropertyIds.containsKey(entityType)) {
             entityTypePropertyIds.put(entityType, new TreeSet<String>());
@@ -93,6 +122,12 @@ public class LabelDepot {
         }
     }
 
+    /**
+     * Get field label for given entity type and property
+     * @param entityType entity type
+     * @param propertyId property in the entity type
+     * @return field label
+     */
     public String getFieldLabel(String entityType, String propertyId) {
         String propertyPath = entityType + "." + propertyId;
         String label = "";
@@ -107,7 +142,12 @@ public class LabelDepot {
         return label;
     }
 
-    public void trackLabels(DisplayFields displayFields) {
+    /**
+     * Register all the labels from DisplayFields.
+     *
+     * @param displayFields collection of all fields associated with a display component
+     */
+    public void registerLabels(DisplayFields displayFields) {
         Collection<DisplayField> fields = displayFields.getFields();
 
         for (DisplayField field : fields) {
@@ -123,21 +163,39 @@ public class LabelDepot {
         }
     }
 
+    /**
+     * Label for display to end user in UI
+     */
     public static class DisplayLabel {
         private String propertyId;
         private String section;
         String label;
 
+        /**
+         * Construct based on property, section and label.
+         * @param propertyId id of property (field)
+         * @param section section (tab)
+         * @param label label
+         */
         public DisplayLabel(String propertyId, String section, String label) {
             this.propertyId = propertyId;
             this.section = section;
             this.label = label;
         }
 
+        /**
+         * Get property id of the label.
+         * @return property id
+         */
         public String getPropertyId() {
             return propertyId;
         }
 
+        /**
+         * Get display label for display to end user in UI.
+         *
+         * @return display label
+         */
         public String getDisplayName() {
             if (section == null || section.isEmpty()) {
                 return label;

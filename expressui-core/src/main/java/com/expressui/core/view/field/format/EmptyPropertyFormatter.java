@@ -39,6 +39,9 @@ package com.expressui.core.view.field.format;
 
 import com.vaadin.data.util.PropertyFormatter;
 
+/**
+ * An empty formatter that just throws UnsupportedOperationException, if it is used.
+ */
 public class EmptyPropertyFormatter extends PropertyFormatter {
 
     @Override

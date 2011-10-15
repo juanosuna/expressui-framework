@@ -49,6 +49,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.*;
 
+/**
+ * Collection of fields for display in UI component, e.g. results table
+ */
 @Component
 @Scope("prototype")
 public class DisplayFields {
@@ -68,6 +71,37 @@ public class DisplayFields {
     public DisplayFields() {
     }
 
+    /**
+     * Get the type of entity these fields are bound to
+     *
+     * @return type of entity in the Datasource
+     */
+    public Class getEntityType() {
+        return entityType;
+    }
+
+    /**
+     * Set the type of entity these fields are bound to
+     *
+     * @param entityType type of entity in the Datasource
+     */
+    public void setEntityType(Class entityType) {
+        this.entityType = entityType;
+    }
+
+    DefaultFormats getDefaultFormats() {
+        return defaultFormats;
+    }
+
+    MessageSource getMessageSource() {
+        return messageSource;
+    }
+
+    /**
+     * Set the property ids for data binding these fields to a Datasource of entities
+     *
+     * @param propertyIds names of entity properties
+     */
     public void setPropertyIds(String[] propertyIds) {
         for (String propertyId : propertyIds) {
             DisplayField displayField = createField(propertyId);
@@ -75,22 +109,11 @@ public class DisplayFields {
         }
     }
 
-    public Class getEntityType() {
-        return entityType;
-    }
-
-    public void setEntityType(Class entityType) {
-        this.entityType = entityType;
-    }
-
-    public DefaultFormats getDefaultFormats() {
-        return defaultFormats;
-    }
-
-    public MessageSource getMessageSource() {
-        return messageSource;
-    }
-
+    /**
+     * Get the property ids for data binding these fields to a Datasource of entities
+     *
+     * @return property ids
+     */
     public List<String> getPropertyIds() {
         return new ArrayList(fields.keySet());
     }
@@ -108,10 +131,18 @@ public class DisplayFields {
         return viewablePropertyIds;
     }
 
+    /**
+     * Get property ids as array
+     * @return array of property ids
+     */
     public String[] getViewablePropertyIdsAsArray() {
         return CollectionsUtil.toStringArray(getViewablePropertyIds());
     }
 
+    /**
+     * Get labels (column headings) as array
+     * @return array of property labels
+     */
     public String[] getViewableLabelsAsArray() {
         List<String> labels = new ArrayList<String>();
         List<String> propertyIds = getViewablePropertyIds();
@@ -122,10 +153,20 @@ public class DisplayFields {
         return CollectionsUtil.toStringArray(labels);
     }
 
+    /**
+     * Ask if these fields contains a field bound to given property id
+     * @param propertyId property id to check
+     * @return true if a field is bound to given property id
+     */
     public boolean containsPropertyId(String propertyId) {
         return fields.containsKey(propertyId);
     }
 
+    /**
+     * Get display field bound to given property id
+     * @param propertyId property id
+     * @return display field bound to given property id
+     */
     public DisplayField getField(String propertyId) {
         if (!containsPropertyId(propertyId)) {
             DisplayField displayField = createField(propertyId);
@@ -135,14 +176,23 @@ public class DisplayFields {
         return fields.get(propertyId);
     }
 
-    protected DisplayField createField(String propertyId) {
+    DisplayField createField(String propertyId) {
         return new DisplayField(this, propertyId);
     }
 
+    /**
+     * Get collection of DisplayField objects
+     *
+     * @return collection of DisplayField objects
+     */
     public Collection<DisplayField> getFields() {
         return fields.values();
     }
 
+    /**
+     * Get all property ids that have been set as non-sortable
+     * @return non-sortable properties
+     */
     public Set<String> getNonSortablePropertyIds() {
         Set<String> nonSortablePropertyIds = new HashSet<String>();
         for (DisplayField displayField : fields.values()) {
@@ -154,22 +204,50 @@ public class DisplayFields {
         return nonSortablePropertyIds;
     }
 
+    /**
+     * Get display label (column heading) bound to given property.
+     * @param propertyId property path in entity tree
+     * @return display label (column heading)
+     */
     public String getLabel(String propertyId) {
         return getField(propertyId).getLabel();
     }
 
+    /**
+     * Set display label (column heading) bound to given property.
+     * @param propertyId property path in entity tree
+     * @param label label (column heading)
+     */
     public void setLabel(String propertyId, String label) {
         getField(propertyId).setLabel(label);
     }
 
+    /**
+     * Set column associated with given property id as sortable or not
+     * @param propertyId id for identify column
+     * @param isSortable true if sortable
+     */
     public void setSortable(String propertyId, boolean isSortable) {
         getField(propertyId).setSortable(isSortable);
     }
 
+    /**
+     * Set a link to open an entity form related to this field. Enables embedding
+     * links in results table to open up related entity
+     * @param propertyId id property path for display content in the link
+     * @param entityPropertyId property path that is many-to-one relationship with another entity
+     * @param entityForm entity form component to open when link is clicked
+     */
     public void setFormLink(String propertyId, String entityPropertyId, EntityForm entityForm) {
         getField(propertyId).setFormLink(entityPropertyId, entityForm);
     }
 
+    /**
+     * Set property formatter to be used for formatting display value.
+     *
+     * @param propertyId property path in entity tree
+     * @param propertyFormatter property formatter
+     */
     public void setPropertyFormatter(String propertyId, PropertyFormatter propertyFormatter) {
         getField(propertyId).setPropertyFormatter(propertyFormatter);
     }

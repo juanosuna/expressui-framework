@@ -65,16 +65,29 @@ public class DisplayField {
     private boolean isSortable = true;
     private String columnHeader;
 
+    /**
+     * Construct with reference to parent and property name this field is bound to
+     * @param displayFields parent that contains collection of all display fields
+     * @param propertyId name of the property this field is bound to
+     */
     public DisplayField(DisplayFields displayFields, String propertyId) {
         this.displayFields = displayFields;
         this.propertyId = propertyId;
         beanPropertyType = BeanPropertyType.getBeanPropertyType(getDisplayFields().getEntityType(), propertyId);
     }
 
+    /**
+     * Get parent collection of all display properties bound to UI component, e.g. results table
+     * @return parent DisplayFields that contains this DisplayField
+     */
     public DisplayFields getDisplayFields() {
         return displayFields;
     }
 
+    /**
+     * Get the name of the property this field is bound to
+     * @return name of the property
+     */
     public String getPropertyId() {
         return propertyId;
     }
@@ -83,10 +96,19 @@ public class DisplayField {
         return beanPropertyType;
     }
 
+    /**
+     * Get the type of property this field is bound to.
+     * @return type of property
+     */
     public Class getPropertyType() {
         return beanPropertyType.getType();
     }
 
+    /**
+     * Get the PropertyFormatter used to format values for display and parse values
+     * entered by user.
+     * @return Vaadin property formatter
+     */
     public PropertyFormatter getPropertyFormatter() {
         if (propertyFormatter == null) {
             propertyFormatter = generateDefaultPropertyFormatter();
@@ -95,15 +117,25 @@ public class DisplayField {
         return propertyFormatter;
     }
 
+    /**
+     * Set the PropertyFormatter used to format values for display and parse values
+     * entered by user.
+     * @param propertyFormatter Vaadin property formatter
+     */
     public void setPropertyFormatter(PropertyFormatter propertyFormatter) {
         this.propertyFormatter = propertyFormatter;
     }
 
+    /**
+     * Set the JDK format used to format values for display and parse values
+     * entered by user.
+     * @param format JDK format
+     */
     public void setFormat(Format format) {
         setPropertyFormatter(new JDKFormatPropertyFormatter(format));
     }
 
-    public PropertyFormatter generateDefaultPropertyFormatter() {
+    private PropertyFormatter generateDefaultPropertyFormatter() {
         DefaultFormats defaultFormats = getDisplayFields().getDefaultFormats();
 
         if (getBeanPropertyType().getBusinessType() == BeanPropertyType.BusinessType.DATE) {
@@ -120,14 +152,27 @@ public class DisplayField {
         return defaultFormats.getEmptyFormat();
     }
 
+    /**
+     * Ask if this field is a sortable column in results table
+     * @return true if sortable
+     */
     public boolean isSortable() {
         return isSortable;
     }
 
+    /**
+     * Set whether or not this field is a sortable column in results table
+     * @param sortable true if sortable
+     */
     public void setSortable(boolean sortable) {
         isSortable = sortable;
     }
 
+    /**
+     * Get the label used for this field, e.g. column header.
+     *
+     * @return display label
+     */
     public String getLabel() {
         if (columnHeader == null) {
             columnHeader = generateLabelText();
@@ -136,11 +181,16 @@ public class DisplayField {
         return columnHeader;
     }
 
+    /**
+     * Set the label used for this field, e.g. column header.
+     *
+     * @param columnHeader label
+     */
     public void setLabel(String columnHeader) {
         this.columnHeader = columnHeader;
     }
 
-    protected String generateLabelText() {
+    String generateLabelText() {
         String labelText = getLabelTextFromMessageSource();
         if (labelText == null) {
             labelText = getLabelTextFromAnnotation();
@@ -152,7 +202,7 @@ public class DisplayField {
         return labelText;
     }
 
-    protected String getLabelSectionDisplayName() {
+    String getLabelSectionDisplayName() {
         return "Column";
     }
 
@@ -180,15 +230,29 @@ public class DisplayField {
         return StringUtil.humanizeCamelCase(afterPeriod);
     }
 
+    /**
+     * Set a link to open an entity form related to this field. Enables embedding
+     * links in results table to open up related entity
+     * @param propertyId property path that is many-to-one relationship with another entity
+     * @param entityForm entity form component to open when link is clicked
+     */
     public void setFormLink(String propertyId, EntityForm entityForm) {
         formLink = new FormLink(propertyId, entityForm);
         entityForm.postWire();
     }
 
+    /**
+     * Get a link to open an entity form related to this field. Enables embedding
+     * links in results table to open up related entity
+     * @return form link
+     */
     public FormLink getFormLink() {
         return formLink;
     }
 
+    /**
+     * A link for opening an EntityForm
+     */
     public static class FormLink {
         private String propertyId;
         private EntityForm entityForm;
@@ -198,10 +262,19 @@ public class DisplayField {
             this.entityForm = entityForm;
         }
 
+        /**
+         * Get property path of many-to-one link to another entity
+         * @return name of property
+         */
         public String getPropertyId() {
             return propertyId;
         }
 
+        /**
+         * Get EntityForm that is opened when link is clicked.
+         *
+         * @return entity form
+         */
         public EntityForm getEntityForm() {
             return entityForm;
         }

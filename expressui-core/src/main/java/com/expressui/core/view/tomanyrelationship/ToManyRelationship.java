@@ -41,12 +41,21 @@ import com.expressui.core.view.EntityComponent;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * A to-many relationship component.
+ *
+ * @param <T> Type of entity in the many part of the relationshipo
+ */
 public abstract class ToManyRelationship<T> extends EntityComponent<T> {
 
     protected ToManyRelationship() {
         super();
     }
 
+    /**
+     * Get the results UI component for the displaying the many of the relationship
+     * @return results UI component
+     */
     public abstract ToManyRelationshipResults getResults();
 
     @PostConstruct

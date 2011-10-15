@@ -41,7 +41,7 @@ import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.ReflectionUtil;
 import com.expressui.core.view.field.FormField;
 import com.expressui.core.view.field.FormFields;
-import com.expressui.core.view.field.LabelDepot;
+import com.expressui.core.view.field.LabelRegistry;
 import com.expressui.core.view.field.format.DefaultFormats;
 import com.expressui.core.view.layout.FormGridLayout;
 import com.expressui.core.view.menu.LayoutContextMenu;
@@ -81,7 +81,7 @@ public abstract class FormComponent<T> extends CustomComponent {
     private DefaultFormats defaultFormat;
 
     @Resource
-    protected LabelDepot labelDepot;
+    protected LabelRegistry labelDepot;
 
     @Resource
     private SecurityService securityService;
@@ -205,7 +205,7 @@ public abstract class FormComponent<T> extends CustomComponent {
         setCompositionRoot(formComponentLayout);
         setCustomSizeUndefined();
 
-        labelDepot.trackLabels(getFormFields());
+        labelDepot.registerLabels(getFormFields());
     }
 
     private void initializeTabs(VerticalLayout layout) {
@@ -356,16 +356,16 @@ public abstract class FormComponent<T> extends CustomComponent {
     void executeContextAction(String name) {
         if (name.startsWith(uiMessageSource.getMessage("formComponent.add") + " ")) {
             String tabName = name.substring(4);
-            FormFields.AddRemoveMethodDelegate addRemoveMethodDelegate = getFormFields().getTabAddRemoveDelegate(tabName);
-            addRemoveMethodDelegate.getAddMethodDelegate().execute();
+            FormFields.AddRemoveTabMethodDelegate addRemoveTabMethodDelegate = getFormFields().getTabAddRemoveDelegate(tabName);
+            addRemoveTabMethodDelegate.getAddTabMethodDelegate().execute();
             TabSheet.Tab tab = getTabByName(tabName);
             setIsRequiredEnable(tabName, true);
             tab.setVisible(true);
             tabSheet.setSelectedTab(tab.getComponent());
         } else if (name.startsWith(uiMessageSource.getMessage("formComponent.remove") + " ")) {
             String tabName = name.substring(7);
-            FormFields.AddRemoveMethodDelegate addRemoveMethodDelegate = getFormFields().getTabAddRemoveDelegate(tabName);
-            addRemoveMethodDelegate.getRemoveMethodDelegate().execute();
+            FormFields.AddRemoveTabMethodDelegate addRemoveTabMethodDelegate = getFormFields().getTabAddRemoveDelegate(tabName);
+            addRemoveTabMethodDelegate.getRemoveTabMethodDelegate().execute();
             TabSheet.Tab tab = getTabByName(tabName);
             setIsRequiredEnable(tabName, false);
             tab.setVisible(false);

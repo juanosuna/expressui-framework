@@ -41,6 +41,10 @@ package com.expressui.core.view.layout;
 import com.expressui.core.view.field.FormField;
 import com.vaadin.ui.GridLayout;
 
+/**
+ * A special layout for forms, which can support labels on top
+ * of fields or to the left.
+ */
 public abstract class FormGridLayout extends GridLayout {
     public FormGridLayout(int columns, int rows) {
         super(columns, rows);
@@ -49,9 +53,23 @@ public abstract class FormGridLayout extends GridLayout {
     public FormGridLayout() {
     }
 
+    /**
+     * Set the number of columns in the form.
+     *
+     * @param columns number of columns in the two-dimension form grid
+     */
     public abstract void setFormColumns(int columns);
 
+    /**
+     * Add a field to the form
+     * @param formField field to add
+     */
     public abstract void addField(FormField formField);
 
+    /**
+     * Remove field from the form.
+     *
+     * @param formField field to remove
+     */
     public abstract void removeField(FormField formField);
 }

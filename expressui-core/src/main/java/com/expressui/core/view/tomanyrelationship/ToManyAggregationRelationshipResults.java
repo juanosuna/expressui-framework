@@ -42,8 +42,16 @@ import com.expressui.core.view.entityselect.EntitySelect;
 import javax.annotation.PostConstruct;
 import java.util.Collection;
 
+/**
+ * Results containing entities in a to-many aggregation relationship.
+ * @param <T> type of the entities in the results
+ */
 public abstract class ToManyAggregationRelationshipResults<T> extends ToManyRelationshipResults<T> {
 
+    /**
+     * Get the EntitySelect component used to select an entity for adding to the relationship
+     * @return EntitySelect component
+     */
     public abstract EntitySelect<T> getEntitySelect();
 
     @PostConstruct
@@ -66,6 +74,9 @@ public abstract class ToManyAggregationRelationshipResults<T> extends ToManyRela
         getEntitySelect().open();
     }
 
+    /**
+     * Invoked when user sellects entities to be added to the relationship.
+     */
     public void itemsSelected() {
         getEntitySelect().close();
         Collection<T> selectedValues = getEntitySelect().getResults().getSelectedValues();

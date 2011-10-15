@@ -38,7 +38,7 @@
 package com.expressui.core.view;
 
 import com.expressui.core.MainApplication;
-import com.expressui.core.view.field.LabelDepot;
+import com.expressui.core.view.field.LabelRegistry;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -60,7 +60,7 @@ import javax.annotation.Resource;
 public abstract class MainEntryPoint<T> extends EntryPoint<T> {
 
     @Resource
-    private LabelDepot labelDepot;
+    private LabelRegistry labelDepot;
 
     private Button logoutButton;
 

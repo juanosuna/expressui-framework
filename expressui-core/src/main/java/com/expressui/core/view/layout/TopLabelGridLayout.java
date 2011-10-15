@@ -43,21 +43,19 @@ import com.vaadin.ui.Field;
 import com.vaadin.ui.VerticalLayout;
 
 /**
- * User: Juan
- * Date: 7/27/11
+ * Form layout that places labels on top of the fields
  */
 public class TopLabelGridLayout extends FormGridLayout {
     public TopLabelGridLayout(int columns, int rows) {
         super(columns, rows);
     }
 
-    public TopLabelGridLayout() {
-    }
-
+    @Override
     public void setFormColumns(int columns) {
         setColumns(columns);
     }
 
+    @Override
     public void addField(FormField formField) {
         VerticalLayout fieldLayout = (VerticalLayout) getComponent(formField.getColumnStart() - 1,
                 formField.getRowStart() - 1);
@@ -83,6 +81,7 @@ public class TopLabelGridLayout extends FormGridLayout {
         }
     }
 
+    @Override
     public void removeField(FormField formField) {
         removeComponent(formField.getColumnStart() - 1, formField.getRowStart() - 1);
     }

@@ -43,6 +43,10 @@ import java.lang.annotation.Target;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+/**
+ * A display label for display to end user; can be used to annotate
+ * entity property to define UI display label in the entity.
+ */
 @Target(ElementType.FIELD)
 @Retention(RUNTIME)
 public @interface Label {

@@ -52,6 +52,13 @@ import org.vaadin.addon.customfield.CustomField;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
+/**
+ * A custom field in an EntityForm for selecting an entity in a many-to-one relationship. EntitySelect represents the
+ * popup selection window, whereas this custom field consists of a text input that displays a property in the selected
+ * entity and the popup button for opening EntitySelect.
+ *
+ * @see EntitySelect
+ */
 public class SelectField extends CustomField {
 
     private MessageSource uiMessageSource;
@@ -65,6 +72,12 @@ public class SelectField extends CustomField {
     private EntityForm entityForm;
     private String propertyId;
 
+    /**
+     * Construct in the given entity form for given property id
+     * @param entityForm entity form that contains this field
+     * @param propertyId property id bound to this field
+     * @param entitySelect popup component for selecting entity
+     */
     public SelectField(EntityForm entityForm, String propertyId, EntitySelect entitySelect) {
         this.entityForm = entityForm;
         this.propertyId = propertyId;
@@ -73,16 +86,25 @@ public class SelectField extends CustomField {
         initialize();
     }
 
+    /**
+     * Get popup component for selecting entity.
+     *
+     * @return component for selecting entity
+     */
     public EntitySelect getEntitySelect() {
         return entitySelect;
     }
 
+    /**
+     * Make clear and search button (in)visible
+     * @param isVisible true to make visible
+     */
     public void setButtonVisible(boolean isVisible) {
         clearButton.setVisible(isVisible);
         searchButton.setVisible(isVisible);
     }
 
-    public void initialize() {
+    private void initialize() {
         setSizeUndefined();
         field = new TextField();
         FormField.initAbstractFieldDefaults(field);
@@ -112,11 +134,14 @@ public class SelectField extends CustomField {
         layout.addComponent(clearButton);
 
         entitySelect.getResults().setSelectButtonListener(this, "itemSelected");
-        addClearListener(this, "itemCleared");
+        clearButton.addListener(Button.ClickEvent.class, this, "itemCleared");
 
         setCompositionRoot(layout);
     }
 
+    /**
+     * Invoked when user selects item.
+     */
     public void itemSelected() {
         Object selectedValue = getSelectedValue();
         Object entity = entityForm.getEntity();
@@ -135,6 +160,9 @@ public class SelectField extends CustomField {
         entitySelect.close();
     }
 
+    /**
+     * Invoked when user clicks clear button.
+     */
     public void itemCleared() {
         Object entity = entityForm.getEntity();
         try {
@@ -151,139 +179,170 @@ public class SelectField extends CustomField {
         field.setPropertyDataSource(property);
     }
 
-    public void addClearListener(Object target, String methodName) {
-        clearButton.addListener(Button.ClickEvent.class, target, methodName);
-    }
-
+    /**
+     * Get selected value.
+     * @return selected value
+     */
     public Object getSelectedValue() {
         return entitySelect.getResults().getSelectedValue();
     }
 
+    @Override
     public String getRequiredError() {
         return field.getRequiredError();
     }
 
+    @Override
     public boolean isRequired() {
         return field.isRequired();
     }
 
+    @Override
     public void setRequired(boolean required) {
         field.setRequired(required);
     }
 
+    @Override
     public void setRequiredError(String requiredMessage) {
         field.setRequiredError(requiredMessage);
     }
 
+    @Override
     public boolean isInvalidCommitted() {
         return field.isInvalidCommitted();
     }
 
+    @Override
     public void setInvalidCommitted(boolean isCommitted) {
         field.setInvalidCommitted(isCommitted);
     }
 
+    @Override
     public void commit() throws SourceException, Validator.InvalidValueException {
 //        field.commit();
     }
 
+    @Override
     public void discard() throws SourceException {
         field.discard();
     }
 
+    @Override
     public boolean isModified() {
         return field.isModified();
     }
 
+    @Override
     public boolean isReadThrough() {
         return field.isReadThrough();
     }
 
+    @Override
     public boolean isWriteThrough() {
         return field.isWriteThrough();
     }
 
+    @Override
     public void setReadThrough(boolean readThrough) throws SourceException {
         field.setReadThrough(readThrough);
     }
 
+    @Override
     public void setWriteThrough(boolean writeThrough) throws SourceException,
             Validator.InvalidValueException {
         field.setWriteThrough(writeThrough);
     }
 
+    @Override
     public void addValidator(Validator validator) {
         field.addValidator(validator);
     }
 
+    @Override
     public Collection<Validator> getValidators() {
         return field.getValidators();
     }
 
+    @Override
     public boolean isInvalidAllowed() {
         return field.isInvalidAllowed();
     }
 
+    @Override
     public boolean isValid() {
         return field.isValid();
     }
 
+    @Override
     public void removeValidator(Validator validator) {
         field.removeValidator(validator);
 
     }
 
+    @Override
     public void setInvalidAllowed(boolean invalidValueAllowed)
             throws UnsupportedOperationException {
         field.setInvalidAllowed(invalidValueAllowed);
     }
 
+    @Override
     public void validate() throws Validator.InvalidValueException {
         field.validate();
     }
 
+    @Override
     public Class<?> getType() {
         return field.getType();
     }
 
+    @Override
     public void setValue(Object newValue) throws ReadOnlyException,
             ConversionException {
         field.setValue(newValue);
     }
 
+    @Override
     public void addListener(ValueChangeListener listener) {
         field.addListener(listener);
     }
 
+    @Override
     public void removeListener(ValueChangeListener listener) {
         field.removeListener(listener);
     }
 
+    @Override
     public void valueChange(com.vaadin.data.Property.ValueChangeEvent event) {
         field.valueChange(event);
     }
 
+    @Override
     public Property getPropertyDataSource() {
         return field.getPropertyDataSource();
     }
 
+    @Override
     public void setPropertyDataSource(Property newDataSource) {
         field.setPropertyDataSource(newDataSource);
 
     }
 
+    @Override
     public void focus() {
         field.focus();
     }
 
+    @Override
     public int getTabIndex() {
         return field.getTabIndex();
     }
 
+    @Override
     public void setTabIndex(int tabIndex) {
         field.setTabIndex(tabIndex);
     }
 
+    @Override
     public Object getValue() {
         return field.getValue();
     }
