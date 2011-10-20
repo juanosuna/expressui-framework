@@ -208,20 +208,20 @@
            <artifactId>stepper</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>chameleon</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.vaadin.addons</groupId>-->
+            <!--<artifactId>chameleon</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.vaadin.addons</groupId>
             <artifactId>chameleon-blue</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>chameleon-vaadin</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.vaadin.addons</groupId>-->
+            <!--<artifactId>chameleon-vaadin</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
