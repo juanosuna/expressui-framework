@@ -35,48 +35,63 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.core.view;
+package com.expressui.sample.view.dashboard;
 
-import javax.annotation.PostConstruct;
+import com.expressui.core.view.CrudResults;
+import com.expressui.core.view.field.DisplayFields;
+import com.expressui.sample.dao.ContactDao;
+import com.expressui.sample.entity.Contact;
+import com.expressui.sample.view.account.AccountForm;
+import com.expressui.sample.view.contact.ContactForm;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-/**
- * An entry point is simply comprised of a search form and a list of results.
- *
- * @param <T> type of business entity for this entry point
- */
-public abstract class EntryPoint<T> extends EntityComponent<T> {
+import javax.annotation.Resource;
 
-    protected EntryPoint() {
-        super();
-    }
+@Component
+@Scope("prototype")
+@SuppressWarnings({"serial"})
+public class RecentContactResults extends CrudResults<Contact> {
 
-    /**
-     * Get the search form component of this entry point
-     *
-     * @return search form component
-     */
-    public abstract SearchForm getSearchForm();
+    @Resource
+    private ContactDao contactDao;
 
-    /**
-     * Get the results component for this entry point.
-     *
-     * @return
-     */
-    public abstract Results<T> getResults();
+    @Resource
+    private RecentContactsQuery recentContactsQuery;
 
-    @PostConstruct
+    @Resource
+    private ContactForm contactForm;
+
+    @Resource
+    private AccountForm accountForm;
+
     @Override
-    public void postConstruct() {
-        super.postConstruct();
-
-        addStyleName("p-entry-point");
+    public ContactDao getEntityDao() {
+        return contactDao;
     }
 
     @Override
-    public void postWire() {
-        super.postWire();
-        getSearchForm().setResults(getResults());
-        getSearchForm().postWire();
-        getResults().postWire();
+    public RecentContactsQuery getEntityQuery() {
+        return recentContactsQuery;
+    }
+
+    @Override
+    public ContactForm getEntityForm() {
+        return contactForm;
+    }
+
+    @Override
+    public void configureFields(DisplayFields displayFields) {
+        displayFields.setPropertyIds(new String[]{
+                "name",
+                "mailingAddress.street",
+                "mailingAddress.city",
+                "mailingAddress.state.code",
+                "mailingAddress.country",
+                "lastModified"
+        });
+
+        displayFields.setSortable("name", false);
+        displayFields.setLabel("mailingAddress.state.code", "State");
     }
 }

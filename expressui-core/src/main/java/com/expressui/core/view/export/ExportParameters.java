@@ -35,71 +35,78 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.sample.view.opportunity;
+package com.expressui.core.view.export;
 
-import com.expressui.core.view.CrudResults;
-import com.expressui.core.view.ResultsTable;
-import com.expressui.core.view.field.DisplayFields;
-import com.expressui.core.view.field.format.JDKFormatPropertyFormatter;
-import com.expressui.sample.dao.OpportunityDao;
-import com.expressui.sample.entity.Opportunity;
-import com.vaadin.terminal.Sizeable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
-import java.text.NumberFormat;
-import java.util.Locale;
-
+/**
+ * Parameters for exporting excel. See <a href="https://vaadin.com/directory#addon/tableexport">TableExport Add-On</a>.
+ */
 @Component
 @Scope("prototype")
-@SuppressWarnings({"serial"})
-public class OpportunityResults extends CrudResults<Opportunity> {
+public class ExportParameters {
+    private String exportFilename = "export.xls";
+    private String workbookName = "Export";
+    private String sheetName = "Export";
+    private String dateFormat = "mm/dd/yyyy";
+    private String doubleFormat = "#0.00";
+    private boolean displayRowHeaders = true;
+    private boolean displayTotals;
 
-    @Resource
-    private OpportunityDao opportunityDao;
-
-    @Resource
-    private OpportunityQuery opportunityQuery;
-
-    @Resource
-    private OpportunityForm opportunityForm;
-
-    @Override
-    public OpportunityDao getEntityDao() {
-        return opportunityDao;
+    public String getExportFilename() {
+        return exportFilename;
     }
 
-    @Override
-    public OpportunityQuery getEntityQuery() {
-        return opportunityQuery;
+    public void setExportFilename(String exportFilename) {
+        this.exportFilename = exportFilename;
     }
 
-    @Override
-    public OpportunityForm getEntityForm() {
-        return opportunityForm;
+    public String getWorkbookName() {
+        return workbookName;
     }
 
-    @Override
-    public void configureFields(DisplayFields displayFields) {
-        displayFields.setPropertyIds(new String[]{
-                "name",
-                "salesStage",
-                "amountWeightedInUSD",
-                "expectedCloseDate",
-                "lastModified",
-                "modifiedBy"
-        });
-
-        displayFields.setLabel("amountWeightedInUSD", "Weighted Amount");
-        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
-        numberFormat.setMaximumFractionDigits(0);
-        JDKFormatPropertyFormatter formatter = new JDKFormatPropertyFormatter(numberFormat);
-        displayFields.setPropertyFormatter("amountWeightedInUSD", formatter);
+    public void setWorkbookName(String workbookName) {
+        this.workbookName = workbookName;
     }
 
-    @Override
-    public void configureTable(ResultsTable resultsTable) {
-        resultsTable.setWidth(70, Sizeable.UNITS_EM);
+    public String getSheetName() {
+        return sheetName;
+    }
+
+    public void setSheetName(String sheetName) {
+        this.sheetName = sheetName;
+    }
+
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+
+    public String getDoubleFormat() {
+        return doubleFormat;
+    }
+
+    public void setDoubleFormat(String doubleFormat) {
+        this.doubleFormat = doubleFormat;
+    }
+
+    public boolean isDisplayRowHeaders() {
+        return displayRowHeaders;
+    }
+
+    public void setDisplayRowHeaders(boolean displayRowHeaders) {
+        this.displayRowHeaders = displayRowHeaders;
+    }
+
+    public boolean isDisplayTotals() {
+        return displayTotals;
+    }
+
+    public void setDisplayTotals(boolean displayTotals) {
+        this.displayTotals = displayTotals;
     }
 }

@@ -80,6 +80,12 @@ public class TestDataInitializer {
     private OpportunityDao opportunityDao;
 
     @Resource
+    private CountryDao countryDao;
+
+    @Resource
+    private StateDao stateDao;
+
+    @Resource
     private ReferenceDataInitializer referenceDataInitializer;
 
     public void initialize(int count) {
@@ -89,7 +95,7 @@ public class TestDataInitializer {
         for (Integer i = 0; i < count; i++) {
             Contact contact;
             contact = new Contact("first" + i, "last" + i);
-            contact.setBirthDate(randomBirthDate());
+            contact.setBirthDate(randomDate(1920, 2010));
             contact.setAssignedTo(ReferenceDataInitializer.random(userDao.findAll()));
             contact.setTitle("Vice President");
             contact.setDoNotCall(randomBoolean());
@@ -107,12 +113,12 @@ public class TestDataInitializer {
             try {
                 Phone phone = (Phone) new PhonePropertyFormatter().parse(PhoneValidator.getExampleNumber("US", address.getCountry().getId()));
                 contact.setMainPhone(phone);
-                contact.getMainPhone().setPhoneType(random(PhoneType.class));
+                contact.setMainPhoneType(random(PhoneType.class));
 
                 if (randomBoolean()) {
                     phone = (Phone) new PhonePropertyFormatter().parse(PhoneValidator.getExampleNumber("US", address.getCountry().getId()));
                     contact.setOtherPhone(phone);
-                    contact.getOtherPhone().setPhoneType(random(PhoneType.class));
+                    contact.setOtherPhoneType(random(PhoneType.class));
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -235,7 +241,6 @@ public class TestDataInitializer {
         try {
             Phone phone = (Phone) new PhonePropertyFormatter().parse(PhoneValidator.getExampleNumber("US", address.getCountry().getId()));
             account.setMainPhone(phone);
-            account.getMainPhone().setPhoneType(random(PhoneType.class));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -256,7 +261,11 @@ public class TestDataInitializer {
 
         opportunity.setSalesStage(referenceDataInitializer.randomSalesStage());
         opportunity.setCurrency(referenceDataInitializer.randomCurrency());
-        opportunity.setExpectedCloseDate(new Date());
+        if (opportunity.getSalesStage().getId().startsWith("Closed")) {
+            opportunity.setActualCloseDate(randomDate(2000, 2010));
+        } else {
+            opportunity.setExpectedCloseDate(randomDate(2011, 2015));
+        }
         opportunity.setAssignedTo(ReferenceDataInitializer.random(userDao.findAll()));
         opportunity.setLeadSource(referenceDataInitializer.randomLeadSource());
         opportunity.setDescription("Description of opportunity");
@@ -269,21 +278,47 @@ public class TestDataInitializer {
 
     private Address randomAddress(int i) {
         Address address = new Address();
-        address.setStreet(i + " Main St");
-        address.setCity("Mayberry" + i);
-        State state = referenceDataInitializer.randomState();
-        address.setCountry(state.getCountry());
-        address.setState(state);
-        if (state.getCountry().getId().equals("CA")) {
-            address.setZipCode("A0A 0A0");
-        } else {
-            address.setZipCode(state.getCountry().getMinPostalCode());
+
+        int randomNumber = ReferenceDataInitializer.random(0, 3);
+        State state;
+        switch (randomNumber) {
+            case 0:
+                address.setStreet(i + " Main St");
+                address.setCity("Toronto");
+                state = stateDao.find("CA-ON");
+                address.setState(state);
+                address.setZipCode("M4C 1L1");
+                address.setCountry(state.getCountry());
+                break;
+            case 1:
+                address.setStreet(i + " South Tryon St");
+                address.setCity("Charlotte");
+                state = stateDao.find("US-NC");
+                address.setState(state);
+                address.setZipCode("28202");
+                address.setCountry(state.getCountry());
+                break;
+            case 2:
+                address.setStreet(i + " Paseo de la Reforma");
+                address.setCity("Mexico City");
+                state = stateDao.find("MX-DIF");
+                address.setState(state);
+                address.setZipCode("06000");
+                address.setCountry(state.getCountry());
+                break;
+            case 3:
+                address.setStreet(i + " Victoria St");
+                address.setCity("Melbourne");
+                state = stateDao.find("AU-VIC");
+                address.setState(state);
+                address.setZipCode("3053");
+                address.setCountry(state.getCountry());
         }
 
         return address;
     }
 
-    public static Date randomBirthDate() {
+    public static Date randomDate(int startYear, int endYear) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.MILLISECOND, 0);
         calendar.set(Calendar.SECOND, 0);
@@ -291,7 +326,7 @@ public class TestDataInitializer {
         calendar.set(Calendar.HOUR, 0);
         calendar.set(Calendar.DAY_OF_MONTH, ReferenceDataInitializer.random(1, 28));
         calendar.set(Calendar.MONTH, ReferenceDataInitializer.random(1, 12));
-        calendar.set(Calendar.YEAR, ReferenceDataInitializer.random(1920, 2010));
+        calendar.set(Calendar.YEAR, ReferenceDataInitializer.random(startYear, endYear));
 
         return calendar.getTime();
     }
@@ -302,7 +337,7 @@ public class TestDataInitializer {
     }
 
     @SuppressWarnings("rawtypes")
-	public static <T extends Enum> T random(Class<T> enumType) {
+    public static <T extends Enum> T random(Class<T> enumType) {
         T[] enumConstants = enumType.getEnumConstants();
         Arrays.asList(enumConstants);
 

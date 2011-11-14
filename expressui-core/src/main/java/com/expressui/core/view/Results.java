@@ -40,9 +40,12 @@ package com.expressui.core.view;
 import com.expressui.core.dao.EntityDao;
 import com.expressui.core.dao.EntityQuery;
 import com.expressui.core.util.ReflectionUtil;
-import com.expressui.core.view.util.MessageSource;
+import com.expressui.core.view.export.ExportForm;
+import com.expressui.core.view.export.ExportParameters;
 import com.expressui.core.view.field.DisplayFields;
 import com.expressui.core.view.field.LabelRegistry;
+import com.expressui.core.view.util.MessageSource;
+import com.vaadin.addon.tableexport.ExcelExport;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.MethodProperty;
 import com.vaadin.data.validator.IntegerValidator;
@@ -69,6 +72,9 @@ public abstract class Results<T> extends CustomComponent {
     @Resource
     private LabelRegistry labelDepot;
 
+    @Resource
+    private ExportForm exportForm;
+
     private ResultsTable resultsTable;
     private DisplayFields displayFields;
     private TextField firstResultTextField;
@@ -79,6 +85,7 @@ public abstract class Results<T> extends CustomComponent {
     private Button previousButton;
     private Button nextButton;
     private Button lastButton;
+    private Button excelButton;
 
     private HorizontalLayout crudButtons;
 
@@ -275,6 +282,14 @@ public abstract class Results<T> extends CustomComponent {
         lastButton.setIcon(new ThemeResource("icons/16/last.png"));
         navigationButtons.addComponent(lastButton);
 
+        excelButton = new Button(null, this, "openExportForm");
+        excelButton.setDescription(uiMessageSource.getMessage("entityResults.excel.description"));
+        excelButton.setSizeUndefined();
+        excelButton.addStyleName("borderless");
+        excelButton.setIcon(new ThemeResource("icons/16/excel.bmp"));
+        navigationButtons.addComponent(excelButton);
+        exportForm.setExportButtonListener(this, "exportToExcel");
+
         HorizontalLayout navigationLine = new HorizontalLayout();
         navigationLine.setWidth("100%");
         navigationLine.setMargin(true, true, true, false);
@@ -324,6 +339,7 @@ public abstract class Results<T> extends CustomComponent {
 
         pageSizeMenu.setEnabled(getEntityQuery().getResultCount() > 10);
         firstResultTextField.setEnabled(getEntityQuery().getResultCount() > 10);
+        excelButton.setEnabled(getEntityQuery().getResultCount() > 0);
     }
 
     /**
@@ -335,6 +351,7 @@ public abstract class Results<T> extends CustomComponent {
         pageSizeMenu.setPropertyDataSource(pageProperty);
         pageSizeMenu.addListener(Property.ValueChangeEvent.class, this, "search");
         getEntityQuery().postWire();
+        exportForm.postWire();
     }
 
     /**
@@ -364,10 +381,14 @@ public abstract class Results<T> extends CustomComponent {
         getEntityQuery().setPageSize(pageSize);
     }
 
+    public void setPageSizeVisible(boolean isVisible) {
+        pageSizeMenu.setVisible(isVisible);
+    }
+
     /**
      * Add a listener that detects row-selection changes in the results
      *
-     * @param target target object to invoke listener on
+     * @param target     target object to invoke listener on
      * @param methodName name of method to invoke when selection occurs
      */
     public void addSelectionChangedListener(Object target, String methodName) {
@@ -401,6 +422,7 @@ public abstract class Results<T> extends CustomComponent {
 
     /**
      * Execute current query and refresh results.
+     *
      * @param clearSelection true if row selection should be cleared
      */
     protected void searchImpl(boolean clearSelection) {
@@ -423,5 +445,33 @@ public abstract class Results<T> extends CustomComponent {
                         query.getResultCount()});
         firstResultTextField.setWidth(Math.max(3, query.getResultCount().toString().length() - 1), Sizeable.UNITS_EM);
         resultCountLabel.setValue(caption);
+    }
+
+    public void openExportForm() {
+        String entityLabel = labelDepot.getEntityLabel(getEntityType().getName());
+        exportForm.getExportParameters().setWorkbookName(entityLabel + " Export");
+        exportForm.getExportParameters().setSheetName(entityLabel + " Export");
+        exportForm.getExportParameters().setExportFilename(entityLabel + " Export.xls");
+
+        exportForm.open();
+    }
+
+    public void exportToExcel() {
+        ExportParameters exportParameters = exportForm.getExportParameters();
+
+        ExcelExport excelExport = new ExcelExport(getResultsTable(), exportParameters.getWorkbookName(),
+                exportParameters.getSheetName());
+        if (exportParameters.getDateFormat() != null) {
+            excelExport.setDateDataFormat(exportParameters.getDateFormat());
+        }
+        if (exportParameters.getDoubleFormat() != null) {
+            excelExport.setDoubleDataFormat(exportParameters.getDoubleFormat());
+        }
+
+        excelExport.setDisplayTotals(exportParameters.isDisplayTotals());
+        excelExport.setExportFileName(exportParameters.getExportFilename());
+        excelExport.setRowHeaders(exportParameters.isDisplayRowHeaders());
+        excelExport.excludeCollapsedColumns();
+        excelExport.export();
     }
 }

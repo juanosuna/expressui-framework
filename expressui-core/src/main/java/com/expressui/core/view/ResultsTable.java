@@ -92,6 +92,10 @@ public class ResultsTable extends Table {
         setColumnHeaders(results.getDisplayFields().getViewableLabelsAsArray());
     }
 
+    public void turnOnContentRefreshing() {
+        enableContentRefreshing(true);
+    }
+
     @Override
     public BeanItemContainer getContainerDataSource() {
         return (BeanItemContainer) super.getContainerDataSource();

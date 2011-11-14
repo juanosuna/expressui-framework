@@ -39,8 +39,48 @@ package com.expressui.sample.dao;
 
 import com.expressui.core.dao.EntityDao;
 import com.expressui.sample.entity.Opportunity;
+import com.expressui.sample.entity.derived.TotalSalesStage;
+import com.expressui.sample.entity.derived.TotalYearSales;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.Query;
+import java.util.List;
 
 @Repository
 public class OpportunityDao extends EntityDao<Opportunity, Long> {
+
+    public List<TotalSalesStage> getSalesStageCounts() {
+        Query query = getEntityManager().createQuery(
+                "select new com.expressui.sample.entity.derived.TotalSalesStage(opportunity.salesStage, count(opportunity)) " +
+                        "from Opportunity opportunity " +
+                        "group by opportunity.salesStage");
+
+        return query.getResultList();
+    }
+
+    public List<TotalYearSales> getSalesByYear() {
+        Query query = getEntityManager().createQuery(
+                "select new com.expressui.sample.entity.derived.TotalYearSales(" +
+                        "year(opportunity.actualCloseDate), sum(opportunity.amountInUSD)) " +
+                        "from Opportunity opportunity " +
+                        "where opportunity.salesStage.id = 'Closed Won' " +
+                        "and year(opportunity.actualCloseDate) > 2003 " +
+                        "group by year(opportunity.actualCloseDate)" +
+                        " order by year(opportunity.actualCloseDate)");
+
+        return query.getResultList();
+    }
+
+    public List<TotalYearSales> getSalesLostByYear() {
+        Query query = getEntityManager().createQuery(
+                "select new com.expressui.sample.entity.derived.TotalYearSales(" +
+                        "year(opportunity.actualCloseDate), sum(opportunity.amountInUSD)) " +
+                        "from Opportunity opportunity " +
+                        "where opportunity.salesStage.id = 'Closed Lost' " +
+                        "and year(opportunity.actualCloseDate) > 2003 " +
+                        "group by year(opportunity.actualCloseDate)" +
+                        " order by year(opportunity.actualCloseDate)");
+
+        return query.getResultList();
+    }
 }

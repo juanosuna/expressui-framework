@@ -38,13 +38,15 @@
 package com.expressui.core;
 
 import com.expressui.core.security.SecurityService;
+import com.expressui.core.view.CrudResults;
+import com.expressui.core.view.Dashboard;
+import com.expressui.core.view.MainEntryPoint;
 import com.expressui.core.view.MainEntryPoints;
 import com.expressui.core.view.util.MessageSource;
 import com.vaadin.Application;
+import com.vaadin.terminal.ThemeResource;
 import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.VerticalLayout;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ChameleonTheme;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.exception.ConstraintViolationException;
@@ -56,6 +58,7 @@ import org.vaadin.dialogs.DefaultConfirmDialogFactory;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * Main Vaadin Application that is tied to the user's session. The user's MainApplication
@@ -65,16 +68,26 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class MainApplication extends Application implements HttpServletRequestListener {
 
+    private static final int WARNING_PERIOD_MINS = 2;
+
     private static ThreadLocal<MainApplication> threadLocal = new ThreadLocal<MainApplication>();
 
     @Resource(name = "uiMessageSource")
     private MessageSource messageSource;
 
     @Resource
+    private Dashboard dashboard;
+
+    @Resource
     private MainEntryPoints mainEntryPoints;
 
     @Resource
     private SecurityService securityService;
+
+    @Resource
+    protected MessageSource uiMessageSource;
+
+    private Button logoutButton;
 
     /**
      * Get instance of MainApplication associated with current session.
@@ -123,10 +136,62 @@ public class MainApplication extends Application implements HttpServletRequestLi
         mainWindow.getContent().setSizeUndefined();
         setMainWindow(mainWindow);
 
-        mainEntryPoints.addStyleName("p-main-entry-points");
-        mainWindow.addComponent(mainEntryPoints);
+        VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setSizeUndefined();
+        mainWindow.setContent(verticalLayout);
 
+        logoutButton = new Button(null);
+        logoutButton.setDescription(uiMessageSource.getMessage("mainApplication.logout"));
+        logoutButton.setSizeUndefined();
+        logoutButton.addStyleName("borderless");
+        logoutButton.setIcon(new ThemeResource("icons/16/logout.png"));
+        setLogoutURL("mvc/login.do");
+        logoutButton.addListener(Button.ClickEvent.class, MainApplication.getInstance(), "logout");
+
+        verticalLayout.addComponent(logoutButton);
+        verticalLayout.setComponentAlignment(logoutButton, Alignment.TOP_RIGHT);
+
+        verticalLayout.addComponent(createTabSheet());
+
+//        SessionGuard sessionGuard = new SessionGuard();
+//        sessionGuard.setTimeoutWarningPeriod(WARNING_PERIOD_MINS);
+//        mainWindow.addComponent(sessionGuard);
+
+        dashboard.postWire();
         mainEntryPoints.postWire();
+    }
+
+    private TabSheet createTabSheet() {
+        TabSheet tabSheet = new TabSheet();
+        tabSheet.addStyleName("p-main-entry-points");
+        tabSheet.setSizeUndefined();
+
+        tabSheet.addTab(dashboard);
+        List<MainEntryPoint> entryPoints = mainEntryPoints.getViewableEntryPoints();
+        for (MainEntryPoint entryPoint : entryPoints) {
+            tabSheet.addTab(entryPoint);
+        }
+
+        tabSheet.addListener(new TabChangeListener());
+        if (entryPoints.size() > 0) {
+            entryPoints.get(0).getResults().search();
+        }
+
+        return tabSheet;
+    }
+
+    private class TabChangeListener implements TabSheet.SelectedTabChangeListener {
+
+        @Override
+        public void selectedTabChange(TabSheet.SelectedTabChangeEvent event) {
+            if (event.getTabSheet().getSelectedTab() instanceof MainEntryPoint) {
+                MainEntryPoint entryPoint = (MainEntryPoint) event.getTabSheet().getSelectedTab();
+                entryPoint.getResults().search();
+                if (entryPoint.getResults() instanceof CrudResults) {
+                    ((CrudResults) entryPoint.getResults()).applySecurityToCRUDButtons();
+                }
+            }
+        }
     }
 
     private void customizeConfirmDialogStyle() {

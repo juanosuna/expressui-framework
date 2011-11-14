@@ -204,13 +204,13 @@
         </dependency>
 
         <dependency>
-           <groupId>org.vaadin.addons</groupId>
-           <artifactId>stepper</artifactId>
+            <groupId>org.vaadin.addons</groupId>
+            <artifactId>stepper</artifactId>
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>org.vaadin.addons</groupId>-->
-            <!--<artifactId>chameleon</artifactId>-->
+        <!--<groupId>org.vaadin.addons</groupId>-->
+        <!--<artifactId>chameleon</artifactId>-->
         <!--</dependency>-->
 
         <dependency>
@@ -219,9 +219,44 @@
         </dependency>
 
         <!--<dependency>-->
-            <!--<groupId>org.vaadin.addons</groupId>-->
-            <!--<artifactId>chameleon-vaadin</artifactId>-->
+        <!--<groupId>org.vaadin.addons</groupId>-->
+        <!--<artifactId>chameleon-vaadin</artifactId>-->
         <!--</dependency>-->
+
+        <dependency>
+            <groupId>org.vaadin.addons</groupId>
+            <artifactId>portallayout</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.vaadin.addons</groupId>
+            <artifactId>visualizationsforvaadin</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.gwt.google-apis</groupId>
+            <artifactId>gwt-visualization</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.vaadin.vol</groupId>
+            <artifactId>openlayers-wrapper</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.vaadin.addons</groupId>
+            <artifactId>tableexport</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.vaadin.addons</groupId>
+            <artifactId>sessionguard</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>

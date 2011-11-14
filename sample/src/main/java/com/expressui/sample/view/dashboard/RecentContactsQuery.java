@@ -35,101 +35,74 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.sample.view.opportunity;
+package com.expressui.sample.view.dashboard;
 
 import com.expressui.core.dao.StructuredEntityQuery;
-import com.expressui.sample.dao.OpportunityDao;
-import com.expressui.sample.entity.Opportunity;
-import com.expressui.sample.entity.SalesStage;
+import com.expressui.sample.dao.ContactDao;
+import com.expressui.sample.entity.Contact;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Component
 @Scope("prototype")
 @SuppressWarnings({"rawtypes"})
-public class OpportunityQuery extends StructuredEntityQuery<Opportunity> {
+public class RecentContactsQuery extends StructuredEntityQuery<Contact> {
 
     @Resource
-    private OpportunityDao opportunityDao;
+    private ContactDao contactDao;
 
-    private String accountName;
-    private Set<SalesStage> salesStages = new HashSet<SalesStage>();
+    @PostConstruct
+    @Override
+    public void postConstruct() {
+        super.postConstruct();
 
-    public String getAccountName() {
-        return accountName;
-    }
-
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
-    }
-
-    public Set<SalesStage> getSalesStages() {
-        return salesStages;
-    }
-
-    public void setSalesStages(Set<SalesStage> salesStages) {
-        this.salesStages = salesStages;
+        setPageSize(10);
     }
 
     @Override
-    public List<Opportunity> execute() {
-        return opportunityDao.execute(this);
+    public List<Contact> execute() {
+        return contactDao.execute(this);
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, Root<Opportunity> rootEntity) {
-        List<Predicate> criteria = new ArrayList<Predicate>();
-
-        if (!isEmpty(accountName)) {
-            ParameterExpression<String> p = builder.parameter(String.class, "accountName");
-            criteria.add(builder.like(builder.upper(rootEntity.get("account").<String>get("name")), p));
-        }
-        if (!isEmpty(salesStages)) {
-            ParameterExpression<Set> p = builder.parameter(Set.class, "salesStages");
-            criteria.add(builder.in(rootEntity.get("salesStage")).value(p));
-        }
-
-        return criteria;
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, Root<Contact> rootEntity) {
+        return new ArrayList<Predicate>();
     }
 
     @Override
     public void setParameters(TypedQuery typedQuery) {
-        if (!isEmpty(accountName)) {
-            typedQuery.setParameter("accountName", "%" + accountName.toUpperCase() + "%");
-        }
-        if (!isEmpty(salesStages)) {
-            typedQuery.setParameter("salesStages", salesStages);
-        }
     }
 
     @Override
-    public Path buildOrderBy(Root<Opportunity> rootEntity) {
-        if (getOrderByPropertyId().equals("account.name")) {
-            return rootEntity.join("account", JoinType.LEFT).get("name");
+    public Path buildOrderBy(Root<Contact> rootEntity) {
+        if (getOrderByPropertyId().equals("mailingAddress.country")) {
+            return rootEntity.join("mailingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
+        } else if (getOrderByPropertyId().equals("mailingAddress.street")) {
+            return rootEntity.join("mailingAddress", JoinType.LEFT).get("street");
+        } else if (getOrderByPropertyId().equals("mailingAddress.city")) {
+            return rootEntity.join("mailingAddress", JoinType.LEFT).get("city");
+        } else if (getOrderByPropertyId().equals("mailingAddress.state.code")) {
+            return rootEntity.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
         } else {
             return null;
         }
     }
 
     @Override
-    public void addFetchJoins(Root<Opportunity> rootEntity) {
-        rootEntity.fetch("account", JoinType.LEFT);
+    public void addFetchJoins(Root<Contact> rootEntity) {
+        rootEntity.fetch("mailingAddress", JoinType.LEFT).fetch("state", JoinType.LEFT);
     }
 
     @Override
     public String toString() {
-        return "OpportunityQuery{" +
-                "accountName='" + accountName + '\'' +
-                ", salesStages=" + salesStages +
+        return "RecentContactsQuery{" +
                 '}';
     }
-
 }

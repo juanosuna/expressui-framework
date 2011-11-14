@@ -55,6 +55,7 @@ import java.util.Collection;
 
 /**
  * Results containing entities in a to-many composition relationship.
+ *
  * @param <T> type of the entities in the results
  */
 public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRelationshipResults<T> implements WalkableResults {
@@ -71,6 +72,7 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
 
     /**
      * Get the EntityForm used for creating a new entity to add to relationship.
+     *
      * @return EntityForm component for entering new values into new entity
      */
     public abstract EntityForm<T> getEntityForm();
@@ -208,6 +210,8 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
         } else {
             previousSelectionCount = itemIds.size();
         }
+
+        getResultsTable().turnOnContentRefreshing();
 
         boolean isParentPropertyEditable = securityService.getCurrentUser().isEditAllowed(getParentEntityType().getName(),
                 getChildPropertyId());

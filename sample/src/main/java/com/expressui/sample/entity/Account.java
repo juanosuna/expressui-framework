@@ -47,7 +47,6 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotBlank;
-import org.joda.money.IllegalCurrencyException;
 
 import javax.annotation.Resource;
 import javax.persistence.*;
@@ -229,15 +228,6 @@ public class Account extends WritableEntity {
             } catch (Exception e) {
                 return null;
             }
-        }
-    }
-
-    public String getAnnualRevenueInUSDFormatted() {
-        BigDecimal amount = getAnnualRevenueInUSD();
-        if (amount == null) {
-            return null;
-        } else {
-            return "$" + defaultFormat.getNumberFormat().format(amount);
         }
     }
 

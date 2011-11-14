@@ -92,7 +92,7 @@ public class Address extends WritableEntity {
 
     @NotNull
     @NotBlank
-    @Size(min = 1, max = 16)
+    @Size(min = 1, max = 32)
     public String getStreet() {
         return street;
     }
@@ -103,7 +103,7 @@ public class Address extends WritableEntity {
 
     @NotNull
     @NotBlank
-    @Size(min = 1, max = 16)
+    @Size(min = 1, max = 32)
     public String getCity() {
         return city;
     }

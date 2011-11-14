@@ -41,8 +41,8 @@ import com.expressui.core.MainApplication;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.assertion.Assert;
-import com.expressui.core.view.util.MessageSource;
 import com.expressui.core.view.menu.ActionContextMenu;
+import com.expressui.core.view.util.MessageSource;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.ItemClickEvent;
@@ -97,7 +97,6 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         super.postConstruct();
 
         getResultsTable().setMultiSelect(true);
-
         HorizontalLayout crudButtons = new HorizontalLayout();
         crudButtons.setMargin(false);
         crudButtons.setSpacing(true);
@@ -167,7 +166,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         editButton.setVisible(isEditAllowed);
 
         newButton.setVisible(securityService.getCurrentUser().isCreateAllowed(getEntityType().getName())
-            && isEditAllowed);
+                && isEditAllowed);
 
         deleteButton.setVisible(securityService.getCurrentUser().isDeleteAllowed(getEntityType().getName()));
     }
@@ -309,6 +308,8 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         } else {
             previousSelectionCount = itemIds.size();
         }
+
+        getResultsTable().turnOnContentRefreshing();
 
         boolean hasViewableFields = !getEntityForm().getFormFields().getViewableFormFields().isEmpty();
         boolean isViewAllowed = securityService.getCurrentUser().isViewAllowed(getEntityType().getName())

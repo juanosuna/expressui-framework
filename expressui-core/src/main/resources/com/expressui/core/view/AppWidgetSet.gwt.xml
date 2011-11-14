@@ -48,4 +48,10 @@
 
     <inherits name="org.vaadin.risto.stepper.widgetset.StepperWidgetset"/>
 
+    <inherits name="org.vaadin.sasha.portallayout.PortallayoutWidgetset"/>
+
+    <inherits name="org.vaadin.vaadinvisualizations.widgetset.VaadinvisualizationApplicationWidgetset"/>
+
+    <inherits name="org.vaadin.vol.demo.VolExampleAppWidgetset"/>
+
 </module>

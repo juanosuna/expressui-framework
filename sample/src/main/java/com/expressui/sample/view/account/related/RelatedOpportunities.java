@@ -39,6 +39,7 @@ package com.expressui.sample.view.account.related;
 
 import com.expressui.core.dao.ToManyRelationshipQuery;
 import com.expressui.core.view.field.DisplayFields;
+import com.expressui.core.view.field.format.JDKFormatPropertyFormatter;
 import com.expressui.core.view.tomanyrelationship.ToManyAggregationRelationshipResults;
 import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
 import com.expressui.sample.dao.OpportunityDao;
@@ -51,8 +52,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @SuppressWarnings("serial")
 @Component
@@ -105,11 +108,15 @@ public class RelatedOpportunities extends ToManyRelationship<Opportunity> {
             displayFields.setPropertyIds(new String[]{
                     "name",
                     "salesStage",
-                    "amountWeightedInUSDFormatted",
+                    "amountWeightedInUSD",
                     "expectedCloseDate"
             });
 
-            displayFields.setLabel("amountWeightedInUSDFormatted", "Weighted Amount");
+            displayFields.setLabel("amountWeightedInUSD", "Weighted Amount");
+            NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
+            numberFormat.setMaximumFractionDigits(0);
+            JDKFormatPropertyFormatter formatter = new JDKFormatPropertyFormatter(numberFormat);
+            displayFields.setPropertyFormatter("amountWeightedInUSD", formatter);
         }
 
         @Override
@@ -176,9 +183,6 @@ public class RelatedOpportunities extends ToManyRelationship<Opportunity> {
         public Path buildOrderBy(Root<Opportunity> rootEntity) {
             if (getOrderByPropertyId().equals("account.name")) {
                 return rootEntity.join("account", JoinType.LEFT).get("name");
-            }
-            if (getOrderByPropertyId().equals("amountWeightedInUSDFormatted")) {
-                return rootEntity.get("amountWeightedInUSD");
             } else {
                 return null;
             }

@@ -60,10 +60,10 @@ import java.util.List;
 public class SampleEntryPoints extends MainEntryPoints {
 
     @Resource
-    private ContactEntryPoint contactEntryPoint;
+    private AccountEntryPoint accountEntryPoint;
 
     @Resource
-    private AccountEntryPoint accountEntryPoint;
+    private ContactEntryPoint contactEntryPoint;
 
     @Resource
     private OpportunityEntryPoint opportunityEntryPoint;
@@ -81,8 +81,8 @@ public class SampleEntryPoints extends MainEntryPoints {
     @Override
     public List<MainEntryPoint> getEntryPoints() {
         List<MainEntryPoint> entryPoints = new ArrayList<MainEntryPoint>();
-        entryPoints.add(contactEntryPoint);
         entryPoints.add(accountEntryPoint);
+        entryPoints.add(contactEntryPoint);
         entryPoints.add(opportunityEntryPoint);
         entryPoints.add(userEntryPoint);
         entryPoints.add(roleEntryPoint);

@@ -84,7 +84,7 @@ public class ContactForm extends EntityForm<Contact> {
         formFields.setPosition("Overview", "doNotEmail", 4, 2);
 
         formFields.setPosition("Overview", "mainPhone", 5, 1);
-        formFields.setPosition("Overview", "mainPhone.phoneType", 5, 1);
+        formFields.setPosition("Overview", "mainPhoneType", 5, 1);
         formFields.setPosition("Overview", "doNotCall", 5, 2);
 
         formFields.setPosition("Overview", "assignedTo.loginName", 6, 1);
@@ -105,9 +105,9 @@ public class ContactForm extends EntityForm<Contact> {
         formFields.setPosition("Description", "description", 1, 1);
 
         formFields.setLabel("description", null);
-        formFields.setLabel("mainPhone.phoneType", null);
+        formFields.setLabel("mainPhoneType", null);
         formFields.setLabel("account.name", "Account");
-        formFields.setWidth("mainPhone.phoneType", 7, Sizeable.UNITS_EM);
+        formFields.setWidth("mainPhoneType", 7, Sizeable.UNITS_EM);
         formFields.setLabel("assignedTo.loginName", "Assigned to");
 
         formFields.addValidator("mainPhone", PhoneConversionValidator.class);

@@ -39,19 +39,17 @@ package com.expressui.core.view;
 
 import com.expressui.core.entity.security.AbstractUser;
 import com.expressui.core.security.SecurityService;
-import com.vaadin.ui.TabSheet;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Main entry points into the ExpressUI application, presented as a Vaadin Tabsheet.
- *
+ * <p/>
  * Each entry point is presented as a Vaadin Tab.
  */
-public abstract class MainEntryPoints extends TabSheet {
+public abstract class MainEntryPoints {
 
     @Resource
     private SecurityService securityService;
@@ -59,7 +57,7 @@ public abstract class MainEntryPoints extends TabSheet {
     /**
      * Get all the entry points of the application, including those the user doesn't
      * have permission to view.
-     *
+     * <p/>
      * Implementer should return all entry points and let ExpressUI take care of
      * security handling.
      *
@@ -101,23 +99,6 @@ public abstract class MainEntryPoints extends TabSheet {
     }
 
     /**
-     * Called after Spring constructs this bean. Overriding methods should call super.
-     */
-    @PostConstruct
-    protected void postConstruct() {
-        setSizeUndefined();
-        List<MainEntryPoint> entryPoints = getViewableEntryPoints();
-        for (MainEntryPoint entryPoint : entryPoints) {
-            addTab(entryPoint);
-        }
-
-        addListener(new TabChangeListener());
-        if (entryPoints.size() > 0) {
-            entryPoints.get(0).getResults().search();
-        }
-    }
-
-    /**
      * Can be overridden if any initialization is required after all Spring beans have been wired.
      * Overriding methods should call super.
      */
@@ -125,18 +106,6 @@ public abstract class MainEntryPoints extends TabSheet {
         List<MainEntryPoint> entryPoints = getViewableEntryPoints();
         for (EntryPoint entryPoint : entryPoints) {
             entryPoint.postWire();
-        }
-    }
-
-    private class TabChangeListener implements SelectedTabChangeListener {
-
-        @Override
-        public void selectedTabChange(SelectedTabChangeEvent event) {
-            MainEntryPoint entryPoint = (MainEntryPoint) getSelectedTab();
-            entryPoint.getResults().search();
-            if (entryPoint.getResults() instanceof CrudResults) {
-                ((CrudResults) entryPoint.getResults()).applySecurityToCRUDButtons();
-            }
         }
     }
 }

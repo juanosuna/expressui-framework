@@ -40,6 +40,7 @@ package com.expressui.core.dao;
 import com.expressui.core.util.ReflectionUtil;
 import org.apache.commons.beanutils.PropertyUtils;
 
+import javax.annotation.PostConstruct;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -65,6 +66,10 @@ public abstract class EntityQuery<T> {
 
     protected EntityQuery() {
         descriptors = PropertyUtils.getPropertyDescriptors(this);
+    }
+
+    @PostConstruct
+    public void postConstruct() {
     }
 
     /**

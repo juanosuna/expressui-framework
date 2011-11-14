@@ -77,8 +77,14 @@ public class Contact extends WritableEntity {
     @Embedded
     private Phone mainPhone;
 
+    @Enumerated(EnumType.STRING)
+    private PhoneType mainPhoneType = PhoneType.BUSINESS;
+
     @Embedded
     private Phone otherPhone;
+
+    @Enumerated(EnumType.STRING)
+    private PhoneType otherPhoneType = PhoneType.HOME;
 
     private boolean doNotCall;
 
@@ -211,12 +217,30 @@ public class Contact extends WritableEntity {
         this.mainPhone = mainPhone;
     }
 
+    @NotNull
+    public PhoneType getMainPhoneType() {
+        return mainPhoneType;
+    }
+
+    public void setMainPhoneType(PhoneType mainPhoneType) {
+        this.mainPhoneType = mainPhoneType;
+    }
+
     public Phone getOtherPhone() {
         return otherPhone;
     }
 
     public void setOtherPhone(Phone otherPhone) {
         this.otherPhone = otherPhone;
+    }
+
+    @NotNull
+    public PhoneType getOtherPhoneType() {
+        return otherPhoneType;
+    }
+
+    public void setOtherPhoneType(PhoneType otherPhoneType) {
+        this.otherPhoneType = otherPhoneType;
     }
 
     public boolean isDoNotCall() {

@@ -57,9 +57,6 @@ public class Phone implements Serializable {
     private Integer countryCode;
     private Long phoneNumber;
 
-    @Enumerated(EnumType.STRING)
-    private PhoneType phoneType = PhoneType.BUSINESS;
-
     public Phone() {
     }
 
@@ -109,12 +106,8 @@ public class Phone implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    @NotNull
-    public PhoneType getPhoneType() {
-        return phoneType;
-    }
-
-    public void setPhoneType(PhoneType phoneType) {
-        this.phoneType = phoneType;
+    @Override
+    public String toString() {
+        return getFormatted("US");
     }
 }

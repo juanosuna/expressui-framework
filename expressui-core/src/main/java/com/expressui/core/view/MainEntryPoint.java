@@ -37,19 +37,14 @@
 
 package com.expressui.core.view;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.view.field.LabelRegistry;
-import com.vaadin.terminal.ThemeResource;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.HorizontalLayout;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 /**
  * A main entry point for the user to work with entities of a particular type.
- *
+ * <p/>
  * The difference between main entry point and a regular entry point: a main entry point is presented to the user
  * as a Vaadin Tab in the initial "home page" of the application, a TabSheet. A regular entry point can be
  * presented anywhere in the application, e.g. a pop-up EntitySelect  also provides a search form
@@ -60,39 +55,16 @@ import javax.annotation.Resource;
 public abstract class MainEntryPoint<T> extends EntryPoint<T> {
 
     @Resource
-    private LabelRegistry labelDepot;
-
-    private Button logoutButton;
+    private LabelRegistry labelRegistry;
 
     @PostConstruct
     @Override
     public void postConstruct() {
         super.postConstruct();
 
-        labelDepot.putEntityLabel(getEntityType().getName(), getEntityCaption());
+        labelRegistry.putEntityLabel(getEntityType().getName(), getEntityCaption());
 
-        HorizontalLayout searchAndLogout = new HorizontalLayout();
-        searchAndLogout.setSizeFull();
-        searchAndLogout.addComponent(getSearchForm());
-
-        logoutButton = new Button(null);
-        logoutButton.setDescription(uiMessageSource.getMessage("mainApplication.logout"));
-        logoutButton.setSizeUndefined();
-        logoutButton.addStyleName("borderless");
-        logoutButton.setIcon(new ThemeResource("icons/16/logout.png"));
-
-        searchAndLogout.addComponent(logoutButton);
-        searchAndLogout.setComponentAlignment(logoutButton, Alignment.TOP_RIGHT);
-
-        addComponent(searchAndLogout);
+        addComponent(getSearchForm());
         addComponent(getResults());
-    }
-
-    @Override
-    public void postWire() {
-        super.postWire();
-
-        MainApplication.getInstance().setLogoutURL("mvc/login.do");
-        logoutButton.addListener(Button.ClickEvent.class, MainApplication.getInstance(), "logout");
     }
 }

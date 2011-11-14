@@ -45,7 +45,6 @@ import com.expressui.sample.entity.security.User;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.constraints.NotBlank;
-import org.joda.money.IllegalCurrencyException;
 
 import javax.annotation.Resource;
 import javax.persistence.*;
@@ -78,6 +77,9 @@ public class Opportunity extends WritableEntity {
     @Temporal(TemporalType.DATE)
     private Date expectedCloseDate;
 
+    @Temporal(TemporalType.DATE)
+    private Date actualCloseDate;
+
     private BigDecimal amount;
 
     @Index(name = "IDX_OPPORTUNITY_CURRENCY")
@@ -86,6 +88,8 @@ public class Opportunity extends WritableEntity {
     private Currency currency;
 
     private double probability;
+
+    private BigDecimal amountInUSD;
 
     private BigDecimal amountWeightedInUSD;
 
@@ -146,6 +150,14 @@ public class Opportunity extends WritableEntity {
         this.expectedCloseDate = expectedCloseDate;
     }
 
+    public Date getActualCloseDate() {
+        return actualCloseDate;
+    }
+
+    public void setActualCloseDate(Date actualCloseDate) {
+        this.actualCloseDate = actualCloseDate;
+    }
+
     @Min(0)
     public BigDecimal getAmount() {
         return amount;
@@ -155,6 +167,7 @@ public class Opportunity extends WritableEntity {
         if (!isEqual(this.amount, amount)) {
             this.amount = amount;
             amountWeightedInUSD = calculateAmountWeightedInUSD();
+            amountInUSD = calculateAmountInUSD();
         }
     }
 
@@ -170,6 +183,7 @@ public class Opportunity extends WritableEntity {
         if (!isEqual(this.currency, currency)) {
             this.currency = currency;
             amountWeightedInUSD = calculateAmountWeightedInUSD();
+            amountInUSD = calculateAmountInUSD();
         }
     }
 
@@ -203,12 +217,22 @@ public class Opportunity extends WritableEntity {
         }
     }
 
-    public String getAmountWeightedInUSDFormatted() {
-        BigDecimal amount = getAmountWeightedInUSD();
-        if (amount == null) {
+    public BigDecimal getAmountInUSD() {
+        return amountInUSD;
+    }
+
+
+    private BigDecimal calculateAmountInUSD() {
+        if (getAmount() == null || getCurrency() == null) {
             return null;
         } else {
-            return "$" + defaultFormat.getNumberFormat().format(amount);
+            try {
+                BigDecimal amountInUSD = ecbfxService.convert(getAmount(), getCurrency().getId(), "USD");
+                amountInUSD = amountInUSD.setScale(0, RoundingMode.HALF_EVEN);
+                return amountInUSD.setScale(0, RoundingMode.HALF_EVEN);
+            } catch (Exception e) {
+                return null;
+            }
         }
     }
 

@@ -76,7 +76,7 @@ public class ContactDaoTest extends AbstractDomainTest {
         contact.setFirstName("Juan");
         contact.setLastName("Osuna");
         contact.setMainPhone(new Phone("(704) 555-1212", "US"));
-        contact.getMainPhone().setPhoneType(PhoneType.BUSINESS);
+        contact.setMainPhoneType(PhoneType.BUSINESS);
 
         Address address = new Address(AddressType.MAILING);
         address.setStreet("100 Main St.");

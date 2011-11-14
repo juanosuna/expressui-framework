@@ -35,48 +35,24 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.core.view;
+package com.expressui.sample.entity.derived;
 
-import javax.annotation.PostConstruct;
+import java.math.BigDecimal;
 
-/**
- * An entry point is simply comprised of a search form and a list of results.
- *
- * @param <T> type of business entity for this entry point
- */
-public abstract class EntryPoint<T> extends EntityComponent<T> {
+public class TotalYearSales {
+    private int year;
+    private BigDecimal totalSales;
 
-    protected EntryPoint() {
-        super();
+    public TotalYearSales(int year, BigDecimal totalSales) {
+        this.year = year;
+        this.totalSales = totalSales;
     }
 
-    /**
-     * Get the search form component of this entry point
-     *
-     * @return search form component
-     */
-    public abstract SearchForm getSearchForm();
-
-    /**
-     * Get the results component for this entry point.
-     *
-     * @return
-     */
-    public abstract Results<T> getResults();
-
-    @PostConstruct
-    @Override
-    public void postConstruct() {
-        super.postConstruct();
-
-        addStyleName("p-entry-point");
+    public int getYear() {
+        return year;
     }
 
-    @Override
-    public void postWire() {
-        super.postWire();
-        getSearchForm().setResults(getResults());
-        getSearchForm().postWire();
-        getResults().postWire();
+    public BigDecimal getTotalSales() {
+        return totalSales;
     }
 }

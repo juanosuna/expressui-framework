@@ -37,9 +37,9 @@
 
 package com.expressui.core.view.entityselect;
 
-import com.expressui.core.view.util.MessageSource;
 import com.expressui.core.view.Results;
 import com.expressui.core.view.menu.ActionContextMenu;
+import com.expressui.core.view.util.MessageSource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -92,6 +92,9 @@ public abstract class EntitySelectResults<T> extends Results<T> {
      */
     public void selectionChanged() {
         Object itemId = getResultsTable().getValue();
+
+        getResultsTable().turnOnContentRefreshing();
+
         if (itemId instanceof Collection) {
             if (((Collection) itemId).size() > 0) {
                 selectButton.setEnabled(true);
@@ -114,7 +117,7 @@ public abstract class EntitySelectResults<T> extends Results<T> {
     /**
      * Set a listener to be invoked when use selects entity.
      *
-     * @param target target object to be invoked
+     * @param target     target object to be invoked
      * @param methodName listener method to be invoked
      */
     public void setSelectButtonListener(Object target, String methodName) {

@@ -59,6 +59,7 @@ import java.util.Collection;
 
 /**
  * Results containing entities in a to-many relationship.
+ *
  * @param <T> type of the entities in the results
  */
 public abstract class ToManyRelationshipResults<T> extends Results<T> {
@@ -92,12 +93,14 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
 
     /**
      * Get the property id in the parent entity for referencing the child entity
+     *
      * @return child property id
      */
     public abstract String getChildPropertyId();
 
     /**
      * Get the property id in the child entity for referencing the parent entity
+     *
      * @return parent property id
      */
     public abstract String getParentPropertyId();
@@ -183,6 +186,7 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
 
     /**
      * Get the type of the parent entity in this relationship
+     *
      * @return type of parent entity
      */
     public Class getParentEntityType() {
@@ -275,6 +279,8 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
     public void selectionChanged() {
         boolean isEditable = securityService.getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId());
 
+        getResultsTable().turnOnContentRefreshing();
+
         Collection itemIds = (Collection) getResultsTable().getValue();
         if (itemIds.size() > 0 && isEditable && !isViewMode()) {
             actionContextMenu.setActionEnabled("entityResults.remove", true);
@@ -289,6 +295,7 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
 
     /**
      * Ask if this component is in view-only mode.
+     *
      * @return true if in view-only mode
      */
     public boolean isViewMode() {

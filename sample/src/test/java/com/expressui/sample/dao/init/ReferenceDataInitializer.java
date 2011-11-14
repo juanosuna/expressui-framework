@@ -150,6 +150,10 @@ public class ReferenceDataInitializer {
         return random(stateDao.findAll());
     }
 
+    public State randomState(Country country) {
+        return random(stateDao.findByCountry(country));
+    }
+
     public static int random(int start, int end) {
         if (start == end) {
             return start;

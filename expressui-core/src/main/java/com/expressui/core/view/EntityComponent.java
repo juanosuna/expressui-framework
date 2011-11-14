@@ -37,6 +37,7 @@
 
 package com.expressui.core.view;
 
+import com.expressui.core.util.ReflectionUtil;
 import com.expressui.core.view.util.MessageSource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.ComponentContainer;
@@ -48,6 +49,7 @@ import javax.annotation.Resource;
 
 /**
  * Any generic entity component that contains some results.
+ *
  * @param <T>
  */
 public abstract class EntityComponent<T> extends CustomComponent {
@@ -62,11 +64,13 @@ public abstract class EntityComponent<T> extends CustomComponent {
     }
 
     /**
-     * Get results.
+     * Type of business entity for this entry point.
      *
-     * @return results
+     * @return type of business entity for this entry point
      */
-    public abstract Results getResults();
+    public Class getEntityType() {
+        return ReflectionUtil.getGenericArgumentType(getClass());
+    }
 
     /**
      * Get the caption used to represent this type of entity, e.g. to be displayed in tab.

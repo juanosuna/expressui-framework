@@ -243,9 +243,9 @@
             </dependency>
 
             <!--<dependency>-->
-                <!--<groupId>org.vaadin.addons</groupId>-->
-                <!--<artifactId>chameleon</artifactId>-->
-                <!--<version>1.0.2</version>-->
+            <!--<groupId>org.vaadin.addons</groupId>-->
+            <!--<artifactId>chameleon</artifactId>-->
+            <!--<version>1.0.2</version>-->
             <!--</dependency>-->
 
             <dependency>
@@ -255,10 +255,52 @@
             </dependency>
 
             <!--<dependency>-->
-                <!--<groupId>org.vaadin.addons</groupId>-->
-                <!--<artifactId>chameleon-vaadin</artifactId>-->
-                <!--<version>1.0.2</version>-->
+            <!--<groupId>org.vaadin.addons</groupId>-->
+            <!--<artifactId>chameleon-vaadin</artifactId>-->
+            <!--<version>1.0.2</version>-->
             <!--</dependency>-->
+
+            <dependency>
+                <groupId>org.vaadin.addons</groupId>
+                <artifactId>portallayout</artifactId>
+                <version>1.1.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.vaadin.addons</groupId>
+                <artifactId>visualizationsforvaadin</artifactId>
+                <version>1.1.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.gwt.google-apis</groupId>
+                <artifactId>gwt-visualization</artifactId>
+                <version>1.1.2</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.vaadin.vol</groupId>
+                <artifactId>openlayers-wrapper</artifactId>
+                <version>0.9.1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.vaadin.addons</groupId>
+                <artifactId>tableexport</artifactId>
+                <version>1.2.6</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>3.8-beta4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.vaadin.addons</groupId>
+                <artifactId>sessionguard</artifactId>
+                <version>0.0.4</version>
+            </dependency>
 
             <!-- Misc -->
             <dependency>
@@ -517,7 +559,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <execute />
+                                        <execute/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>

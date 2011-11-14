@@ -133,8 +133,6 @@ public class AccountQuery extends StructuredEntityQuery<Account> {
             return rootEntity.join("billingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
         } else if (getOrderByPropertyId().equals("billingAddress.state.code")) {
             return rootEntity.join("billingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
-        } else if (getOrderByPropertyId().equals("annualRevenueInUSDFormatted")) {
-            return rootEntity.get("annualRevenueInUSD");
         } else {
             return null;
         }

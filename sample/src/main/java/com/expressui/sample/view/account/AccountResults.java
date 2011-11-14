@@ -40,14 +40,16 @@ package com.expressui.sample.view.account;
 import com.expressui.core.view.CrudResults;
 import com.expressui.core.view.ResultsTable;
 import com.expressui.core.view.field.DisplayFields;
+import com.expressui.core.view.field.format.JDKFormatPropertyFormatter;
 import com.expressui.sample.dao.AccountDao;
 import com.expressui.sample.entity.Account;
-import com.expressui.sample.util.PhonePropertyFormatter;
 import com.vaadin.terminal.Sizeable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 @Component
 @Scope("prototype")
@@ -86,7 +88,7 @@ public class AccountResults extends CrudResults<Account> {
                 "billingAddress.country",
                 "mainPhone",
                 "numberOfEmployees",
-                "annualRevenueInUSDFormatted",
+                "annualRevenueInUSD",
                 "lastModified",
                 "modifiedBy"
         });
@@ -94,9 +96,13 @@ public class AccountResults extends CrudResults<Account> {
         displayFields.setLabel("billingAddress.state.code", "State");
         displayFields.setLabel("mainPhone", "Phone");
         displayFields.setLabel("numberOfEmployees", "# of Employees");
-        displayFields.setLabel("annualRevenueInUSDFormatted", "Annual Revenue");
+        displayFields.setLabel("annualRevenueInUSD", "Annual Revenue");
         displayFields.setSortable("mainPhone", false);
-        displayFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
+
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
+        numberFormat.setMaximumFractionDigits(0);
+        JDKFormatPropertyFormatter formatter = new JDKFormatPropertyFormatter(numberFormat);
+        displayFields.setPropertyFormatter("annualRevenueInUSD", formatter);
     }
 
     @Override
