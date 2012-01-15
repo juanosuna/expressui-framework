@@ -39,17 +39,21 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <context:component-scan base-package="com.expressui.sample"/>
+    <context:annotation-config/>
 
     <!-- Vaadin application controller -->
     <bean id="applicationServlet" class="org.springframework.web.servlet.mvc.ServletWrappingController"
           p:servletClass="com.expressui.core.util.SpringApplicationServlet">
         <property name="initParameters">
             <props>
-                <prop key="application">com.expressui.core.MainApplication</prop>
-                <prop key="productionMode">true</prop>
-                <prop key="widgetset">com.expressui.core.view.AppWidgetSet</prop>
+                <prop key="application">${mainApplication}</prop>
+                <prop key="productionMode">${productionMode}</prop>
+                <prop key="widgetset">${widgetset}</prop>
             </props>
         </property>
     </bean>
@@ -63,18 +67,41 @@
                 <entry key="/UIDL" value-ref="applicationServlet"/>
                 <entry key="/UIDL/**/*" value-ref="applicationServlet"/>
                 <entry key="/VAADIN/**/*" value-ref="applicationServlet"/>
-                <entry key="/mvc/login.do" value-ref="loginController"/>
             </map>
         </property>
     </bean>
 
-    <bean name="loginController" class="org.springframework.web.servlet.mvc.ParameterizableViewController">
-        <property name="viewName" value="login"/>
-    </bean>
+    <!--<bean id="loginController" class="org.springframework.web.servlet.mvc.ServletWrappingController"-->
+    <!--p:servletClass="com.expressui.core.util.SpringApplicationServlet">-->
+    <!--<property name="initParameters">-->
+    <!--<props>-->
+    <!--<prop key="application">${loginApplication}</prop>-->
+    <!--<prop key="productionMode">${productionMode}</prop>-->
+    <!--<prop key="widgetset">${widgetset}</prop>-->
+    <!--</props>-->
+    <!--</property>-->
+    <!--</bean>-->
+
+    <!--<bean name="loginController" class="org.springframework.web.servlet.mvc.ParameterizableViewController">-->
+    <!--<property name="viewName" value="login"/>-->
+    <!--</bean>-->
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
+
+    <bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"
+          p:order="1" p:alwaysUseFullPath="true"/>
+
+    <!-- Enables annotated POJO @Controllers. -->
+    <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"
+          p:alwaysUseFullPath="true"/>
+
+    <bean class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
+
+    <!-- Controller which maps URLs to view names. Nice for static pages. -->
+    <!-- Views are handled by Tiles. -->
+    <bean id="urlFilenameViewController" class="org.springframework.web.servlet.mvc.UrlFilenameViewController"/>
 
 </beans>

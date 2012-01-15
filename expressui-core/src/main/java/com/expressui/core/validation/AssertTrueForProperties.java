@@ -69,6 +69,7 @@ public @interface AssertTrueForProperties {
      * For example, if zipCode is not consistent with selected country, then setting errorProperty
      * to zipCode would cause the validation error to be displayed with the zipCode field rather
      * than country field.
+     *
      * @return property associated with error, from end-user perspective
      */
     String errorProperty();

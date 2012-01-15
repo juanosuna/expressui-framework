@@ -84,6 +84,10 @@ public class SpringApplicationContext implements ApplicationContextAware {
         return applicationContext.getBean(beanName);
     }
 
+    public static <T> T getBean(Class<T> requiredType) {
+        return applicationContext.getBean(requiredType);
+    }
+
     /**
      * If the application context has been set, autowire the given target.
      * This is a helpful utility method for injecting Spring beans into a non-Spring-bean.
@@ -110,11 +114,23 @@ public class SpringApplicationContext implements ApplicationContextAware {
 
     /**
      * Find bean of a given type, declared with given generic argument type.
-     * @param type type to search for
+     *
+     * @param type                type to search for
      * @param genericArgumentType generic argument type declared on the bean
      * @param <T>
      * @return found bean
      */
+    public static <T> T mustGetBeanByTypeAndGenericArgumentType(Class<T> type, Class genericArgumentType) {
+        T foundBean = getBeanByTypeAndGenericArgumentType(type, genericArgumentType);
+
+        if (foundBean != null) {
+            return foundBean;
+        } else {
+            throw new RuntimeException("No bean found for type " + type
+                    + " and generic argument type " + genericArgumentType);
+        }
+    }
+
     public static <T> T getBeanByTypeAndGenericArgumentType(Class<T> type, Class genericArgumentType) {
         Set<T> beans = getBeansByType(type);
 
@@ -125,23 +141,18 @@ public class SpringApplicationContext implements ApplicationContextAware {
                 if (foundBean == null) {
                     foundBean = bean;
                 } else {
-                    throw new RuntimeException("More than on one bean found for type " + type
-                            + " and generic argument type " + genericArgumentType);
+                    return null;
                 }
             }
         }
 
-        if (foundBean != null) {
-            return foundBean;
-        } else {
-            throw new RuntimeException("No bean found for type " + type
-                    + " and generic argument type " + genericArgumentType);
-        }
+        return foundBean;
     }
 
     /**
      * Find all beans of a given type, declared with given generic argument type.
-     * @param type type to search for
+     *
+     * @param type                type to search for
      * @param genericArgumentType generic argument type declared on the bean
      * @param <T>
      * @return found beans

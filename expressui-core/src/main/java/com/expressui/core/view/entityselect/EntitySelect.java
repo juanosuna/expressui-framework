@@ -38,7 +38,8 @@
 package com.expressui.core.view.entityselect;
 
 import com.expressui.core.MainApplication;
-import com.expressui.core.view.EntryPoint;
+import com.expressui.core.view.EntityComponent;
+import com.expressui.core.view.form.SearchForm;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
@@ -52,13 +53,20 @@ import javax.annotation.PostConstruct;
  *
  * @param <T> type of entity to be selected
  */
-public abstract class EntitySelect<T> extends EntryPoint<T> {
+public abstract class EntitySelect<T> extends EntityComponent<T> {
 
     private Window popupWindow;
 
     protected EntitySelect() {
         super();
     }
+
+    /**
+     * Get the search form component of this page
+     *
+     * @return search form component
+     */
+    public abstract SearchForm getSearchForm();
 
     /**
      * Get the results component presented to user for selection.
@@ -92,6 +100,14 @@ public abstract class EntitySelect<T> extends EntryPoint<T> {
 
         addComponent(getSearchForm());
         addComponent(getResults());
+    }
+
+    @Override
+    public void postWire() {
+        super.postWire();
+        getSearchForm().setResults(getResults());
+        getSearchForm().postWire();
+        getResults().postWire();
     }
 
     /**

@@ -38,9 +38,11 @@
 package com.expressui.sample.dao.init;
 
 import com.expressui.core.dao.EntityDao;
+import com.expressui.core.dao.GenericDao;
+import com.expressui.core.dao.ReferenceEntityDao;
 import com.expressui.domain.geonames.GeoNamesService;
 import com.expressui.domain.geoplanet.GeoPlanetService;
-import com.expressui.sample.dao.*;
+import com.expressui.sample.dao.CurrencyDao;
 import com.expressui.sample.entity.*;
 import com.expressui.sample.entity.Currency;
 import org.springframework.stereotype.Service;
@@ -96,22 +98,10 @@ public class ReferenceDataInitializer {
     ));
 
     @Resource
-    private AccountTypeDao accountTypeDao;
+    private GenericDao genericDao;
 
     @Resource
-    private IndustryDao industryDao;
-
-    @Resource
-    private LeadSourceDao leadSourceDao;
-
-    @Resource
-    private SalesStageDao salesStageDao;
-
-    @Resource
-    private StateDao stateDao;
-
-    @Resource
-    private CountryDao countryDao;
+    private ReferenceEntityDao referenceEntityDao;
 
     @Resource
     private CurrencyDao currencyDao;
@@ -123,35 +113,23 @@ public class ReferenceDataInitializer {
     private GeoNamesService geoNamesService;
 
     public AccountType randomAccountType() {
-        return random(accountTypeDao.findAll());
+        return random(genericDao.findAll(AccountType.class));
     }
 
     public Industry randomIndustry() {
-        return random(industryDao.findAll());
+        return random(genericDao.findAll(Industry.class));
     }
 
     public LeadSource randomLeadSource() {
-        return random(leadSourceDao.findAll());
+        return random(referenceEntityDao.findAll(LeadSource.class));
     }
 
     public SalesStage randomSalesStage() {
-        return random(salesStageDao.findAll());
+        return random(referenceEntityDao.findAll(SalesStage.class));
     }
 
     public Currency randomCurrency() {
         return random(currencyDao.findAll());
-    }
-
-    public Country randomCountry() {
-        return random(countryDao.findAll());
-    }
-
-    public State randomState() {
-        return random(stateDao.findAll());
-    }
-
-    public State randomState(Country country) {
-        return random(stateDao.findByCountry(country));
     }
 
     public static int random(int start, int end) {
@@ -170,52 +148,57 @@ public class ReferenceDataInitializer {
         return dao.countAll() > 0;
     }
 
+    public static boolean hasExistingEntities(Class clazz, @SuppressWarnings("rawtypes") GenericDao genericDao) {
+        return genericDao.countAll(clazz) > 0;
+    }
+
     public void initialize() {
         initializeReferenceEntities();
-        if (!hasExistingEntities(countryDao) && !hasExistingEntities(currencyDao)) {
+        if (!hasExistingEntities(Country.class, genericDao)
+                && !hasExistingEntities(currencyDao)) {
             initializeCountriesAndCurrencies();
         }
-        if (!hasExistingEntities(stateDao)) {
+        if (!hasExistingEntities(State.class, genericDao)) {
             initializeStates();
         }
     }
 
     private void initializeReferenceEntities() {
-        if (!hasExistingEntities(accountTypeDao)) {
+        if (!hasExistingEntities(AccountType.class, genericDao)) {
             for (String accountType : ACCOUNT_TYPES) {
                 AccountType referenceEntity = new AccountType(accountType);
-                accountTypeDao.persist(referenceEntity);
+                genericDao.persist(referenceEntity);
             }
-            accountTypeDao.flush();
+            genericDao.flush();
         }
 
-        if (!hasExistingEntities(industryDao)) {
+        if (!hasExistingEntities(Industry.class, genericDao)) {
             for (String industry : INDUSTRIES) {
                 Industry referenceEntity = new Industry(industry);
-                industryDao.persist(referenceEntity);
+                genericDao.persist(referenceEntity);
             }
-            industryDao.flush();
+            genericDao.flush();
         }
 
-        if (!hasExistingEntities(leadSourceDao)) {
+        if (!hasExistingEntities(LeadSource.class, referenceEntityDao)) {
             for (int i = 0, lead_sourcesLength = LEAD_SOURCES.length; i < lead_sourcesLength; i++) {
                 String leadSource = LEAD_SOURCES[i];
                 LeadSource referenceEntity = new LeadSource(leadSource);
                 referenceEntity.setSortOrder(i);
-                leadSourceDao.persist(referenceEntity);
+                referenceEntityDao.persist(referenceEntity);
             }
-            leadSourceDao.flush();
+            referenceEntityDao.flush();
         }
 
-        if (!hasExistingEntities(salesStageDao)) {
+        if (!hasExistingEntities(SalesStage.class, referenceEntityDao)) {
             for (int i = 0, sales_stagesLength = SALES_STAGES.length; i < sales_stagesLength; i++) {
                 String salesStage = SALES_STAGES[i];
                 SalesStage referenceEntity = new SalesStage(salesStage);
                 referenceEntity.setSortOrder(i);
                 referenceEntity.setProbability(SALES_STAGE_PROBABILITIES.get(salesStage));
-                salesStageDao.persist(referenceEntity);
+                referenceEntityDao.persist(referenceEntity);
             }
-            salesStageDao.flush();
+            referenceEntityDao.flush();
         }
     }
 
@@ -243,11 +226,11 @@ public class ReferenceDataInitializer {
                     }
                     currencyDao.persist(currency);
                 }
-                countryDao.persist(country);
+                genericDao.persist(country);
             }
         }
 
-        countryDao.flush();
+        genericDao.flush();
     }
 
     private void initializeStates() {
@@ -255,9 +238,9 @@ public class ReferenceDataInitializer {
         for (GeoPlanetService.Place geoPlanetState : geoPlanetStates) {
             Country country = new Country(geoPlanetState.country.code);
             State state = new State(geoPlanetState.admin1.code, geoPlanetState.admin1.name, country);
-            stateDao.persist(state);
+            genericDao.persist(state);
         }
 
-        stateDao.flush();
+        genericDao.flush();
     }
 }

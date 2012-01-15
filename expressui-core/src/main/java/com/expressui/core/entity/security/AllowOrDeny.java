@@ -52,6 +52,7 @@ public enum AllowOrDeny {
 
     /**
      * Get name for displaying to end user
+     *
      * @return name for displaying to end user
      */
     public String getDisplayName() {

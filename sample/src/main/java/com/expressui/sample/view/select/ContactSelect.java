@@ -40,18 +40,19 @@ package com.expressui.sample.view.select;
 import com.expressui.core.view.entityselect.EntitySelect;
 import com.expressui.core.view.entityselect.EntitySelectResults;
 import com.expressui.core.view.field.DisplayFields;
-import com.expressui.sample.dao.ContactDao;
+import com.expressui.sample.dao.query.ContactQuery;
 import com.expressui.sample.entity.Contact;
-import com.expressui.sample.util.PhonePropertyFormatter;
-import com.expressui.sample.view.contact.ContactQuery;
+import com.expressui.sample.util.formatter.PhonePropertyFormatter;
 import com.expressui.sample.view.contact.ContactSearchForm;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"serial"})
 public class ContactSelect extends EntitySelect<Contact> {
 
@@ -77,19 +78,11 @@ public class ContactSelect extends EntitySelect<Contact> {
     }
 
     @Component
-    @Scope("prototype")
+    @Scope(SCOPE_PROTOTYPE)
     public static class ContactSelectResults extends EntitySelectResults<Contact> {
 
         @Resource
-        private ContactDao contactDao;
-
-        @Resource
         private ContactQuery contactQuery;
-
-        @Override
-        public ContactDao getEntityDao() {
-            return contactDao;
-        }
 
         @Override
         public ContactQuery getEntityQuery() {
@@ -98,13 +91,13 @@ public class ContactSelect extends EntitySelect<Contact> {
 
         @Override
         public void configureFields(DisplayFields displayFields) {
-            displayFields.setPropertyIds(new String[]{
+            displayFields.setPropertyIds(
                     "name",
                     "title",
                     "mailingAddress.state.code",
                     "mailingAddress.country",
                     "mainPhone"
-            });
+            );
 
             displayFields.setLabel("mailingAddress.state.code", "State");
             displayFields.setLabel("mainPhone", "Phone");

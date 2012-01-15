@@ -58,7 +58,7 @@ public class GeoNamesServiceTest extends AbstractServiceTest {
 
     @Test
     public void getCountries() {
-        Map<String,GeoNamesService.CountryInfo> countries = geoNamesService.getCountries();
+        Map<String, GeoNamesService.CountryInfo> countries = geoNamesService.getCountries();
         assertNotNull(countries);
         assertTrue(countries.size() > 0);
     }

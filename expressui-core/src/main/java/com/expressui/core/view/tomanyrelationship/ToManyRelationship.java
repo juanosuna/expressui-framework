@@ -54,6 +54,7 @@ public abstract class ToManyRelationship<T> extends EntityComponent<T> {
 
     /**
      * Get the results UI component for the displaying the many of the relationship
+     *
      * @return results UI component
      */
     public abstract ToManyRelationshipResults getResults();

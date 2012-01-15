@@ -37,9 +37,10 @@
 
 package com.expressui.sample.view.account;
 
-import com.expressui.core.view.SearchForm;
 import com.expressui.core.view.field.FormFields;
+import com.expressui.core.view.form.SearchForm;
 import com.expressui.sample.dao.StateDao;
+import com.expressui.sample.dao.query.AccountQuery;
 import com.expressui.sample.entity.Country;
 import com.expressui.sample.entity.State;
 import com.vaadin.data.Property;
@@ -47,12 +48,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope("prototype")
-@SuppressWarnings({ "rawtypes", "serial" })
+@Scope(SCOPE_PROTOTYPE)
+@SuppressWarnings({"rawtypes", "serial"})
 public class AccountSearchForm extends SearchForm<AccountQuery> {
 
     @Resource
@@ -65,7 +67,7 @@ public class AccountSearchForm extends SearchForm<AccountQuery> {
         formFields.setPosition("country", 1, 2);
         formFields.setPosition("states", 1, 3);
 
-        formFields.setSelectItems("states", new ArrayList());
+        formFields.clearSelectItems("states");
         formFields.setVisible("states", false);
         formFields.setMultiSelectDimensions("states", 5, 15);
 

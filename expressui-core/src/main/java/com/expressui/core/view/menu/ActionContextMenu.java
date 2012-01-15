@@ -50,10 +50,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 /**
  * Context menu (right-mouse click) for handling any actions
  */
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 @Component
 public class ActionContextMenu implements Action.Handler {
 
@@ -65,8 +67,8 @@ public class ActionContextMenu implements Action.Handler {
     /**
      * Add action to the context menu.
      *
-     * @param caption capture for display context menu item
-     * @param target target object to invoke when user selects action
+     * @param caption    capture for display context menu item
+     * @param target     target object to invoke when user selects action
      * @param methodName target method to invoke when user selects action
      */
     public void addAction(String caption, Object target, String methodName) {

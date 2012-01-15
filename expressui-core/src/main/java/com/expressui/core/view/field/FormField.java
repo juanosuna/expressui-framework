@@ -38,12 +38,13 @@
 package com.expressui.core.view.field;
 
 import com.expressui.core.dao.EntityDao;
+import com.expressui.core.dao.ReferenceEntityDao;
 import com.expressui.core.entity.ReferenceEntity;
 import com.expressui.core.util.*;
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.validation.NumberConversionValidator;
-import com.expressui.core.view.EntityForm;
 import com.expressui.core.view.field.format.EmptyPropertyFormatter;
+import com.expressui.core.view.form.EntityForm;
 import com.vaadin.addon.beanvalidation.BeanValidationValidator;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
@@ -54,20 +55,17 @@ import com.vaadin.terminal.ErrorMessage;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 
+import javax.annotation.Resource;
 import javax.persistence.Lob;
 import java.util.*;
 
 /**
  * A field in a form. Wraps Vaadin field component, while providing other features and integration with ExpressUI.
- *
+ * <p/>
  * Automatically generates labels with required asterisks.
  * Keeps track of row and column positions in the form grid layout.
  */
 public class FormField extends DisplayField {
-    /**
-     * Property id for displaying captions in select fields.
-     */
-    public static final String DEFAULT_DISPLAY_PROPERTY_ID = "displayName";
 
     /**
      * Default text field width in EM
@@ -93,8 +91,13 @@ public class FormField extends DisplayField {
     private Integer defaultWidth;
     private boolean hasConversionError;
 
+    @Resource
+    private ReferenceEntityDao referenceEntityDao;
+
     FormField(FormFields formFields, String propertyId) {
         super(formFields, propertyId);
+
+        SpringApplicationContext.autowire(this);
     }
 
     /**
@@ -226,7 +229,7 @@ public class FormField extends DisplayField {
 
     /**
      * Get the underlying Vaadin field. The field is intelligently and automatically generated based on the property type.
-     *
+     * <p/>
      * In most cases, applications will not need to access Vaadin APIs directly. However,
      * it is exposed in case Vaadin features are needed that are not available in ExpressUI.
      *
@@ -243,7 +246,7 @@ public class FormField extends DisplayField {
 
     /**
      * Get the underlying Vaadin field. The field is intelligently and automatically generated based on the property type.
-     *
+     * <p/>
      * In most cases, applications will not need to access Vaadin APIs directly. However,
      * it is exposed in case Vaadin features are needed that are not available in ExpressUI.
      *
@@ -256,7 +259,7 @@ public class FormField extends DisplayField {
     /**
      * Set the underlying Vaadin field, overriding the automatically generated one.
      *
-     * @param field Vaadin field
+     * @param field              Vaadin field
      * @param initializeDefaults allow ExpressUI to initialize the default settings for Vaadin field
      */
     public void setField(Field field, boolean initializeDefaults) {
@@ -325,8 +328,7 @@ public class FormField extends DisplayField {
      * Manually set width of the field and turn off auto width adjustment.
      *
      * @param width size of width
-     * @param unit unit of measurement defined in Sizeable
-     *
+     * @param unit  unit of measurement defined in Sizeable
      * @see Sizeable
      */
     public void setWidth(float width, int unit) {
@@ -338,8 +340,7 @@ public class FormField extends DisplayField {
      * Set height of the field.
      *
      * @param height size of width
-     * @param unit unit of measurement defined in Sizeable
-     *
+     * @param unit   unit of measurement defined in Sizeable
      * @see Sizeable
      */
     public void setHeight(float height, int unit) {
@@ -373,8 +374,7 @@ public class FormField extends DisplayField {
      * Set the menu options in a select.
      *
      * @param items list of items
-     *
-     * @see FormField.DEFAULT_DISPLAY_PROPERTY_ID
+     * @see ReferenceEntity.DISPLAY_PROPERTY
      */
     public void setSelectItems(List items) {
         // could be either collection or single item
@@ -418,7 +418,7 @@ public class FormField extends DisplayField {
     /**
      * Set menu options in a select.
      *
-     * @param items map of items where key is bound to entity and value is the display caption
+     * @param items       map of items where key is bound to entity and value is the display caption
      * @param nullCaption caption displayed to represent null or no selection
      */
     public void setSelectItems(Map<Object, String> items, String nullCaption) {
@@ -426,8 +426,10 @@ public class FormField extends DisplayField {
         Assert.PROGRAMMING.assertTrue(field instanceof AbstractSelect,
                 "property " + getPropertyId() + " is not a AbstractSelect field");
         AbstractSelect selectField = (AbstractSelect) field;
-        selectField.setItemCaptionMode(Select.ITEM_CAPTION_MODE_EXPLICIT);
 
+        Object previouslySelectedValue = selectField.getValue();
+
+        selectField.setItemCaptionMode(Select.ITEM_CAPTION_MODE_EXPLICIT);
         selectField.removeAllItems();
 
         if (nullCaption != null) {
@@ -440,6 +442,9 @@ public class FormField extends DisplayField {
             String caption = items.get(item);
             selectField.addItem(item);
             selectField.setItemCaption(item, caption);
+            if (previouslySelectedValue != null && previouslySelectedValue.equals(item)) {
+                selectField.setValue(item);
+            }
         }
 
         autoAdjustSelectWidth();
@@ -461,7 +466,7 @@ public class FormField extends DisplayField {
     /**
      * Set the dimensions of a multi-select menu
      *
-     * @param rows height
+     * @param rows    height
      * @param columns width
      */
     public void setMultiSelectDimensions(int rows, int columns) {
@@ -488,7 +493,7 @@ public class FormField extends DisplayField {
     /**
      * Add listener for changes in this field's value.
      *
-     * @param target target object to invoke
+     * @param target     target object to invoke
      * @param methodName name of method to invoke
      */
     public void addValueChangeListener(Object target, String methodName) {
@@ -806,7 +811,11 @@ public class FormField extends DisplayField {
             } else if (ReferenceEntity.class.isAssignableFrom(valueType)) {
                 EntityDao propertyDao = SpringApplicationContext.getBeanByTypeAndGenericArgumentType(EntityDao.class,
                         valueType);
-                referenceEntities = propertyDao.findAll();
+                if (propertyDao != null) {
+                    referenceEntities = propertyDao.findAll();
+                } else {
+                    referenceEntities = referenceEntityDao.findAll(valueType);
+                }
             }
 
             if (referenceEntities != null) {
@@ -911,7 +920,7 @@ public class FormField extends DisplayField {
         field.setWidth(DEFAULT_SELECT_FIELD_WIDTH, Sizeable.UNITS_EM);
         field.setItemCaptionMode(Select.ITEM_CAPTION_MODE_PROPERTY);
         field.setNullSelectionAllowed(true);
-        field.setItemCaptionPropertyId(DEFAULT_DISPLAY_PROPERTY_ID);
+        field.setItemCaptionPropertyId(ReferenceEntity.DISPLAY_PROPERTY);
     }
 
     /**

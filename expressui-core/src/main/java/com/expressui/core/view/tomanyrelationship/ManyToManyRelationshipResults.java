@@ -89,6 +89,7 @@ public abstract class ManyToManyRelationshipResults<T, A extends IdentifiableEnt
 
     /**
      * Implementation should create the appropriate associate entity for linking the given value to the parent
+     *
      * @param value entity to add to the relationship
      * @return the newly created association entity
      */

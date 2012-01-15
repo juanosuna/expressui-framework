@@ -38,12 +38,12 @@
 package com.expressui.core.view.tomanyrelationship;
 
 import com.expressui.core.MainApplication;
-import com.expressui.core.dao.ToManyRelationshipQuery;
+import com.expressui.core.dao.query.ToManyRelationshipQuery;
 import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.BeanPropertyType;
 import com.expressui.core.util.assertion.Assert;
-import com.expressui.core.view.Results;
 import com.expressui.core.view.menu.ActionContextMenu;
+import com.expressui.core.view.results.Results;
 import com.expressui.core.view.util.MessageSource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Alignment;
@@ -157,9 +157,9 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
      */
     public void setReferencesToParentAndPersist(T... values) {
         for (T value : values) {
-            T referenceValue = getEntityDao().getReference(value);
+            T referenceValue = getGenericDao().getReference(value);
             setReferenceToParent(referenceValue);
-            getEntityDao().persist(referenceValue);
+            getGenericDao().persist(referenceValue);
         }
         searchImpl(false);
     }
@@ -257,7 +257,7 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
      */
     public void removeConfirmed(T... values) {
         for (T value : values) {
-            value = getEntityDao().getReference(value);
+            value = getGenericDao().getReference(value);
             try {
                 PropertyUtils.setProperty(value, getParentPropertyId(), null);
             } catch (IllegalAccessException e) {
@@ -267,7 +267,7 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
-            getEntityDao().persist(value);
+            getGenericDao().persist(value);
         }
         searchImpl(false);
         removeButton.setEnabled(false);

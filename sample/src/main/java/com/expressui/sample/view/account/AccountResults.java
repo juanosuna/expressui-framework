@@ -37,11 +37,11 @@
 
 package com.expressui.sample.view.account;
 
-import com.expressui.core.view.CrudResults;
-import com.expressui.core.view.ResultsTable;
 import com.expressui.core.view.field.DisplayFields;
 import com.expressui.core.view.field.format.JDKFormatPropertyFormatter;
-import com.expressui.sample.dao.AccountDao;
+import com.expressui.core.view.results.CrudResults;
+import com.expressui.core.view.results.ResultsTable;
+import com.expressui.sample.dao.query.AccountQuery;
 import com.expressui.sample.entity.Account;
 import com.vaadin.terminal.Sizeable;
 import org.springframework.context.annotation.Scope;
@@ -51,24 +51,18 @@ import javax.annotation.Resource;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"serial"})
 public class AccountResults extends CrudResults<Account> {
-
-    @Resource
-    private AccountDao accountDao;
 
     @Resource
     private AccountQuery accountQuery;
 
     @Resource
     private AccountForm accountForm;
-
-    @Override
-    public AccountDao getEntityDao() {
-        return accountDao;
-    }
 
     @Override
     public AccountQuery getEntityQuery() {
@@ -82,7 +76,7 @@ public class AccountResults extends CrudResults<Account> {
 
     @Override
     public void configureFields(DisplayFields displayFields) {
-        displayFields.setPropertyIds(new String[]{
+        displayFields.setPropertyIds(
                 "name",
                 "billingAddress.state.code",
                 "billingAddress.country",
@@ -91,7 +85,7 @@ public class AccountResults extends CrudResults<Account> {
                 "annualRevenueInUSD",
                 "lastModified",
                 "modifiedBy"
-        });
+        );
 
         displayFields.setLabel("billingAddress.state.code", "State");
         displayFields.setLabel("mainPhone", "Phone");

@@ -53,22 +53,21 @@ public class MethodDelegate {
     /**
      * Construct method delegate on a given target with given method name and parameter types.
      *
-     * @param target instance for later executing the method
-     * @param methodName name of the method
+     * @param target         instance for later executing the method
+     * @param methodName     name of the method
      * @param parameterTypes parameter types defined in the method signature
      */
     public MethodDelegate(Object target, String methodName, Class<?>... parameterTypes) {
         this.target = target;
         method = ReflectionUtil.getMethod(target.getClass(), methodName, parameterTypes);
         Assert.PROGRAMMING.assertTrue(method != null, "Cannot find method " + target.getClass().getName()
-                +"." + methodName + parameterTypes == null ? "" : " (" + parameterTypes + ")");
+                + "." + methodName + parameterTypes == null ? "" : " (" + parameterTypes + ")");
     }
 
     /**
      * Execute the method with the give arguments.
      *
      * @param args arguments for passing to the method
-     *
      * @return value returned by the method
      */
     public Object execute(Object... args) {

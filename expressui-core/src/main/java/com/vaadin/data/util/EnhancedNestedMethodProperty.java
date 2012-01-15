@@ -37,8 +37,6 @@
 
 package com.vaadin.data.util;
 
-import com.vaadin.terminal.ErrorMessage;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;

@@ -40,11 +40,13 @@ package com.expressui.core.view.export;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 /**
  * Parameters for exporting excel. See <a href="https://vaadin.com/directory#addon/tableexport">TableExport Add-On</a>.
  */
 @Component
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 public class ExportParameters {
     private String exportFilename = "export.xls";
     private String workbookName = "Export";

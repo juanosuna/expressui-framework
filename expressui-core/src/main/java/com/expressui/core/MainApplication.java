@@ -37,36 +37,48 @@
 
 package com.expressui.core;
 
+import com.expressui.core.entity.security.User;
 import com.expressui.core.security.SecurityService;
-import com.expressui.core.view.CrudResults;
-import com.expressui.core.view.Dashboard;
-import com.expressui.core.view.MainEntryPoint;
-import com.expressui.core.view.MainEntryPoints;
+import com.expressui.core.util.SpringApplicationContext;
+import com.expressui.core.view.ViewResource;
+import com.expressui.core.view.field.LabelRegistry;
+import com.expressui.core.view.menu.MainMenuBar;
+import com.expressui.core.view.page.Page;
+import com.expressui.core.view.page.PageConversation;
+import com.expressui.core.view.page.SearchPage;
+import com.expressui.core.view.results.CrudResults;
 import com.expressui.core.view.util.MessageSource;
 import com.vaadin.Application;
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
+import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ChameleonTheme;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.AccessDeniedException;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.dialogs.DefaultConfirmDialogFactory;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.List;
+import javax.servlet.http.HttpSession;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Main Vaadin Application that is tied to the user's session. The user's MainApplication
  * is always tied to the current thread and can be looked up by calling getInstance().
- * Instance of MainEntryPoints is injected into the MainApplication and used to launch
+ * Instance of MainPages is injected into the MainApplication and used to launch
  * the application.
  */
-public class MainApplication extends Application implements HttpServletRequestListener {
+public abstract class MainApplication extends Application implements ViewResource, HttpServletRequestListener {
 
     private static final int WARNING_PERIOD_MINS = 2;
 
@@ -76,18 +88,53 @@ public class MainApplication extends Application implements HttpServletRequestLi
     private MessageSource messageSource;
 
     @Resource
-    private Dashboard dashboard;
-
-    @Resource
-    private MainEntryPoints mainEntryPoints;
-
-    @Resource
     private SecurityService securityService;
 
     @Resource
     protected MessageSource uiMessageSource;
 
-    private Button logoutButton;
+    @Resource
+    private LabelRegistry labelRegistry;
+
+    private Window mainWindow;
+
+    private VerticalLayout mainLayout;
+
+    private TabSheet pageLayout;
+
+    private PageConversation currentPageConversation;
+
+    public abstract void configureLeftMenuBar(MainMenuBar mainMenuBar);
+
+    public abstract void configureRightMenuBar(MainMenuBar mainMenuBar);
+
+    public String getCustomTheme() {
+        return "expressUiTheme";
+    }
+
+    public PageConversation getCurrentPageConversation() {
+        return currentPageConversation;
+    }
+
+    public PageConversation beginPageConversation(String id) {
+        currentPageConversation = new PageConversation(id);
+
+        return currentPageConversation;
+    }
+
+    public void endPageConversation() {
+        currentPageConversation = null;
+    }
+
+    @PostConstruct
+    @Override
+    public void postConstruct() {
+    }
+
+    @Override
+    public void postWire() {
+        refreshView();
+    }
 
     /**
      * Get instance of MainApplication associated with current session.
@@ -105,15 +152,6 @@ public class MainApplication extends Application implements HttpServletRequestLi
         }
     }
 
-    /**
-     * Get the main entry points to the application that comprise the "home page"
-     *
-     * @return MainEntryPoints
-     */
-    public MainEntryPoints getMainEntryPoints() {
-        return mainEntryPoints;
-    }
-
     @Override
     public void onRequestStart(HttpServletRequest request, HttpServletResponse response) {
         MainApplication.setInstance(this);
@@ -128,70 +166,136 @@ public class MainApplication extends Application implements HttpServletRequestLi
     public void init() {
         setInstance(this);
 
-        setTheme(mainEntryPoints.getTheme());
+        setTheme(getCustomTheme());
         customizeConfirmDialogStyle();
 
-        Window mainWindow = new Window(messageSource.getMessage("mainApplication.caption"));
+        mainWindow = new Window(messageSource.getMessage("mainApplication.caption"));
         mainWindow.addStyleName("p-main-window");
-        mainWindow.getContent().setSizeUndefined();
         setMainWindow(mainWindow);
 
-        VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.setSizeUndefined();
-        mainWindow.setContent(verticalLayout);
+        mainLayout = new VerticalLayout();
+        mainLayout.setDebugId("e-mainLayout");
+        mainLayout.setWidth(100, Sizeable.UNITS_PERCENTAGE);
+        mainWindow.setContent(mainLayout);
 
-        logoutButton = new Button(null);
-        logoutButton.setDescription(uiMessageSource.getMessage("mainApplication.logout"));
-        logoutButton.setSizeUndefined();
-        logoutButton.addStyleName("borderless");
-        logoutButton.setIcon(new ThemeResource("icons/16/logout.png"));
-        setLogoutURL("mvc/login.do");
-        logoutButton.addListener(Button.ClickEvent.class, MainApplication.getInstance(), "logout");
+        setLogoutURL("app?restartApplication");
 
-        verticalLayout.addComponent(logoutButton);
-        verticalLayout.setComponentAlignment(logoutButton, Alignment.TOP_RIGHT);
-
-        verticalLayout.addComponent(createTabSheet());
 
 //        SessionGuard sessionGuard = new SessionGuard();
 //        sessionGuard.setTimeoutWarningPeriod(WARNING_PERIOD_MINS);
 //        mainWindow.addComponent(sessionGuard);
 
-        dashboard.postWire();
-        mainEntryPoints.postWire();
+        postWire();
     }
 
-    private TabSheet createTabSheet() {
-        TabSheet tabSheet = new TabSheet();
-        tabSheet.addStyleName("p-main-entry-points");
-        tabSheet.setSizeUndefined();
+    public void refreshView() {
+        mainLayout.removeAllComponents();
 
-        tabSheet.addTab(dashboard);
-        List<MainEntryPoint> entryPoints = mainEntryPoints.getViewableEntryPoints();
-        for (MainEntryPoint entryPoint : entryPoints) {
-            tabSheet.addTab(entryPoint);
-        }
+        HorizontalLayout menuBarLayout = createMainMenuBar();
 
-        tabSheet.addListener(new TabChangeListener());
-        if (entryPoints.size() > 0) {
-            entryPoints.get(0).getResults().search();
-        }
+        mainLayout.addComponent(menuBarLayout);
 
-        return tabSheet;
+        pageLayout = createPageLayout();
+        mainLayout.addComponent(pageLayout);
     }
 
-    private class TabChangeListener implements TabSheet.SelectedTabChangeListener {
+    private HorizontalLayout createMainMenuBar() {
+        HorizontalLayout menuBarLayout = new HorizontalLayout();
+        menuBarLayout.addStyleName("p-page-bar");
+        menuBarLayout.setWidth(100, Sizeable.UNITS_PERCENTAGE);
 
-        @Override
-        public void selectedTabChange(TabSheet.SelectedTabChangeEvent event) {
-            if (event.getTabSheet().getSelectedTab() instanceof MainEntryPoint) {
-                MainEntryPoint entryPoint = (MainEntryPoint) event.getTabSheet().getSelectedTab();
-                entryPoint.getResults().search();
-                if (entryPoint.getResults() instanceof CrudResults) {
-                    ((CrudResults) entryPoint.getResults()).applySecurityToCRUDButtons();
-                }
+        MenuBar leftMenuBar = new MenuBar();
+        leftMenuBar.setSizeUndefined();
+        leftMenuBar.setAutoOpen(true);
+        leftMenuBar.setHtmlContentAllowed(true);
+
+        MainMenuBar leftMainMenuBar = new MainMenuBar(leftMenuBar);
+        configureLeftMenuBar(leftMainMenuBar);
+        menuBarLayout.addComponent(leftMenuBar);
+
+        MenuBar rightMenuBar = new MenuBar();
+        rightMenuBar.setSizeUndefined();
+        rightMenuBar.setAutoOpen(true);
+        rightMenuBar.setHtmlContentAllowed(true);
+
+        MainMenuBar rightMainMenuBar = new MainMenuBar(rightMenuBar);
+        configureRightMenuBar(rightMainMenuBar);
+        menuBarLayout.addComponent(rightMenuBar);
+        menuBarLayout.setComponentAlignment(rightMenuBar, Alignment.MIDDLE_RIGHT);
+
+        return menuBarLayout;
+    }
+
+    private TabSheet createPageLayout() {
+        TabSheet pageLayout = new TabSheet();
+        pageLayout.setDebugId("e-page-layout");
+//        pageLayout.setSizeFull();
+        pageLayout.setWidth(100, Sizeable.UNITS_PERCENTAGE);
+        pageLayout.addStyleName("p-main-tabsheet");
+        return pageLayout;
+    }
+
+    public void selectPage(Class<? extends Page> pageClass) {
+        Page page = loadPageBean(pageClass);
+
+        Page previousPage = (Page) pageLayout.getSelectedTab();
+        if (previousPage != null) {
+            Scope scope = previousPage.getClass().getAnnotation(Scope.class);
+            if (scope != null && scope.value().equals("page")) {
+                pageLayout.removeComponent(previousPage);
             }
         }
+
+        boolean componentFound = false;
+        Iterator<Component> components = pageLayout.getComponentIterator();
+        while (components.hasNext()) {
+            Component component = components.next();
+            if (page.equals(component)) {
+                pageLayout.setSelectedTab(component);
+                componentFound = true;
+            }
+        }
+
+        if (!componentFound) {
+            page.postWire();
+
+            if (page instanceof SearchPage) {
+                SearchPage searchPage = (SearchPage) page;
+                searchPage.getResults().search();
+                if (searchPage.getResults() instanceof CrudResults) {
+                    ((CrudResults) searchPage.getResults()).applySecurityToCRUDButtons();
+                }
+            }
+            pageLayout.addTab(page);
+            pageLayout.setSelectedTab(page);
+
+            page.onLoad();
+        }
+    }
+
+    public void loadAllPageBeans() {
+        Map<String, String> typeLabels = labelRegistry.getTypeLabels();
+        Set<Class> classes = new HashSet<Class>();
+        for (String type : typeLabels.keySet()) {
+            try {
+                Class clazz = Class.forName(type);
+                classes.add(clazz);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        for (Class clazz : classes) {
+            if (Page.class.isAssignableFrom(clazz)) {
+                loadPageBean(clazz);
+            }
+        }
+    }
+
+    public Page loadPageBean(Class<? extends Page> pageClass) {
+        beginPageConversation(pageClass.getName());
+
+        return SpringApplicationContext.getBean(pageClass);
     }
 
     private void customizeConfirmDialogStyle() {
@@ -291,5 +395,17 @@ public class MainApplication extends Application implements HttpServletRequestLi
     public void logout() {
         securityService.logout();
         close();
+        WebApplicationContext context = (WebApplicationContext) getContext();
+        HttpSession httpSession = context.getHttpSession();
+        httpSession.invalidate();
+    }
+
+    public LabelRegistry getLabelRegistry() {
+        return labelRegistry;
+    }
+
+    public boolean isPageViewAllowed(String type) {
+        User currentUser = securityService.getCurrentUser();
+        return currentUser.isViewAllowed(type);
     }
 }

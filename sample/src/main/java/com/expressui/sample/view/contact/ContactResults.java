@@ -37,10 +37,10 @@
 
 package com.expressui.sample.view.contact;
 
-import com.expressui.core.view.CrudResults;
-import com.expressui.core.view.ResultsTable;
 import com.expressui.core.view.field.DisplayFields;
-import com.expressui.sample.dao.ContactDao;
+import com.expressui.core.view.results.CrudResults;
+import com.expressui.core.view.results.ResultsTable;
+import com.expressui.sample.dao.query.ContactQuery;
 import com.expressui.sample.entity.Contact;
 import com.expressui.sample.view.account.AccountForm;
 import com.vaadin.terminal.Sizeable;
@@ -49,13 +49,12 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"serial"})
 public class ContactResults extends CrudResults<Contact> {
-
-    @Resource
-    private ContactDao contactDao;
 
     @Resource
     private ContactQuery contactQuery;
@@ -65,11 +64,6 @@ public class ContactResults extends CrudResults<Contact> {
 
     @Resource
     private AccountForm accountForm;
-
-    @Override
-    public ContactDao getEntityDao() {
-        return contactDao;
-    }
 
     @Override
     public ContactQuery getEntityQuery() {
@@ -83,7 +77,7 @@ public class ContactResults extends CrudResults<Contact> {
 
     @Override
     public void configureFields(DisplayFields displayFields) {
-        displayFields.setPropertyIds(new String[]{
+        displayFields.setPropertyIds(
                 "firstName",
                 "lastName",
                 "account.name",
@@ -91,7 +85,7 @@ public class ContactResults extends CrudResults<Contact> {
                 "mailingAddress.country",
                 "lastModified",
                 "modifiedBy"
-        });
+        );
 
         displayFields.setLabel("mailingAddress.state.code", "State");
         displayFields.setLabel("account.name", "Account");

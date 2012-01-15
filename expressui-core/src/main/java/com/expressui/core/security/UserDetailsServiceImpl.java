@@ -37,19 +37,25 @@
 
 package com.expressui.core.security;
 
-import com.expressui.core.entity.security.AbstractUser;
+import com.expressui.core.dao.security.UserDao;
+import com.expressui.core.entity.security.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import javax.annotation.Resource;
 
 /**
  * Loads UserDetails by username by integrating Spring Security with ExpressUI SecurityService
  */
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    @Resource
+    private UserDao userDao;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        AbstractUser user = SecurityService.findUser(username);
+        User user = userDao.findByNaturalId("loginName", username);
 
         return new UserDetailsImpl(user);
     }

@@ -41,9 +41,8 @@ import com.expressui.core.view.entityselect.EntitySelect;
 import com.expressui.core.view.entityselect.EntitySelectResults;
 import com.expressui.core.view.field.DisplayFields;
 import com.expressui.core.view.field.format.JDKFormatPropertyFormatter;
-import com.expressui.sample.dao.OpportunityDao;
+import com.expressui.sample.dao.query.OpportunityQuery;
 import com.expressui.sample.entity.Opportunity;
-import com.expressui.sample.view.opportunity.OpportunityQuery;
 import com.expressui.sample.view.opportunity.OpportunitySearchForm;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -52,8 +51,10 @@ import javax.annotation.Resource;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"serial"})
 public class OpportunitySelect extends EntitySelect<Opportunity> {
 
@@ -79,19 +80,11 @@ public class OpportunitySelect extends EntitySelect<Opportunity> {
     }
 
     @Component
-    @Scope("prototype")
+    @Scope(SCOPE_PROTOTYPE)
     public static class OpportunitySelectResults extends EntitySelectResults<Opportunity> {
 
         @Resource
-        private OpportunityDao opportunityDao;
-
-        @Resource
         private OpportunityQuery opportunityQuery;
-
-        @Override
-        public OpportunityDao getEntityDao() {
-            return opportunityDao;
-        }
 
         @Override
         public OpportunityQuery getEntityQuery() {
@@ -100,12 +93,12 @@ public class OpportunitySelect extends EntitySelect<Opportunity> {
 
         @Override
         public void configureFields(DisplayFields displayFields) {
-            displayFields.setPropertyIds(new String[]{
+            displayFields.setPropertyIds(
                     "name",
                     "salesStage",
                     "amountWeightedInUSD",
                     "expectedCloseDate"
-            });
+            );
 
             displayFields.setLabel("amountWeightedInUSD", "Weighted Amount");
             NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);

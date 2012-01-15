@@ -155,12 +155,35 @@
         CREATE boolean not null,
         DELETE boolean not null,
         EDIT boolean not null,
-        ENTITY_TYPE varchar(64) not null,
         FIELD varchar(255),
+        TARGET_TYPE varchar(64) not null,
         VIEW boolean not null,
         ROLE_ID bigint,
         primary key (ID),
-        unique (ENTITY_TYPE, FIELD)
+        unique (TARGET_TYPE, FIELD)
+    );
+
+    create table SAMPLE.PROFILE (
+        ID bigint not null,
+        CREATED timestamp not null,
+        CREATED_BY varchar(255) not null,
+        LAST_MODIFIED timestamp not null,
+        MODIFIED_BY varchar(255) not null,
+        VERSION integer,
+        UUID varchar(255) not null unique,
+        COMPANY varchar(64) not null,
+        DO_NOT_CALL boolean not null,
+        DO_NOT_EMAIL boolean not null,
+        EMAIL varchar(255) not null,
+        FIRST_NAME varchar(64) not null,
+        LAST_NAME varchar(64) not null,
+        MAIN_PHONE_COUNTRY_CODE integer,
+        MAIN_PHONE_PHONE_NUMBER bigint,
+        MAIN_PHONE_TYPE varchar(255) not null,
+        TITLE varchar(64),
+        ADDRESS_ID bigint not null,
+        USER_ID bigint not null,
+        primary key (ID)
     );
 
     create table SAMPLE.ROLE (
@@ -367,7 +390,26 @@
         foreign key (LEAD_SOURCE_ID) 
         references SAMPLE.LEAD_SOURCE;
 
-    create index PERMISSIONIDX_PERMISSION_ROLE on SAMPLE.PERMISSION (ROLE_ID);
+    create index IDX_PERMISSION_ROLE on SAMPLE.PERMISSION (ROLE_ID);
+
+    alter table SAMPLE.PERMISSION 
+        add constraint FK_PERMISSION_ROLE 
+        foreign key (ROLE_ID) 
+        references SAMPLE.ROLE;
+
+    create index IDX_PROFILE_MAILING_ADDRESS on SAMPLE.PROFILE (ADDRESS_ID);
+
+    create index IDX_PROFILE_USER on SAMPLE.PROFILE (USER_ID);
+
+    alter table SAMPLE.PROFILE 
+        add constraint FK_PROFILE_MAILING_ADDRESS 
+        foreign key (ADDRESS_ID) 
+        references SAMPLE.ADDRESS;
+
+    alter table SAMPLE.PROFILE 
+        add constraint FK_PROFILE_USER 
+        foreign key (USER_ID) 
+        references SAMPLE.USER;
 
     create index IDX_STATE_COUNTRY on SAMPLE.STATE (COUNTRY_ID);
 
@@ -376,15 +418,19 @@
         foreign key (COUNTRY_ID) 
         references SAMPLE.COUNTRY;
 
-    create index USER_ROLEIDX_USER_ROLE_ROLE on SAMPLE.USER_ROLE (ROLE_ID);
+    create index IDX_USER_ROLE_ROLE on SAMPLE.USER_ROLE (ROLE_ID);
 
-    create index USER_ROLEIDX_USER_ROLE_USER on SAMPLE.USER_ROLE (USER_ID);
+    create index IDX_USER_ROLE_USER on SAMPLE.USER_ROLE (USER_ID);
 
-    create sequence SAMPLE.SEQ_ABSTRACT_PERMISSION;
+    alter table SAMPLE.USER_ROLE 
+        add constraint FK_USER_ROLE_ROLE 
+        foreign key (ROLE_ID) 
+        references SAMPLE.ROLE;
 
-    create sequence SAMPLE.SEQ_ABSTRACT_ROLE;
-
-    create sequence SAMPLE.SEQ_ABSTRACT_USER;
+    alter table SAMPLE.USER_ROLE 
+        add constraint FK_USER_ROLE_USER 
+        foreign key (USER_ID) 
+        references SAMPLE.USER;
 
     create sequence SAMPLE.SEQ_ACCOUNT;
 
@@ -393,3 +439,11 @@
     create sequence SAMPLE.SEQ_CONTACT;
 
     create sequence SAMPLE.SEQ_OPPORTUNITY;
+
+    create sequence SAMPLE.SEQ_PERMISSION;
+
+    create sequence SAMPLE.SEQ_PROFILE;
+
+    create sequence SAMPLE.SEQ_ROLE;
+
+    create sequence SAMPLE.SEQ_USER;

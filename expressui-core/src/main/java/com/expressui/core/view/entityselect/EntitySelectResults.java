@@ -37,8 +37,8 @@
 
 package com.expressui.core.view.entityselect;
 
-import com.expressui.core.view.Results;
 import com.expressui.core.view.menu.ActionContextMenu;
+import com.expressui.core.view.results.Results;
 import com.expressui.core.view.util.MessageSource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;

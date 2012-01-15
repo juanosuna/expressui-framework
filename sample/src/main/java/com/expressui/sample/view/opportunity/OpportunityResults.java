@@ -37,11 +37,11 @@
 
 package com.expressui.sample.view.opportunity;
 
-import com.expressui.core.view.CrudResults;
-import com.expressui.core.view.ResultsTable;
 import com.expressui.core.view.field.DisplayFields;
 import com.expressui.core.view.field.format.JDKFormatPropertyFormatter;
-import com.expressui.sample.dao.OpportunityDao;
+import com.expressui.core.view.results.CrudResults;
+import com.expressui.core.view.results.ResultsTable;
+import com.expressui.sample.dao.query.OpportunityQuery;
 import com.expressui.sample.entity.Opportunity;
 import com.vaadin.terminal.Sizeable;
 import org.springframework.context.annotation.Scope;
@@ -51,24 +51,18 @@ import javax.annotation.Resource;
 import java.text.NumberFormat;
 import java.util.Locale;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"serial"})
 public class OpportunityResults extends CrudResults<Opportunity> {
-
-    @Resource
-    private OpportunityDao opportunityDao;
 
     @Resource
     private OpportunityQuery opportunityQuery;
 
     @Resource
     private OpportunityForm opportunityForm;
-
-    @Override
-    public OpportunityDao getEntityDao() {
-        return opportunityDao;
-    }
 
     @Override
     public OpportunityQuery getEntityQuery() {
@@ -82,14 +76,14 @@ public class OpportunityResults extends CrudResults<Opportunity> {
 
     @Override
     public void configureFields(DisplayFields displayFields) {
-        displayFields.setPropertyIds(new String[]{
+        displayFields.setPropertyIds(
                 "name",
                 "salesStage",
                 "amountWeightedInUSD",
                 "expectedCloseDate",
                 "lastModified",
                 "modifiedBy"
-        });
+        );
 
         displayFields.setLabel("amountWeightedInUSD", "Weighted Amount");
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);

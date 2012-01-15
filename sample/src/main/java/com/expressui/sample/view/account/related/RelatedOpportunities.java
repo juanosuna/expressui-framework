@@ -37,29 +37,24 @@
 
 package com.expressui.sample.view.account.related;
 
-import com.expressui.core.dao.ToManyRelationshipQuery;
 import com.expressui.core.view.field.DisplayFields;
 import com.expressui.core.view.field.format.JDKFormatPropertyFormatter;
 import com.expressui.core.view.tomanyrelationship.ToManyAggregationRelationshipResults;
 import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
-import com.expressui.sample.dao.OpportunityDao;
-import com.expressui.sample.entity.Account;
+import com.expressui.sample.dao.query.RelatedOpportunitiesQuery;
 import com.expressui.sample.entity.Opportunity;
 import com.expressui.sample.view.select.OpportunitySelect;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
-@SuppressWarnings("serial")
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 public class RelatedOpportunities extends ToManyRelationship<Opportunity> {
 
     @Resource
@@ -76,22 +71,14 @@ public class RelatedOpportunities extends ToManyRelationship<Opportunity> {
     }
 
     @Component
-    @Scope("prototype")
+    @Scope(SCOPE_PROTOTYPE)
     public static class RelatedOpportunitiesResults extends ToManyAggregationRelationshipResults<Opportunity> {
-
-        @Resource
-        private OpportunityDao opportunityDao;
 
         @Resource
         private RelatedOpportunitiesQuery relatedOpportunitiesQuery;
 
         @Resource
         private OpportunitySelect opportunitySelect;
-
-        @Override
-        public OpportunityDao getEntityDao() {
-            return opportunityDao;
-        }
 
         @Override
         public RelatedOpportunitiesQuery getEntityQuery() {
@@ -105,12 +92,12 @@ public class RelatedOpportunities extends ToManyRelationship<Opportunity> {
 
         @Override
         public void configureFields(DisplayFields displayFields) {
-            displayFields.setPropertyIds(new String[]{
+            displayFields.setPropertyIds(
                     "name",
                     "salesStage",
                     "amountWeightedInUSD",
                     "expectedCloseDate"
-            });
+            );
 
             displayFields.setLabel("amountWeightedInUSD", "Weighted Amount");
             NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
@@ -132,72 +119,6 @@ public class RelatedOpportunities extends ToManyRelationship<Opportunity> {
         @Override
         public String getEntityCaption() {
             return "Opportunities";
-        }
-    }
-
-    @Component
-    @Scope("prototype")
-    @SuppressWarnings("rawtypes")
-    public static class RelatedOpportunitiesQuery extends ToManyRelationshipQuery<Opportunity, Account> {
-
-        @Resource
-        private OpportunityDao opportunityDao;
-
-        private Account account;
-
-        @Override
-        public void setParent(Account parent) {
-            this.account = parent;
-        }
-
-        @Override
-        public Account getParent() {
-            return account;
-        }
-
-        @Override
-        public List<Opportunity> execute() {
-            return opportunityDao.execute(this);
-        }
-
-        @Override
-        public List<Predicate> buildCriteria(CriteriaBuilder builder, Root<Opportunity> rootEntity) {
-            List<Predicate> criteria = new ArrayList<Predicate>();
-
-            if (!isEmpty(account)) {
-                ParameterExpression<Account> p = builder.parameter(Account.class, "account");
-                criteria.add(builder.equal(rootEntity.get("account"), p));
-            }
-
-            return criteria;
-        }
-
-        @Override
-        public void setParameters(TypedQuery typedQuery) {
-            if (!isEmpty(account)) {
-                typedQuery.setParameter("account", account);
-            }
-        }
-
-        @Override
-        public Path buildOrderBy(Root<Opportunity> rootEntity) {
-            if (getOrderByPropertyId().equals("account.name")) {
-                return rootEntity.join("account", JoinType.LEFT).get("name");
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        public void addFetchJoins(Root<Opportunity> rootEntity) {
-            rootEntity.fetch("account", JoinType.LEFT);
-        }
-
-        @Override
-        public String toString() {
-            return "RelatedOpportunities{" +
-                    "account='" + account + '\'' +
-                    '}';
         }
     }
 }

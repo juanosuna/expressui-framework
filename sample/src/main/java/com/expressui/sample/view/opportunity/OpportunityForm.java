@@ -37,19 +37,21 @@
 
 package com.expressui.sample.view.opportunity;
 
-import com.expressui.core.view.EntityForm;
 import com.expressui.core.view.field.FormFields;
 import com.expressui.core.view.field.SelectField;
+import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.security.select.UserSelect;
 import com.expressui.sample.entity.Opportunity;
 import com.expressui.sample.view.select.AccountSelect;
-import com.expressui.sample.view.select.UserSelect;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"serial"})
 public class OpportunityForm extends EntityForm<Opportunity> {
 

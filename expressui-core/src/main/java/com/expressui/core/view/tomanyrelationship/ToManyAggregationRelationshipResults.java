@@ -44,12 +44,14 @@ import java.util.Collection;
 
 /**
  * Results containing entities in a to-many aggregation relationship.
+ *
  * @param <T> type of the entities in the results
  */
 public abstract class ToManyAggregationRelationshipResults<T> extends ToManyRelationshipResults<T> {
 
     /**
      * Get the EntitySelect component used to select an entity for adding to the relationship
+     *
      * @return EntitySelect component
      */
     public abstract EntitySelect<T> getEntitySelect();

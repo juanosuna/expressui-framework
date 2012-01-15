@@ -47,6 +47,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 @Repository
+@SuppressWarnings({"rawtypes"})
 public class OpportunityDao extends EntityDao<Opportunity, Long> {
 
     public List<TotalSalesStage> getSalesStageCounts() {
@@ -83,4 +84,5 @@ public class OpportunityDao extends EntityDao<Opportunity, Long> {
 
         return query.getResultList();
     }
+
 }

@@ -50,7 +50,6 @@ import java.util.Date;
  * This class also versions entities in order to handle concurrent optimistic writes gracefully.
  * Finally, any instances of this class are automatically autowired by Spring, allowing injection
  * of resources into entities.
- *
  */
 @MappedSuperclass
 @EntityListeners({AuditableEntity.WritableEntityListener.class})
@@ -97,6 +96,7 @@ public abstract class AuditableEntity implements IdentifiableEntity {
 
     /**
      * Gets the login name of the user who made the last modifications
+     *
      * @return login name of the user entity
      */
     public String getModifiedBy() {
@@ -114,38 +114,44 @@ public abstract class AuditableEntity implements IdentifiableEntity {
 
     /**
      * Gets the login name of the user who created this entity
+     *
      * @return login name of the user entity
      */
     public String getCreatedBy() {
         return createdBy;
     }
 
-    // todo see if this is really necessary
-    public void updateLastModified() {
-        new WritableEntityListener().onPreUpdate(this);
-    }
-
     public static class WritableEntityListener {
+
         @Resource
         private SecurityService securityService;
 
         public WritableEntityListener() {
-            SpringApplicationContext.autowire(this);
+        }
+
+        protected void autowire() {
+            if (securityService == null) {
+                SpringApplicationContext.autowire(this);
+            }
         }
 
         @PrePersist
         public void onPrePersist(AuditableEntity writableEntity) {
+            autowire();
+
             writableEntity.created = new Date();
             writableEntity.lastModified = writableEntity.created;
 
-            writableEntity.createdBy = securityService.getCurrentLoginName();
+            writableEntity.createdBy = securityService.getCurrentUser().getLoginName();
             writableEntity.modifiedBy = writableEntity.createdBy;
         }
 
         @PreUpdate
         public void onPreUpdate(AuditableEntity writableEntity) {
+            autowire();
+
             writableEntity.lastModified = new Date();
-            writableEntity.modifiedBy = securityService.getCurrentLoginName();
+            writableEntity.modifiedBy = securityService.getCurrentUser().getLoginName();
         }
     }
 }

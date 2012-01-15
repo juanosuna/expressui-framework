@@ -37,27 +37,23 @@
 
 package com.expressui.sample.view.account.related;
 
-import com.expressui.core.dao.ToManyRelationshipQuery;
+import com.expressui.core.dao.query.ToManyRelationshipQuery;
 import com.expressui.core.view.field.DisplayFields;
 import com.expressui.core.view.tomanyrelationship.ToManyAggregationRelationshipResults;
 import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
-import com.expressui.sample.dao.ContactDao;
-import com.expressui.sample.entity.Account;
+import com.expressui.sample.dao.query.RelatedContactsQuery;
 import com.expressui.sample.entity.Contact;
-import com.expressui.sample.util.PhonePropertyFormatter;
+import com.expressui.sample.util.formatter.PhonePropertyFormatter;
 import com.expressui.sample.view.select.ContactSelect;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.List;
 
-@SuppressWarnings("serial")
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 public class RelatedContacts extends ToManyRelationship<Contact> {
 
     @Resource
@@ -73,13 +69,10 @@ public class RelatedContacts extends ToManyRelationship<Contact> {
         return relatedContactsResults;
     }
 
+    @Component
+    @Scope(SCOPE_PROTOTYPE)
     @SuppressWarnings("rawtypes")
-	@Component
-    @Scope("prototype")
     public static class RelatedContactsResults extends ToManyAggregationRelationshipResults<Contact> {
-
-        @Resource
-        private ContactDao contactDao;
 
         @Resource
         private ContactSelect contactSelect;
@@ -88,29 +81,24 @@ public class RelatedContacts extends ToManyRelationship<Contact> {
         private RelatedContactsQuery relatedContactsQuery;
 
         @Override
-        public ContactDao getEntityDao() {
-            return contactDao;
-        }
-
-        @Override
         public ContactSelect getEntitySelect() {
             return contactSelect;
         }
 
-		@Override
+        @Override
         public ToManyRelationshipQuery getEntityQuery() {
             return relatedContactsQuery;
         }
 
         @Override
         public void configureFields(DisplayFields displayFields) {
-            displayFields.setPropertyIds(new String[]{
+            displayFields.setPropertyIds(
                     "name",
                     "title",
                     "mailingAddress.state.code",
                     "mailingAddress.country",
                     "mainPhone"
-            });
+            );
 
             displayFields.setLabel("mailingAddress.state.code", "State");
             displayFields.setLabel("mainPhone", "Phone");
@@ -133,76 +121,6 @@ public class RelatedContacts extends ToManyRelationship<Contact> {
         public String getEntityCaption() {
             return "Contacts";
         }
-    }
-
-    @Component
-    @Scope("prototype")
-    @SuppressWarnings("rawtypes")
-    public static class RelatedContactsQuery extends ToManyRelationshipQuery<Contact, Account> {
-
-        @Resource
-        private ContactDao contactDao;
-
-        private Account account;
-
-        @Override
-        public void setParent(Account parent) {
-            this.account = parent;
-        }
-
-        @Override
-        public Account getParent() {
-            return account;
-        }
-
-        @Override
-        public List<Contact> execute() {
-            return contactDao.execute(this);
-        }
-
-        @Override
-        public List<Predicate> buildCriteria(CriteriaBuilder builder, Root<Contact> rootEntity) {
-            List<Predicate> criteria = new ArrayList<Predicate>();
-
-            if (!isEmpty(account)) {
-                ParameterExpression<Account> p = builder.parameter(Account.class, "account");
-                criteria.add(builder.equal(rootEntity.get("account"), p));
-            }
-
-            return criteria;
-        }
-
-		@Override
-        public void setParameters(TypedQuery typedQuery) {
-            if (!isEmpty(account)) {
-                typedQuery.setParameter("account", account);
-            }
-        }
-
-        @Override
-        public Path buildOrderBy(Root<Contact> rootEntity) {
-            if (getOrderByPropertyId().equals("mailingAddress.country")) {
-                return rootEntity.join("mailingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
-            } else if (getOrderByPropertyId().equals("mailingAddress.state.code")) {
-                return rootEntity.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
-            } else {
-                return null;
-            }
-        }
-
-        @Override
-        public void addFetchJoins(Root<Contact> rootEntity) {
-            rootEntity.fetch("mailingAddress", JoinType.LEFT);
-            rootEntity.fetch("account", JoinType.LEFT);
-        }
-
-        @Override
-        public String toString() {
-            return "RelatedContacts{" +
-                    "account='" + account + '\'' +
-                    '}';
-        }
-
     }
 }
 

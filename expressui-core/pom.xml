@@ -53,6 +53,7 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
@@ -215,27 +216,7 @@
 
         <dependency>
             <groupId>org.vaadin.addons</groupId>
-            <artifactId>stepper</artifactId>
-        </dependency>
-
-        <!--<dependency>-->
-        <!--<groupId>org.vaadin.addons</groupId>-->
-        <!--<artifactId>chameleon</artifactId>-->
-        <!--</dependency>-->
-
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
             <artifactId>chameleon-blue</artifactId>
-        </dependency>
-
-        <!--<dependency>-->
-        <!--<groupId>org.vaadin.addons</groupId>-->
-        <!--<artifactId>chameleon-vaadin</artifactId>-->
-        <!--</dependency>-->
-
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>portallayout</artifactId>
         </dependency>
 
         <dependency>
@@ -261,11 +242,6 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>sessionguard</artifactId>
         </dependency>
 
         <dependency>

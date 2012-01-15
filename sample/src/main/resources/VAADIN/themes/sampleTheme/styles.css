@@ -40,7 +40,7 @@
 @import "../expressUiTheme/styles.css";
 
 .p-main-window {
-    background: #d3d3d3 url(img/background.gif);
+    background: #ecffec;
 }
 
 .p-entity-form-window {
@@ -51,7 +51,11 @@
     background: #ecffec;
 }
 
-.p-entry-point {
+.p-entity-select {
+    background: #ecffec;
+}
+
+.p-page {
     background: #ecffec;
 }
 
@@ -126,4 +130,44 @@
 .v-form-errormessage {
     padding-left: 2em;
     color: red;
+}
+
+.p-page-bar {
+    font-size: large;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    background-color: #414141 !important;
+    color: #b8b8b8;
+    text-shadow: none !important;
+}
+
+.v-menubar, .v-menubar-menuitem, .v-menubar-submenu {
+    font-size: large;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    background-color: #414141 !important;
+    color: #b8b8b8;
+    text-shadow: none !important;
+    /*padding: 0 !important;*/
+
+    background: none;
+    border-style: none;
+    border-width: 0;
+    padding: 0;
+}
+
+.v-menubar-menuitem-caption a {
+    text-decoration: none;
+    color: #b8b8b8;
+}
+
+.v-menubar-menuitem-caption a:hover {
+    text-decoration: none;
+    color: white;
+}
+
+.v-menubar-menuitem-selected {
+    background-color: #ecffec;
+}
+
+.p-main-tabsheet .v-tabsheet-tabcontainer {
+    visibility: collapse !important;
 }

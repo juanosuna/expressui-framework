@@ -46,8 +46,6 @@ import javax.annotation.Resource;
 import javax.persistence.Query;
 import java.util.List;
 
-import static com.expressui.sample.dao.CacheSettings.setReadOnly;
-
 @Repository
 @SuppressWarnings("unchecked")
 public class CurrencyDao extends EntityDao<Currency, String> {

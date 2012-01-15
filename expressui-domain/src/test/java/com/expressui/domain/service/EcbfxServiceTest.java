@@ -42,7 +42,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.annotation.Resource;
-
 import java.math.BigDecimal;
 import java.util.Map;
 

@@ -40,17 +40,18 @@ package com.expressui.sample.view.select;
 import com.expressui.core.view.entityselect.EntitySelect;
 import com.expressui.core.view.entityselect.EntitySelectResults;
 import com.expressui.core.view.field.DisplayFields;
-import com.expressui.sample.dao.AccountDao;
+import com.expressui.sample.dao.query.AccountQuery;
 import com.expressui.sample.entity.Account;
-import com.expressui.sample.view.account.AccountQuery;
 import com.expressui.sample.view.account.AccountSearchForm;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"serial"})
 public class AccountSelect extends EntitySelect<Account> {
 
@@ -76,19 +77,11 @@ public class AccountSelect extends EntitySelect<Account> {
     }
 
     @Component
-    @Scope("prototype")
+    @Scope(SCOPE_PROTOTYPE)
     public static class AccountSelectResults extends EntitySelectResults<Account> {
 
         @Resource
-        private AccountDao accountDao;
-
-        @Resource
         private AccountQuery accountQuery;
-
-        @Override
-        public AccountDao getEntityDao() {
-            return accountDao;
-        }
 
         @Override
         public AccountQuery getEntityQuery() {
@@ -97,13 +90,13 @@ public class AccountSelect extends EntitySelect<Account> {
 
         @Override
         public void configureFields(DisplayFields displayFields) {
-            displayFields.setPropertyIds(new String[]{
+            displayFields.setPropertyIds(
                     "name",
                     "tickerSymbol",
                     "website",
                     "billingAddress.state.code",
                     "billingAddress.country"
-            });
+            );
 
             displayFields.setLabel("billingAddress.state.code", "State");
         }

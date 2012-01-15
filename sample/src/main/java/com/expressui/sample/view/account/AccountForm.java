@@ -37,17 +37,17 @@
 
 package com.expressui.sample.view.account;
 
-import com.expressui.core.view.EntityForm;
 import com.expressui.core.view.field.FormFields;
 import com.expressui.core.view.field.SelectField;
+import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.security.select.UserSelect;
 import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
 import com.expressui.sample.dao.StateDao;
 import com.expressui.sample.entity.*;
-import com.expressui.sample.util.PhoneConversionValidator;
-import com.expressui.sample.util.PhonePropertyFormatter;
+import com.expressui.sample.util.formatter.PhonePropertyFormatter;
+import com.expressui.sample.util.validator.PhoneConversionValidator;
 import com.expressui.sample.view.account.related.RelatedContacts;
 import com.expressui.sample.view.account.related.RelatedOpportunities;
-import com.expressui.sample.view.select.UserSelect;
 import com.vaadin.data.Property;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -56,8 +56,10 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 @Component
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"serial", "rawtypes"})
 public class AccountForm extends EntityForm<Account> {
 
@@ -124,11 +126,11 @@ public class AccountForm extends EntityForm<Account> {
         formFields.addValidator("mainPhone", PhoneConversionValidator.class);
         formFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
 
-        formFields.setSelectItems("billingAddress.state", new ArrayList());
-        formFields.addValueChangeListener("billingAddress.country", this, "countryChanged");
+        formFields.clearSelectItems("billingAddress.state");
+        formFields.addValueChangeListener("billingAddress.country", this, "billingCountryChanged");
 
-        formFields.setSelectItems("mailingAddress.state", new ArrayList());
-        formFields.addValueChangeListener("mailingAddress.country", this, "otherCountryChanged");
+        formFields.clearSelectItems("mailingAddress.state");
+        formFields.addValueChangeListener("mailingAddress.country", this, "mailingCountryChanged");
 
         SelectField selectField = new SelectField(this, "assignedTo", userSelect);
         formFields.setField("assignedTo.loginName", selectField);
@@ -142,15 +144,15 @@ public class AccountForm extends EntityForm<Account> {
         getEntity().setMailingAddress(null);
     }
 
-    public void countryChanged(Property.ValueChangeEvent event) {
+    public void billingCountryChanged(Property.ValueChangeEvent event) {
         countryChangedImpl(event, "billingAddress");
     }
 
-    public void otherCountryChanged(Property.ValueChangeEvent event) {
+    public void mailingCountryChanged(Property.ValueChangeEvent event) {
         countryChangedImpl(event, "mailingAddress");
     }
 
-    public void countryChangedImpl(Property.ValueChangeEvent event, String addressPropertyId) {
+    private void countryChangedImpl(Property.ValueChangeEvent event, String addressPropertyId) {
         Country newCountry = (Country) event.getProperty().getValue();
         List<State> states = stateDao.findByCountry(newCountry);
 
@@ -159,7 +161,12 @@ public class AccountForm extends EntityForm<Account> {
         formFields.setVisible(fullStatePropertyId, !states.isEmpty());
         formFields.setSelectItems(fullStatePropertyId, states);
 
+        refreshZipCodeToolTip(addressPropertyId, newCountry);
+    }
+
+    private void refreshZipCodeToolTip(String addressPropertyId, Country newCountry) {
         String fullZipCodePropertyId = addressPropertyId + ".zipCode";
+        FormFields formFields = getFormFields();
 
         if (newCountry != null && newCountry.getMinPostalCode() != null && newCountry.getMaxPostalCode() != null) {
             formFields.setDescription(fullZipCodePropertyId,
@@ -171,7 +178,6 @@ public class AccountForm extends EntityForm<Account> {
             formFields.setDescription(fullZipCodePropertyId, null);
         }
     }
-
 
     @Override
     public String getEntityCaption() {

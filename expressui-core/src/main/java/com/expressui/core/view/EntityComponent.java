@@ -38,35 +38,26 @@
 package com.expressui.core.view;
 
 import com.expressui.core.util.ReflectionUtil;
-import com.expressui.core.view.util.MessageSource;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.ComponentContainer;
-import com.vaadin.ui.CustomComponent;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.VerticalLayout;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 
 /**
  * Any generic entity component that contains some results.
  *
  * @param <T>
  */
-public abstract class EntityComponent<T> extends CustomComponent {
-
-    @Resource
-    protected MessageSource entityMessageSource;
-
-    @Resource
-    protected MessageSource uiMessageSource;
+public abstract class EntityComponent<T> extends RootComponent {
 
     protected EntityComponent() {
+        super();
     }
 
     /**
-     * Type of business entity for this entry point.
+     * Type of business entity for this page.
      *
-     * @return type of business entity for this entry point
+     * @return type of business entity for this page
      */
     public Class getEntityType() {
         return ReflectionUtil.getGenericArgumentType(getClass());
@@ -84,11 +75,10 @@ public abstract class EntityComponent<T> extends CustomComponent {
         return entityMessageSource.getMessageWithDefault(getEntityCaption());
     }
 
-    /**
-     * Called after Spring constructs this bean. Overriding methods should call super.
-     */
     @PostConstruct
+    @Override
     public void postConstruct() {
+        super.postConstruct();
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
         layout.setSpacing(true);
@@ -98,19 +88,9 @@ public abstract class EntityComponent<T> extends CustomComponent {
     }
 
     private void setCustomSizeUndefined() {
-        setSizeUndefined();
-        getCompositionRoot().setSizeUndefined();
-    }
-
-    /**
-     * Can be overridden if any initialization is required after all Spring beans have been wired.
-     * Overriding methods should call super.
-     */
-    public void postWire() {
-    }
-
-    @Override
-    public void addComponent(Component c) {
-        ((ComponentContainer) getCompositionRoot()).addComponent(c);
+        setWidth(100, Sizeable.UNITS_PERCENTAGE);
+        getCompositionRoot().setWidth(100, Sizeable.UNITS_PERCENTAGE);
+//        setSizeUndefined();
+//        getCompositionRoot().setSizeUndefined();
     }
 }

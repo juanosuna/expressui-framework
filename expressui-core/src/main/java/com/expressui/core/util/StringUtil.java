@@ -57,7 +57,8 @@ public class StringUtil {
 
     /**
      * Ask if the given String is equal to any of the other args
-     * @param s string to query for
+     *
+     * @param s    string to query for
      * @param args strings to query in
      * @return true if string is found
      */
@@ -73,6 +74,7 @@ public class StringUtil {
 
     /**
      * Get the approximate column width in EM units of the given string
+     *
      * @param s string to measure
      * @return width in EM units
      */
@@ -82,6 +84,7 @@ public class StringUtil {
 
     /**
      * Get the approximate column width in pixels of the given string
+     *
      * @param s string to measure
      * @return width in pixels
      */
@@ -107,6 +110,7 @@ public class StringUtil {
     /**
      * Converts camel case to human-readable form, i.e. spaced-delimited words with each first
      * letter capitalized
+     *
      * @param camelCase string in camel case
      * @return
      */
@@ -118,6 +122,7 @@ public class StringUtil {
 
     /**
      * Capitalize first letter of given string
+     *
      * @param str string to capitalize first letter of
      * @return new String with first letter capitalized
      */
@@ -127,6 +132,7 @@ public class StringUtil {
 
     /**
      * Ask if the given arg is empty, i.e. null or empty string
+     *
      * @param s any object
      * @return true if arg is null or empty string
      */

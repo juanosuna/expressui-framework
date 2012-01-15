@@ -58,7 +58,7 @@ public class ReflectionUtil {
      * Create new instance from the given type.
      *
      * @param type class to reflectively instantiate
-     * @param <T> type of the class
+     * @param <T>  type of the class
      * @return new instance
      */
     public static <T> T newInstance(Class<T> type) {
@@ -74,10 +74,10 @@ public class ReflectionUtil {
     /**
      * Create new instance from the given type, based on given parameter types and args.
      *
-     * @param type class to reflectively instantiate
-     * @param <T> type of the class
+     * @param type           class to reflectively instantiate
+     * @param <T>            type of the class
      * @param parameterTypes used to find the right constructor
-     * @param args passed to constructor
+     * @param args           passed to constructor
      * @return new instance
      */
     public static <T> T newInstance(Class<T> type, Class[] parameterTypes, Object[] args) {
@@ -98,6 +98,7 @@ public class ReflectionUtil {
 
     /**
      * Get the first generic argument of the given class
+     *
      * @param clazz class from which to extract generic argument
      * @return type of generic argument
      */
@@ -107,7 +108,8 @@ public class ReflectionUtil {
 
     /**
      * Get a generic argument of the given class, based on arg index
-     * @param clazz class from which to extract generic argument
+     *
+     * @param clazz    class from which to extract generic argument
      * @param argIndex index of the declared argument type
      * @return type of generic argument
      */
@@ -115,7 +117,11 @@ public class ReflectionUtil {
         Type type = clazz.getGenericSuperclass();
 
         if (type != null && type instanceof ParameterizedType) {
-            return (Class) ((ParameterizedType) type).getActualTypeArguments()[argIndex];
+            if (((ParameterizedType) type).getActualTypeArguments()[argIndex] instanceof Class) {
+                return (Class) ((ParameterizedType) type).getActualTypeArguments()[argIndex];
+            } else {
+                return null;
+            }
         } else {
             if (!(type instanceof Class) || type.equals(Object.class)) {
                 return null;
@@ -127,7 +133,8 @@ public class ReflectionUtil {
 
     /**
      * Get the value type of the given collection, as declared by the collection property type
-     * @param beanType bean class
+     *
+     * @param beanType     bean class
      * @param beanProperty name of property, which must be a collection
      * @return generic type declared for collection members
      */
@@ -199,9 +206,9 @@ public class ReflectionUtil {
     /**
      * Find all properties in the bean that are complex, i.e. not BeanUtils.isSimpleValueType
      *
-     * @see BeanUtils.isSimpleValueType()
      * @param bean
      * @return
+     * @see BeanUtils.isSimpleValueType()
      */
     public static Collection<String> findComplexProperties(Object bean) {
         Collection<String> complexProperties = new ArrayList<String>();
@@ -224,8 +231,8 @@ public class ReflectionUtil {
      * Converts strings to numbers.
      *
      * @param value value to convert
-     * @param type type to convert to
-     * @param <T> type
+     * @param type  type to convert to
+     * @param <T>   type
      * @return
      * @throws InvocationTargetException
      * @throws IllegalAccessException
@@ -269,8 +276,8 @@ public class ReflectionUtil {
     /**
      * Find a method on a class.
      *
-     * @param type class containing the method
-     * @param methodName name of the method to search for
+     * @param type           class containing the method
+     * @param methodName     name of the method to search for
      * @param parameterTypes parameter types declared in the method signature
      * @return found method
      */
@@ -292,7 +299,8 @@ public class ReflectionUtil {
 
     /**
      * Find field on a given type
-     * @param type class containing the field
+     *
+     * @param type      class containing the field
      * @param fieldName name of field to search for
      * @return found field
      */

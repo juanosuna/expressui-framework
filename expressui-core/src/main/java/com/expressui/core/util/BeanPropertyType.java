@@ -62,7 +62,7 @@ public class BeanPropertyType {
      * Get the BeanPropertyType instance from the given class and dot-delimited propertyPath.
      * Uses caching to speed-up repeated calls for the same property.
      *
-     * @param clazz root type
+     * @param clazz        root type
      * @param propertyPath dot-delimited property path
      * @return BeanPropertyType representing property within the type tree
      */
@@ -159,7 +159,7 @@ public class BeanPropertyType {
      * Get instance of given annotation type from bean property.
      *
      * @param annotationClass annotation to find on the property
-     * @param <T> annotation type
+     * @param <T>             annotation type
      * @return annotation instance
      */
     public <T extends Annotation> T getAnnotation(Class<T> annotationClass) {
@@ -337,6 +337,7 @@ public class BeanPropertyType {
 
     /**
      * Ask if this property is validatable recursively because it as @Valid annotation
+     *
      * @return true if this property is validatable recursively because it as @Valid annotation
      */
     public boolean isValidatable() {

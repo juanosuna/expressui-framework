@@ -49,9 +49,9 @@
             classpath:/spring/applicationContext-data-access.xml
             classpath:/spring/applicationContext-core-scan.xml
             classpath:/spring/applicationContext-messages.xml
-            classpath:/spring/applicationContext-security.xml
             classpath:/spring/applicationContext-domain-scan.xml
             classpath:/spring/applicationContext-scan.xml
+            classpath:/spring/applicationContext-security.xml
         </param-value>
     </context-param>
 
@@ -66,27 +66,22 @@
         </listener-class>
     </listener>
 
-    <!--
-      - Publishes events for session creation and destruction through the application
-      - context. Optional unless concurrent session control is being used.
-      -->
-    <listener>
-        <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
-    </listener>
-
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
-            <param-value>classpath:/spring/dispatcher-servlet.xml</param-value>
+            <param-value>
+                classpath:/spring/applicationContext-properties.xml
+                classpath:/spring/dispatcher-servlet.xml
+            </param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
         <!--<url-pattern>/*</url-pattern>-->
-        <url-pattern>/mvc/*</url-pattern>
+        <!--<url-pattern>/mvc/*</url-pattern>-->
         <url-pattern>/app/*</url-pattern>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
@@ -103,22 +98,12 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <filter>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter>
-
-    <filter-mapping>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
     <session-config>
         <session-timeout>60</session-timeout>
     </session-config>
 
     <welcome-file-list>
-        <welcome-file>login.jsp</welcome-file>
+        <welcome-file>/app</welcome-file>
     </welcome-file-list>
 
 </web-app>

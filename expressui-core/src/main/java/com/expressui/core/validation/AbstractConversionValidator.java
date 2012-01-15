@@ -38,8 +38,8 @@
 package com.expressui.core.validation;
 
 
-import com.expressui.core.view.EntityForm;
 import com.expressui.core.view.field.FormField;
+import com.expressui.core.view.form.EntityForm;
 import com.vaadin.data.Validator;
 
 /**
@@ -52,7 +52,8 @@ public abstract class AbstractConversionValidator implements Validator {
 
     /**
      * Construct validator based on the form field is bound to and error message
-     * @param formField form field that this conversion validator is bound to
+     *
+     * @param formField    form field that this conversion validator is bound to
      * @param errorMessage error message to display to user if validation fails
      */
     public AbstractConversionValidator(FormField formField, String errorMessage) {
@@ -62,6 +63,7 @@ public abstract class AbstractConversionValidator implements Validator {
 
     /**
      * Construct validator based on the form field is bound to
+     *
      * @param formField form field that this conversion validator is bound to
      */
     protected AbstractConversionValidator(FormField formField) {

@@ -40,10 +40,10 @@ package com.expressui.core.view.tomanyrelationship;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.assertion.Assert;
-import com.expressui.core.view.EntityForm;
-import com.expressui.core.view.EntityFormWindow;
-import com.expressui.core.view.ResultsConnectedEntityForm;
-import com.expressui.core.view.WalkableResults;
+import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.form.EntityFormWindow;
+import com.expressui.core.view.results.ResultsConnectedEntityForm;
+import com.expressui.core.view.results.WalkableResults;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.terminal.ThemeResource;
@@ -193,7 +193,7 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
     @Override
     public void removeConfirmed(T... values) {
         for (T value : values) {
-            getEntityDao().remove(value);
+            getGenericDao().remove(value);
         }
 
         searchImpl(false);

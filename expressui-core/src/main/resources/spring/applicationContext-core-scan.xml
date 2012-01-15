@@ -52,4 +52,14 @@
     <context:annotation-config/>
     <aop:aspectj-autoproxy proxy-target-class="true"/>
 
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="page">
+                    <bean class="com.expressui.core.view.page.PageScope"/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+
 </beans>

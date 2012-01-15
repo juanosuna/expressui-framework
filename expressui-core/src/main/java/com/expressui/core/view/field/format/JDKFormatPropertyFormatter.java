@@ -37,19 +37,20 @@
 
 package com.expressui.core.view.field.format;
 
-import com.vaadin.data.util.PropertyFormatter;
+import com.vaadin.data.util.EnhancedPropertyFormatter;
 
 import java.text.Format;
 
 /**
  * Integrates Vaadin PropertyFormatter with JDK formatter by wrapping it.
  */
-public class JDKFormatPropertyFormatter extends PropertyFormatter {
+public class JDKFormatPropertyFormatter extends EnhancedPropertyFormatter {
 
     private Format format;
 
     /**
      * Construct with the JDK format to wrap
+     *
      * @param format JDK format
      */
     public JDKFormatPropertyFormatter(Format format) {
@@ -58,6 +59,7 @@ public class JDKFormatPropertyFormatter extends PropertyFormatter {
 
     /**
      * Get the JDK format
+     *
      * @return JDK format
      */
     public Format getFormat() {

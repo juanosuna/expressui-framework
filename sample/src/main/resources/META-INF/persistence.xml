@@ -44,8 +44,13 @@
     <persistence-unit name="persistence-unit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <non-jta-data-source>expressUiDataSource</non-jta-data-source>
+        <class>com.expressui.core.entity.security.Permission</class>
+        <class>com.expressui.core.entity.security.Role</class>
+        <class>com.expressui.core.entity.security.User</class>
+        <class>com.expressui.core.entity.security.UserRole</class>
         <properties>
             <property name="javax.persistence.validation.mode" value="auto"/>
+            <property name="hibernate.archive.autodetection" value="class"/>
         </properties>
     </persistence-unit>
 

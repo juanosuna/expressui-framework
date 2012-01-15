@@ -39,9 +39,10 @@ package com.expressui.core.view.field;
 
 import com.expressui.core.util.BeanPropertyType;
 import com.expressui.core.util.StringUtil;
-import com.expressui.core.view.EntityForm;
+import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.field.format.DefaultFormats;
 import com.expressui.core.view.field.format.JDKFormatPropertyFormatter;
+import com.expressui.core.view.form.EntityForm;
 import com.vaadin.data.util.PropertyFormatter;
 import org.springframework.beans.BeanUtils;
 
@@ -52,7 +53,6 @@ import java.text.Format;
 /**
  * A field for non-editable display in the UI, e.g. as a column in results table.
  * For editable fields, use FormField.
- *
  */
 public class DisplayField {
 
@@ -67,17 +67,20 @@ public class DisplayField {
 
     /**
      * Construct with reference to parent and property name this field is bound to
+     *
      * @param displayFields parent that contains collection of all display fields
-     * @param propertyId name of the property this field is bound to
+     * @param propertyId    name of the property this field is bound to
      */
     public DisplayField(DisplayFields displayFields, String propertyId) {
         this.displayFields = displayFields;
         this.propertyId = propertyId;
         beanPropertyType = BeanPropertyType.getBeanPropertyType(getDisplayFields().getEntityType(), propertyId);
+        Assert.PROGRAMMING.assertTrue(beanPropertyType != null, "beanPropertyType must not be null");
     }
 
     /**
      * Get parent collection of all display properties bound to UI component, e.g. results table
+     *
      * @return parent DisplayFields that contains this DisplayField
      */
     public DisplayFields getDisplayFields() {
@@ -86,6 +89,7 @@ public class DisplayField {
 
     /**
      * Get the name of the property this field is bound to
+     *
      * @return name of the property
      */
     public String getPropertyId() {
@@ -98,6 +102,7 @@ public class DisplayField {
 
     /**
      * Get the type of property this field is bound to.
+     *
      * @return type of property
      */
     public Class getPropertyType() {
@@ -107,6 +112,7 @@ public class DisplayField {
     /**
      * Get the PropertyFormatter used to format values for display and parse values
      * entered by user.
+     *
      * @return Vaadin property formatter
      */
     public PropertyFormatter getPropertyFormatter() {
@@ -120,6 +126,7 @@ public class DisplayField {
     /**
      * Set the PropertyFormatter used to format values for display and parse values
      * entered by user.
+     *
      * @param propertyFormatter Vaadin property formatter
      */
     public void setPropertyFormatter(PropertyFormatter propertyFormatter) {
@@ -129,6 +136,7 @@ public class DisplayField {
     /**
      * Set the JDK format used to format values for display and parse values
      * entered by user.
+     *
      * @param format JDK format
      */
     public void setFormat(Format format) {
@@ -154,6 +162,7 @@ public class DisplayField {
 
     /**
      * Ask if this field is a sortable column in results table
+     *
      * @return true if sortable
      */
     public boolean isSortable() {
@@ -162,6 +171,7 @@ public class DisplayField {
 
     /**
      * Set whether or not this field is a sortable column in results table
+     *
      * @param sortable true if sortable
      */
     public void setSortable(boolean sortable) {
@@ -233,6 +243,7 @@ public class DisplayField {
     /**
      * Set a link to open an entity form related to this field. Enables embedding
      * links in results table to open up related entity
+     *
      * @param propertyId property path that is many-to-one relationship with another entity
      * @param entityForm entity form component to open when link is clicked
      */
@@ -244,6 +255,7 @@ public class DisplayField {
     /**
      * Get a link to open an entity form related to this field. Enables embedding
      * links in results table to open up related entity
+     *
      * @return form link
      */
     public FormLink getFormLink() {
@@ -264,6 +276,7 @@ public class DisplayField {
 
         /**
          * Get property path of many-to-one link to another entity
+         *
          * @return name of property
          */
         public String getPropertyId() {

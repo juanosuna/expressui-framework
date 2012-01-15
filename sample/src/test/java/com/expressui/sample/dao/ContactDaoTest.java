@@ -37,9 +37,10 @@
 
 package com.expressui.sample.dao;
 
-import com.google.i18n.phonenumbers.NumberParseException;
+import com.expressui.core.dao.GenericDao;
+import com.expressui.sample.dao.query.ContactQuery;
 import com.expressui.sample.entity.*;
-import com.expressui.sample.view.contact.ContactQuery;
+import com.google.i18n.phonenumbers.NumberParseException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -50,16 +51,10 @@ import java.util.List;
 public class ContactDaoTest extends AbstractDomainTest {
 
     @Resource
-    private ContactDao contactDao;
-
-    @Resource
-    private AddressDao addressDao;
+    private GenericDao genericDao;
 
     @Resource
     private StateDao stateDao;
-
-    @Resource
-    private CountryDao countryDao;
 
     @Resource
     private ContactQuery contactQuery;
@@ -68,7 +63,7 @@ public class ContactDaoTest extends AbstractDomainTest {
     public void createContact() throws NumberParseException {
 
         Country country = new Country("XX");
-        countryDao.persist(country);
+        genericDao.persist(country);
         State state = new State("XX-NC", "North Carolina", country);
         stateDao.persist(state);
 
@@ -83,10 +78,10 @@ public class ContactDaoTest extends AbstractDomainTest {
         address.setCity("Charlotte");
         address.setState(state);
         address.setCountry(country);
-        addressDao.persist(address);
+        genericDao.persist(address);
         contact.setMailingAddress(address);
         contact.setOtherAddress(null);
-        contactDao.persist(contact);
+        genericDao.persist(contact);
     }
 
     @Test

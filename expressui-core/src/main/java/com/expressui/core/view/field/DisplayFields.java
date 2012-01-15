@@ -39,9 +39,9 @@ package com.expressui.core.view.field;
 
 import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.CollectionsUtil;
-import com.expressui.core.view.EntityForm;
-import com.expressui.core.view.util.MessageSource;
 import com.expressui.core.view.field.format.DefaultFormats;
+import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.util.MessageSource;
 import com.vaadin.data.util.PropertyFormatter;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -49,11 +49,13 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.util.*;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 /**
  * Collection of fields for display in UI component, e.g. results table
  */
 @Component
-@Scope("prototype")
+@Scope(SCOPE_PROTOTYPE)
 public class DisplayFields {
 
     @Resource(name = "entityMessageSource")
@@ -102,7 +104,7 @@ public class DisplayFields {
      *
      * @param propertyIds names of entity properties
      */
-    public void setPropertyIds(String[] propertyIds) {
+    public void setPropertyIds(String... propertyIds) {
         for (String propertyId : propertyIds) {
             DisplayField displayField = createField(propertyId);
             fields.put(propertyId, displayField);
@@ -133,6 +135,7 @@ public class DisplayFields {
 
     /**
      * Get property ids as array
+     *
      * @return array of property ids
      */
     public String[] getViewablePropertyIdsAsArray() {
@@ -141,6 +144,7 @@ public class DisplayFields {
 
     /**
      * Get labels (column headings) as array
+     *
      * @return array of property labels
      */
     public String[] getViewableLabelsAsArray() {
@@ -155,6 +159,7 @@ public class DisplayFields {
 
     /**
      * Ask if these fields contains a field bound to given property id
+     *
      * @param propertyId property id to check
      * @return true if a field is bound to given property id
      */
@@ -164,6 +169,7 @@ public class DisplayFields {
 
     /**
      * Get display field bound to given property id
+     *
      * @param propertyId property id
      * @return display field bound to given property id
      */
@@ -191,6 +197,7 @@ public class DisplayFields {
 
     /**
      * Get all property ids that have been set as non-sortable
+     *
      * @return non-sortable properties
      */
     public Set<String> getNonSortablePropertyIds() {
@@ -206,6 +213,7 @@ public class DisplayFields {
 
     /**
      * Get display label (column heading) bound to given property.
+     *
      * @param propertyId property path in entity tree
      * @return display label (column heading)
      */
@@ -215,8 +223,9 @@ public class DisplayFields {
 
     /**
      * Set display label (column heading) bound to given property.
+     *
      * @param propertyId property path in entity tree
-     * @param label label (column heading)
+     * @param label      label (column heading)
      */
     public void setLabel(String propertyId, String label) {
         getField(propertyId).setLabel(label);
@@ -224,6 +233,7 @@ public class DisplayFields {
 
     /**
      * Set column associated with given property id as sortable or not
+     *
      * @param propertyId id for identify column
      * @param isSortable true if sortable
      */
@@ -234,9 +244,10 @@ public class DisplayFields {
     /**
      * Set a link to open an entity form related to this field. Enables embedding
      * links in results table to open up related entity
-     * @param propertyId id property path for display content in the link
+     *
+     * @param propertyId       id property path for display content in the link
      * @param entityPropertyId property path that is many-to-one relationship with another entity
-     * @param entityForm entity form component to open when link is clicked
+     * @param entityForm       entity form component to open when link is clicked
      */
     public void setFormLink(String propertyId, String entityPropertyId, EntityForm entityForm) {
         getField(propertyId).setFormLink(entityPropertyId, entityForm);
@@ -245,7 +256,7 @@ public class DisplayFields {
     /**
      * Set property formatter to be used for formatting display value.
      *
-     * @param propertyId property path in entity tree
+     * @param propertyId        property path in entity tree
      * @param propertyFormatter property formatter
      */
     public void setPropertyFormatter(String propertyId, PropertyFormatter propertyFormatter) {

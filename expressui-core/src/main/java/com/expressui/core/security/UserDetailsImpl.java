@@ -37,8 +37,8 @@
 
 package com.expressui.core.security;
 
-import com.expressui.core.entity.security.AbstractRole;
-import com.expressui.core.entity.security.AbstractUser;
+import com.expressui.core.entity.security.Role;
+import com.expressui.core.entity.security.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -60,10 +60,10 @@ public class UserDetailsImpl implements UserDetails {
     private boolean credentialsNonExpired;
     private boolean enabled;
 
-    public UserDetailsImpl(AbstractUser user) {
-        Collection<AbstractRole> roles = user.getRoles();
+    public UserDetailsImpl(User user) {
+        Collection<Role> roles = user.getRoles();
 
-        for (AbstractRole role : roles) {
+        for (Role role : roles) {
             SimpleGrantedAuthority grantedAuthority = new SimpleGrantedAuthority(role.getName());
             grantedAuthorities.add(grantedAuthority);
         }

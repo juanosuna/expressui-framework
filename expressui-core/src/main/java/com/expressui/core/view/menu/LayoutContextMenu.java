@@ -54,6 +54,7 @@ public class LayoutContextMenu extends ContextMenu implements LayoutEvents.Layou
 
     /**
      * Construct this context menu on given layout.
+     *
      * @param layout layout for adding the context menu to
      */
     public LayoutContextMenu(AbstractOrderedLayout layout) {
@@ -66,8 +67,8 @@ public class LayoutContextMenu extends ContextMenu implements LayoutEvents.Layou
     /**
      * Add action to the context menu.
      *
-     * @param caption capture for display context menu item
-     * @param target target object to invoke when user selects action
+     * @param caption    capture for display context menu item
+     * @param target     target object to invoke when user selects action
      * @param methodName target method to invoke when user selects action
      */
     public ContextMenu.ContextMenuItem addAction(String caption, Object target, String methodName) {
@@ -82,6 +83,7 @@ public class LayoutContextMenu extends ContextMenu implements LayoutEvents.Layou
 
     /**
      * Get the context menu item identified by caption
+     *
      * @param caption caption for identifying the context menu item
      * @return context menu item
      */

@@ -38,8 +38,8 @@
 package com.expressui.core.view.export;
 
 import com.expressui.core.MainApplication;
-import com.expressui.core.view.FormComponent;
 import com.expressui.core.view.field.FormFields;
+import com.expressui.core.view.form.GridForm;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
@@ -51,13 +51,14 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+
 /**
  * Form for configuring excel export parameters.
- *
  */
 @Component
-@Scope("prototype")
-public class ExportForm extends FormComponent<ExportParameters> {
+@Scope(SCOPE_PROTOTYPE)
+public class ExportForm extends GridForm<ExportParameters> {
 
     private Window popupWindow;
 

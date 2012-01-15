@@ -44,6 +44,7 @@ public class MathUtil {
 
     /**
      * Get the maximum integer, ignoring if one arg is null.
+     *
      * @param a first integer
      * @param b second integer
      * @return maximum integer
@@ -57,6 +58,7 @@ public class MathUtil {
 
     /**
      * Get the minimum integer, ignoring if one arg is null.
+     *
      * @param a first integer
      * @param b second integer
      * @return minimum integer
@@ -70,6 +72,7 @@ public class MathUtil {
 
     /**
      * Get the maximum integer, returning null if any arg is null
+     *
      * @param a first integer
      * @param b second integer
      * @return maximum integer, or null if any arg is null
@@ -82,6 +85,7 @@ public class MathUtil {
 
     /**
      * Get the minimum integer, returning null if any arg is null
+     *
      * @param a first integer
      * @param b second integer
      * @return minimum integer, or null if any arg is null

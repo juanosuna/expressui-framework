@@ -38,17 +38,22 @@
 package com.expressui.core.security;
 
 
-import com.expressui.core.dao.EntityDao;
-import com.expressui.core.entity.security.AbstractUser;
-import com.expressui.core.util.ReflectionUtil;
-import com.expressui.core.util.SpringApplicationContext;
+import com.expressui.core.dao.security.UserDao;
+import com.expressui.core.entity.security.Permission;
+import com.expressui.core.entity.security.Role;
+import com.expressui.core.entity.security.User;
 import com.expressui.core.util.assertion.Assert;
+import org.hibernate.Hibernate;
+import org.springframework.context.annotation.Scope;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.annotation.Resource;
 import java.util.Set;
 
 /**
@@ -56,18 +61,25 @@ import java.util.Set;
  * provides access to roles and permissions.
  */
 @Service
+@Scope("session")
 public class SecurityService {
 
     public static final String SYSTEM_USER = "system";
 
-    private Map<String, AbstractUser> users = new HashMap<String, AbstractUser>();
+    @Resource
+    private AuthenticationManager authenticationManager;
+
+    @Resource
+    private UserDao userDao;
+
+    private User user;
 
     /**
      * Get the login name of the currently logged in user.
      *
      * @return login name
      */
-    public static String getCurrentLoginName() {
+    private static String getCurrentLoginName() {
         if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null
                 && SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null) {
             UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -83,15 +95,27 @@ public class SecurityService {
      *
      * @return user entity with roles and permissions
      */
-    public AbstractUser getCurrentUser() {
-        String loginName = getCurrentLoginName();
-        AbstractUser user = users.get(loginName);
+    public User getCurrentUser() {
         if (user == null) {
+            String loginName = getCurrentLoginName();
             user = findUser(loginName);
-            users.put(loginName, user);
+
+            Hibernate.initialize(user);
+            Set<Role> roles = user.getRoles();
+            for (Role role : roles) {
+                Hibernate.initialize(role);
+                Set<Permission> permissions = role.getPermissions();
+                for (Permission permission : permissions) {
+                    Hibernate.initialize(permission);
+                }
+            }
         }
 
         return user;
+    }
+
+    public void setCurrentUser(User user) {
+        this.user = user;
     }
 
     /**
@@ -100,23 +124,11 @@ public class SecurityService {
      * @param loginName login name of the user entity to find
      * @return user entity
      */
-    public static AbstractUser findUser(String loginName) {
+    public User findUser(String loginName) {
 
         Assert.PROGRAMMING.assertTrue(loginName != null, "Current loginName is null");
 
-        EntityDao userDao = null;
-        Set<EntityDao> daos = SpringApplicationContext.getBeansByTypeAndGenericArgumentType(EntityDao.class, AbstractUser.class);
-        for (EntityDao dao : daos) {
-            Class argType = ReflectionUtil.getGenericArgumentType(dao.getClass());
-            if (argType != null && AbstractUser.class.equals(argType.getSuperclass())) {
-                userDao = dao;
-            }
-        }
-        Assert.PROGRAMMING.assertTrue(userDao != null,
-                "No instance of EntityDao found with a generic argument type that is a subclass of " +
-                        AbstractUser.class.getName());
-
-        return (AbstractUser) userDao.findByNaturalId("loginName", loginName);
+        return userDao.findByNaturalId("loginName", loginName);
     }
 
     /**
@@ -124,5 +136,42 @@ public class SecurityService {
      */
     public void logout() {
         SecurityContextHolder.getContext().setAuthentication(null);
+        user = null;
+    }
+
+    public boolean login(String username, String password) {
+        logout();
+        if (username == null) username = "";
+        if (password == null) password = "";
+        username = username.trim();
+
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
+
+        Authentication authResult;
+        try {
+            authResult = authenticationManager.authenticate(authRequest);
+        } catch (AuthenticationException failed) {
+            unsuccessfulAuthentication(failed);
+            return false;
+        }
+        successfulAuthentication(authResult);
+
+        return true;
+    }
+
+    protected void successfulAuthentication(Authentication authResult) {
+        SecurityContextHolder.getContext().setAuthentication(authResult);
+        getCurrentUser();
+
+        // optionally getRememberMeServices().loginSuccess(request, response, authResult);
+        // optionally getEventPublisher().publishEvent(new InteractiveAuthenticationSuccessEvent(authResult, this.getClass()));
+        // optionally getSuccessHandler().onAuthenticationSuccess(request, response, authResult);
+
+        // TODO redirect to the correct application URL
+    }
+
+    protected void unsuccessfulAuthentication(AuthenticationException failed) {
+        // optionally getRememberMeServices().loginFail(request, response);
+        // optionally getFailureHandler().onAuthenticationFailure(request, response, failed);
     }
 }

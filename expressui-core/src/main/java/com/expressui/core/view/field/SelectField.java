@@ -37,9 +37,9 @@
 
 package com.expressui.core.view.field;
 
-import com.expressui.core.view.EntityForm;
-import com.expressui.core.view.util.MessageSource;
 import com.expressui.core.view.entityselect.EntitySelect;
+import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.util.MessageSource;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.terminal.ThemeResource;
@@ -74,8 +74,9 @@ public class SelectField extends CustomField {
 
     /**
      * Construct in the given entity form for given property id
-     * @param entityForm entity form that contains this field
-     * @param propertyId property id bound to this field
+     *
+     * @param entityForm   entity form that contains this field
+     * @param propertyId   property id bound to this field
      * @param entitySelect popup component for selecting entity
      */
     public SelectField(EntityForm entityForm, String propertyId, EntitySelect entitySelect) {
@@ -97,6 +98,7 @@ public class SelectField extends CustomField {
 
     /**
      * Make clear and search button (in)visible
+     *
      * @param isVisible true to make visible
      */
     public void setButtonVisible(boolean isVisible) {
@@ -181,6 +183,7 @@ public class SelectField extends CustomField {
 
     /**
      * Get selected value.
+     *
      * @return selected value
      */
     public Object getSelectedValue() {

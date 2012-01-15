@@ -49,6 +49,10 @@ public abstract class ReferenceEntity implements IdentifiableEntity, Comparable 
 
     public static final String CACHE_REGION = "ReadOnly";
 
+    public static final String DISPLAY_PROPERTY = "displayName";
+
+    public static final String ORDER_BY_PROPERTY = "sortOrder";
+
     @Id
     private String id;
 
@@ -91,7 +95,7 @@ public abstract class ReferenceEntity implements IdentifiableEntity, Comparable 
      * Set caption text for displaying to the user in menus. The display name
      * can be different than the id but doesn't have to be.
      *
-     * @param  displayName friendly name that identifies this entity to an end-user
+     * @param displayName friendly name that identifies this entity to an end-user
      */
     public void setDisplayName(String displayName) {
         this.displayName = displayName;

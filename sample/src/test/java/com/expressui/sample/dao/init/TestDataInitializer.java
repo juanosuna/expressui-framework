@@ -37,15 +37,17 @@
 
 package com.expressui.sample.dao.init;
 
-import com.expressui.core.entity.security.AllowOrDeny;
-import com.expressui.sample.dao.*;
+import com.expressui.core.dao.GenericDao;
+import com.expressui.core.dao.security.PermissionDao;
+import com.expressui.core.dao.security.RoleDao;
+import com.expressui.core.dao.security.UserDao;
+import com.expressui.core.dao.security.UserRoleDao;
+import com.expressui.core.entity.security.*;
+import com.expressui.sample.dao.StateDao;
 import com.expressui.sample.entity.*;
-import com.expressui.sample.entity.security.Permission;
-import com.expressui.sample.entity.security.Role;
-import com.expressui.sample.entity.security.User;
-import com.expressui.sample.entity.security.UserRole;
-import com.expressui.sample.util.PhonePropertyFormatter;
-import com.expressui.sample.util.PhoneValidator;
+import com.expressui.sample.util.formatter.PhonePropertyFormatter;
+import com.expressui.sample.util.validator.PhoneValidator;
+import com.expressui.sample.view.LoginPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,16 +73,7 @@ public class TestDataInitializer {
     private PermissionDao permissionDao;
 
     @Resource
-    private ContactDao contactDao;
-
-    @Resource
-    private AccountDao accountDao;
-
-    @Resource
-    private OpportunityDao opportunityDao;
-
-    @Resource
-    private CountryDao countryDao;
+    private GenericDao genericDao;
 
     @Resource
     private StateDao stateDao;
@@ -128,10 +121,10 @@ public class TestDataInitializer {
             contact.setDescription("Description of contact");
 
             initializeAccount(contact, i);
-            contactDao.persist(contact);
+            genericDao.persist(contact);
             if (i % 50 == 0) {
-                contactDao.flush();
-                contactDao.clear();
+                genericDao.flush();
+                genericDao.clear();
             }
         }
     }
@@ -141,6 +134,10 @@ public class TestDataInitializer {
         role.setDescription("This role belongs to all users and allows user to login.");
         role.setAllowOrDenyByDefault(AllowOrDeny.DENY);
         roleDao.persist(role);
+        Permission permission = new Permission(LoginPage.class.getName());
+        permission.setRole(role);
+        permission.setView(true);
+        permissionDao.persist(permission);
 
         role = new Role("ROLE_ADMIN");
         role.setDescription("This role allows full access to everything.");
@@ -150,7 +147,7 @@ public class TestDataInitializer {
         role.setDescription("This role demonstrates full access to entities but only view access to security entities.");
         role.setAllowOrDenyByDefault(AllowOrDeny.ALLOW);
         roleDao.persist(role);
-        Permission permission = new Permission(Role.class.getName());
+        permission = new Permission(Role.class.getName());
         permission.setRole(role);
         permission.setView(true);
         permission.setEdit(false);
@@ -194,9 +191,14 @@ public class TestDataInitializer {
         Role adminRole = roleDao.findByName("ROLE_ADMIN");
         Role guestRole = roleDao.findByName("ROLE_GUEST");
 
-        User user = new User("admin", "admin");
+        User user = new User("anonymous", "anonymous");
         userDao.persist(user);
         UserRole userRole = new UserRole(user, anyUserRole);
+        userRoleDao.persist(userRole);
+
+        user = new User("admin", "admin");
+        userDao.persist(user);
+        userRole = new UserRole(user, anyUserRole);
         userRoleDao.persist(userRole);
         userRole = new UserRole(user, adminRole);
         userRoleDao.persist(userRole);
@@ -249,7 +251,7 @@ public class TestDataInitializer {
             Address mailingAddress = randomAddress(i);
             account.setMailingAddress(mailingAddress);
         }
-        accountDao.persist(account);
+        genericDao.persist(account);
 
         initializeOpportunity(account, i);
     }
@@ -273,7 +275,7 @@ public class TestDataInitializer {
 
         opportunity.setAmount(ReferenceDataInitializer.random(1, 1000000));
 
-        opportunityDao.persist(opportunity);
+        genericDao.persist(opportunity);
     }
 
     private Address randomAddress(int i) {

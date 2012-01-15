@@ -37,32 +37,31 @@
 
 package com.expressui.core.dao;
 
+import com.expressui.core.dao.query.StructuredEntityQuery;
+import com.expressui.core.dao.query.ToManyRelationshipQuery;
 import com.expressui.core.entity.IdentifiableEntity;
 import com.expressui.core.util.ReflectionUtil;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 /**
  * Base class for entity DAOs. All methods that write to the database are marked @Transactional.
  *
- * @param <T> entity type that must implement IdentifiableEntity
+ * @param <T>  entity type that must implement IdentifiableEntity
  * @param <ID> entity's primary key type that must implement Serializable
- *
  * @see IdentifiableEntity
  */
 public abstract class EntityDao<T, ID extends Serializable> {
+
+    @Resource
+    private GenericDao genericDao;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -73,6 +72,14 @@ public abstract class EntityDao<T, ID extends Serializable> {
     protected EntityDao() {
         entityType = ReflectionUtil.getGenericArgumentType(getClass());
         idType = ReflectionUtil.getGenericArgumentType(getClass(), 1);
+    }
+
+    public void setEntityType(Class<T> entityType) {
+        this.entityType = entityType;
+    }
+
+    public void setIdType(Class<ID> idType) {
+        this.idType = idType;
     }
 
     /**
@@ -115,15 +122,12 @@ public abstract class EntityDao<T, ID extends Serializable> {
      * using given entity's primary key. This is useful when you need an managed reference to an entity and don't
      * care about merging it's state.
      *
-     * @see EntityManager#getReference(Class, Object)
-     *
      * @param entity for getting the primary key
-     *
      * @return attached but hollow entity
+     * @see EntityManager#getReference(Class, Object)
      */
     public T getReference(T entity) {
-        Object primaryKey = ((IdentifiableEntity) entity).getId();
-        return getEntityManager().getReference(getEntityType(), primaryKey);
+        return genericDao.getReference(entity);
     }
 
     /**
@@ -133,34 +137,30 @@ public abstract class EntityDao<T, ID extends Serializable> {
      */
     @Transactional
     public void remove(T entity) {
-        T attachedEntity = getReference(entity);
-        getEntityManager().remove(attachedEntity);
+        genericDao.remove(entity);
     }
 
     /**
      * Merge given entity.
      *
-     * @see EntityManager#merge(Object)
-     *
      * @param entity to merge
-     *
      * @return managed entity
+     * @see EntityManager#merge(Object)
      */
     @Transactional
     public T merge(T entity) {
-        return getEntityManager().merge(entity);
+        return genericDao.merge(entity);
     }
 
     /**
      * Persist given entity.
      *
-     * @see EntityManager#persist(Object)
-     *
      * @param entity to persist
+     * @see EntityManager#persist(Object)
      */
     @Transactional
     public void persist(T entity) {
-        getEntityManager().persist(entity);
+        genericDao.persist(entity);
     }
 
     /**
@@ -170,36 +170,27 @@ public abstract class EntityDao<T, ID extends Serializable> {
      */
     @Transactional
     public void persist(Collection<T> entities) {
-        for (T entity : entities) {
-            persist(entity);
-        }
+        genericDao.persist(entities);
     }
 
     /**
      * Refresh given entity.
      *
-     * @see EntityManager#refresh(Object)
      * @param entity
+     * @see EntityManager#refresh(Object)
      */
     public void refresh(T entity) {
-        getEntityManager().refresh(entity);
+        genericDao.refresh(entity);
     }
 
     /**
      * Ask if given entity is persistent, i.e. if it has a primary key
      *
      * @param entity to check
-     *
      * @return true if entity has primary key
      */
     public boolean isPersistent(T entity) {
-        ID id = (ID) getEntityManager().getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(entity);
-        if (id == null) {
-            return false;
-        } else {
-            T existingEntity = find(id);
-            return existingEntity != null;
-        }
+        return genericDao.isPersistent(entity);
     }
 
     /**
@@ -208,7 +199,7 @@ public abstract class EntityDao<T, ID extends Serializable> {
      * @see EntityManager#flush()
      */
     public void flush() {
-        getEntityManager().flush();
+        genericDao.flush();
     }
 
     /**
@@ -217,20 +208,18 @@ public abstract class EntityDao<T, ID extends Serializable> {
      * @see EntityManager#clear()
      */
     public void clear() {
-        getEntityManager().clear();
+        genericDao.clear();
     }
 
     /**
      * Find entity by primary key.
      *
-     * @see EntityManager#find(Class, Object)
-     *
      * @param id primary key
-     *
      * @return initialized entity
+     * @see EntityManager#find(Class, Object)
      */
     public T find(ID id) {
-        return getEntityManager().find(getEntityType(), id);
+        return genericDao.find(getEntityType(), id);
     }
 
     /**
@@ -238,19 +227,12 @@ public abstract class EntityDao<T, ID extends Serializable> {
      * marked as @NaturalId. The benefit of calling this method is that Hibernate will try to look up the entity
      * in the secondary cache.
      *
-     * @param propertyName name of the property in the entity that is marked @NaturalId
+     * @param propertyName  name of the property in the entity that is marked @NaturalId
      * @param propertyValue value to search for
-     *
-     * @return  entity
+     * @return entity
      */
     public T findByNaturalId(String propertyName, Object propertyValue) {
-        Session session = (Session) getEntityManager().getDelegate();
-
-        Criteria criteria = session.createCriteria(getEntityType());
-        criteria.add(Restrictions.naturalId().set(propertyName, propertyValue));
-        criteria.setCacheable(true);
-
-        return (T) criteria.uniqueResult();
+        return genericDao.findByNaturalId(getEntityType(), propertyName, propertyValue);
     }
 
     /**
@@ -259,9 +241,7 @@ public abstract class EntityDao<T, ID extends Serializable> {
      * @return list of all entities
      */
     public List<T> findAll() {
-        Query query = getEntityManager().createQuery("SELECT e FROM " + getEntityType().getSimpleName() + " e");
-
-        return query.getResultList();
+        return genericDao.findAll(getEntityType());
     }
 
     /**
@@ -270,9 +250,7 @@ public abstract class EntityDao<T, ID extends Serializable> {
      * @return count of all records in the database
      */
     public Long countAll() {
-        Query query = getEntityManager().createQuery("SELECT COUNT(e) from " + getEntityType().getSimpleName() + " e");
-
-        return (Long) query.getSingleResult();
+        return genericDao.countAll(getEntityType());
     }
 
     /**
@@ -287,11 +265,10 @@ public abstract class EntityDao<T, ID extends Serializable> {
      * executed in the same query as paging.
      *
      * @param structuredEntityQuery query that can be re-executed as paging, sort and other criteria change
-     *
      * @return list of entities of this DAO's type
      */
     public List<T> execute(StructuredEntityQuery structuredEntityQuery) {
-        return new StructuredQueryExecutor(structuredEntityQuery).execute();
+        return genericDao.execute(structuredEntityQuery);
     }
 
     /**
@@ -299,124 +276,13 @@ public abstract class EntityDao<T, ID extends Serializable> {
      * to-many relationship. Provides same benefits as StructuredEntityQuery.
      *
      * @param toManyRelationshipQuery query that can be re-executed as paging, sort and other criteria change
-     *
      * @return list of entities of this DAO's type
      */
     public List<T> execute(ToManyRelationshipQuery toManyRelationshipQuery) {
-        return new ToManyRelationshipQueryExecutor(toManyRelationshipQuery).execute();
+        return genericDao.execute(toManyRelationshipQuery);
     }
 
-    private class StructuredQueryExecutor {
-
-        private StructuredEntityQuery structuredQuery;
-
-        public StructuredQueryExecutor(StructuredEntityQuery structuredQuery) {
-            this.structuredQuery = structuredQuery;
-        }
-
-        public StructuredEntityQuery getStructuredQuery() {
-            return structuredQuery;
-        }
-
-        public List<T> execute() {
-            List<ID> count = executeImpl(true);
-            structuredQuery.setResultCount((Long) count.get(0));
-
-            if (structuredQuery.getResultCount() > 0) {
-                List<ID> ids = executeImpl(false);
-                return findByIds(ids);
-            } else {
-                return new ArrayList<T>();
-            }
-        }
-
-        private List<ID> executeImpl(boolean isCount) {
-            CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-            CriteriaQuery c = builder.createQuery();
-            Root<T> rootEntity = c.from(getEntityType());
-
-            if (isCount) {
-                c.select(builder.count(rootEntity));
-            } else {
-                c.select(rootEntity.get("id"));
-            }
-
-            List<Predicate> criteria = structuredQuery.buildCriteria(builder, rootEntity);
-            c.where(builder.and(criteria.toArray(new Predicate[0])));
-
-            if (!isCount && structuredQuery.getOrderByPropertyId() != null) {
-                Path path = structuredQuery.buildOrderBy(rootEntity);
-                if (path == null) {
-                    path = rootEntity.get(structuredQuery.getOrderByPropertyId());
-                }
-                if (structuredQuery.getOrderDirection().equals(EntityQuery.OrderDirection.ASC)) {
-                    c.orderBy(builder.asc(path));
-                } else {
-                    c.orderBy(builder.desc(path));
-                }
-            }
-
-            TypedQuery<ID> typedQuery = getEntityManager().createQuery(c);
-            structuredQuery.setParameters(typedQuery);
-
-            if (!isCount) {
-                typedQuery.setFirstResult(structuredQuery.getFirstResult());
-                typedQuery.setMaxResults(structuredQuery.getPageSize());
-            }
-
-            return typedQuery.getResultList();
-        }
-
-        private List<T> findByIds(List<ID> ids) {
-            CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-            CriteriaQuery<T> c = builder.createQuery(getEntityType());
-            Root<T> rootEntity = c.from(getEntityType());
-            c.select(rootEntity);
-
-            structuredQuery.addFetchJoins(rootEntity);
-
-            List<Predicate> criteria = new ArrayList<Predicate>();
-            ParameterExpression<List> p = builder.parameter(List.class, "ids");
-            criteria.add(builder.in(rootEntity.get("id")).value(p));
-
-            c.where(builder.and(criteria.toArray(new Predicate[0])));
-
-            if (structuredQuery.getOrderByPropertyId() != null) {
-                Path path = structuredQuery.buildOrderBy(rootEntity);
-                if (path == null) {
-                    path = rootEntity.get(structuredQuery.getOrderByPropertyId());
-                }
-                if (structuredQuery.getOrderDirection().equals(EntityQuery.OrderDirection.ASC)) {
-                    c.orderBy(builder.asc(path));
-                } else {
-                    c.orderBy(builder.desc(path));
-                }
-            }
-
-            TypedQuery<T> q = getEntityManager().createQuery(c);
-            q.setParameter("ids", ids);
-
-            return q.getResultList();
-        }
-    }
-
-    public class ToManyRelationshipQueryExecutor extends StructuredQueryExecutor {
-        public ToManyRelationshipQueryExecutor(ToManyRelationshipQuery toManyRelationshipQuery) {
-            super(toManyRelationshipQuery);
-        }
-
-        @Override
-        public ToManyRelationshipQuery getStructuredQuery() {
-            return (ToManyRelationshipQuery) super.getStructuredQuery();
-        }
-
-        @Override
-        public List<T> execute() {
-            if (getStructuredQuery().getParent() == null) {
-                return new ArrayList();
-            } else {
-                return super.execute();
-            }
-        }
+    public static void setReadOnly(Query query) {
+        GenericDao.setReadOnly(query);
     }
 }

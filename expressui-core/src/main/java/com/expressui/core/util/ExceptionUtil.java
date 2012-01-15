@@ -45,9 +45,9 @@ public class ExceptionUtil {
     /**
      * Find given throwable within a tree of chained throwables
      *
-     * @param rootThrowable throwable to traverse/search
+     * @param rootThrowable      throwable to traverse/search
      * @param queryThrowableType throwable type to query for
-     * @param <T> type of throwable to query for
+     * @param <T>                type of throwable to query for
      * @return found throwable instance, or null if not found
      */
     public static <T> T findThrowableInChain(Throwable rootThrowable, Class<? extends Throwable> queryThrowableType) {

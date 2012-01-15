@@ -46,45 +46,53 @@ import java.util.*;
  */
 @Component
 public class LabelRegistry {
-    private Map<String, String> entityTypeLabels = new TreeMap<String, String>();
-    private Map<String, Set<String>> entityTypePropertyIds = new HashMap<String, Set<String>>();
+
+    private Map<String, String> typeLabels = new TreeMap<String, String>();
+    private Map<String, Set<String>> typePropertyIds = new HashMap<String, Set<String>>();
     private Map<String, Set<DisplayLabel>> labels = new HashMap<String, Set<DisplayLabel>>();
 
     /**
-     * Put entity label into registry.
-     * @param entityType type of entity
+     * Put label into registry.
+     *
+     * @param type  type
      * @param label label
      */
-    public void putEntityLabel(String entityType, String label) {
-        entityTypeLabels.put(entityType, label);
+    public void putTypeLabel(String type, String label) {
+        typeLabels.put(type, label);
+        if (!typePropertyIds.containsKey(type)) {
+            typePropertyIds.put(type, new TreeSet<String>());
+        }
     }
 
     /**
-     * Get entity label associated with entity type
-     * @param entityType entity type for looking up label
+     * Get label associated with type
+     *
+     * @param type type for looking up label
      * @return label
      */
-    public String getEntityLabel(String entityType) {
-        return entityTypeLabels.get(entityType);
+    public String getTypeLabel(String type) {
+        return typeLabels.get(type);
     }
 
     /**
-     * Get Map of all entity type labels keyed by entity type
-     * @return map of all entity type labels
+     * Get Map of all type labels keyed by type name
+     *
+     * @return map of all type labels
      */
-    public Map<String, String> getEntityTypeLabels() {
-        return entityTypeLabels;
+    public Map<String, String> getTypeLabels() {
+        return typeLabels;
     }
 
     /**
      * Get all property ids that have been registered
-     * @param entityType
+     *
+     * @param type
      * @return
      */
-    public Map<Object, String> getPropertyIds(String entityType) {
+    public Map<Object, String> getPropertyIds(String type) {
         Map<Object, String> fieldItems = new LinkedHashMap<Object, String>();
 
-        Set<String> propertyIds = entityTypePropertyIds.get(entityType);
+        Set<String> propertyIds = typePropertyIds.get(type);
         for (String propertyId : propertyIds) {
             fieldItems.put(propertyId, propertyId);
         }
@@ -94,22 +102,23 @@ public class LabelRegistry {
 
     /**
      * Field (property) label into registry
-     * @param entityType entity type for the label
+     *
+     * @param type       type for the label
      * @param propertyId property id of the field
-     * @param section section of field (tab)
-     * @param label label to put into registry
+     * @param section    section of field (tab)
+     * @param label      label to put into registry
      */
-    public void putFieldLabel(String entityType, String propertyId, String section, String label) {
-        if (!entityTypePropertyIds.containsKey(entityType)) {
-            entityTypePropertyIds.put(entityType, new TreeSet<String>());
+    public void putFieldLabel(String type, String propertyId, String section, String label) {
+        if (!typePropertyIds.containsKey(type)) {
+            typePropertyIds.put(type, new TreeSet<String>());
         }
 
-        Set<String> propertyIds = entityTypePropertyIds.get(entityType);
+        Set<String> propertyIds = typePropertyIds.get(type);
         if (!propertyIds.contains(propertyId)) {
             propertyIds.add(propertyId);
         }
 
-        String propertyPath = entityType + "." + propertyId;
+        String propertyPath = type + "." + propertyId;
         if (!labels.containsKey(propertyPath)) {
             labels.put(propertyPath, new HashSet<DisplayLabel>());
         }
@@ -123,13 +132,14 @@ public class LabelRegistry {
     }
 
     /**
-     * Get field label for given entity type and property
-     * @param entityType entity type
-     * @param propertyId property in the entity type
+     * Get field label for given type and property
+     *
+     * @param type       type
+     * @param propertyId property in the type
      * @return field label
      */
-    public String getFieldLabel(String entityType, String propertyId) {
-        String propertyPath = entityType + "." + propertyId;
+    public String getFieldLabel(String type, String propertyId) {
+        String propertyPath = type + "." + propertyId;
         String label = "";
         Set<DisplayLabel> displayLabels = labels.get(propertyPath);
         for (DisplayLabel displayLabel : displayLabels) {
@@ -173,9 +183,10 @@ public class LabelRegistry {
 
         /**
          * Construct based on property, section and label.
+         *
          * @param propertyId id of property (field)
-         * @param section section (tab)
-         * @param label label
+         * @param section    section (tab)
+         * @param label      label
          */
         public DisplayLabel(String propertyId, String section, String label) {
             this.propertyId = propertyId;
@@ -185,6 +196,7 @@ public class LabelRegistry {
 
         /**
          * Get property id of the label.
+         *
          * @return property id
          */
         public String getPropertyId() {
