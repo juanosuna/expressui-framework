@@ -43,11 +43,13 @@ import java.util.List;
 
 public class EnhancedNestedMethodProperty extends NestedMethodProperty {
 
+    private String propertyName;
     private Object instance;
 
     public EnhancedNestedMethodProperty(Object instance, String propertyName) {
         super(instance, propertyName);
         this.instance = instance;
+        this.propertyName = propertyName;
     }
 
     public EnhancedNestedMethodProperty(Class<?> instanceClass, String propertyName) {
@@ -61,6 +63,10 @@ public class EnhancedNestedMethodProperty extends NestedMethodProperty {
         } else {
             return super.getValue();
         }
+    }
+
+    public String getPropertyName() {
+        return propertyName;
     }
 
     public boolean hasNullInPropertyPath() {

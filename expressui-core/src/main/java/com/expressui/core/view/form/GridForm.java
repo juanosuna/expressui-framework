@@ -159,7 +159,7 @@ public abstract class GridForm<T> extends EntityComponent<T> {
         configureFields(formFields);
         form.setFormFieldFactory(new EntityFieldFactory(getFormFields()));
 
-        final GridLayout gridLayout = getFormFields().createGridLayout();
+        final Layout gridLayout = getFormFields().createGridLayout();
         form.setLayout(gridLayout);
 
         form.getFooter().addStyleName("p-form-component-footer");

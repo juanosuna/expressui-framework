@@ -43,6 +43,7 @@ import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.form.GridForm;
 import com.expressui.core.view.form.SearchForm;
+import com.expressui.core.view.form.layout.FormGridLayout;
 import com.expressui.core.view.form.layout.LeftLabelGridLayout;
 import com.expressui.core.view.form.layout.TopLabelGridLayout;
 import com.vaadin.data.Validator;
@@ -167,7 +168,7 @@ public class FormFields extends DisplayFields {
      *
      * @return form grid layout
      */
-    public GridLayout createGridLayout() {
+    public Layout createGridLayout() {
         return createGridLayout(getFirstTabName());
     }
 
@@ -177,8 +178,8 @@ public class FormFields extends DisplayFields {
      * @param tabName tab subsection of form
      * @return grid layout for tab
      */
-    public GridLayout createGridLayout(String tabName) {
-        GridLayout gridLayout;
+    public Layout createGridLayout(String tabName) {
+        FormGridLayout gridLayout;
         if (form instanceof EntityForm) {
             gridLayout = new LeftLabelGridLayout(getColumns(tabName), getRows(tabName));
         } else {

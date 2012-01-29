@@ -39,18 +39,21 @@ package com.expressui.core.view.form.layout;
 
 
 import com.expressui.core.view.field.FormField;
-import com.vaadin.ui.GridLayout;
+import com.vaadin.data.Property;
+import com.vaadin.data.util.EnhancedNestedMethodProperty;
+import com.vaadin.ui.*;
 
 /**
  * A special layout for forms, which can support labels on top
  * of fields or to the left.
  */
-public abstract class FormGridLayout extends GridLayout {
-    public FormGridLayout(int columns, int rows) {
-        super(columns, rows);
-    }
+public abstract class FormGridLayout extends CustomComponent implements Layout {
 
-    public FormGridLayout() {
+    private GridLayout gridLayout;
+
+    public FormGridLayout(int columns, int rows) {
+        gridLayout = new GridLayout(columns, rows);
+        setCompositionRoot(gridLayout);
     }
 
     /**
@@ -73,4 +76,60 @@ public abstract class FormGridLayout extends GridLayout {
      * @param formField field to remove
      */
     public abstract void removeField(FormField formField);
+
+    @Override
+    public void setMargin(boolean enabled) {
+        gridLayout.setEnabled(enabled);
+    }
+
+    @Override
+    public void setMargin(boolean top, boolean right, boolean bottom, boolean left) {
+        gridLayout.setMargin(top, right, bottom, left);
+    }
+
+    public void addComponent(Component component, int column1, int row1, int column2, int row2) throws GridLayout.OverlapsException, GridLayout.OutOfBoundsException {
+        gridLayout.addComponent(component, column1, row1, column2, row2);
+    }
+
+    @Override
+    public void addComponent(Component component) {
+//        Field field = (Field) component;
+//        EnhancedNestedMethodProperty property = (EnhancedNestedMethodProperty) field.getPropertyDataSource();
+//        String propertyName = property.getPropertyName();
+
+//        gridLayout.addComponent(component);
+    }
+
+    public void setColumns(int columns) {
+        gridLayout.setColumns(columns);
+    }
+
+    public void setRows(int rows) {
+        gridLayout.setRows(rows);
+    }
+
+    public Component getComponent(int x, int y) {
+        return gridLayout.getComponent(x, y);
+    }
+
+    public void addComponent(Component c, int column, int row) throws GridLayout.OverlapsException, GridLayout.OutOfBoundsException {
+        gridLayout.addComponent(c, column, row);
+    }
+
+    public void removeComponent(int column, int row) {
+        gridLayout.removeComponent(column, row);
+    }
+
+    public void setComponentAlignment(Component childComponent, Alignment alignment) {
+        gridLayout.setComponentAlignment(childComponent, alignment);
+    }
+
+    public void setSpacing(boolean enabled) {
+        gridLayout.setSpacing(enabled);
+    }
+
+    @Override
+    public void removeAllComponents() {
+        gridLayout.removeAllComponents();
+    }
 }
