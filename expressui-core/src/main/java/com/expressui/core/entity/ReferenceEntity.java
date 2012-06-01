@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -41,16 +41,26 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 /**
- * Base class for entities that are read-only by end users and that represent
- * things like menu selects like states or countries.
+ * Base class for entities that are read-only by end users.  and that represent
+ * things like menu selects states or countries.
  */
 @MappedSuperclass
 public abstract class ReferenceEntity implements IdentifiableEntity, Comparable {
 
-    public static final String CACHE_REGION = "ReadOnly";
+    /**
+     * Name of read-only cache, which should be defined in the application's ehcache.xml.
+     */
+    public static final String READ_ONLY_CACHE = "ReadOnly";
 
+    /**
+     * Property of reference entities that is displayed to users in select boxes.
+     */
     public static final String DISPLAY_PROPERTY = "displayName";
 
+    /**
+     * Property of reference entities used for sorting reference entities, allowing full control over
+     * the sort order of reference entities.
+     */
     public static final String ORDER_BY_PROPERTY = "sortOrder";
 
     @Id
@@ -101,10 +111,20 @@ public abstract class ReferenceEntity implements IdentifiableEntity, Comparable 
         this.displayName = displayName;
     }
 
+    /**
+     * Get number for controlling sort order.
+     *
+     * @return number for controlling sort order
+     */
     public Integer getSortOrder() {
         return sortOrder;
     }
 
+    /**
+     * Set number for controlling sort order.
+     *
+     * @param order number for controlling sort order
+     */
     public void setSortOrder(Integer order) {
         this.sortOrder = order;
     }

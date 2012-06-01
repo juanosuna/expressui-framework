@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,10 +37,19 @@
 
 package com.expressui.core.view.page;
 
-import com.expressui.core.security.SecurityResource;
-import com.expressui.core.view.ViewResource;
+import com.expressui.core.view.ViewBean;
 import com.vaadin.ui.Component;
 
-public interface Page extends Component, ViewResource, SecurityResource {
-    void onLoad();
+/**
+ * A interface for indicating a page for display in the main window of ExpressUI.
+ * A page is also both a Vaadin component and a Spring bean.
+ */
+public interface Page extends Component, ViewBean {
+
+    /**
+     * When user leaves the Page, this scope tells ExpressUI to purge
+     * it from Spring's ApplicationContext and the UI. This results is
+     * a small delay but lower memory consumption.
+     */
+    public static final String SCOPE_PAGE = "page";
 }

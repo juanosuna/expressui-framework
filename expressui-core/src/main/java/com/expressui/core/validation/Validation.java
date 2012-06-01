@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -67,10 +67,26 @@ public class Validation {
         return factory;
     }
 
+    /**
+     * Validates all constraints on <code>object</code>.
+     *
+     * @param object object to validate
+     * @param groups group or list of groups targeted for validation
+     *               (default to {@link javax.validation.groups.Default})
+     * @return constraint violations or an empty Set if none
+     * @throws IllegalArgumentException if object is null
+     *                                  or if null is passed to the varargs groups
+     * @throws javax.validation.ValidationException
+     *                                  if a non recoverable error happens
+     *                                  during the validation process
+     */
     public <T> Set<ConstraintViolation<T>> validate(T object, Class<?>... groups) {
         return validator.validate(object, groups);
     }
 
+    /**
+     * Iterate through constraint violations and find ones that are not-null violations.
+     */
     private <T> ConstraintViolation findNotNullViolation(Set<ConstraintViolation<T>> violations) {
         for (ConstraintViolation violation : violations) {
             if (violation.getConstraintDescriptor().getAnnotation().annotationType().equals(NotNull.class)) {
@@ -81,6 +97,22 @@ public class Validation {
         return null;
     }
 
+    /**
+     * Validates all constraints placed on the property of <code>object</code>
+     * named <code>propertyName</code>.
+     *
+     * @param object       object to validate
+     * @param propertyPath property path to validate (ie field and getter constraints)
+     * @param groups       group or list of groups targeted for validation
+     *                     (default to {@link javax.validation.groups.Default})
+     * @return constraint violations or an empty Set if none
+     * @throws IllegalArgumentException if <code>object</code> is null,
+     *                                  if <code>propertyName</code> null, empty or not a valid object property
+     *                                  or if null is passed to the varargs groups
+     * @throws javax.validation.ValidationException
+     *                                  if a non recoverable error happens
+     *                                  during the validation process
+     */
     public <T> Set<ConstraintViolation<T>> validateProperty(T object, String propertyPath, Class<?>... groups) {
 
         Set<ConstraintViolation<T>> violations = new HashSet<ConstraintViolation<T>>();
@@ -114,14 +146,58 @@ public class Validation {
         return violations;
     }
 
+    /**
+     * Validates all constraints placed on the property named <code>propertyName</code>
+     * of the class <code>beanType</code> would the property value be <code>value</code>
+     * <p/>
+     * <code>ConstraintViolation</code> objects return null for
+     * {@link ConstraintViolation#getRootBean()} and {@link ConstraintViolation#getLeafBean()}
+     *
+     * @param beanType     the bean type
+     * @param propertyName property to validate
+     * @param value        property value to validate
+     * @param groups       group or list of groups targeted for validation
+     *                     (default to {@link javax.validation.groups.Default})
+     * @return constraint violations or an empty Set if none
+     * @throws IllegalArgumentException if <code>beanType</code> is null,
+     *                                  if <code>propertyName</code> null, empty or not a valid object property
+     *                                  or if null is passed to the varargs groups
+     * @throws javax.validation.ValidationException
+     *                                  if a non recoverable error happens
+     *                                  during the validation process
+     */
     public <T> Set<ConstraintViolation<T>> validateValue(Class<T> beanType, String propertyName, Object value, Class<?>... groups) {
         return validator.validateValue(beanType, propertyName, value, groups);
     }
 
+    /**
+     * Return the descriptor object describing bean constraints.
+     * The returned object (and associated objects including
+     * <code>ConstraintDescriptor<code>s) are immutable.
+     *
+     * @param clazz class or interface type evaluated
+     * @return the bean descriptor for the specified class.
+     * @throws IllegalArgumentException if clazz is null
+     * @throws javax.validation.ValidationException
+     *                                  if a non recoverable error happens
+     *                                  during the metadata discovery or if some
+     *                                  constraints are invalid.
+     */
     public BeanDescriptor getConstraintsForClass(Class<?> clazz) {
         return validator.getConstraintsForClass(clazz);
     }
 
+    /**
+     * Return an instance of the specified type allowing access to
+     * provider-specific APIs.  If the Bean Validation provider
+     * implementation does not support the specified class,
+     * <code>ValidationException</code> is thrown.
+     *
+     * @param type the class of the object to be returned.
+     * @return an instance of the specified class
+     * @throws javax.validation.ValidationException
+     *          if the provider does not support the call.
+     */
     public <T> T unwrap(Class<T> type) {
         return validator.unwrap(type);
     }
@@ -131,10 +207,25 @@ public class Validation {
         return descriptor != null && descriptor.isCascaded();
     }
 
+    /**
+     * Ask if a property in a bean class has NotNull annotation
+     *
+     * @param beanClass    bean class to check
+     * @param propertyName name of property to check
+     * @return true if property has NotNull annotation
+     */
     public boolean isRequired(Class beanClass, String propertyName) {
         return hasAnnotation(beanClass, propertyName, NotNull.class);
     }
 
+    /**
+     * Ask if property in a bean class has an annotation
+     *
+     * @param beanClass       bean class to check
+     * @param propertyName    name of property to check
+     * @param annotationClass annotation to check
+     * @return true if property has the annotation
+     */
     public boolean hasAnnotation(Class beanClass, String propertyName, Class annotationClass) {
         PropertyDescriptor descriptor = validator.getConstraintsForClass(beanClass).getConstraintsForProperty(propertyName);
         if (descriptor != null) {

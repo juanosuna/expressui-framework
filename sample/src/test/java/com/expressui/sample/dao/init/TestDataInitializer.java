@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -45,9 +45,11 @@ import com.expressui.core.dao.security.UserRoleDao;
 import com.expressui.core.entity.security.*;
 import com.expressui.sample.dao.StateDao;
 import com.expressui.sample.entity.*;
-import com.expressui.sample.util.formatter.PhonePropertyFormatter;
-import com.expressui.sample.util.validator.PhoneValidator;
+import com.expressui.sample.formatter.PhonePropertyFormatter;
+import com.expressui.sample.validator.PhoneValidator;
 import com.expressui.sample.view.LoginPage;
+import com.expressui.sample.view.profile.ProfilePage;
+import com.expressui.sample.view.registration.RegistrationPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,6 +87,7 @@ public class TestDataInitializer {
         initializeRoles();
         initializeUsers();
 
+        Account currentAccount = null;
         for (Integer i = 0; i < count; i++) {
             Contact contact;
             contact = new Contact("first" + i, "last" + i);
@@ -92,7 +95,7 @@ public class TestDataInitializer {
             contact.setAssignedTo(ReferenceDataInitializer.random(userDao.findAll()));
             contact.setTitle("Vice President");
             contact.setDoNotCall(randomBoolean());
-            contact.setEmail("juan@brownbagconsulting.com");
+            contact.setEmail("info@expressui.com");
             contact.setDoNotEmail(randomBoolean());
             contact.setLeadSource(referenceDataInitializer.randomLeadSource());
             Address address = randomAddress(i);
@@ -120,8 +123,12 @@ public class TestDataInitializer {
 
             contact.setDescription("Description of contact");
 
-            initializeAccount(contact, i);
+            if (i % 10 == 0) {
+                currentAccount = initializeAccount(i);
+            }
+            contact.setAccount(currentAccount);
             genericDao.persist(contact);
+
             if (i % 50 == 0) {
                 genericDao.flush();
                 genericDao.clear();
@@ -134,9 +141,22 @@ public class TestDataInitializer {
         role.setDescription("This role belongs to all users and allows user to login.");
         role.setAllowOrDenyByDefault(AllowOrDeny.DENY);
         roleDao.persist(role);
+
         Permission permission = new Permission(LoginPage.class.getName());
         permission.setRole(role);
         permission.setView(true);
+        permissionDao.persist(permission);
+
+        permission = new Permission(RegistrationPage.class.getName());
+        permission.setRole(role);
+        permission.setView(true);
+        permissionDao.persist(permission);
+
+        permission = new Permission(Profile.class.getName());
+        permission.setRole(role);
+        permission.setView(true);
+        permission.setCreate(true);
+        permission.setEdit(true);
         permissionDao.persist(permission);
 
         role = new Role("ROLE_ADMIN");
@@ -147,6 +167,12 @@ public class TestDataInitializer {
         role.setDescription("This role demonstrates full access to entities but only view access to security entities.");
         role.setAllowOrDenyByDefault(AllowOrDeny.ALLOW);
         roleDao.persist(role);
+
+        permission = new Permission(ProfilePage.class.getName());
+        permission.setRole(role);
+        permission.setView(false);
+        permissionDao.persist(permission);
+
         permission = new Permission(Role.class.getName());
         permission.setRole(role);
         permission.setView(true);
@@ -154,6 +180,7 @@ public class TestDataInitializer {
         permission.setDelete(false);
         permission.setCreate(false);
         permissionDao.persist(permission);
+
         permission = new Permission(User.class.getName());
         permission.setRole(role);
         permission.setView(true);
@@ -161,26 +188,13 @@ public class TestDataInitializer {
         permission.setDelete(false);
         permission.setCreate(false);
         permissionDao.persist(permission);
-        permission = new Permission(Contact.class.getName());
+
+        permission = new Permission(Permission.class.getName());
         permission.setRole(role);
         permission.setView(true);
-        permission.setEdit(true);
-        permission.setDelete(true);
-        permission.setCreate(true);
-        permissionDao.persist(permission);
-        permission = new Permission(Account.class.getName());
-        permission.setRole(role);
-        permission.setView(true);
-        permission.setEdit(true);
-        permission.setDelete(true);
-        permission.setCreate(true);
-        permissionDao.persist(permission);
-        permission = new Permission(Opportunity.class.getName());
-        permission.setRole(role);
-        permission.setView(true);
-        permission.setEdit(true);
-        permission.setDelete(true);
-        permission.setCreate(true);
+        permission.setEdit(false);
+        permission.setDelete(false);
+        permission.setCreate(false);
         permissionDao.persist(permission);
 
         roleDao.flush();
@@ -220,11 +234,10 @@ public class TestDataInitializer {
         userDao.flush();
     }
 
-    private void initializeAccount(Contact contact, int i) {
+    private Account initializeAccount(int i) {
         Account account = new Account();
         account.setName("Brown Bag" + i);
-        contact.setAccount(account);
-        account.setWebsite("http://www.brownbagconsulting.com");
+        account.setWebsite("www.expressui.com");
         account.setTickerSymbol("EXPUI");
 
         Address address = randomAddress(i);
@@ -237,7 +250,7 @@ public class TestDataInitializer {
         account.setAnnualRevenue(ReferenceDataInitializer.random(1, 1000000000));
         account.setCurrency(referenceDataInitializer.randomCurrency());
         account.setDescription("Description of account");
-        account.setEmail("juan@brownbagconsulting.com");
+        account.setEmail("info@expressui.com");
         account.setIndustry(referenceDataInitializer.randomIndustry());
 
         try {
@@ -254,6 +267,8 @@ public class TestDataInitializer {
         genericDao.persist(account);
 
         initializeOpportunity(account, i);
+
+        return account;
     }
 
     private void initializeOpportunity(Account account, int i) {
@@ -264,9 +279,9 @@ public class TestDataInitializer {
         opportunity.setSalesStage(referenceDataInitializer.randomSalesStage());
         opportunity.setCurrency(referenceDataInitializer.randomCurrency());
         if (opportunity.getSalesStage().getId().startsWith("Closed")) {
-            opportunity.setActualCloseDate(randomDate(2000, 2010));
+            opportunity.setActualCloseDate(randomDate(2005, 2011));
         } else {
-            opportunity.setExpectedCloseDate(randomDate(2011, 2015));
+            opportunity.setExpectedCloseDate(randomDate(2012, 2015));
         }
         opportunity.setAssignedTo(ReferenceDataInitializer.random(userDao.findAll()));
         opportunity.setLeadSource(referenceDataInitializer.randomLeadSource());

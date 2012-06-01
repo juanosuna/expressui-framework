@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -67,7 +67,7 @@ public class ActionContextMenu implements Action.Handler {
     /**
      * Add action to the context menu.
      *
-     * @param caption    capture for display context menu item
+     * @param caption    caption to display in context menu item
      * @param target     target object to invoke when user selects action
      * @param methodName target method to invoke when user selects action
      */
@@ -104,7 +104,7 @@ public class ActionContextMenu implements Action.Handler {
     public void handleAction(Action action, Object sender, Object target) {
         for (ContextMenuAction contextMenuAction : actions.values()) {
             if (action.equals(contextMenuAction.getAction())) {
-                Assert.PROGRAMMING.assertTrue(contextMenuAction.isEnabled());
+                Assert.PROGRAMMING.isTrue(contextMenuAction.isEnabled());
                 contextMenuAction.getMethodDelegate().execute();
                 break;
             }

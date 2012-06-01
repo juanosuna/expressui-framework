@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,6 +37,7 @@
 
 package com.expressui.core.util;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 
 /**
@@ -58,5 +59,23 @@ public class CollectionsUtil {
         }
 
         return stringArray;
+    }
+
+    /**
+     * Convert a collection to a primitive array of a given type
+     *
+     * @param type       type of array to create
+     * @param collection collection to convert, must contain items that extend T
+     * @param <T>        type of array to create
+     * @return primitive array of type T
+     */
+    public static <T> T[] toArray(Class<T> type, Collection<? extends T> collection) {
+        T[] array = (T[]) Array.newInstance(type, collection.size());
+        int i = 0;
+        for (T item : collection) {
+            array[i++] = item;
+        }
+
+        return array;
     }
 }

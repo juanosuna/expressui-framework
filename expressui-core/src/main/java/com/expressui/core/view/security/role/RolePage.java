@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,16 +37,19 @@
 
 package com.expressui.core.view.security.role;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.entity.security.Role;
+import com.expressui.core.view.page.Page;
 import com.expressui.core.view.page.SearchPage;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+/**
+ * Page for searching for roles and editing/viewing them.
+ */
 @Component
-@Scope("page")
+@Scope(Page.SCOPE_PAGE)
 @SuppressWarnings({"serial"})
 public class RolePage extends SearchPage<Role> {
 
@@ -67,7 +70,7 @@ public class RolePage extends SearchPage<Role> {
     }
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return "Roles";
     }
 
@@ -75,7 +78,7 @@ public class RolePage extends SearchPage<Role> {
     public void postWire() {
         super.postWire();
 
-        MainApplication.getInstance().loadAllPageBeans();
+        getMainApplication().loadAllPageBeans();
     }
 }
 

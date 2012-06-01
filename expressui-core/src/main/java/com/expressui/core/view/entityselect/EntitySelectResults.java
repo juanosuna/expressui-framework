@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -39,7 +39,6 @@ package com.expressui.core.view.entityselect;
 
 import com.expressui.core.view.menu.ActionContextMenu;
 import com.expressui.core.view.results.Results;
-import com.expressui.core.view.util.MessageSource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
@@ -54,9 +53,6 @@ import java.util.Collection;
  * @param <T> type of entity displayed in the results
  */
 public abstract class EntitySelectResults<T> extends Results<T> {
-
-    @Resource(name = "uiMessageSource")
-    private MessageSource uiMessageSource;
 
     @Resource
     private ActionContextMenu actionContextMenu;
@@ -74,21 +70,28 @@ public abstract class EntitySelectResults<T> extends Results<T> {
         addSelectionChangedListener(this, "selectionChanged");
 
         HorizontalLayout crudButtons = new HorizontalLayout();
+        setDebugId(crudButtons, "crudButtons");
         crudButtons.setMargin(false);
         crudButtons.setSpacing(true);
 
-        selectButton = new Button(uiMessageSource.getMessage("entityResults.select"));
-        selectButton.setDescription(uiMessageSource.getMessage("entityResults.select.description"));
+        selectButton = new Button(uiMessageSource.getMessage("results.select"));
+        selectButton.setDescription(uiMessageSource.getMessage("results.select.description"));
         selectButton.setEnabled(false);
         selectButton.addStyleName("small default");
         crudButtons.addComponent(selectButton);
 
         getCrudButtons().addComponent(crudButtons, 0);
         getCrudButtons().setComponentAlignment(crudButtons, Alignment.MIDDLE_LEFT);
+
+        addCodePopupButtonIfEnabled(EntitySelectResults.class);
+    }
+
+    @Override
+    public void onDisplay() {
     }
 
     /**
-     * Invoked when the user selects an entity in the results.
+     * Listener method invoked when the user selects an entity in the results.
      */
     public void selectionChanged() {
         Object itemId = getResultsTable().getValue();
@@ -123,7 +126,7 @@ public abstract class EntitySelectResults<T> extends Results<T> {
     public void setSelectButtonListener(Object target, String methodName) {
         selectButton.removeListener(Button.ClickEvent.class, target, methodName);
         selectButton.addListener(Button.ClickEvent.class, target, methodName);
-        actionContextMenu.addAction("entityResults.select", target, methodName);
-        actionContextMenu.setActionEnabled("entityResults.select", true);
+        actionContextMenu.addAction("results.select", target, methodName);
+        actionContextMenu.setActionEnabled("results.select", true);
     }
 }

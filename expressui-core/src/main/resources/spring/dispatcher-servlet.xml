@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2011 Brown Bag Consulting.
+  ~ Copyright (c) 2012 Brown Bag Consulting.
   ~ This file is part of the ExpressUI project.
   ~ Author: Juan Osuna
   ~
@@ -41,9 +41,8 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
 
-    <context:component-scan base-package="com.expressui.sample"/>
     <context:annotation-config/>
 
     <!-- Vaadin application controller -->
@@ -71,20 +70,6 @@
         </property>
     </bean>
 
-    <!--<bean id="loginController" class="org.springframework.web.servlet.mvc.ServletWrappingController"-->
-    <!--p:servletClass="com.expressui.core.util.SpringApplicationServlet">-->
-    <!--<property name="initParameters">-->
-    <!--<props>-->
-    <!--<prop key="application">${loginApplication}</prop>-->
-    <!--<prop key="productionMode">${productionMode}</prop>-->
-    <!--<prop key="widgetset">${widgetset}</prop>-->
-    <!--</props>-->
-    <!--</property>-->
-    <!--</bean>-->
-
-    <!--<bean name="loginController" class="org.springframework.web.servlet.mvc.ParameterizableViewController">-->
-    <!--<property name="viewName" value="login"/>-->
-    <!--</bean>-->
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/"/>

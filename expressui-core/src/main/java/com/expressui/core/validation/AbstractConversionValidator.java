@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -43,7 +43,7 @@ import com.expressui.core.view.form.EntityForm;
 import com.vaadin.data.Validator;
 
 /**
- * Superclass for implementing conversion validators, that validate whether a user-entered value
+ * Abstract superclass for implementing conversion validators, which validate whether a user-entered value
  * is convertible to specific data type.
  */
 public abstract class AbstractConversionValidator implements Validator {
@@ -51,7 +51,8 @@ public abstract class AbstractConversionValidator implements Validator {
     private FormField formField;
 
     /**
-     * Construct validator based on the form field is bound to and error message
+     * Construct validator based on the form field the validator is bound to and error message if validation were to
+     * fail.
      *
      * @param formField    form field that this conversion validator is bound to
      * @param errorMessage error message to display to user if validation fails
@@ -62,7 +63,7 @@ public abstract class AbstractConversionValidator implements Validator {
     }
 
     /**
-     * Construct validator based on the form field is bound to
+     * Construct validator based on the form field the validator is bound to
      *
      * @param formField form field that this conversion validator is bound to
      */
@@ -71,8 +72,8 @@ public abstract class AbstractConversionValidator implements Validator {
     }
 
     /**
-     * Get error message that is displayed to user if validation fails. If error message is null, then this
-     * class uses the message contained in any validation exception
+     * Get error message that is displayed to user if validation were to fail. If error message is null, then this
+     * class uses the message contained in any validation exception.
      *
      * @return error message
      */
@@ -109,7 +110,7 @@ public abstract class AbstractConversionValidator implements Validator {
                 throw new InvalidValueException(e.getMessage());
             }
         } finally {
-            EntityForm entityForm = (EntityForm) formField.getFormFields().getForm();
+            EntityForm entityForm = (EntityForm) formField.getFormFieldSet().getForm();
             entityForm.syncTabAndSaveButtonErrors();
         }
     }

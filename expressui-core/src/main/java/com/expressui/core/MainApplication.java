@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -39,17 +39,20 @@ package com.expressui.core;
 
 import com.expressui.core.entity.security.User;
 import com.expressui.core.security.SecurityService;
-import com.expressui.core.util.SpringApplicationContext;
-import com.expressui.core.view.ViewResource;
+import com.expressui.core.util.*;
+import com.expressui.core.view.TypedComponent;
+import com.expressui.core.view.ViewBean;
 import com.expressui.core.view.field.LabelRegistry;
 import com.expressui.core.view.menu.MainMenuBar;
+import com.expressui.core.view.menu.MenuBarNode;
 import com.expressui.core.view.page.Page;
 import com.expressui.core.view.page.PageConversation;
 import com.expressui.core.view.page.SearchPage;
 import com.expressui.core.view.results.CrudResults;
 import com.expressui.core.view.util.MessageSource;
+import com.github.wolfie.sessionguard.SessionGuard;
 import com.vaadin.Application;
-import com.vaadin.terminal.Sizeable;
+import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
 import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.*;
@@ -58,7 +61,6 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.access.AccessDeniedException;
 import org.vaadin.dialogs.ConfirmDialog;
 import org.vaadin.dialogs.DefaultConfirmDialogFactory;
 
@@ -73,55 +75,79 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Main Vaadin Application that is tied to the user's session. The user's MainApplication
- * is always tied to the current thread and can be looked up by calling getInstance().
- * Instance of MainPages is injected into the MainApplication and used to launch
- * the application.
+ * Main Vaadin Application, which is tied to the user's session. The user's MainApplication
+ * is also tied to the current thread and can be looked up by calling getInstance().
  */
-public abstract class MainApplication extends Application implements ViewResource, HttpServletRequestListener {
+public abstract class MainApplication extends Application implements ViewBean, HttpServletRequestListener {
 
-    private static final int WARNING_PERIOD_MINS = 2;
+    private static ThreadLocal<MainApplication> currentInstance = new ThreadLocal<MainApplication>();
 
-    private static ThreadLocal<MainApplication> threadLocal = new ThreadLocal<MainApplication>();
-
-    @Resource(name = "uiMessageSource")
-    private MessageSource messageSource;
-
+    /**
+     * Service for logging in/out and getting the current user. The current user entity
+     * provides access to roles and permissions.
+     */
     @Resource
-    private SecurityService securityService;
+    public SecurityService securityService;
 
+    /**
+     * Provides access to internationalized messages.
+     */
     @Resource
-    protected MessageSource uiMessageSource;
+    public MessageSource uiMessageSource;
 
+    /**
+     * A registry for managing UI display labels.
+     */
     @Resource
-    private LabelRegistry labelRegistry;
+    public LabelRegistry labelRegistry;
 
-    private Window mainWindow;
+    /**
+     * Main menu bar displayed for navigation.
+     */
+    @Resource
+    public MainMenuBar mainMenuBar;
 
-    private VerticalLayout mainLayout;
+    private boolean codePopupEnabled = false;
 
-    private TabSheet pageLayout;
+    private TabSheet pageLayoutTabSheet;
+
+    private Class<? extends Page> currentPageClass;
+    private Class<? extends Page> previousPageClass;
 
     private PageConversation currentPageConversation;
 
-    public abstract void configureLeftMenuBar(MainMenuBar mainMenuBar);
+    public abstract void configureLeftMenuBar(MenuBarNode rootNode);
 
-    public abstract void configureRightMenuBar(MainMenuBar mainMenuBar);
+    public abstract void configureRightMenuBar(MenuBarNode rootNode);
 
     public String getCustomTheme() {
-        return "expressUiTheme";
+        return "expressui";
     }
 
+    /**
+     * Get the current page conversation.
+     *
+     * @return current page conversation
+     */
     public PageConversation getCurrentPageConversation() {
         return currentPageConversation;
     }
 
+    /**
+     * Begin a new page conversation.
+     *
+     * @param id unique id of conversation
+     * @return newly created page conversation
+     */
     public PageConversation beginPageConversation(String id) {
         currentPageConversation = new PageConversation(id);
 
         return currentPageConversation;
     }
 
+    /**
+     * End the current page conversation.
+     */
     public void endPageConversation() {
         currentPageConversation = null;
     }
@@ -129,11 +155,16 @@ public abstract class MainApplication extends Application implements ViewResourc
     @PostConstruct
     @Override
     public void postConstruct() {
+        MainApplication.setInstance(this);
     }
 
     @Override
     public void postWire() {
-        refreshView();
+    }
+
+    @Override
+    public void onDisplay() {
+        mainMenuBar.onDisplay();
     }
 
     /**
@@ -143,23 +174,25 @@ public abstract class MainApplication extends Application implements ViewResourc
      * @return MainApplication associated with user's session
      */
     public static MainApplication getInstance() {
-        return threadLocal.get();
+        return currentInstance.get();
     }
 
     private static void setInstance(MainApplication application) {
-        if (getInstance() == null) {
-            threadLocal.set(application);
-        }
+        currentInstance.set(application);
     }
 
     @Override
     public void onRequestStart(HttpServletRequest request, HttpServletResponse response) {
         MainApplication.setInstance(this);
+        if (securityService.getCurrentUser() != null) {
+            SecurityService.setCurrentLoginName(securityService.getCurrentUser().getLoginName());
+        }
     }
 
     @Override
     public void onRequestEnd(HttpServletRequest request, HttpServletResponse response) {
-        threadLocal.remove();
+        currentInstance.remove();
+        SecurityService.removeCurrentLoginName();
     }
 
     @Override
@@ -169,110 +202,150 @@ public abstract class MainApplication extends Application implements ViewResourc
         setTheme(getCustomTheme());
         customizeConfirmDialogStyle();
 
-        mainWindow = new Window(messageSource.getMessage("mainApplication.caption"));
-        mainWindow.addStyleName("p-main-window");
+        Window mainWindow = new Window(uiMessageSource.getMessage("mainApplication.caption"));
+        mainWindow.addStyleName("e-main-window");
         setMainWindow(mainWindow);
 
-        mainLayout = new VerticalLayout();
-        mainLayout.setDebugId("e-mainLayout");
-        mainLayout.setWidth(100, Sizeable.UNITS_PERCENTAGE);
+        VerticalLayout mainLayout = new VerticalLayout();
+        String id = StringUtil.generateDebugId("e", this, mainLayout, "mainLayout");
+        mainLayout.setDebugId(id);
+
+        mainWindow.setSizeFull();
+        mainLayout.setSizeFull();
         mainWindow.setContent(mainLayout);
 
-        setLogoutURL("app?restartApplication");
+        setLogoutURL(getApplicationProperties().getRestartApplicationUrl());
 
+        configureLeftMenuBar(mainMenuBar.getLeftMenuBarRoot());
+        configureRightMenuBar(mainMenuBar.getRightMenuBarRoot());
+        mainLayout.addComponent(mainMenuBar);
 
-//        SessionGuard sessionGuard = new SessionGuard();
-//        sessionGuard.setTimeoutWarningPeriod(WARNING_PERIOD_MINS);
-//        mainWindow.addComponent(sessionGuard);
+        pageLayoutTabSheet = new TabSheet();
+        id = StringUtil.generateDebugId("e", this, pageLayoutTabSheet, "pageLayoutTabSheet");
+        pageLayoutTabSheet.setDebugId(id);
 
+        pageLayoutTabSheet.addStyleName("e-main-page-layout");
+        pageLayoutTabSheet.setSizeFull();
+        mainLayout.addComponent(pageLayoutTabSheet);
+        mainLayout.setExpandRatio(pageLayoutTabSheet, 1.0f);
+
+        Link expressUILink = new Link(uiMessageSource.getMessage("mainApplication.footerMessage"),
+                new ExternalResource(uiMessageSource.getMessage("mainApplication.footerLink")));
+//        expressUILink.setIcon(new ThemeResource("../expressui/img/expressui_logo.png"));
+        expressUILink.setSizeUndefined();
+        mainLayout.addComponent(expressUILink);
+        mainLayout.setComponentAlignment(expressUILink, Alignment.TOP_CENTER);
+
+        configureSessionTimeout(mainWindow);
         postWire();
+        onDisplay();
     }
 
-    public void refreshView() {
-        mainLayout.removeAllComponents();
+    private void configureSessionTimeout(Window mainWindow) {
+        ((WebApplicationContext) getContext())
+                .getHttpSession().setMaxInactiveInterval(getApplicationProperties().getSessionTimeout() * 60);
 
-        HorizontalLayout menuBarLayout = createMainMenuBar();
-
-        mainLayout.addComponent(menuBarLayout);
-
-        pageLayout = createPageLayout();
-        mainLayout.addComponent(pageLayout);
+        SessionGuard sessionGuard = new SessionGuard();
+        Integer timeoutWarningPeriod = getApplicationProperties().getSessionTimeoutWarning();
+        sessionGuard.setTimeoutWarningPeriod(timeoutWarningPeriod);
+        sessionGuard.setTimeoutWarningXHTML(uiMessageSource.getMessage("mainApplication.timeoutWarning",
+                new Object[]{timeoutWarningPeriod}));
+        mainWindow.addComponent(sessionGuard);
     }
 
-    private HorizontalLayout createMainMenuBar() {
-        HorizontalLayout menuBarLayout = new HorizontalLayout();
-        menuBarLayout.addStyleName("p-page-bar");
-        menuBarLayout.setWidth(100, Sizeable.UNITS_PERCENTAGE);
+    /**
+     * Select a new page base on page's class. Does nothing if user does not have permission to access the page.
+     * If the previous page is Page.SCOPE_PAGE, then it is removed from Spring's ApplicationContext and the UI.
+     * If the previous page is WebApplicationContext.SESSION_SCOPE, then it is retained in Spring's ApplicationContext
+     * and in the UI as a hidden component in an unselected tab.
+     * </P>
+     * WebApplicationContext.SESSION_SCOPE pages display more quickly at the cost of using more memory.
+     *
+     * @param pageClass class of the new page to select
+     */
+    public void displayPage(Class<? extends Page> pageClass) {
+        User currentUser = securityService.getCurrentUser();
 
-        MenuBar leftMenuBar = new MenuBar();
-        leftMenuBar.setSizeUndefined();
-        leftMenuBar.setAutoOpen(true);
-        leftMenuBar.setHtmlContentAllowed(true);
+        if (!currentUser.isViewAllowed(pageClass.getName())) {
+            showError(uiMessageSource.getMessage("mainApplication.notAllowed"));
+            return;
+        }
 
-        MainMenuBar leftMainMenuBar = new MainMenuBar(leftMenuBar);
-        configureLeftMenuBar(leftMainMenuBar);
-        menuBarLayout.addComponent(leftMenuBar);
-
-        MenuBar rightMenuBar = new MenuBar();
-        rightMenuBar.setSizeUndefined();
-        rightMenuBar.setAutoOpen(true);
-        rightMenuBar.setHtmlContentAllowed(true);
-
-        MainMenuBar rightMainMenuBar = new MainMenuBar(rightMenuBar);
-        configureRightMenuBar(rightMainMenuBar);
-        menuBarLayout.addComponent(rightMenuBar);
-        menuBarLayout.setComponentAlignment(rightMenuBar, Alignment.MIDDLE_RIGHT);
-
-        return menuBarLayout;
-    }
-
-    private TabSheet createPageLayout() {
-        TabSheet pageLayout = new TabSheet();
-        pageLayout.setDebugId("e-page-layout");
-//        pageLayout.setSizeFull();
-        pageLayout.setWidth(100, Sizeable.UNITS_PERCENTAGE);
-        pageLayout.addStyleName("p-main-tabsheet");
-        return pageLayout;
-    }
-
-    public void selectPage(Class<? extends Page> pageClass) {
         Page page = loadPageBean(pageClass);
 
-        Page previousPage = (Page) pageLayout.getSelectedTab();
+        if (page instanceof TypedComponent && !((TypedComponent) page).isViewAllowed()) {
+            showError(uiMessageSource.getMessage("mainApplication.notAllowed"));
+            return;
+        }
+
+        if (!ObjectUtil.isEqual(currentPageClass, pageClass)) {
+            previousPageClass = currentPageClass;
+            currentPageClass = pageClass;
+        }
+
+        Page previousPage = (Page) pageLayoutTabSheet.getSelectedTab();
         if (previousPage != null) {
             Scope scope = previousPage.getClass().getAnnotation(Scope.class);
-            if (scope != null && scope.value().equals("page")) {
-                pageLayout.removeComponent(previousPage);
+            if (scope != null && scope.value().equals(Page.SCOPE_PAGE)) {
+                pageLayoutTabSheet.removeComponent(previousPage);
             }
         }
 
         boolean componentFound = false;
-        Iterator<Component> components = pageLayout.getComponentIterator();
+        Iterator<Component> components = pageLayoutTabSheet.getComponentIterator();
         while (components.hasNext()) {
             Component component = components.next();
             if (page.equals(component)) {
-                pageLayout.setSelectedTab(component);
+                pageLayoutTabSheet.setSelectedTab(component);
                 componentFound = true;
             }
         }
 
         if (!componentFound) {
             page.postWire();
+            pageLayoutTabSheet.addTab(page);
+            pageLayoutTabSheet.setSelectedTab(page);
+        }
 
-            if (page instanceof SearchPage) {
-                SearchPage searchPage = (SearchPage) page;
-                searchPage.getResults().search();
-                if (searchPage.getResults() instanceof CrudResults) {
-                    ((CrudResults) searchPage.getResults()).applySecurityToCRUDButtons();
-                }
+        if (page instanceof SearchPage) {
+            SearchPage searchPage = (SearchPage) page;
+            searchPage.getResults().search();
+            if (searchPage.getResults() instanceof CrudResults) {
+                ((CrudResults) searchPage.getResults()).applySecurityToCRUDButtons();
             }
-            pageLayout.addTab(page);
-            pageLayout.setSelectedTab(page);
+        }
 
-            page.onLoad();
+        page.onDisplay();
+    }
+
+    /**
+     * Ask of user is allowed to view page of given type.
+     *
+     * @param pageClass class of type Page
+     * @return true if user is allowed.
+     */
+    public boolean isPageViewAllowed(Class<? extends Page> pageClass) {
+
+        User currentUser = securityService.getCurrentUser();
+        Class genericType = ReflectionUtil.getGenericArgumentType(pageClass);
+        return currentUser.isViewAllowed(pageClass.getName()) && currentUser.isViewAllowed(genericType.getName());
+    }
+
+    /**
+     * Navigates to the previously selected page, sort of like using back button, except only keeps a history of one
+     * page.
+     */
+    public void selectPreviousPage() {
+        if (previousPageClass != null) {
+            displayPage(previousPageClass);
         }
     }
 
+    /**
+     * Forces all page beans to be loaded. This is useful for admin managing security permissions. In this case,
+     * all pages must be loaded so that security becomes aware of the components whose permissions
+     * can be altered.
+     */
     public void loadAllPageBeans() {
         Map<String, String> typeLabels = labelRegistry.getTypeLabels();
         Set<Class> classes = new HashSet<Class>();
@@ -281,7 +354,7 @@ public abstract class MainApplication extends Application implements ViewResourc
                 Class clazz = Class.forName(type);
                 classes.add(clazz);
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
+                // ignore for menu bar labels that have NullCommand
             }
         }
 
@@ -292,7 +365,7 @@ public abstract class MainApplication extends Application implements ViewResourc
         }
     }
 
-    public Page loadPageBean(Class<? extends Page> pageClass) {
+    private Page loadPageBean(Class<? extends Page> pageClass) {
         beginPageConversation(pageClass.getName());
 
         return SpringApplicationContext.getBean(pageClass);
@@ -320,20 +393,16 @@ public abstract class MainApplication extends Application implements ViewResourc
         super.terminalError(event);
         Throwable cause = event.getThrowable().getCause();
 
-        if (cause instanceof AccessDeniedException) {
-            getMainWindow().showNotification(
-                    messageSource.getMessage("mainApplication.accessDenied"),
-                    Window.Notification.TYPE_ERROR_MESSAGE);
-        } else if (cause instanceof DataIntegrityViolationException) {
+        if (cause instanceof DataIntegrityViolationException) {
             DataIntegrityViolationException violationException = (DataIntegrityViolationException) cause;
             getMainWindow().showNotification(
-                    messageSource.getMessage("mainApplication.dataConstraintViolation"),
+                    uiMessageSource.getMessage("mainApplication.dataConstraintViolation"),
                     violationException.getMessage(),
                     Window.Notification.TYPE_ERROR_MESSAGE);
         } else if (cause instanceof ConstraintViolationException) {
             ConstraintViolationException violationException = (ConstraintViolationException) cause;
             getMainWindow().showNotification(
-                    messageSource.getMessage("mainApplication.dataConstraintViolation"),
+                    uiMessageSource.getMessage("mainApplication.dataConstraintViolation"),
                     violationException.getMessage(),
                     Window.Notification.TYPE_ERROR_MESSAGE);
         } else {
@@ -360,21 +429,66 @@ public abstract class MainApplication extends Application implements ViewResourc
         getMainWindow().showNotification(warningMessage, Window.Notification.TYPE_WARNING_MESSAGE);
     }
 
-    public static SystemMessages getSystemMessages() {
-        CustomizedSystemMessages customizedSystemMessages = new CustomizedSystemMessages();
-        customizedSystemMessages.setSessionExpiredURL("mvc/login.do");
-        customizedSystemMessages.setCommunicationErrorURL("mvc/login.do");
-        customizedSystemMessages.setOutOfSyncURL("mvc/login.do");
-        return customizedSystemMessages;
+    /**
+     * Should message box to user.
+     *
+     * @param humanizedMessage
+     */
+    public void showMessage(String humanizedMessage) {
+        getMainWindow().showNotification(humanizedMessage, Window.Notification.TYPE_HUMANIZED_MESSAGE);
     }
 
     /**
-     * Open separate error Window, useful for showing stacktraces.
+     * Show notification to user, more customizable that other show* methods.
      *
-     * @param message
+     * @param notification customized notification
+     */
+    public void showNotification(Window.Notification notification) {
+        getMainWindow().showNotification(notification);
+    }
+
+    /**
+     * Show a yes/no confirmation dialog box.
+     *
+     * @param listener listener to capture whether user chooses yes or no
+     */
+    public void showConfirmationDialog(ConfirmDialog.Listener listener) {
+        ConfirmDialog.show(getMainWindow(),
+                uiMessageSource.getMessage("mainApplication.confirmationCaption"),
+                uiMessageSource.getMessage("mainApplication.confirmationPrompt"),
+                uiMessageSource.getMessage("mainApplication.confirmationYes"),
+                uiMessageSource.getMessage("mainApplication.confirmationNo"),
+                listener);
+    }
+
+    /**
+     * Configures various messages to embed ApplicationProperties.restartApplicationUrl when anything goes wrong,
+     * e.g. session expires, communication error, out of sync, etc.
+     * </P>
+     * Vaadin automatically calls this method.
+     *
+     * @return configured SystemMessages
+     */
+    public static SystemMessages getSystemMessages() {
+        String restartUrl = getApplicationProperties().getRestartApplicationUrl();
+        CustomizedSystemMessages customizedSystemMessages = new CustomizedSystemMessages();
+        customizedSystemMessages.setSessionExpiredURL(restartUrl);
+        customizedSystemMessages.setCommunicationErrorURL(restartUrl);
+        customizedSystemMessages.setOutOfSyncURL(restartUrl);
+        return customizedSystemMessages;
+    }
+
+    private static ApplicationProperties getApplicationProperties() {
+        return (ApplicationProperties) SpringApplicationContext.getBean("applicationProperties");
+    }
+
+    /**
+     * Open separate error Window, useful for showing long stacktraces.
+     *
+     * @param message to display in error Window
      */
     public void openErrorWindow(String message) {
-        Window errorWindow = new Window("Error");
+        Window errorWindow = new Window(uiMessageSource.getMessage("mainApplication.errorWindowCaption"));
         errorWindow.addStyleName("opaque");
         VerticalLayout layout = (VerticalLayout) errorWindow.getContent();
         layout.setSpacing(true);
@@ -386,7 +500,7 @@ public abstract class MainApplication extends Application implements ViewResourc
         layout.addComponent(label);
         errorWindow.setClosable(true);
         errorWindow.setScrollable(true);
-        MainApplication.getInstance().getMainWindow().addWindow(errorWindow);
+        getMainWindow().addWindow(errorWindow);
     }
 
     /**
@@ -395,17 +509,44 @@ public abstract class MainApplication extends Application implements ViewResourc
     public void logout() {
         securityService.logout();
         close();
+        invalidateSession();
+    }
+
+    private void invalidateSession() {
         WebApplicationContext context = (WebApplicationContext) getContext();
         HttpSession httpSession = context.getHttpSession();
         httpSession.invalidate();
     }
 
-    public LabelRegistry getLabelRegistry() {
-        return labelRegistry;
+    /**
+     * Ask if code popups are enabled, useful for demo apps only.
+     *
+     * @return true if code popups are enabled
+     */
+    public boolean isCodePopupEnabled() {
+        return codePopupEnabled;
     }
 
-    public boolean isPageViewAllowed(String type) {
-        User currentUser = securityService.getCurrentUser();
-        return currentUser.isViewAllowed(type);
+    /**
+     * Set if code popups are enabled.
+     *
+     * @param codePopupEnabled true if code popups are enabled
+     */
+    public void setCodePopupEnabled(boolean codePopupEnabled) {
+        this.codePopupEnabled = codePopupEnabled;
+    }
+
+    /**
+     * Check if application has access to external Internet, e.g. there is no firewall or proxy interference.
+     *
+     * @param testUrl      url to test
+     * @param errorMessage error message if test fails
+     */
+    public void checkInternetConnectivity(String testUrl, String errorMessage) {
+        try {
+            UrlUtil.getContents(testUrl);
+        } catch (Exception e) {
+            MainApplication.getInstance().showError(errorMessage);
+        }
     }
 }

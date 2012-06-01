@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -45,6 +45,10 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 
+/**
+ * Validates that permission is not already redundant with existing permission with the
+ * same role, entity type and field.
+ */
 public class PermissionValidator implements ConstraintValidator<ValidPermission, Permission> {
 
     @Resource

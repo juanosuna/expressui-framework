@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -45,6 +45,7 @@ import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.validation.NumberConversionValidator;
 import com.expressui.core.view.field.format.EmptyPropertyFormatter;
 import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.form.FormFieldSet;
 import com.vaadin.addon.beanvalidation.BeanValidationValidator;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
@@ -54,9 +55,12 @@ import com.vaadin.terminal.CompositeErrorMessage;
 import com.vaadin.terminal.ErrorMessage;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.annotation.Resource;
 import javax.persistence.Lob;
+import javax.validation.constraints.NotNull;
 import java.util.*;
 
 /**
@@ -77,7 +81,7 @@ public class FormField extends DisplayField {
      */
     public static final Integer DEFAULT_SELECT_FIELD_WIDTH = 11;
 
-    private String tabName = "";
+    private String tabName;
     private Field field;
     private Integer columnStart;
     private Integer rowStart;
@@ -94,15 +98,23 @@ public class FormField extends DisplayField {
     @Resource
     private ReferenceEntityDao referenceEntityDao;
 
-    FormField(FormFields formFields, String propertyId) {
-        super(formFields, propertyId);
+    /**
+     * Construct with reference to fieldSet this field belongs to and the property name this field is bound to, e.g.
+     * an entity object.
+     *
+     * @param formFieldSet fieldSet that contains this field
+     * @param propertyId   name of the property this field is bound to
+     */
+    public FormField(FormFieldSet formFieldSet, String propertyId) {
+        super(formFieldSet, propertyId);
 
         SpringApplicationContext.autowire(this);
     }
 
     /**
-     * Get Vaadin label for this field. Label is automatically generated from property ID unless configured
-     * by the application.
+     * Get Vaadin label for this field. Label is automatically generated from property Id unless configured
+     * by the application. Generated one can be derived from the property name, @Label annotation on the bound property
+     * or looked up from domainMessageSource bean, using property name as key.
      *
      * @return Vaadin label for this field
      */
@@ -110,7 +122,7 @@ public class FormField extends DisplayField {
         if (label == null) {
             String labelText = generateLabelText();
             if (isRequired()) {
-                labelText = "<span class=\"p-required-field-indicator\">*</span>" + labelText;
+                labelText = "<span class=\"e-required-field-indicator\">*</span>" + labelText;
             }
             label = new com.vaadin.ui.Label(labelText, com.vaadin.ui.Label.CONTENT_XHTML);
             label.setSizeUndefined();
@@ -138,100 +150,119 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get the name of the tab this field resides in.
+     * Get the name of the form tab this field resides in.
      *
-     * @return name of tab that contains this field
+     * @return name of form tab that contains this field
      */
     public String getTabName() {
         return tabName;
     }
 
     /**
-     * Set the name of the tab this field resides in.
+     * Set the name of the form tab this field resides in.
      *
-     * @param tabName name of tab that contains this field
+     * @param tabName name of form tab that contains this field
      */
     public void setTabName(String tabName) {
+        Assert.PROGRAMMING.isTrue(!(tabName.isEmpty() && getFormFieldSet().hasTabs()), "tabName arg must not be empty" +
+                " if named tabs already exist");
+
+
+        Set<String> tabNames = getFormFieldSet().getTabNames();
+        for (String name : tabNames) {
+            Assert.PROGRAMMING.isTrue(tabName.isEmpty() || !name.isEmpty(), "tabName arg must be empty" +
+                    " if empty tabNames already exist");
+        }
+
         this.tabName = tabName;
     }
 
     /**
-     * Get the column start position of this field, starting with 1 not 0
+     * Get the column start coordinate of this field, starting with 1 not 0
      *
-     * @return column start position
+     * @return column start coordinate
      */
     public Integer getColumnStart() {
         return columnStart;
     }
 
     /**
-     * Set the column start position of this field, starting with 1 not 0
+     * Set the column start coordinate of this field, starting with 1 not 0
      *
-     * @param columnStart column start position
+     * @param columnStart column start coordinate
      */
     public void setColumnStart(Integer columnStart) {
         this.columnStart = columnStart;
     }
 
     /**
-     * Get the row start position of this field, starting with 1 not 0
+     * Get the row start coordinate of this field, starting with 1 not 0
      *
-     * @return row start position
+     * @return row start coordinate
      */
     public Integer getRowStart() {
         return rowStart;
     }
 
     /**
-     * Set the row start position of this field, starting with 1 not 0
+     * Set the row start coordinate of this field, starting with 1 not 0
      *
-     * @param rowStart row start position
+     * @param rowStart row start coordinate
      */
     public void setRowStart(Integer rowStart) {
         this.rowStart = rowStart;
     }
 
     /**
-     * Get the column end position of this field
+     * Get the column end coordinate of this field
      *
-     * @return column end position
+     * @return column end coordinate
      */
     public Integer getColumnEnd() {
         return columnEnd;
     }
 
     /**
-     * Set the column end position of this field
+     * Set the column end coordinate of this field
      *
-     * @param columnEnd column end position
+     * @param columnEnd column end coordinate
      */
     public void setColumnEnd(Integer columnEnd) {
         this.columnEnd = columnEnd;
     }
 
     /**
-     * Get the row end position of this field
+     * Get the row end coordinate of this field
      *
-     * @return row end position
+     * @return row end coordinate
      */
     public Integer getRowEnd() {
         return rowEnd;
     }
 
     /**
-     * Set the row end position of this field
+     * Set the row end coordinate of this field
      *
-     * @param rowEnd row end position
+     * @param rowEnd row end coordinate
      */
     public void setRowEnd(Integer rowEnd) {
         this.rowEnd = rowEnd;
     }
 
     /**
-     * Get the underlying Vaadin field. The field is intelligently and automatically generated based on the property type.
+     * Assert that column start and row start are not null.
+     */
+    public void assertValid() {
+        Assert.PROGRAMMING.notNull(columnStart, "columnStart must not be null");
+        Assert.PROGRAMMING.notNull(rowStart, "rowStart must not be null");
+    }
+
+    /**
+     * Get the underlying Vaadin field. The field is intelligently and automatically generated based on the property
+     * type.
      * <p/>
      * In most cases, applications will not need to access Vaadin APIs directly. However,
-     * it is exposed in case Vaadin features are needed that are not available in ExpressUI.
+     * it is exposed in case Vaadin features are needed that are not exposed by ExpressUI.
      *
      * @return Vaadin field
      */
@@ -248,7 +279,7 @@ public class FormField extends DisplayField {
      * Get the underlying Vaadin field. The field is intelligently and automatically generated based on the property type.
      * <p/>
      * In most cases, applications will not need to access Vaadin APIs directly. However,
-     * it is exposed in case Vaadin features are needed that are not available in ExpressUI.
+     * it is exposed in case Vaadin features are needed that are not exposed by ExpressUI.
      *
      * @return Vaadin field
      */
@@ -297,8 +328,11 @@ public class FormField extends DisplayField {
         this.autoAdjustWidthMode = autoAdjustWidthMode;
     }
 
-    void autoAdjustTextFieldWidth() {
-        Assert.PROGRAMMING.assertTrue(getField() instanceof AbstractTextField,
+    /**
+     * Intelligently adjusts the width of fields to accommodate currently populated data.
+     */
+    public void autoAdjustTextFieldWidth() {
+        Assert.PROGRAMMING.instanceOf(getField(), AbstractTextField.class,
                 "FormField.autoAdjustWidth can only be called on text fields");
 
         if (autoAdjustWidthMode == AutoAdjustWidthMode.NONE) return;
@@ -347,8 +381,11 @@ public class FormField extends DisplayField {
         getField().setHeight(height, unit);
     }
 
+    /**
+     * Intelligently adjusts the width of select fields to accommodate currently populated data.
+     */
     public void autoAdjustSelectWidth() {
-        Assert.PROGRAMMING.assertTrue(getField() instanceof AbstractSelect,
+        Assert.PROGRAMMING.instanceOf(getField(), AbstractSelect.class,
                 "FormField.autoAdjustSelectWidth can only be called on select fields");
 
         if (autoAdjustWidthMode == AutoAdjustWidthMode.NONE) return;
@@ -381,7 +418,7 @@ public class FormField extends DisplayField {
         Object selectedItems = getSelectedItems();
 
         Field field = getField();
-        Assert.PROGRAMMING.assertTrue(field instanceof AbstractSelect,
+        Assert.PROGRAMMING.instanceOf(field, AbstractSelect.class,
                 "property " + getPropertyId() + " is not a AbstractSelect field");
         AbstractSelect selectField = (AbstractSelect) field;
         if (selectField.getContainerDataSource() == null
@@ -423,7 +460,7 @@ public class FormField extends DisplayField {
      */
     public void setSelectItems(Map<Object, String> items, String nullCaption) {
         Field field = getField();
-        Assert.PROGRAMMING.assertTrue(field instanceof AbstractSelect,
+        Assert.PROGRAMMING.instanceOf(field, AbstractSelect.class,
                 "property " + getPropertyId() + " is not a AbstractSelect field");
         AbstractSelect selectField = (AbstractSelect) field;
 
@@ -451,13 +488,13 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get selected items, maybe single item or collection.
+     * Get selected items, which could be a single item or collection.
      *
      * @return single item or collection
      */
     public Object getSelectedItems() {
         Field field = getField();
-        Assert.PROGRAMMING.assertTrue(field instanceof AbstractSelect,
+        Assert.PROGRAMMING.instanceOf(field, AbstractSelect.class,
                 "property " + getPropertyId() + " is not a AbstractSelect field");
         AbstractSelect selectField = (AbstractSelect) field;
         return selectField.getValue();
@@ -471,7 +508,7 @@ public class FormField extends DisplayField {
      */
     public void setMultiSelectDimensions(int rows, int columns) {
         Field field = getField();
-        Assert.PROGRAMMING.assertTrue(field instanceof ListSelect,
+        Assert.PROGRAMMING.instanceOf(field, ListSelect.class,
                 "property " + getPropertyId() + " is not a AbstractSelect field");
         ListSelect selectField = (ListSelect) field;
         selectField.setRows(rows);
@@ -484,7 +521,7 @@ public class FormField extends DisplayField {
      * @param displayCaptionPropertyId bean property name
      */
     public void setDisplayCaptionPropertyId(String displayCaptionPropertyId) {
-        Assert.PROGRAMMING.assertTrue(field instanceof AbstractSelect,
+        Assert.PROGRAMMING.instanceOf(field, AbstractSelect.class,
                 "property " + getPropertyId() + " is not a Select field");
 
         ((AbstractSelect) field).setItemCaptionPropertyId(displayCaptionPropertyId);
@@ -502,12 +539,12 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get the parent object for managing all fields on this form.
+     * Get the FormFieldSet that contains this field.
      *
-     * @return object for managing all fields on this form
+     * @return FormFieldSet that contains this field
      */
-    public FormFields getFormFields() {
-        return (FormFields) getDisplayFields();
+    public FormFieldSet getFormFieldSet() {
+        return (FormFieldSet) getFieldSet();
     }
 
     /**
@@ -538,21 +575,21 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set whether or not this field is required
-     *
-     * @param isRequired true if required
-     */
-    public void setRequired(boolean isRequired) {
-        getField().setRequired(isRequired);
-    }
-
-    /**
      * Ask if this field is required.
      *
      * @return true if required
      */
     public boolean isRequired() {
         return getField().isRequired();
+    }
+
+    /**
+     * Set whether or not this field is required
+     *
+     * @param isRequired true if required
+     */
+    public void setRequired(boolean isRequired) {
+        getField().setRequired(isRequired);
     }
 
     /**
@@ -567,17 +604,17 @@ public class FormField extends DisplayField {
      *
      * @return description displayed to user
      */
-    public String getDescription() {
+    public String getToolTip() {
         return getField().getDescription();
     }
 
     /**
      * Set the description displayed during mouse-over/hovering
      *
-     * @param description description displayed to user
+     * @param toolTip description displayed to user
      */
-    public void setDescription(String description) {
-        getField().setDescription(description);
+    public void setToolTip(String toolTip) {
+        getField().setDescription(toolTip);
     }
 
     /**
@@ -687,7 +724,7 @@ public class FormField extends DisplayField {
      * @param errorMessage error message, builds Vaadin composite error message
      */
     public void addError(ErrorMessage errorMessage) {
-        Assert.PROGRAMMING.assertTrue(getField() instanceof AbstractComponent,
+        Assert.PROGRAMMING.instanceOf(getField(), AbstractComponent.class,
                 "Error message cannot be added to field that is not an AbstractComponent");
 
         AbstractComponent abstractComponent = (AbstractComponent) getField();
@@ -824,7 +861,7 @@ public class FormField extends DisplayField {
         }
 
 
-        if (getFormFields().isEntityForm()) {
+        if (getFormFieldSet().isEntityForm()) {
             if (getBeanPropertyType().isValidatable()) {
                 initializeIsRequired();
                 initializeValidators();
@@ -916,10 +953,16 @@ public class FormField extends DisplayField {
      *
      * @param field Vaadin field to initialize
      */
-    public static void initAbstractSelectDefaults(AbstractSelect field) {
+    public void initAbstractSelectDefaults(AbstractSelect field) {
         field.setWidth(DEFAULT_SELECT_FIELD_WIDTH, Sizeable.UNITS_EM);
         field.setItemCaptionMode(Select.ITEM_CAPTION_MODE_PROPERTY);
-        field.setNullSelectionAllowed(true);
+        if (getBeanPropertyType().hasAnnotation(NotNull.class) || getBeanPropertyType().hasAnnotation(NotEmpty.class)
+                || getBeanPropertyType().hasAnnotation(NotBlank.class)) {
+            field.setNullSelectionAllowed(false);
+        } else {
+            field.setNullSelectionAllowed(true);
+        }
+
         field.setItemCaptionPropertyId(ReferenceEntity.DISPLAY_PROPERTY);
     }
 
@@ -944,7 +987,7 @@ public class FormField extends DisplayField {
     private class FieldValueChangeListener implements Property.ValueChangeListener {
         @Override
         public void valueChange(Property.ValueChangeEvent event) {
-            EntityForm entityForm = (EntityForm) getFormFields().getForm();
+            EntityForm entityForm = (EntityForm) getFormFieldSet().getForm();
 
             if (entityForm.isValidationEnabled()) {
                 entityForm.validate(false);

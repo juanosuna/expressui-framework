@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -39,8 +39,8 @@ package com.expressui.core.view.security.role;
 
 import com.expressui.core.entity.security.Role;
 import com.expressui.core.view.field.FormField;
-import com.expressui.core.view.field.FormFields;
 import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.security.role.related.RelatedPermissions;
 import com.expressui.core.view.security.role.related.RelatedUsers;
 import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
@@ -55,6 +55,9 @@ import java.util.List;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
+/**
+ * Form for viewing or editing roles.
+ */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"rawtypes", "serial"})
@@ -67,11 +70,11 @@ public class RoleForm extends EntityForm<Role> {
     private RelatedPermissions relatedPermissions;
 
     @Override
-    public void configureFields(FormFields formFields) {
-        formFields.setPosition("name", 1, 1);
-        formFields.setPosition("allowOrDenyByDefault", 1, 2);
+    public void init(FormFieldSet formFields) {
+        formFields.setCoordinates("name", 1, 1);
+        formFields.setCoordinates("allowOrDenyByDefault", 1, 2);
 
-        formFields.setPosition("description", 2, 1, 2, 2);
+        formFields.setCoordinates("description", 2, 1, 2, 2);
         formFields.setField("description", new TextArea());
         formFields.setWidth("description", 40, Sizeable.UNITS_EM);
         formFields.setHeight("description", 5, Sizeable.UNITS_EM);
@@ -79,7 +82,7 @@ public class RoleForm extends EntityForm<Role> {
     }
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return "Role Form";
     }
 

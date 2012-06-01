@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,71 +38,63 @@
 package com.expressui.sample;
 
 import com.expressui.core.MainApplication;
-import com.expressui.core.security.SecurityService;
-import com.expressui.core.view.menu.MainMenuBar;
+import com.expressui.core.security.exception.AuthenticationException;
+import com.expressui.core.view.menu.MenuBarNode;
 import com.expressui.core.view.security.role.RolePage;
 import com.expressui.core.view.security.user.UserPage;
-import com.expressui.domain.ecbfx.EcbfxService;
 import com.expressui.sample.view.HomePage;
 import com.expressui.sample.view.LoginPage;
 import com.expressui.sample.view.account.AccountPage;
 import com.expressui.sample.view.contact.ContactPage;
 import com.expressui.sample.view.dashboard.SampleDashboardPage;
+import com.expressui.sample.view.myprofile.MyProfilePage;
 import com.expressui.sample.view.opportunity.OpportunityPage;
 import com.expressui.sample.view.profile.ProfilePage;
-
-import javax.annotation.Resource;
-import javax.persistence.Transient;
+import com.expressui.sample.view.registration.RegistrationPage;
 
 public class SampleApplication extends MainApplication {
 
-    @Resource
-    private SecurityService securityService;
-
-    @Resource
-    @Transient
-    private EcbfxService ecbfxService;
-
     @Override
-    public void configureLeftMenuBar(MainMenuBar mainMenuBar) {
-        mainMenuBar.addPage("Home", HomePage.class);
-        mainMenuBar.addPage("Dashboard", SampleDashboardPage.class);
-        mainMenuBar.addPage("Accounts", AccountPage.class).addPage("Opportunities", OpportunityPage.class);
-        mainMenuBar.addPage("Contacts", ContactPage.class);
-        mainMenuBar.addPage("Users", UserPage.class).addPage("Roles", RolePage.class);
-
+    public void configureLeftMenuBar(MenuBarNode rootNode) {
+        rootNode.addPage("Home", HomePage.class);
+        rootNode.addPage("Dashboard", SampleDashboardPage.class);
+        rootNode.addPage("Accounts", AccountPage.class);
+        rootNode.addPage("Opportunities", OpportunityPage.class);
+        rootNode.addPage("Contacts", ContactPage.class);
+        MenuBarNode securityNode = rootNode.addCaption("Security");
+        securityNode.addPage("Users", UserPage.class);
+        securityNode.addPage("Roles", RolePage.class);
+        securityNode.addPage("Profiles", ProfilePage.class);
     }
 
     @Override
-    public void configureRightMenuBar(MainMenuBar mainMenuBar) {
-        mainMenuBar.addPage("Profile", ProfilePage.class);
+    public void configureRightMenuBar(MenuBarNode rootNode) {
+        MenuBarNode myAccountNode = rootNode.addPage("My Account", MyProfilePage.class);
+        myAccountNode.addCommand("Logout", this, "logout");
 
-        if (securityService.getCurrentUser().getLoginName().equals("anonymous")) {
-            mainMenuBar.addPage("Login", LoginPage.class);
-        } else {
-            mainMenuBar.addCommand("Logout", this, "logout");
-        }
+        rootNode.addPage("Login", LoginPage.class);
+        rootNode.addPage("Register", RegistrationPage.class);
     }
 
     @Override
     public String getCustomTheme() {
-        return "sampleTheme";
+        return "sample";
     }
 
     @Override
-    public void postWire() {
-        securityService.login("anonymous", "anonymous");
-
-        super.postWire();
+    public void init() {
+        super.init();
 
         try {
-            ecbfxService.getFXRates();
-        } catch (Exception e) {
-            MainApplication.getInstance().showWarning("I can't seem to fetch FX rates from an external REST service hosted at European" +
-                    " Central Bank. Please see application.properties. You may need to set an HTTP proxy address." +
-                    " In the meantime, click this box to make it disappear.");
+            securityService.login("anonymous", "anonymous");
+        } catch (AuthenticationException e) {
+            throw new RuntimeException("Anonymous account login failed");
         }
+        displayPage(LoginPage.class);
+        mainMenuBar.refresh();
 
-        selectPage(HomePage.class);
+        checkInternetConnectivity("http://www.google.com",
+                "The sample application requires an Internet connection.</br>If it is running behind a proxy," +
+                        " please configure http.proxyHost and http.proxyPort in application.properties.");
     }
 }

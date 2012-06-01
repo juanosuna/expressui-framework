@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -39,139 +39,158 @@ package com.expressui.core.security;
 
 
 import com.expressui.core.dao.security.UserDao;
-import com.expressui.core.entity.security.Permission;
 import com.expressui.core.entity.security.Role;
 import com.expressui.core.entity.security.User;
+import com.expressui.core.entity.security.UserRole;
+import com.expressui.core.security.exception.*;
 import com.expressui.core.util.assertion.Assert;
-import org.hibernate.Hibernate;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.springframework.context.annotation.Scope;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Set;
+
+import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
 
 /**
- * Service for getting the current user and logging out. The current user entity
+ * Service for logging in/out and getting the current user. The current user entity
  * provides access to roles and permissions.
  */
 @Service
-@Scope("session")
+@Scope(SCOPE_SESSION)
 public class SecurityService {
 
-    public static final String SYSTEM_USER = "system";
+    /**
+     * Default user name when no user is logged in, e.g. in unit tests or system process that doesn't require log in
+     */
+    public static final String DEFAULT_USER = "system";
 
-    @Resource
-    private AuthenticationManager authenticationManager;
+    /**
+     * Default role for system user
+     */
+    public static final String DEFAULT_ROLE = "system";
+
+    private static ThreadLocal<String> currentLoginName = new ThreadLocal<String>();
 
     @Resource
     private UserDao userDao;
 
-    private User user;
+    private User currentUser;
 
     /**
-     * Get the login name of the currently logged in user.
+     * Get the login name of the currently logged-in user. If no one is logged in, returns DEFAULT_USER.
      *
      * @return login name
      */
-    private static String getCurrentLoginName() {
-        if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null
-                && SecurityContextHolder.getContext().getAuthentication().getPrincipal() != null) {
-            UserDetails user = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-            return user.getUsername();
+    public static String getCurrentLoginName() {
+        if (currentLoginName.get() == null) {
+            return DEFAULT_USER;
         } else {
-            return SYSTEM_USER;
+            return currentLoginName.get();
         }
     }
 
+    public static void setCurrentLoginName(String loginName) {
+        currentLoginName.set(loginName);
+    }
+
+    public static void removeCurrentLoginName() {
+        currentLoginName.remove();
+    }
+
     /**
-     * Get the user entity for the currently logged in user. Uses a cache
-     * to improve performance.
+     * Get the user entity for the currently logged in user. Caches user entity.
      *
      * @return user entity with roles and permissions
      */
     public User getCurrentUser() {
-        if (user == null) {
-            String loginName = getCurrentLoginName();
-            user = findUser(loginName);
+        return currentUser;
+    }
 
-            Hibernate.initialize(user);
-            Set<Role> roles = user.getRoles();
-            for (Role role : roles) {
-                Hibernate.initialize(role);
-                Set<Permission> permissions = role.getPermissions();
-                for (Permission permission : permissions) {
-                    Hibernate.initialize(permission);
-                }
-            }
+    private User findUser(String loginName) {
+        Assert.PROGRAMMING.notNull(loginName, "loginName must not be null");
+
+        User user = userDao.findByNaturalId("loginName", loginName);
+        if (user != null) {
+            user.hasRole("ROLE_BOGUS"); // force initialization of user and it's roles
         }
 
         return user;
     }
 
-    public void setCurrentUser(User user) {
-        this.user = user;
-    }
-
     /**
-     * Find user entity for the given login name. Does not use cache.
+     * Sets current user, useful in unit-test environment, where user can be set programmatically.
      *
-     * @param loginName login name of the user entity to find
-     * @return user entity
+     * @param user user to set
      */
-    public User findUser(String loginName) {
-
-        Assert.PROGRAMMING.assertTrue(loginName != null, "Current loginName is null");
-
-        return userDao.findByNaturalId("loginName", loginName);
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
     }
 
     /**
-     * Clear the Authentication object from Spring Security's context.
+     * Logout by clearing user and current login name
      */
     public void logout() {
-        SecurityContextHolder.getContext().setAuthentication(null);
-        user = null;
+        currentUser = null;
+        removeCurrentLoginName();
     }
 
-    public boolean login(String username, String password) {
+    /**
+     * Login as default system user, useful for testing or scenarios where no authentication is required. System user
+     * has full rights without restrictions.
+     */
+    public void loginAsDefaultSystemUser() {
+        User user = new User(DEFAULT_USER, DEFAULT_USER);
+        Role role = new Role(DEFAULT_ROLE);
+        UserRole userRole = new UserRole(user, role);
+        user.getUserRoles().add(userRole);
+        setCurrentUser(user);
+    }
+
+    /**
+     * Login and cache current user in the session.
+     *
+     * @param loginName     user name
+     * @param loginPassword password in plaintext
+     */
+    public void login(String loginName, String loginPassword) throws AuthenticationException {
         logout();
-        if (username == null) username = "";
-        if (password == null) password = "";
-        username = username.trim();
 
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
+        if (loginName == null) loginName = "";
+        if (loginPassword == null) loginPassword = "";
+        loginName = loginName.trim();
 
-        Authentication authResult;
-        try {
-            authResult = authenticationManager.authenticate(authRequest);
-        } catch (AuthenticationException failed) {
-            unsuccessfulAuthentication(failed);
-            return false;
+        User user = findUser(loginName);
+        if (user == null) {
+            throw new LoginNameNotFoundException();
         }
-        successfulAuthentication(authResult);
 
-        return true;
+        BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+        if (!passwordEncryptor.checkPassword(loginPassword, user.getLoginPasswordEncrypted())) {
+            throw new IncorrectCredentialsException();
+        }
+
+        assertLoginAllowed(user);
+
+        setCurrentUser(user);
+        setCurrentLoginName(loginName);
     }
 
-    protected void successfulAuthentication(Authentication authResult) {
-        SecurityContextHolder.getContext().setAuthentication(authResult);
-        getCurrentUser();
-
-        // optionally getRememberMeServices().loginSuccess(request, response, authResult);
-        // optionally getEventPublisher().publishEvent(new InteractiveAuthenticationSuccessEvent(authResult, this.getClass()));
-        // optionally getSuccessHandler().onAuthenticationSuccess(request, response, authResult);
-
-        // TODO redirect to the correct application URL
-    }
-
-    protected void unsuccessfulAuthentication(AuthenticationException failed) {
-        // optionally getRememberMeServices().loginFail(request, response);
-        // optionally getFailureHandler().onAuthenticationFailure(request, response, failed);
+    /**
+     * Assert that given user is allowed to log in.
+     *
+     * @param user user to check
+     * @throws AuthenticationException if user is not allowed
+     */
+    public static void assertLoginAllowed(User user) throws AuthenticationException {
+        if (user.isAccountExpired()) {
+            throw new AccountExpiredException();
+        } else if (user.isAccountLocked()) {
+            throw new AccountLockedException();
+        } else if (user.isCredentialsExpired()) {
+            throw new CredentialsExpiredException();
+        } else if (!user.isEnabled()) {
+            throw new AccountDisabledException();
+        }
     }
 }

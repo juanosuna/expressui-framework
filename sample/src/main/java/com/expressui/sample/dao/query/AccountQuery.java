@@ -53,10 +53,6 @@ import java.util.Set;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
-/**
- * User: Juan
- * Date: 1/13/12
- */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class AccountQuery extends StructuredEntityQuery<Account> {
@@ -90,52 +86,52 @@ public class AccountQuery extends StructuredEntityQuery<Account> {
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, Root<Account> rootEntity) {
-        List<Predicate> criteria = new ArrayList<Predicate>();
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<Account> account) {
+        List<Predicate> predicates = new ArrayList<Predicate>();
 
-        if (!isEmpty(name)) {
-            ParameterExpression<String> p = builder.parameter(String.class, "name");
-            criteria.add(builder.like(builder.upper(rootEntity.<String>get("name")), p));
+        if (hasValue(name)) {
+            ParameterExpression<String> nameExp = builder.parameter(String.class, "name");
+            predicates.add(builder.like(builder.upper(account.<String>get("name")), nameExp));
         }
-        if (!isEmpty(states)) {
-            ParameterExpression<Set> p = builder.parameter(Set.class, "states");
-            criteria.add(builder.in(rootEntity.get("billingAddress").get("state")).value(p));
+        if (hasValue(states)) {
+            ParameterExpression<Set> statesExp = builder.parameter(Set.class, "states");
+            predicates.add(builder.in(account.get("billingAddress").get("state")).value(statesExp));
         }
-        if (!isEmpty(country)) {
-            ParameterExpression<Country> p = builder.parameter(Country.class, "country");
-            criteria.add(builder.equal(rootEntity.get("billingAddress").get("country"), p));
+        if (hasValue(country)) {
+            ParameterExpression<Country> countryExp = builder.parameter(Country.class, "country");
+            predicates.add(builder.equal(account.get("billingAddress").get("country"), countryExp));
         }
 
-        return criteria;
+        return predicates;
     }
 
     @Override
     public void setParameters(TypedQuery typedQuery) {
-        if (!isEmpty(name)) {
+        if (hasValue(name)) {
             typedQuery.setParameter("name", "%" + name.toUpperCase() + "%");
         }
-        if (!isEmpty(states)) {
+        if (hasValue(states)) {
             typedQuery.setParameter("states", states);
         }
-        if (!isEmpty(country)) {
+        if (hasValue(country)) {
             typedQuery.setParameter("country", country);
         }
     }
 
     @Override
-    public Path buildOrderBy(Root<Account> rootEntity) {
+    public Path buildOrderBy(Root<Account> account) {
         if (getOrderByPropertyId().equals("billingAddress.country")) {
-            return rootEntity.join("billingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
+            return account.join("billingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
         } else if (getOrderByPropertyId().equals("billingAddress.state.code")) {
-            return rootEntity.join("billingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
+            return account.join("billingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
         } else {
             return null;
         }
     }
 
     @Override
-    public void addFetchJoins(Root<Account> rootEntity) {
-        rootEntity.fetch("billingAddress", JoinType.LEFT);
+    public void addFetchJoins(Root<Account> account) {
+        account.fetch("billingAddress", JoinType.LEFT);
     }
 
     @Override

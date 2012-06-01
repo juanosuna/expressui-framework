@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -183,5 +183,16 @@ public class Address extends WritableEntity {
         }
 
         return false;
+    }
+
+    public String getFormatted() {
+        String formattedAddress = getStreet() + ", " + getCity() + ",";
+        if (getState() != null) {
+            formattedAddress += getState().getCode() + ", ";
+        }
+        formattedAddress += getZipCode() + ", ";
+        formattedAddress += getCountry().getDisplayName();
+
+        return formattedAddress;
     }
 }

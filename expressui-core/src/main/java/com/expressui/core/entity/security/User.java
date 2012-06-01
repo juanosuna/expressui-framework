@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,8 +38,11 @@
 package com.expressui.core.entity.security;
 
 import com.expressui.core.entity.WritableEntity;
+import com.expressui.core.util.ObjectUtil;
+import com.expressui.core.validation.AssertTrueForProperties;
 import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.NotBlank;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -57,13 +60,19 @@ public class User extends WritableEntity {
 
     @NaturalId
     private String loginName;
+
+    private String loginPasswordEncrypted;
+    @Transient
     private String loginPassword;
+    @Transient
+    private String repeatLoginPassword;
+
     private boolean accountExpired = false;
     private boolean accountLocked = false;
     private boolean credentialsExpired = false;
     private boolean enabled = true;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<UserRole> userRoles = new HashSet<UserRole>();
 
     public User() {
@@ -76,8 +85,10 @@ public class User extends WritableEntity {
      * @param loginPassword password
      */
     public User(String loginName, String loginPassword) {
-        this.loginName = loginName;
-        this.loginPassword = loginPassword;
+        this();
+        setLoginName(loginName);
+        setLoginPassword(loginPassword);
+        setRepeatLoginPassword(loginPassword);
     }
 
     /**
@@ -101,13 +112,19 @@ public class User extends WritableEntity {
         this.loginName = loginName;
     }
 
+    public String getLoginPasswordEncrypted() {
+        return loginPasswordEncrypted;
+    }
+
+    public void setLoginPasswordEncrypted(String loginPasswordEncrypted) {
+        this.loginPasswordEncrypted = loginPasswordEncrypted;
+    }
+
     /**
      * Get password.
      *
      * @return password
      */
-    @NotBlank
-    @NotNull
     @Size(min = 4, max = 16)
     public String getLoginPassword() {
         return loginPassword;
@@ -120,6 +137,24 @@ public class User extends WritableEntity {
      */
     public void setLoginPassword(String loginPassword) {
         this.loginPassword = loginPassword;
+        if (loginPassword != null) {
+            BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+            String encryptedPassword = passwordEncryptor.encryptPassword(loginPassword);
+            setLoginPasswordEncrypted(encryptedPassword);
+        }
+    }
+
+    public String getRepeatLoginPassword() {
+        return repeatLoginPassword;
+    }
+
+    public void setRepeatLoginPassword(String repeatLoginPassword) {
+        this.repeatLoginPassword = repeatLoginPassword;
+    }
+
+    @AssertTrueForProperties(errorProperty = "repeatLoginPassword", message = "Entered passwords do not match")
+    public boolean isPasswordMatch() {
+        return ObjectUtil.isEqual(getLoginPassword(), getRepeatLoginPassword());
     }
 
     /**
@@ -226,6 +261,28 @@ public class User extends WritableEntity {
         }
 
         return roles;
+    }
+
+    public boolean hasRole(Role role) {
+        Set<Role> roles = getRoles();
+        for (Role r : roles) {
+            if (role.equals(r)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasRole(String role) {
+        Set<Role> roles = getRoles();
+        for (Role r : roles) {
+            if (role.equals(r.getName())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

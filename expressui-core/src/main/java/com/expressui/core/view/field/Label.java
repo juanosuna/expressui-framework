@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -44,8 +44,11 @@ import java.lang.annotation.Target;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * A display label for display to end user; can be used to annotate
- * entity property to define UI display label in the entity.
+ * A label for display to end user. Can be used to annotate
+ * a property to define UI display label in an entity.
+ * Embedding UI labels in entities is a questionable practice. However,
+ * it avoids having to define redundant labels throughout the UI at the
+ * expense of flexibility.
  */
 @Target(ElementType.FIELD)
 @Retention(RUNTIME)

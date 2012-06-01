@@ -42,57 +42,32 @@ import com.expressui.sample.entity.Contact;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
-/**
- * User: Juan
- * Date: 1/13/12
- */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class RecentContactsQuery extends StructuredEntityQuery<Contact> {
 
-    @PostConstruct
     @Override
-    public void postConstruct() {
-        super.postConstruct();
-
-        setPageSize(10);
-    }
-
-    @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, Root<Contact> rootEntity) {
-        return new ArrayList<Predicate>();
-    }
-
-    @Override
-    public void setParameters(TypedQuery typedQuery) {
-    }
-
-    @Override
-    public Path buildOrderBy(Root<Contact> rootEntity) {
+    public Path buildOrderBy(Root<Contact> contact) {
         if (getOrderByPropertyId().equals("mailingAddress.country")) {
-            return rootEntity.join("mailingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
+            return contact.join("mailingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
         } else if (getOrderByPropertyId().equals("mailingAddress.street")) {
-            return rootEntity.join("mailingAddress", JoinType.LEFT).get("street");
+            return contact.join("mailingAddress", JoinType.LEFT).get("street");
         } else if (getOrderByPropertyId().equals("mailingAddress.city")) {
-            return rootEntity.join("mailingAddress", JoinType.LEFT).get("city");
+            return contact.join("mailingAddress", JoinType.LEFT).get("city");
         } else if (getOrderByPropertyId().equals("mailingAddress.state.code")) {
-            return rootEntity.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
+            return contact.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
         } else {
             return null;
         }
     }
 
     @Override
-    public void addFetchJoins(Root<Contact> rootEntity) {
-        rootEntity.fetch("mailingAddress", JoinType.LEFT).fetch("state", JoinType.LEFT);
+    public void addFetchJoins(Root<Contact> contact) {
+        contact.fetch("mailingAddress", JoinType.LEFT).fetch("state", JoinType.LEFT);
     }
 
     @Override

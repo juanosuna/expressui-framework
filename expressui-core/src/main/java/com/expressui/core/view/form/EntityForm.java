@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,10 +37,8 @@
 
 package com.expressui.core.view.form;
 
-import com.expressui.core.dao.GenericDao;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
-import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.MethodDelegate;
 import com.expressui.core.validation.AssertTrueForProperties;
 import com.expressui.core.validation.Validation;
@@ -60,10 +58,7 @@ import javax.annotation.Resource;
 import javax.validation.ConstraintViolation;
 import javax.validation.metadata.ConstraintDescriptor;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A form bound to a JPA entity, providing save, refresh and cancel actions. Underneath the form
@@ -71,33 +66,30 @@ import java.util.Set;
  *
  * @param <T> type of entity
  */
-public abstract class EntityForm<T> extends GridForm<T> {
+public abstract class EntityForm<T extends WritableEntity> extends TypedForm<T> {
 
     @Resource
     private Validation validation;
-
-    @Resource
-    private SecurityService securityService;
-
-    @Resource
-    private GenericDao genericDao;
 
     private boolean isViewMode;
 
     private TabSheet toManyRelationshipTabs;
 
+    private Button cancelButton;
     private Button refreshButton;
     private Button saveAndCloseButton;
     private Button saveAndStayOpenButton;
     private boolean isValidationEnabled = true;
 
-    private List<MethodDelegate> persistListeners = new ArrayList<MethodDelegate>();
-    private List<MethodDelegate> closeListeners = new ArrayList<MethodDelegate>();
-    private List<MethodDelegate> cancelListeners = new ArrayList<MethodDelegate>();
-    private List<MethodDelegate> saveListeners = new ArrayList<MethodDelegate>();
+    private com.vaadin.terminal.Resource saveAndCloseButtonIconBackup;
+    private com.vaadin.terminal.Resource saveAndStayOpenButtonIconBackup;
+
+    private Set<MethodDelegate> closeListeners = new LinkedHashSet<MethodDelegate>();
+    private Set<MethodDelegate> cancelListeners = new LinkedHashSet<MethodDelegate>();
+    private Set<MethodDelegate> saveListeners = new LinkedHashSet<MethodDelegate>();
 
     /**
-     * Get all to-many relationships.
+     * Get all to-many relationships, displayed as tabs below the form.
      *
      * @return list of to-many relationships
      */
@@ -117,8 +109,8 @@ public abstract class EntityForm<T> extends GridForm<T> {
         for (ToManyRelationship toManyRelationship : toManyRelationships) {
             User user = securityService.getCurrentUser();
 
-            if (user.isViewAllowed(toManyRelationship.getResults().getEntityType().getName())
-                    && !toManyRelationship.getResults().getDisplayFields().getViewablePropertyIds().isEmpty()) {
+            if (user.isViewAllowed(toManyRelationship.getResults().getType().getName())
+                    && !toManyRelationship.getResults().getResultsFieldSet().getViewablePropertyIds().isEmpty()) {
                 viewableToManyRelationships.add(toManyRelationship);
             }
         }
@@ -131,25 +123,27 @@ public abstract class EntityForm<T> extends GridForm<T> {
     public void postConstruct() {
         super.postConstruct();
 
-        addStyleName("p-entity-form");
-
         List<ToManyRelationship> toManyRelationships = getViewableToManyRelationships();
         if (toManyRelationships.size() > 0) {
             toManyRelationshipTabs = new TabSheet();
+            setDebugId(toManyRelationshipTabs, "toManyRelationshipTabs");
             toManyRelationshipTabs.setSizeUndefined();
             for (ToManyRelationship toManyRelationship : toManyRelationships) {
                 toManyRelationshipTabs.addTab(toManyRelationship);
-                labelRegistry.putFieldLabel(getEntityType().getName(), toManyRelationship.getResults().getChildPropertyId(),
-                        "Relationship", toManyRelationship.getResults().getEntityCaption());
+                labelRegistry.putFieldLabel(getType().getName(), toManyRelationship.getResults().getChildPropertyId(),
+                        "Relationship", toManyRelationship.getTypeCaption());
             }
 
-            Layout layout = new HorizontalLayout();
-            layout.setSizeUndefined();
+            HorizontalLayout toManyRelationshipLayout = new HorizontalLayout();
+            setDebugId(toManyRelationshipLayout, "toManyRelationshipLayout");
+            toManyRelationshipLayout.setSizeUndefined();
             Label label = new Label("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;", Label.CONTENT_XHTML);
-            layout.addComponent(label);
-            layout.addComponent(toManyRelationshipTabs);
-            addComponent(layout);
+            toManyRelationshipLayout.addComponent(label);
+            toManyRelationshipLayout.addComponent(toManyRelationshipTabs);
+            addComponent(toManyRelationshipLayout);
         }
+
+        addCodePopupButtonIfEnabled(Alignment.MIDDLE_RIGHT, EntityForm.class);
     }
 
     @Override
@@ -161,7 +155,7 @@ public abstract class EntityForm<T> extends GridForm<T> {
             toManyRelationship.postWire();
         }
 
-        Collection<FormField> formFields = getFormFields().getFormFields();
+        Collection<FormField> formFields = getFormFieldSet().getFormFields();
         for (FormField formField : formFields) {
             Field field = formField.getField();
             if (field instanceof SelectField) {
@@ -170,8 +164,19 @@ public abstract class EntityForm<T> extends GridForm<T> {
         }
     }
 
+    @Override
+    public void onDisplay() {
+        List<ToManyRelationship> toManyRelationships = getToManyRelationships();
+        for (ToManyRelationship toManyRelationship : toManyRelationships) {
+            toManyRelationship.onDisplay();
+        }
+
+        setFormVisible(true);
+    }
+
     /**
-     * Animate the component if and only if there are viewable to-many tabs
+     * Animate the component if and only if there are viewable to-many tabs, i.e. allow component's
+     * visibility to be toggled
      *
      * @param component component to show/hide
      * @return the newly created layout that contains the toggle button and animated component
@@ -186,7 +191,7 @@ public abstract class EntityForm<T> extends GridForm<T> {
     }
 
     /**
-     * Created the footer buttons: cancel, refresh, save
+     * Create the footer buttons: cancel, refresh, save
      *
      * @param footerLayout horizontal layout containing buttons
      */
@@ -195,29 +200,31 @@ public abstract class EntityForm<T> extends GridForm<T> {
         footerLayout.setSpacing(true);
         footerLayout.setMargin(true);
 
-        Button cancelButton = new Button(uiMessageSource.getMessage("entityForm.cancel"), this, "cancel");
+        cancelButton = new Button(uiMessageSource.getMessage("entityForm.cancel"), this, "cancel");
         cancelButton.setDescription(uiMessageSource.getMessage("entityForm.cancel.description"));
-        cancelButton.setIcon(new ThemeResource("icons/16/cancel.png"));
+        cancelButton.setIcon(new ThemeResource("../expressui/icons/16/cancel.png"));
         cancelButton.addStyleName("small default");
         footerLayout.addComponent(cancelButton);
 
         refreshButton = new Button(uiMessageSource.getMessage("entityForm.refresh"), this, "refresh");
         refreshButton.setDescription(uiMessageSource.getMessage("entityForm.refresh.description"));
-        refreshButton.setIcon(new ThemeResource("icons/16/refresh.png"));
+        refreshButton.setIcon(new ThemeResource("../expressui/icons/16/refresh.png"));
         refreshButton.addStyleName("small default");
         footerLayout.addComponent(refreshButton);
 
         saveAndStayOpenButton = new Button(uiMessageSource.getMessage("entityForm.saveAndStayOpen"), this, "saveAndStayOpen");
         saveAndStayOpenButton.setDescription(uiMessageSource.getMessage("entityForm.save.description"));
-        saveAndStayOpenButton.setIcon(new ThemeResource("icons/16/save.png"));
+        saveAndStayOpenButton.setIcon(new ThemeResource("../expressui/icons/16/save.png"));
         saveAndStayOpenButton.addStyleName("small default");
         footerLayout.addComponent(saveAndStayOpenButton);
 
         saveAndCloseButton = new Button(uiMessageSource.getMessage("entityForm.saveAndClose"), this, "saveAndClose");
         saveAndCloseButton.setDescription(uiMessageSource.getMessage("entityForm.save.description"));
-        saveAndCloseButton.setIcon(new ThemeResource("icons/16/save.png"));
+        saveAndCloseButton.setIcon(new ThemeResource("../expressui/icons/16/save.png"));
         saveAndCloseButton.addStyleName("small default");
         footerLayout.addComponent(saveAndCloseButton);
+
+        backupSaveButtonIcons();
     }
 
     /**
@@ -229,18 +236,10 @@ public abstract class EntityForm<T> extends GridForm<T> {
         return isViewMode;
     }
 
-    public void applyViewMode() {
-        if (isViewMode()) {
-            setReadOnly(true);
-        } else {
-            applySecurityIsEditable();
-        }
-    }
-
     /**
-     * Set if this form is in read/view-only mode. Note that this action does not immediately change
+     * Set whether or not this form is in read/view-only mode. Note that this action does not immediately change
      * fields to read-only or restore them to writable. It just sets the mode for the next time
-     * an entity is loaded.
+     * an entity is loaded or applyViewMode is called.
      *
      * @param viewMode true if in view-only mode
      */
@@ -253,14 +252,25 @@ public abstract class EntityForm<T> extends GridForm<T> {
     }
 
     /**
-     * Set all entire form to read-only or writable, including fields, to-many relationships and action buttons
+     * Apply view mode to form.
+     */
+    public void applyViewMode() {
+        if (isViewMode()) {
+            setReadOnly(true);
+        } else {
+            applySecurityIsEditable();
+        }
+    }
+
+    /**
+     * Set entire form to read-only or writable, including fields, to-many relationships and action buttons
      *
      * @param isReadOnly true to set to read-only, otherwise make writable
      */
     @Override
     public void setReadOnly(boolean isReadOnly) {
         super.setReadOnly(isReadOnly);
-        getFormFields().setReadOnly(isReadOnly);
+        getFormFieldSet().setReadOnly(isReadOnly);
 
         saveAndCloseButton.setVisible(!isReadOnly);
         saveAndStayOpenButton.setVisible(!isReadOnly);
@@ -276,7 +286,7 @@ public abstract class EntityForm<T> extends GridForm<T> {
      * Restore the read-only settings of the form fields to how they were originally configured.
      */
     public void restoreIsReadOnly() {
-        getFormFields().restoreIsReadOnly();
+        getFormFieldSet().restoreIsReadOnly();
 
         saveAndCloseButton.setVisible(true);
         saveAndStayOpenButton.setVisible(true);
@@ -295,7 +305,7 @@ public abstract class EntityForm<T> extends GridForm<T> {
         saveAndCloseButton.setVisible(true);
         saveAndStayOpenButton.setVisible(true);
         refreshButton.setVisible(true);
-        getFormFields().applySecurityIsEditable();
+        getFormFieldSet().applySecurityIsEditable();
 
         List<ToManyRelationship> toManyRelationships = getToManyRelationships();
         for (ToManyRelationship toManyRelationship : toManyRelationships) {
@@ -309,7 +319,7 @@ public abstract class EntityForm<T> extends GridForm<T> {
      * @return true if entity has primary key
      */
     public boolean isEntityPersistent() {
-        return getGenericDao().isPersistent(getEntity());
+        return genericDao.isPersistent(getEntity());
     }
 
     /**
@@ -334,7 +344,7 @@ public abstract class EntityForm<T> extends GridForm<T> {
      *
      * @param entity entity to load
      */
-    public void load(WritableEntity entity) {
+    public void load(T entity) {
         load(entity, true);
     }
 
@@ -344,16 +354,19 @@ public abstract class EntityForm<T> extends GridForm<T> {
      * @param entity         entity to load
      * @param selectFirstTab true to select the first tab, once the entity is loaded
      */
-    public void load(WritableEntity entity, boolean selectFirstTab) {
-        WritableEntity loadedEntity = (WritableEntity) getGenericDao().find(getEntityType(), entity.getId());
+    public void load(T entity, boolean selectFirstTab) {
+        T loadedEntity = (T) genericDao.find(getType(), entity.getId());
+        postLoad(loadedEntity);
         BeanItem beanItem = createBeanItem(loadedEntity);
-        setItemDataSource(beanItem, getFormFields().getPropertyIds());
-        getFormFields().autoAdjustWidths();
+        setItemDataSource(beanItem, getFormFieldSet().getPropertyIds());
+        getFormFieldSet().autoAdjustWidths();
 
         validate(true);
 
         loadToManyRelationships();
         resetTabs(selectFirstTab);
+
+        refreshButton.setCaption(uiMessageSource.getMessage("entityForm.refresh"));
     }
 
     @Override
@@ -363,10 +376,6 @@ public abstract class EntityForm<T> extends GridForm<T> {
         isValidationEnabled = true;
 
         return beanItem;
-    }
-
-    public GenericDao getGenericDao() {
-        return genericDao;
     }
 
     private void loadToManyRelationships() {
@@ -386,11 +395,11 @@ public abstract class EntityForm<T> extends GridForm<T> {
     }
 
     /**
-     * Clear the form and all errors.
+     * Clear the form of data and all errors.
      */
     public void clear() {
         clearAllErrors(true);
-        setItemDataSource(null, getFormFields().getPropertyIds());
+        setItemDataSource(null, getFormFieldSet().getPropertyIds());
     }
 
     /**
@@ -407,22 +416,23 @@ public abstract class EntityForm<T> extends GridForm<T> {
     }
 
     private void createImpl() {
-        Object newEntity = createEntity();
+        T newEntity = createEntity();
+        postCreate(newEntity);
         BeanItem beanItem = createBeanItem(newEntity);
-        setItemDataSource(beanItem, getFormFields().getPropertyIds());
+        setItemDataSource(beanItem, getFormFieldSet().getPropertyIds());
 
         validate(true);
 
         resetTabs();
+
+        refreshButton.setCaption(uiMessageSource.getMessage("entityForm.clear"));
     }
 
     private T createEntity() {
-        try {
-            return (T) getEntityType().newInstance();
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+        if (getEntityDao() == null) {
+            return (T) genericDao.create(getType());
+        } else {
+            return getEntityDao().create();
         }
     }
 
@@ -438,14 +448,14 @@ public abstract class EntityForm<T> extends GridForm<T> {
 
         if (!hasTabs()) return;
 
-        Set<String> viewableTabNames = getFormFields().getViewableTabNames();
-        Set<String> tabNames = getFormFields().getTabNames();
+        Set<String> viewableTabNames = getFormFieldSet().getViewableTabNames();
+        Set<String> tabNames = getFormFieldSet().getTabNames();
         for (String tabName : tabNames) {
             TabSheet.Tab tab = getTabByName(tabName);
 
-            Set<FormField> fields = getFormFields().getFormFields(tabName);
+            Set<FormField> fields = getFormFieldSet().getFormFields(tabName);
 
-            if (getFormFields().isTabOptional(tabName)) {
+            if (getFormFieldSet().isTabOptional(tabName)) {
                 boolean isTabEmpty = true;
                 for (FormField field : fields) {
                     if (field.getField().getValue() != null) {
@@ -479,16 +489,16 @@ public abstract class EntityForm<T> extends GridForm<T> {
 
     @Override
     protected void resetContextMenu() {
-        if (getFormFields().hasOptionalTabs()) {
-            Set<String> tabNames = getFormFields().getViewableTabNames();
+        if (getFormFieldSet().hasOptionalTabs()) {
+            Set<String> tabNames = getFormFieldSet().getViewableTabNames();
             for (String tabName : tabNames) {
                 TabSheet.Tab tab = getTabByName(tabName);
 
-                String caption = uiMessageSource.getMessage("formComponent.add") + " " + tabName;
+                String caption = uiMessageSource.getMessage("typedForm.add") + " " + tabName;
                 if (menu.containsItem(caption)) {
                     menu.getContextMenuItem(caption).setVisible(!tab.isVisible() && !isViewMode());
                 }
-                caption = uiMessageSource.getMessage("formComponent.remove") + " " + tabName;
+                caption = uiMessageSource.getMessage("typedForm.remove") + " " + tabName;
                 if (menu.containsItem(caption)) {
                     menu.getContextMenuItem(caption).setVisible(tab.isVisible() && !isViewMode());
                 }
@@ -526,18 +536,42 @@ public abstract class EntityForm<T> extends GridForm<T> {
         saveListeners.add(new MethodDelegate(target, methodName));
     }
 
-    /**
-     * Add persist listener. Listener is invoked only when saving a new entity.
-     *
-     * @param target     target object
-     * @param methodName name of method to invoke
-     */
-    public void addPersistListener(Object target, String methodName) {
-        persistListeners.add(new MethodDelegate(target, methodName));
+    public void removeListeners(Object target) {
+        Set<MethodDelegate> listenersToRemove;
+
+        listenersToRemove = new HashSet<MethodDelegate>();
+        for (MethodDelegate closeListener : closeListeners) {
+            if (closeListener.getTarget().equals(target)) {
+                listenersToRemove.add(closeListener);
+            }
+        }
+        for (MethodDelegate listener : listenersToRemove) {
+            closeListeners.remove(listener);
+        }
+
+        listenersToRemove = new HashSet<MethodDelegate>();
+        for (MethodDelegate cancelListener : cancelListeners) {
+            if (cancelListener.getTarget().equals(target)) {
+                listenersToRemove.add(cancelListener);
+            }
+        }
+        for (MethodDelegate listener : listenersToRemove) {
+            cancelListeners.remove(listener);
+        }
+
+        listenersToRemove = new HashSet<MethodDelegate>();
+        for (MethodDelegate saveListener : saveListeners) {
+            if (saveListener.getTarget().equals(target)) {
+                listenersToRemove.add(saveListener);
+            }
+        }
+        for (MethodDelegate listener : listenersToRemove) {
+            saveListeners.remove(listener);
+        }
     }
 
     /**
-     * Cancel and close the form, disgarding any changes.
+     * Cancel and close the form, discarding any changes.
      */
     public void cancel() {
         clearAllErrors(true);
@@ -546,9 +580,9 @@ public abstract class EntityForm<T> extends GridForm<T> {
         if (beanItem == null) {
             clear();
         } else {
-            WritableEntity entity = (WritableEntity) beanItem.getBean();
+            T entity = (T) beanItem.getBean();
             if (entity.getId() == null) {
-                clear();
+                create();
             } else {
                 load(entity);
             }
@@ -560,37 +594,58 @@ public abstract class EntityForm<T> extends GridForm<T> {
     }
 
     /**
-     * Save changes to the entity, either persisting a transient entity or updating existing one.
+     * Save changes to the entity, either persisting a transient entity or updating existing one, then close form.
      */
     public void saveAndClose() {
-        saveImpl(true);
+        save(true);
     }
 
+    /**
+     * Save changes to the entity, either persisting a transient entity or updating existing one, while
+     * keeping form open.
+     */
     public void saveAndStayOpen() {
-        saveImpl(false);
+        save(false);
     }
 
-    private void saveImpl(boolean executeCloseListeners) {
+    /**
+     * Save changes to the entity, either persisting a transient entity or updating existing one.
+     *
+     * @param executeCloseListeners whether or not to execute close listeners
+     */
+    public void save(boolean executeCloseListeners) {
         boolean isValid = validate(false);
         if (getForm().isValid() && isValid) {
             getForm().commit();
 
-            WritableEntity entity = (WritableEntity) getEntity();
+            preSave(getEntity());
+
+            T entity = getEntity();
             if (entity.getId() != null) {
-                WritableEntity mergedEntity = (WritableEntity) getGenericDao().merge(entity);
+                T mergedEntity;
+                if (getEntityDao() == null) {
+                    mergedEntity = genericDao.merge(entity);
+                } else {
+                    mergedEntity = getEntityDao().merge(entity);
+                }
+
+                postSave(mergedEntity);
                 load(mergedEntity, false);
             } else {
-                getGenericDao().persist(entity);
+                if (getEntityDao() == null) {
+                    genericDao.persist(entity);
+                } else {
+                    getEntityDao().persist(entity);
+                }
+                postSave(entity);
                 load(entity, false);
 
                 if (!executeCloseListeners) {
                     loadToManyRelationships();
                 }
-
-                for (MethodDelegate persistListener : persistListeners) {
-                    persistListener.execute();
-                }
             }
+
+            showSaveSuccessfulMessage();
 
             for (MethodDelegate saveListener : saveListeners) {
                 saveListener.execute();
@@ -601,11 +656,37 @@ public abstract class EntityForm<T> extends GridForm<T> {
                     closeListener.execute();
                 }
             }
+        } else {
+            showSaveUnsuccessfulMessage();
         }
     }
 
     /**
-     * Reload entity from the database, disgarding any changes and clearing any errors.
+     * Show notification message that save was successful.
+     */
+    public void showSaveSuccessfulMessage() {
+        Window.Notification notification = new Window.Notification("\"" + getTypeCaption()
+                + "\" " + uiMessageSource.getMessage("entityForm.saved"),
+                Window.Notification.TYPE_HUMANIZED_MESSAGE);
+        notification.setDelayMsec(Window.Notification.DELAY_NONE);
+        notification.setPosition(Window.Notification.POSITION_CENTERED);
+        getMainApplication().showNotification(notification);
+    }
+
+    /**
+     * Show notification message that save was unsuccessful.
+     */
+    public void showSaveUnsuccessfulMessage() {
+        Window.Notification notification = new Window.Notification("\"" + getTypeCaption()
+                + "\" " + uiMessageSource.getMessage("entityForm.notSaved"),
+                Window.Notification.TYPE_ERROR_MESSAGE);
+        notification.setDelayMsec(Window.Notification.DELAY_NONE);
+        notification.setPosition(Window.Notification.POSITION_CENTERED);
+        getMainApplication().showNotification(notification);
+    }
+
+    /**
+     * Reload entity from the database, discarding any changes and clearing any errors.
      */
     public void refresh() {
         clearAllErrors(true);
@@ -613,7 +694,7 @@ public abstract class EntityForm<T> extends GridForm<T> {
         if (beanItem == null) {
             createImpl();
         } else {
-            WritableEntity entity = (WritableEntity) beanItem.getBean();
+            T entity = (T) beanItem.getBean();
             if (entity.getId() == null) {
                 createImpl();
             } else {
@@ -636,7 +717,7 @@ public abstract class EntityForm<T> extends GridForm<T> {
      * @return true if no validation errors were found
      */
     public boolean validate(boolean clearConversionErrors) {
-        WritableEntity entity = (WritableEntity) getEntity();
+        WritableEntity entity = getEntity();
 
         clearAllErrors(clearConversionErrors);
 
@@ -661,10 +742,12 @@ public abstract class EntityForm<T> extends GridForm<T> {
                     AssertTrueForProperties assertTrueForProperties = (AssertTrueForProperties) annotation;
                     propertyPath += assertTrueForProperties.errorProperty();
                 }
-                field = getFormFields().getFormField(propertyPath);
-                if (!field.hasIsRequiredError()) {
-                    Validator.InvalidValueException error = new Validator.InvalidValueException(constraintViolation.getMessage());
-                    field.addError(error);
+                if (getFormFieldSet().containsPropertyId(propertyPath)) {
+                    field = getFormFieldSet().getFormField(propertyPath);
+                    if (!field.hasIsRequiredError()) {
+                        Validator.InvalidValueException error = new Validator.InvalidValueException(constraintViolation.getMessage());
+                        field.addError(error);
+                    }
                 }
             }
         }
@@ -675,12 +758,12 @@ public abstract class EntityForm<T> extends GridForm<T> {
     }
 
     private void clearAllErrors(boolean clearConversionErrors) {
-        getFormFields().clearErrors(clearConversionErrors);
+        getFormFieldSet().clearErrors(clearConversionErrors);
         getForm().setComponentError(null);
         saveAndCloseButton.setComponentError(null);
         saveAndStayOpenButton.setComponentError(null);
 
-        Set<String> tabNames = getFormFields().getViewableTabNames();
+        Set<String> tabNames = getFormFieldSet().getViewableTabNames();
         for (String tabName : tabNames) {
             setTabError(tabName, null);
         }
@@ -694,14 +777,14 @@ public abstract class EntityForm<T> extends GridForm<T> {
     }
 
     /**
-     * Reset validation error indicators on tabs and the save buttons, according to whether
+     * Reset validation error indicators on tabs and save buttons, according to whether
      * any validation errors exist in any fields.
      */
     public void syncTabAndSaveButtonErrors() {
-        Set<String> tabNames = getFormFields().getViewableTabNames();
+        Set<String> tabNames = getFormFieldSet().getViewableTabNames();
         boolean formHasErrors = false;
         for (String tabName : tabNames) {
-            if (getFormFields().hasError(tabName)) {
+            if (getFormFieldSet().hasError(tabName)) {
                 setTabError(tabName, new UserError("Tab contains invalid values"));
                 formHasErrors = true;
             } else {
@@ -714,11 +797,112 @@ public abstract class EntityForm<T> extends GridForm<T> {
         }
 
         if (formHasErrors) {
+            saveAndCloseButton.setIcon(null);
+            saveAndStayOpenButton.setIcon(null);
             saveAndCloseButton.setComponentError(new UserError("Form contains invalid values"));
             saveAndStayOpenButton.setComponentError(new UserError("Form contains invalid values"));
         } else {
             saveAndCloseButton.setComponentError(null);
             saveAndStayOpenButton.setComponentError(null);
+            restoreSaveButtonIcons();
         }
+    }
+
+    private void backupSaveButtonIcons() {
+        saveAndCloseButtonIconBackup = saveAndCloseButton.getIcon();
+        saveAndStayOpenButtonIconBackup = saveAndStayOpenButton.getIcon();
+    }
+
+    private void restoreSaveButtonIcons() {
+        saveAndCloseButton.setIcon(saveAndCloseButtonIconBackup);
+        saveAndStayOpenButton.setIcon(saveAndStayOpenButtonIconBackup);
+    }
+
+    /**
+     * Set whether or not to enable and hide cancel button.
+     *
+     * @param isEnabled true if cancel button will be enabled
+     */
+    public void enableCancelButton(Boolean isEnabled) {
+        cancelButton.setEnabled(isEnabled);
+        cancelButton.setVisible(isEnabled);
+    }
+
+    /**
+     * Set whether or not to enable and hide save-and-close button.
+     *
+     * @param isEnabled true if save-and-close button will be enabled
+     */
+    public void enableSaveAndCloseButton(Boolean isEnabled) {
+        saveAndCloseButton.setEnabled(isEnabled);
+        saveAndCloseButton.setVisible(isEnabled);
+    }
+
+    /**
+     * Lifecycle method called after new entity is created for this form
+     *
+     * @param entity newly created entity
+     */
+    public void postCreate(T entity) {
+    }
+
+    /**
+     * Lifecycle method called after an entity is loaded from database
+     *
+     * @param entity loaded entity
+     */
+    public void postLoad(T entity) {
+    }
+
+    /**
+     * Lifecycle method called before entity is saved to database.
+     *
+     * @param entity entity to be saved
+     */
+    public void preSave(T entity) {
+    }
+
+    /**
+     * Lifecycle method called  after entity is saved to databased.
+     *
+     * @param entity saved entity
+     */
+    public void postSave(T entity) {
+    }
+
+    /**
+     * Get cancel button.
+     *
+     * @return cancel button
+     */
+    public Button getCancelButton() {
+        return cancelButton;
+    }
+
+    /**
+     * Get refresh button.
+     *
+     * @return refresh button
+     */
+    public Button getRefreshButton() {
+        return refreshButton;
+    }
+
+    /**
+     * Get save-and-close button.
+     *
+     * @return save-and-close button
+     */
+    public Button getSaveAndCloseButton() {
+        return saveAndCloseButton;
+    }
+
+    /**
+     * Get save-and-stay-open button.
+     *
+     * @return save-and-stay-open button
+     */
+    public Button getSaveAndStayOpenButton() {
+        return saveAndStayOpenButton;
     }
 }

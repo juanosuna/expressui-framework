@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -40,10 +40,10 @@ package com.expressui.sample.view.dashboard;
 import com.expressui.core.view.page.DashboardPage;
 import com.expressui.domain.geocode.MapService;
 import com.expressui.sample.dao.OpportunityDao;
-import com.expressui.sample.entity.Address;
 import com.expressui.sample.entity.Contact;
 import com.expressui.sample.entity.derived.TotalSalesStage;
 import com.expressui.sample.entity.derived.TotalYearSales;
+import com.vaadin.terminal.Sizeable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.vaadin.vaadinvisualizations.ColumnChart;
@@ -55,15 +55,21 @@ import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.List;
 
+import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
+
 @Component
-@Scope("session")
+@Scope(SCOPE_SESSION)
 public class SampleDashboardPage extends DashboardPage {
+
+    public static final int PANEL_WIDTH = 680;
+    public static final int PANEL_HEIGHT = 375;
 
     @Resource
     private OpportunityDao opportunityDao;
 
     @Resource
     private RecentContactResults recentContactResults;
+
     @Resource
     private MapService mapService;
 
@@ -74,64 +80,29 @@ public class SampleDashboardPage extends DashboardPage {
 
         addComponent(createOpportunityChartByYear(), "Sales - Won & Lost", 1, 1);
 
-        recentContactResults.setWidth("625px");
-        recentContactResults.setHeight("350px");
+        configureRecentContactResults();
         addComponent(recentContactResults, "Recent Contacts", 1, 2);
-        recentContactResults.addSelectionChangedListener(this, "contactSelectionChanged");
-        recentContactResults.setPageSizeVisible(false);
-
-        if (recentContactResults.getResultsTable().getContainerDataSource().size() > 0) {
-            Object firstItem = recentContactResults.getResultsTable().getContainerDataSource().getIdByIndex(0);
-            recentContactResults.getResultsTable().select(firstItem);
-        }
 
         addComponent(createOpportunitySalesStageChart(), "Sales Stage Breakdown", 2, 1);
-    }
 
-    @Override
-    public void postWire() {
-        super.postWire();
-        recentContactResults.postWire();
-    }
-
-    public void contactSelectionChanged() {
-        Collection<Contact> contacts = (Collection<Contact>) recentContactResults.getSelectedValue();
-
-        if (contacts.size() == 1) {
-            Contact contact = contacts.iterator().next();
-            Address mailingAddress = contact.getMailingAddress();
-            String address = mailingAddress.getStreet() + ", "
-                    + mailingAddress.getCity() + ",";
-            if (mailingAddress.getState() != null) {
-                address += mailingAddress.getState().getCode() + ", ";
-            }
-            address += mailingAddress.getZipCode() + ", ";
-            address += mailingAddress.getCountry().getDisplayName();
-
-            OpenLayersMap map = mapService.createMap(address, contact.getName(), 16);
-            if (map != null) {
-                map.setWidth("625px");
-                addComponent(map, "Contact Location", 2, 2);
-            }
-        } else {
-            removeComponent(2, 2);
-        }
+        // Map is shown at coordinates 2, 2 when user selects a contact, see contactSelectionChanged
     }
 
     private ColumnChart createOpportunityChartByYear() {
-        List<TotalYearSales> totalYearSalesList = opportunityDao.getSalesByYear();
-        List<TotalYearSales> totalYearSalesLostList = opportunityDao.getSalesLostByYear();
-
         ColumnChart columnChart = new ColumnChart();
+        columnChart.setOption("width", PANEL_WIDTH);
+        columnChart.setOption("height", PANEL_HEIGHT);
+        columnChart.setWidth(PANEL_WIDTH, Sizeable.UNITS_PIXELS);
+        columnChart.setHeight(PANEL_HEIGHT, Sizeable.UNITS_PIXELS);
+
         columnChart.setOption("is3D", true);
         columnChart.setOption("isStacked", false);
-        columnChart.setOption("width", 525);
-        columnChart.setOption("height", 350);
-
         columnChart.addXAxisLabel("Year");
         columnChart.addColumn("Closed Won");
         columnChart.addColumn("Closed Lost");
 
+        List<TotalYearSales> totalYearSalesList = opportunityDao.getSalesByYear();
+        List<TotalYearSales> totalYearSalesLostList = opportunityDao.getSalesLostByYear();
         for (TotalYearSales totalYearSales : totalYearSalesList) {
             double salesLost = 0;
             for (TotalYearSales yearSalesLost : totalYearSalesLostList) {
@@ -142,29 +113,71 @@ public class SampleDashboardPage extends DashboardPage {
 
             columnChart.add(String.valueOf(totalYearSales.getYear()),
                     new double[]{totalYearSales.getTotalSales().doubleValue(), salesLost});
-
         }
-        columnChart.setWidth("525px");
-        columnChart.setHeight("350px");
 
         return columnChart;
     }
 
     public PieChart createOpportunitySalesStageChart() {
-        PieChart pc = new PieChart();
+        PieChart pieChart = new PieChart();
+        pieChart.setOption("width", PANEL_WIDTH);
+        pieChart.setOption("height", PANEL_HEIGHT);
+        pieChart.setWidth(PANEL_WIDTH, Sizeable.UNITS_PIXELS);
+        pieChart.setHeight(PANEL_HEIGHT, Sizeable.UNITS_PIXELS);
 
-        pc.setWidth("525px");
-        pc.setHeight("350px");
+        pieChart.setOption("title", "Opportunity Sales Stages");
+        pieChart.setOption("is3D", true);
 
         List<TotalSalesStage> totalSalesStages = opportunityDao.getSalesStageCounts();
         for (TotalSalesStage totalSalesStage : totalSalesStages) {
-            pc.add(totalSalesStage.getSalesStage().getDisplayName(), totalSalesStage.getCount());
+            pieChart.add(totalSalesStage.getSalesStage().getDisplayName(), totalSalesStage.getCount());
         }
-        pc.setOption("title", "Opportunity Sales Stages");
-        pc.setOption("width", 525);
-        pc.setOption("height", 350);
-        pc.setOption("is3D", true);
 
-        return pc;
+        return pieChart;
+    }
+
+    private void configureRecentContactResults() {
+        recentContactResults.setWidth(PANEL_WIDTH, Sizeable.UNITS_PIXELS);
+        recentContactResults.getResultsTable().setWidth(620, Sizeable.UNITS_PIXELS);
+        recentContactResults.setHeight(PANEL_HEIGHT, Sizeable.UNITS_PIXELS);
+
+        recentContactResults.addSelectionChangedListener(this, "contactSelectionChanged");
+        recentContactResults.setPageSizeVisible(false); // restrict page size, since dashboard cells are fixed size
+    }
+
+    @Override
+    public void onDisplay() {
+        super.onDisplay();
+
+        recentContactResults.search();
+        if (recentContactResults.getResultsTable().getContainerDataSource().size() > 0) {
+            Object firstItem = recentContactResults.getResultsTable().getContainerDataSource().getIdByIndex(0);
+            recentContactResults.getResultsTable().select(firstItem);
+        }
+    }
+
+    public void contactSelectionChanged() {
+        Collection<Contact> contacts = (Collection<Contact>) recentContactResults.getSelectedValue();
+
+        if (contacts.size() == 1) {
+            Contact contact = contacts.iterator().next();
+            String formattedAddress = contact.getMailingAddress().getFormatted();
+            addContactLocationMap(contact.getName(), formattedAddress);
+        } else {
+            removeContactLocationMap(); // remove map if user selects more than one contact
+        }
+    }
+
+    private void addContactLocationMap(String contactName, String formattedAddress) {
+        OpenLayersMap map = mapService.createMap(formattedAddress, contactName, 16);
+        if (map != null) {
+            map.setWidth(PANEL_WIDTH, Sizeable.UNITS_PIXELS);
+            map.setHeight(PANEL_HEIGHT, Sizeable.UNITS_PIXELS);
+            addComponent(map, "Contact Location", 2, 2);
+        }
+    }
+
+    private void removeContactLocationMap() {
+        removeComponent(2, 2);
     }
 }

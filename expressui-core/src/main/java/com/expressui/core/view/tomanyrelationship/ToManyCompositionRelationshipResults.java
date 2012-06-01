@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,11 +38,10 @@
 package com.expressui.core.view.tomanyrelationship;
 
 import com.expressui.core.entity.WritableEntity;
-import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.form.EntityFormWindow;
-import com.expressui.core.view.results.ResultsConnectedEntityForm;
+import com.expressui.core.view.form.ResultsConnectedEntityForm;
 import com.expressui.core.view.results.WalkableResults;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.ItemClickEvent;
@@ -50,7 +49,6 @@ import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 import java.util.Collection;
 
 /**
@@ -58,17 +56,13 @@ import java.util.Collection;
  *
  * @param <T> type of the entities in the results
  */
-public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRelationshipResults<T> implements WalkableResults {
+public abstract class ToManyCompositionRelationshipResults<T extends WritableEntity> extends ToManyRelationshipResults<T> implements WalkableResults {
 
     private Button editButton;
 
     private Object currentItemId;
 
-    private ResultsConnectedEntityForm resultsConnectedEntityForm;
     private int previousSelectionCount;
-
-    @Resource
-    private SecurityService securityService;
 
     /**
      * Get the EntityForm used for creating a new entity to add to relationship.
@@ -82,17 +76,16 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
     public void postConstruct() {
         super.postConstruct();
 
-        editButton = new Button(uiMessageSource.getMessage("entityResults.edit"), this, "edit");
-        editButton.setDescription(uiMessageSource.getMessage("entityResults.edit.description"));
-        editButton.setIcon(new ThemeResource("icons/16/edit.png"));
+        editButton = new Button(uiMessageSource.getMessage("crudResults.edit"), this, "edit");
+        editButton.setDescription(uiMessageSource.getMessage("crudResults.edit.description"));
+        editButton.setIcon(new ThemeResource("../expressui/icons/16/edit.png"));
         editButton.setEnabled(false);
         editButton.addStyleName("small default");
         crudButtons.addComponent(editButton, 1);
 
-        actionContextMenu.addAction("entityResults.edit", this, "edit");
+        actionContextMenu.addAction("crudResults.edit", this, "edit");
 
         getResultsTable().addListener(new DoubleClickListener());
-        resultsConnectedEntityForm = new ResultsConnectedEntityForm(getEntityForm(), this);
     }
 
     @Override
@@ -134,12 +127,13 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
      */
     public void edit() {
         Collection itemIds = (Collection) getResultsTable().getValue();
-        Assert.PROGRAMMING.assertTrue(itemIds.size() == 1);
+        Assert.PROGRAMMING.size(itemIds, 1);
         editImpl(itemIds.iterator().next());
     }
 
     private void editImpl(Object itemId) {
         loadItem(itemId, true);
+        ResultsConnectedEntityForm resultsConnectedEntityForm = new ResultsConnectedEntityForm(getEntityForm(), this);
         EntityFormWindow entityFormWindow = EntityFormWindow.open(resultsConnectedEntityForm);
         entityFormWindow.addCloseListener(this, "search");
         if (!getEntityForm().getViewableToManyRelationships().isEmpty()) {
@@ -150,7 +144,7 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
     private void loadItem(Object itemId, boolean selectFirstTab) {
         currentItemId = itemId;
         BeanItem beanItem = getResultsTable().getContainerDataSource().getItem(itemId);
-        getEntityForm().load((WritableEntity) beanItem.getBean(), selectFirstTab);
+        getEntityForm().load((T) beanItem.getBean(), selectFirstTab);
     }
 
     @Override
@@ -193,8 +187,14 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
     @Override
     public void removeConfirmed(T... values) {
         for (T value : values) {
-            getGenericDao().remove(value);
+            if (getEntityDao() == null) {
+                genericDao.remove(value);
+            } else {
+                getEntityDao().remove(value);
+            }
         }
+
+        showRemoveSuccessfulMessage();
 
         searchImpl(false);
         editButton.setEnabled(false);
@@ -215,25 +215,25 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
 
         boolean isParentPropertyEditable = securityService.getCurrentUser().isEditAllowed(getParentEntityType().getName(),
                 getChildPropertyId());
-        boolean isEditAllowed = securityService.getCurrentUser().isEditAllowed(getEntityType().getName());
+        boolean isEditAllowed = securityService.getCurrentUser().isEditAllowed(getType().getName());
 
         if (itemIds.size() == 1) {
-            actionContextMenu.setActionEnabled("entityResults.edit", isEditAllowed && !isViewMode());
-            actionContextMenu.setActionEnabled("entityResults.remove", isParentPropertyEditable && !isViewMode());
+            actionContextMenu.setActionEnabled("crudResults.edit", isEditAllowed && !isViewMode());
+            actionContextMenu.setActionEnabled("toManyRelationshipResults.remove", isParentPropertyEditable && !isViewMode());
             getResultsTable().removeActionHandler(actionContextMenu);
             getResultsTable().addActionHandler(actionContextMenu);
             editButton.setEnabled(true);
             removeButton.setEnabled(true);
         } else if (itemIds.size() > 1) {
-            actionContextMenu.setActionEnabled("entityResults.edit", false);
-            actionContextMenu.setActionEnabled("entityResults.remove", isParentPropertyEditable && !isViewMode());
+            actionContextMenu.setActionEnabled("crudResults.edit", false);
+            actionContextMenu.setActionEnabled("toManyRelationshipResults.remove", isParentPropertyEditable && !isViewMode());
             getResultsTable().removeActionHandler(actionContextMenu);
             getResultsTable().addActionHandler(actionContextMenu);
             editButton.setEnabled(false);
             removeButton.setEnabled(true);
         } else {
-            actionContextMenu.setActionEnabled("entityResults.edit", false);
-            actionContextMenu.setActionEnabled("entityResults.remove", false);
+            actionContextMenu.setActionEnabled("crudResults.edit", false);
+            actionContextMenu.setActionEnabled("toManyRelationshipResults.remove", false);
             getResultsTable().removeActionHandler(actionContextMenu);
             editButton.setEnabled(false);
             removeButton.setEnabled(false);
@@ -243,7 +243,9 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
     private class DoubleClickListener implements ItemClickEvent.ItemClickListener {
         public void itemClick(ItemClickEvent event) {
             if (event.isDoubleClick()) {
-                editImpl(event.getItemId());
+                if (editButton.isVisible() && editButton.isEnabled()) {
+                    editImpl(event.getItemId());
+                }
             }
         }
     }

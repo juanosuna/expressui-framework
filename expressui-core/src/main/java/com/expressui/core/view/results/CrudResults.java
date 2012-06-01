@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,14 +37,12 @@
 
 package com.expressui.core.view.results;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.entity.WritableEntity;
-import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.form.EntityFormWindow;
+import com.expressui.core.view.form.ResultsConnectedEntityForm;
 import com.expressui.core.view.menu.ActionContextMenu;
-import com.expressui.core.view.util.MessageSource;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.ItemClickEvent;
@@ -52,6 +50,7 @@ import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Window;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import javax.annotation.PostConstruct;
@@ -59,20 +58,14 @@ import javax.annotation.Resource;
 import java.util.Collection;
 
 /**
- * Results with CRUD buttons to create, view, edit and delete items in the results.
+ * Results with CRUD buttons to create, view, edit and delete selected items in the results.
  *
  * @param <T> type of entity in the results
  */
-public abstract class CrudResults<T> extends Results<T> implements WalkableResults {
-
-    @Resource(name = "uiMessageSource")
-    private MessageSource uiMessageSource;
+public abstract class CrudResults<T extends WritableEntity> extends Results<T> implements WalkableResults {
 
     @Resource
     private ActionContextMenu actionContextMenu;
-
-    @Resource
-    private SecurityService securityService;
 
     private Button newButton;
     private Button editButton;
@@ -100,41 +93,41 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
 
         getResultsTable().setMultiSelect(true);
         HorizontalLayout crudButtons = new HorizontalLayout();
+        setDebugId(crudButtons, "crudButtons");
         crudButtons.setMargin(false);
         crudButtons.setSpacing(true);
 
-        newButton = new Button(uiMessageSource.getMessage("entityResults.new"), this, "create");
-        newButton.setDescription(uiMessageSource.getMessage("entityResults.new.description"));
-        newButton.setIcon(new ThemeResource("icons/16/add.png"));
+        newButton = new Button(uiMessageSource.getMessage("crudResults.new"), this, "create");
+        newButton.setDescription(uiMessageSource.getMessage("crudResults.new.description"));
+        newButton.setIcon(new ThemeResource("../expressui/icons/16/add.png"));
         newButton.addStyleName("small default");
         crudButtons.addComponent(newButton);
 
-        viewButton = new Button(uiMessageSource.getMessage("entityResults.view"), this, "view");
-        viewButton.setDescription(uiMessageSource.getMessage("entityResults.view.description"));
-        viewButton.setIcon(new ThemeResource("icons/16/view.png"));
+        viewButton = new Button(uiMessageSource.getMessage("crudResults.view"), this, "view");
+        viewButton.setDescription(uiMessageSource.getMessage("crudResults.view.description"));
+        viewButton.setIcon(new ThemeResource("../expressui/icons/16/view.png"));
         viewButton.setEnabled(false);
         viewButton.addStyleName("small default");
         crudButtons.addComponent(viewButton);
 
-        editButton = new Button(uiMessageSource.getMessage("entityResults.edit"), this, "edit");
-        editButton.setDescription(uiMessageSource.getMessage("entityResults.edit.description"));
-        editButton.setIcon(new ThemeResource("icons/16/edit.png"));
+        editButton = new Button(uiMessageSource.getMessage("crudResults.edit"), this, "edit");
+        editButton.setDescription(uiMessageSource.getMessage("crudResults.edit.description"));
+        editButton.setIcon(new ThemeResource("../expressui/icons/16/edit.png"));
         editButton.setEnabled(false);
         editButton.addStyleName("small default");
         crudButtons.addComponent(editButton);
 
-        deleteButton = new Button(uiMessageSource.getMessage("entityResults.delete"), this, "delete");
-        deleteButton.setDescription(uiMessageSource.getMessage("entityResults.delete.description"));
-        deleteButton.setIcon(new ThemeResource("icons/16/delete.png"));
+        deleteButton = new Button(uiMessageSource.getMessage("crudResults.delete"), this, "delete");
+        deleteButton.setDescription(uiMessageSource.getMessage("crudResults.delete.description"));
+        deleteButton.setIcon(new ThemeResource("../expressui/icons/16/delete.png"));
         deleteButton.setEnabled(false);
         deleteButton.addStyleName("small default");
         crudButtons.addComponent(deleteButton);
 
         getResultsTable().addListener(Property.ValueChangeEvent.class, this, "selectionChanged");
-//        addSelectionChangedListener(this, "selectionChanged");
-        actionContextMenu.addAction("entityResults.view", this, "view");
-        actionContextMenu.addAction("entityResults.edit", this, "edit");
-        actionContextMenu.addAction("entityResults.delete", this, "delete");
+        actionContextMenu.addAction("crudResults.view", this, "view");
+        actionContextMenu.addAction("crudResults.edit", this, "edit");
+        actionContextMenu.addAction("crudResults.delete", this, "delete");
 
         applySecurityToCRUDButtons();
         getCrudButtons().addComponent(crudButtons, 0);
@@ -143,6 +136,8 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         getResultsTable().addListener(new DoubleClickListener());
         getEntityForm().addCancelListener(this, "search");
         getEntityForm().addCloseListener(this, "search");
+
+        addCodePopupButtonIfEnabled(CrudResults.class);
     }
 
     @Override
@@ -152,25 +147,28 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
 
     }
 
+    @Override
+    public void onDisplay() {
+    }
+
     /**
      * Apply current security permissions to CRUD buttons so that they are enabled if and only if allowed.
      */
     public void applySecurityToCRUDButtons() {
-        boolean hasViewableFields = !getEntityForm().getFormFields().getViewableFormFields().isEmpty();
+        boolean hasViewableFields = !getEntityForm().getFormFieldSet().getViewableFormFields().isEmpty();
 
-        boolean isViewAllowed = securityService.getCurrentUser().isViewAllowed(getEntityType().getName())
+        boolean isViewAllowed = securityService.getCurrentUser().isViewAllowed(getType().getName())
                 && hasViewableFields;
         viewButton.setVisible(isViewAllowed);
 
-        boolean hasEditableFields = !getEntityForm().getFormFields().getEditableFormFields().isEmpty();
-        boolean isEditAllowed = securityService.getCurrentUser().isEditAllowed(getEntityType().getName())
+        boolean hasEditableFields = !getEntityForm().getFormFieldSet().getEditableFormFields().isEmpty();
+        boolean isEditAllowed = securityService.getCurrentUser().isEditAllowed(getType().getName())
                 && isViewAllowed && hasEditableFields;
         editButton.setVisible(isEditAllowed);
 
-        newButton.setVisible(securityService.getCurrentUser().isCreateAllowed(getEntityType().getName())
-                && isEditAllowed);
+        newButton.setVisible(securityService.getCurrentUser().isCreateAllowed(getType().getName()));
 
-        deleteButton.setVisible(securityService.getCurrentUser().isDeleteAllowed(getEntityType().getName()));
+        deleteButton.setVisible(securityService.getCurrentUser().isDeleteAllowed(getType().getName()));
     }
 
     /**
@@ -202,7 +200,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
 
     private void editOrView() {
         Collection itemIds = (Collection) getResultsTable().getValue();
-        Assert.PROGRAMMING.assertTrue(itemIds.size() == 1);
+        Assert.PROGRAMMING.size(itemIds, 1);
         editOrView(itemIds.iterator().next());
     }
 
@@ -221,12 +219,10 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     }
 
     private void loadItem(Object itemId, boolean selectFirstTab) {
-
         getEntityForm().restoreIsReadOnly();
-
         currentItemId = itemId;
         BeanItem beanItem = getResultsTable().getContainerDataSource().getItem(itemId);
-        getEntityForm().load((WritableEntity) beanItem.getBean(), selectFirstTab);
+        getEntityForm().load((T) beanItem.getBean(), selectFirstTab);
 
         getEntityForm().applyViewMode();
     }
@@ -273,8 +269,15 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         for (Object itemId : itemIds) {
             BeanItem<T> beanItem = getResultsTable().getContainerDataSource().getItem(itemId);
             T entity = beanItem.getBean();
-            getGenericDao().remove(entity);
+            preDelete(entity);
+            if (getEntityDao() == null) {
+                genericDao.remove(entity);
+            } else {
+                getEntityDao().remove(entity);
+            }
         }
+
+        showDeleteSuccessfulMessage();
 
         // solves tricky ConcurrentModification bug where ContextMenu handler calls delete
         // but then search removes handler
@@ -285,14 +288,21 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     }
 
     /**
+     * Show notification message that delete was successful.
+     */
+    public void showDeleteSuccessfulMessage() {
+        Window.Notification notification = new Window.Notification(uiMessageSource.getMessage("crudResults.deleted"),
+                Window.Notification.TYPE_HUMANIZED_MESSAGE);
+        notification.setDelayMsec(Window.Notification.DELAY_NONE);
+        notification.setPosition(Window.Notification.POSITION_CENTERED);
+        getMainApplication().showNotification(notification);
+    }
+
+    /**
      * Delete selected entities. First, pops up confirmation dialog.
      */
     public void delete() {
-        ConfirmDialog.show(MainApplication.getInstance().getMainWindow(),
-                uiMessageSource.getMessage("entityResults.confirmationCaption"),
-                uiMessageSource.getMessage("entityResults.confirmationPrompt"),
-                uiMessageSource.getMessage("entityResults.confirmationYes"),
-                uiMessageSource.getMessage("entityResults.confirmationNo"),
+        getMainApplication().showConfirmationDialog(
                 new ConfirmDialog.Listener() {
                     public void onClose(ConfirmDialog dialog) {
                         if (dialog.isConfirmed()) {
@@ -302,6 +312,19 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
                 });
     }
 
+    /**
+     * Lifecycle listener method called before delete.
+     *
+     * @param entity entity that will be deleted
+     */
+    public void preDelete(T entity) {
+    }
+
+    /**
+     * Listener method called when selection of result items changes.
+     *
+     * @param event ignored
+     */
     public void selectionChanged(Property.ValueChangeEvent event) {
         Collection itemIds = (Collection) getSelectedValue();
 
@@ -313,26 +336,26 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
 
         getResultsTable().turnOnContentRefreshing();
 
-        boolean hasViewableFields = !getEntityForm().getFormFields().getViewableFormFields().isEmpty();
-        boolean isViewAllowed = securityService.getCurrentUser().isViewAllowed(getEntityType().getName())
+        boolean hasViewableFields = !getEntityForm().getFormFieldSet().getViewableFormFields().isEmpty();
+        boolean isViewAllowed = securityService.getCurrentUser().isViewAllowed(getType().getName())
                 && hasViewableFields;
-        boolean isEditAllowed = securityService.getCurrentUser().isEditAllowed(getEntityType().getName())
+        boolean isEditAllowed = securityService.getCurrentUser().isEditAllowed(getType().getName())
                 && isViewAllowed;
-        boolean isDeleteAllowed = securityService.getCurrentUser().isDeleteAllowed(getEntityType().getName());
+        boolean isDeleteAllowed = securityService.getCurrentUser().isDeleteAllowed(getType().getName());
 
         if (itemIds.size() == 1) {
-            actionContextMenu.setActionEnabled("entityResults.view", isViewAllowed);
-            actionContextMenu.setActionEnabled("entityResults.edit", isEditAllowed);
-            actionContextMenu.setActionEnabled("entityResults.delete", isDeleteAllowed);
+            actionContextMenu.setActionEnabled("crudResults.view", isViewAllowed);
+            actionContextMenu.setActionEnabled("crudResults.edit", isEditAllowed);
+            actionContextMenu.setActionEnabled("crudResults.delete", isDeleteAllowed);
             getResultsTable().removeActionHandler(actionContextMenu);
             getResultsTable().addActionHandler(actionContextMenu);
             editButton.setEnabled(isEditAllowed);
             viewButton.setEnabled(isViewAllowed);
             deleteButton.setEnabled(isDeleteAllowed);
         } else if (itemIds.size() > 1) {
-            actionContextMenu.setActionEnabled("entityResults.view", false);
-            actionContextMenu.setActionEnabled("entityResults.edit", false);
-            actionContextMenu.setActionEnabled("entityResults.delete", isDeleteAllowed);
+            actionContextMenu.setActionEnabled("crudResults.view", false);
+            actionContextMenu.setActionEnabled("crudResults.edit", false);
+            actionContextMenu.setActionEnabled("crudResults.delete", isDeleteAllowed);
             getResultsTable().removeActionHandler(actionContextMenu);
             getResultsTable().addActionHandler(actionContextMenu);
             editButton.setEnabled(false);
@@ -346,10 +369,19 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         }
     }
 
+
     class DoubleClickListener implements ItemClickEvent.ItemClickListener {
         public void itemClick(ItemClickEvent event) {
             if (event.isDoubleClick()) {
-                getEntityForm().setViewMode(false);
+                boolean hasViewableFields = !getEntityForm().getFormFieldSet().getViewableFormFields().isEmpty();
+                boolean isViewAllowed = securityService.getCurrentUser().isViewAllowed(getType().getName())
+                        && hasViewableFields;
+                if (isViewAllowed) {
+                    boolean isEditAllowed = securityService.getCurrentUser().isEditAllowed(getType().getName())
+                            && isViewAllowed;
+                    getEntityForm().setViewMode(!isEditAllowed);
+                }
+
                 editOrView(event.getItemId());
             }
         }

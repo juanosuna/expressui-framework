@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -39,8 +39,8 @@ package com.expressui.sample.view.select;
 
 import com.expressui.core.view.entityselect.EntitySelect;
 import com.expressui.core.view.entityselect.EntitySelectResults;
-import com.expressui.core.view.field.DisplayFields;
-import com.expressui.core.view.field.format.JDKFormatPropertyFormatter;
+import com.expressui.core.view.field.format.JDKBridgePropertyFormatter;
+import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.OpportunityQuery;
 import com.expressui.sample.entity.Opportunity;
 import com.expressui.sample.view.opportunity.OpportunitySearchForm;
@@ -75,7 +75,7 @@ public class OpportunitySelect extends EntitySelect<Opportunity> {
     }
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return "Select Opportunity";
     }
 
@@ -92,19 +92,20 @@ public class OpportunitySelect extends EntitySelect<Opportunity> {
         }
 
         @Override
-        public void configureFields(DisplayFields displayFields) {
-            displayFields.setPropertyIds(
+        public void init(ResultsFieldSet resultsFields) {
+            resultsFields.setPropertyIds(
                     "name",
                     "salesStage",
                     "amountWeightedInUSD",
                     "expectedCloseDate"
             );
 
-            displayFields.setLabel("amountWeightedInUSD", "Weighted Amount");
+            resultsFields.setLabel("amountWeightedInUSD", "Weighted Amount");
+
             NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
             numberFormat.setMaximumFractionDigits(0);
-            JDKFormatPropertyFormatter formatter = new JDKFormatPropertyFormatter(numberFormat);
-            displayFields.setPropertyFormatter("amountWeightedInUSD", formatter);
+            JDKBridgePropertyFormatter formatter = new JDKBridgePropertyFormatter(numberFormat);
+            resultsFields.setPropertyFormatter("amountWeightedInUSD", formatter);
         }
     }
 }

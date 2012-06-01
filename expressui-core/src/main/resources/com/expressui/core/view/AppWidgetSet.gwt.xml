@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2011 Brown Bag Consulting.
+  ~ Copyright (c) 2012 Brown Bag Consulting.
   ~ This file is part of the ExpressUI project.
   ~ Author: Juan Osuna
   ~
@@ -49,5 +49,9 @@
     <inherits name="org.vaadin.vaadinvisualizations.widgetset.VaadinvisualizationApplicationWidgetset"/>
 
     <inherits name="org.vaadin.vol.demo.VolExampleAppWidgetset"/>
+
+    <inherits name="org.vaadin.codelabel.CodelabelWidgetset"/>
+
+    <inherits name="com.github.wolfie.sessionguard.SessionguardWidgetset"/>
 
 </module>

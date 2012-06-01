@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -44,8 +44,10 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
+
 @Component
-@Scope("session")
+@Scope(SCOPE_SESSION)
 @SuppressWarnings({"serial"})
 public class AccountPage extends SearchPage<Account> {
 
@@ -66,7 +68,7 @@ public class AccountPage extends SearchPage<Account> {
     }
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return "Accounts";
     }
 }

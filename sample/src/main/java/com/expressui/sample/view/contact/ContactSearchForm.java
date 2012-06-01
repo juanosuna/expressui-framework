@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,7 +37,7 @@
 
 package com.expressui.sample.view.contact;
 
-import com.expressui.core.view.field.FormFields;
+import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.form.SearchForm;
 import com.expressui.sample.dao.StateDao;
 import com.expressui.sample.dao.query.ContactQuery;
@@ -61,11 +61,11 @@ public class ContactSearchForm extends SearchForm<ContactQuery> {
     private StateDao stateDao;
 
     @Override
-    public void configureFields(FormFields formFields) {
+    public void init(FormFieldSet formFields) {
 
-        formFields.setPosition("lastName", 1, 1);
-        formFields.setPosition("country", 1, 2);
-        formFields.setPosition("states", 1, 3);
+        formFields.setCoordinates("lastName", 1, 1);
+        formFields.setCoordinates("country", 1, 2);
+        formFields.setCoordinates("states", 1, 3);
 
         formFields.clearSelectItems("states");
         formFields.setVisible("states", false);
@@ -78,12 +78,12 @@ public class ContactSearchForm extends SearchForm<ContactQuery> {
         Country newCountry = (Country) event.getProperty().getValue();
         List<State> states = stateDao.findByCountry(newCountry);
 
-        getFormFields().setSelectItems("states", states);
-        getFormFields().setVisible("states", !states.isEmpty());
+        getFormFieldSet().setSelectItems("states", states);
+        getFormFieldSet().setVisible("states", !states.isEmpty());
     }
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return "Contact Search Form";
     }
 }

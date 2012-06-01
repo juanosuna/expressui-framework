@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -42,6 +42,12 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 
 import java.util.Locale;
 
+/**
+ * Provides access to internationalized messages.
+ * <p/>
+ * Subclasses Spring's ReloadableResourceBundleMessageSource and adds a few convenient
+ * overloaded methods.
+ */
 public class MessageSource extends ReloadableResourceBundleMessageSource {
 
     public String getMessageWithDefault(String code) {
@@ -49,13 +55,7 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
     }
 
     public String getMessage(String code) {
-        Locale locale;
-        if (MainApplication.getInstance() == null) {
-            locale = Locale.getDefault();
-        } else {
-            locale = MainApplication.getInstance().getLocale();
-        }
-        return getMessage(code, null, null, locale);
+        return getMessage(code, null, null, getLocale());
     }
 
     public String getMessage(String code, Object[] args) {
@@ -67,12 +67,23 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
     }
 
     public String getMessage(String code, Object[] args, String defaultMessage) {
+        return getMessage(code, args, defaultMessage, getLocale());
+    }
+
+    /**
+     * Get the locale associated with Vaadin application. If Application has not been
+     * initialized yet, get JDK default locale.
+     *
+     * @return current locale
+     */
+    public Locale getLocale() {
         Locale locale;
         if (MainApplication.getInstance() == null) {
             locale = Locale.getDefault();
         } else {
             locale = MainApplication.getInstance().getLocale();
         }
-        return getMessage(code, args, defaultMessage, locale);
+
+        return locale;
     }
 }

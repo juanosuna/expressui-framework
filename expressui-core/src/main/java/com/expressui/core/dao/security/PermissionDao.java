@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,27 +38,26 @@
 package com.expressui.core.dao.security;
 
 import com.expressui.core.dao.EntityDao;
-import com.expressui.core.dao.query.ToManyRelationshipQuery;
 import com.expressui.core.entity.security.Permission;
 import com.expressui.core.entity.security.Role;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
 import javax.persistence.FlushModeType;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-
+/**
+ * Permissions DAO with RelatedPermissionsQuery.
+ */
 @Repository
 @SuppressWarnings("unchecked")
 public class PermissionDao extends EntityDao<Permission, Long> {
 
+    /**
+     * Find all permissions ordered by targetType and field
+     *
+     * @return all permissions
+     */
     @Override
     public List<Permission> findAll() {
         Query query = getEntityManager().createQuery("SELECT p FROM Permission p ORDER BY p.targetType, p.field");
@@ -67,6 +66,12 @@ public class PermissionDao extends EntityDao<Permission, Long> {
         return query.getResultList();
     }
 
+    /**
+     * Find all permissions for a given role.
+     *
+     * @param role to query
+     * @return all permissions for role
+     */
     public List<Permission> findByRole(Role role) {
         Query query = getEntityManager().createQuery("SELECT p FROM Permission p WHERE p.role = :role");
         query.setParameter("role", role);
@@ -74,6 +79,14 @@ public class PermissionDao extends EntityDao<Permission, Long> {
         return query.getResultList();
     }
 
+    /**
+     * Find permissions for a given role, entity type and field.
+     *
+     * @param role       to query
+     * @param entityType to query
+     * @param field      to query
+     * @return found permissions
+     */
     public List<Permission> findByRoleEntityTypeAndField(Role role, String entityType, String field) {
         Query query = getEntityManager().createQuery("SELECT p FROM Permission p WHERE p.role = :role" +
                 " AND p.targetType = :entityType AND p.field = :field");
@@ -84,61 +97,5 @@ public class PermissionDao extends EntityDao<Permission, Long> {
         query.setFlushMode(FlushModeType.COMMIT);
 
         return query.getResultList();
-    }
-
-    @Component
-    @Scope(SCOPE_PROTOTYPE)
-    public static class RelatedPermissionsQuery extends ToManyRelationshipQuery<Permission, Role> {
-
-        @Resource
-        private PermissionDao permissionDao;
-
-        private Role role;
-
-        @Override
-        public void setParent(Role parent) {
-            this.role = parent;
-        }
-
-        @Override
-        public Role getParent() {
-            return role;
-        }
-
-        @Override
-        public List<Permission> execute() {
-            return permissionDao.execute(this);
-        }
-
-        @Override
-        public List<Predicate> buildCriteria(CriteriaBuilder builder, Root<Permission> rootEntity) {
-            List<Predicate> criteria = new ArrayList<Predicate>();
-
-            if (!isEmpty(role)) {
-                ParameterExpression<Role> p = builder.parameter(Role.class, "role");
-                criteria.add(builder.equal(rootEntity.get("role"), p));
-            }
-
-            return criteria;
-        }
-
-        @Override
-        public void setParameters(TypedQuery typedQuery) {
-            if (!isEmpty(role)) {
-                typedQuery.setParameter("role", role);
-            }
-        }
-
-        @Override
-        public void addFetchJoins(Root<Permission> rootEntity) {
-            rootEntity.fetch("role", JoinType.LEFT);
-        }
-
-        @Override
-        public String toString() {
-            return "RelatedPermissions{" +
-                    "role='" + role + '\'' +
-                    '}';
-        }
     }
 }

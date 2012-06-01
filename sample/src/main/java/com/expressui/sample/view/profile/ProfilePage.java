@@ -37,73 +37,42 @@
 
 package com.expressui.sample.view.profile;
 
-import com.expressui.core.entity.security.User;
-import com.expressui.core.security.SecurityService;
-import com.expressui.core.view.page.Page;
-import com.expressui.sample.dao.ProfileDao;
+import com.expressui.core.view.page.SearchPage;
 import com.expressui.sample.entity.Profile;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.CustomComponent;
-import com.vaadin.ui.VerticalLayout;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
+
+/**
+ * This page is used by admin to edit other user's profiles.
+ */
 @Component
-@Scope("session")
+@Scope(SCOPE_SESSION)
 @SuppressWarnings({"serial"})
-public class ProfilePage extends CustomComponent implements Page {
+public class ProfilePage extends SearchPage<Profile> {
 
     @Resource
-    private SecurityService securityService;
+    private ProfileSearchForm profileSearchForm;
 
     @Resource
-    private ProfileDao profileDao;
+    private ProfileResults profileResults;
 
-    @Resource
-    private ProfileForm profileForm;
-
-    @PostConstruct
     @Override
-    public void postConstruct() {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(true);
-        layout.setSpacing(true);
-        setCompositionRoot(layout);
-
-        setCustomSizeUndefined();
-
-        layout.addComponent(profileForm);
-        layout.setComponentAlignment(profileForm, Alignment.MIDDLE_CENTER);
-    }
-
-    private void setCustomSizeUndefined() {
-        setSizeUndefined();
-        getCompositionRoot().setSizeUndefined();
+    public ProfileSearchForm getSearchForm() {
+        return profileSearchForm;
     }
 
     @Override
-    public void postWire() {
+    public ProfileResults getResults() {
+        return profileResults;
     }
 
     @Override
-    public void onLoad() {
-        User user = securityService.getCurrentUser();
-        Profile profile = profileDao.findOneByUser(user);
-
-        if (profile == null) {
-            profileForm.create();
-            profileForm.getEntity().setUser(user);
-        } else {
-            profileForm.load(profile);
-        }
-    }
-
-    @Override
-    public boolean isViewAllowed() {
-        return true;
+    public String getTypeCaption() {
+        return "Profiles";
     }
 }
 

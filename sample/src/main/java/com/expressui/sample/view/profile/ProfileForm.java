@@ -37,109 +37,58 @@
 
 package com.expressui.sample.view.profile;
 
-import com.expressui.core.view.field.FormFields;
+import com.expressui.core.dao.security.UserDao;
+import com.expressui.core.entity.security.User;
+import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.security.select.UserSelect;
-import com.expressui.sample.dao.StateDao;
-import com.expressui.sample.entity.Country;
 import com.expressui.sample.entity.Profile;
-import com.expressui.sample.entity.State;
-import com.expressui.sample.util.formatter.PhonePropertyFormatter;
-import com.expressui.sample.util.validator.PhoneConversionValidator;
-import com.expressui.sample.view.select.AccountSelect;
-import com.vaadin.data.Property;
-import com.vaadin.terminal.Sizeable;
+import com.expressui.sample.view.myprofile.MyProfileForm;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"rawtypes", "serial"})
-public class ProfileForm extends EntityForm<Profile> {
+public class ProfileForm<T> extends EntityForm<Profile> {
 
     @Resource
-    private StateDao stateDao;
+    private MyProfileForm myProfileForm;
 
     @Resource
     private UserSelect userSelect;
 
     @Resource
-    private AccountSelect accountSelect;
+    private UserDao userDao;
 
     @Override
-    public void configureFields(FormFields formFields) {
-        formFields.setPosition("Overview", "firstName", 1, 1);
-        formFields.setPosition("Overview", "lastName", 1, 2);
+    public void init(FormFieldSet formFields) {
 
-        formFields.setPosition("Overview", "title", 2, 1);
-        formFields.setPosition("Overview", "company", 1, 1);
+        myProfileForm.init(formFields);
 
-        formFields.setPosition("Overview", "user", 3, 1);
-
-        formFields.setPosition("Overview", "email", 4, 1);
-        formFields.setPosition("Overview", "doNotEmail", 4, 2);
-
-        formFields.setPosition("Overview", "mainPhone", 5, 1);
-        formFields.setPosition("Overview", "mainPhoneType", 5, 1);
-        formFields.setPosition("Overview", "doNotCall", 5, 2);
-
-        formFields.setPosition("Address", "address.street", 1, 1);
-        formFields.setPosition("Address", "address.city", 1, 2);
-        formFields.setPosition("Address", "address.country", 2, 1);
-        formFields.setPosition("Address", "address.zipCode", 2, 2);
-        formFields.setPosition("Address", "address.state", 3, 1);
-
-        formFields.setLabel("mainPhoneType", null);
-        formFields.setWidth("mainPhoneType", 7, Sizeable.UNITS_EM);
-
-        formFields.addValidator("mainPhone", PhoneConversionValidator.class);
-        formFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
-
-        formFields.setDescription("mainPhone",
-                "<strong>Example formats:</strong>" +
-                        "<ul>" +
-                        "  <li>US: (919) 975-5331</li>" +
-                        "  <li>Germany: +49 30/70248804</li>" +
-                        "</ul>");
-
-        formFields.clearSelectItems("address.state");
-        formFields.addValueChangeListener("address.country", this, "countryChanged");
+        SelectField selectField = new SelectField(this, "user", userSelect);
+        formFields.setField("user.loginName", selectField);
     }
 
-    public void countryChanged(Property.ValueChangeEvent event) {
-        Country newCountry = (Country) event.getProperty().getValue();
-        List<State> states = stateDao.findByCountry(newCountry);
+    @Override
+    public void preSave(Profile profile) {
+        super.preSave(profile);
 
-        String fullStatePropertyId = "address.state";
-        FormFields formFields = getFormFields();
-        formFields.setVisible(fullStatePropertyId, !states.isEmpty());
-        formFields.setSelectItems(fullStatePropertyId, states);
-
-        refreshZipCodeToolTip("address", newCountry);
+        User user = userDao.merge(profile.getUser());
+        profile.setUser(user);
     }
 
-    private void refreshZipCodeToolTip(String addressPropertyId, Country newCountry) {
-        String fullZipCodePropertyId = addressPropertyId + ".zipCode";
-        FormFields formFields = getFormFields();
-
-        if (newCountry != null && newCountry.getMinPostalCode() != null && newCountry.getMaxPostalCode() != null) {
-            formFields.setDescription(fullZipCodePropertyId,
-                    "<strong>Postal code range:</strong>" +
-                            "<ul>" +
-                            "  <li>" + newCountry.getMinPostalCode() + " - " + newCountry.getMaxPostalCode() + "</li>" +
-                            "</ul>");
+    @Override
+    public String getTypeCaption() {
+        if (getEntity().getName() == null) {
+            return "Profile Form - New";
         } else {
-            formFields.setDescription(fullZipCodePropertyId, null);
+            return "Profile Form - " + getEntity().getName();
         }
-    }
-
-    @Override
-    public String getEntityCaption() {
-        return "Profile";
     }
 }

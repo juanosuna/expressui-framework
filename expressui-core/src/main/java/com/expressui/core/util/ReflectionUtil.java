@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -50,7 +50,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * Reflection utlity class
+ * Reflection utility class
  */
 public class ReflectionUtil {
 
@@ -141,7 +141,7 @@ public class ReflectionUtil {
     public static Class getCollectionValueType(Class beanType, String beanProperty) {
         PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(beanType, beanProperty);
         Class propertyType = descriptor.getPropertyType();
-        Assert.PROGRAMMING.assertTrue(Collection.class.isAssignableFrom(propertyType),
+        Assert.PROGRAMMING.isTrue(Collection.class.isAssignableFrom(propertyType),
                 "Bean property not a collection type: " + beanType + "." + beanProperty);
 
         Type genericPropertyType = descriptor.getReadMethod().getGenericReturnType();

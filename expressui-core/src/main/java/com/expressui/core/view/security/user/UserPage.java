@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,14 +38,18 @@
 package com.expressui.core.view.security.user;
 
 import com.expressui.core.entity.security.User;
+import com.expressui.core.view.page.Page;
 import com.expressui.core.view.page.SearchPage;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
+/**
+ * Page for searching for users and editing/viewing them.
+ */
 @Component
-@Scope("page")
+@Scope(Page.SCOPE_PAGE)
 @SuppressWarnings({"serial"})
 public class UserPage extends SearchPage<User> {
 
@@ -66,7 +70,7 @@ public class UserPage extends SearchPage<User> {
     }
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return "Users";
     }
 }

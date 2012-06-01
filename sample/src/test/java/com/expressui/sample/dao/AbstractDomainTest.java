@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -57,7 +57,6 @@ import javax.annotation.Resource;
         "classpath:/spring/applicationContext-domain-scan.xml",
         "classpath:/spring/applicationContext-scan.xml",
         "classpath:/spring/applicationContext-test-scope.xml",
-        "classpath:/spring/applicationContext-security.xml"
 })
 @Transactional
 public abstract class AbstractDomainTest {
@@ -67,10 +66,6 @@ public abstract class AbstractDomainTest {
 
     @Before
     public void before() {
-        User user = new User("admin", "admin");
-        Role role = new Role("admin");
-        user.getRoles().add(role);
-
-        securityService.setCurrentUser(user);
+        securityService.loginAsDefaultSystemUser();
     }
 }

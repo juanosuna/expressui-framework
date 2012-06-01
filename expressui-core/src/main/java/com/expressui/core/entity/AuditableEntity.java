@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -40,7 +40,6 @@ package com.expressui.core.entity;
 import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.SpringApplicationContext;
 
-import javax.annotation.Resource;
 import javax.persistence.*;
 import java.util.Date;
 
@@ -48,7 +47,7 @@ import java.util.Date;
  * Base class for entities wishing to be audited. This means that creation and modification timestamps
  * are logged as well as the login name of the user responsible for the creation or modification.
  * This class also versions entities in order to handle concurrent optimistic writes gracefully.
- * Finally, any instances of this class are automatically autowired by Spring, allowing injection
+ * Any instances of this class are automatically autowired by Spring, allowing injection
  * of resources into entities.
  */
 @MappedSuperclass
@@ -123,35 +122,22 @@ public abstract class AuditableEntity implements IdentifiableEntity {
 
     public static class WritableEntityListener {
 
-        @Resource
-        private SecurityService securityService;
-
         public WritableEntityListener() {
         }
 
-        protected void autowire() {
-            if (securityService == null) {
-                SpringApplicationContext.autowire(this);
-            }
-        }
-
         @PrePersist
-        public void onPrePersist(AuditableEntity writableEntity) {
-            autowire();
+        public void onPrePersist(AuditableEntity auditableEntity) {
+            auditableEntity.created = new Date();
+            auditableEntity.lastModified = auditableEntity.created;
 
-            writableEntity.created = new Date();
-            writableEntity.lastModified = writableEntity.created;
-
-            writableEntity.createdBy = securityService.getCurrentUser().getLoginName();
-            writableEntity.modifiedBy = writableEntity.createdBy;
+            auditableEntity.createdBy = SecurityService.getCurrentLoginName();
+            auditableEntity.modifiedBy = auditableEntity.createdBy;
         }
 
         @PreUpdate
-        public void onPreUpdate(AuditableEntity writableEntity) {
-            autowire();
-
-            writableEntity.lastModified = new Date();
-            writableEntity.modifiedBy = securityService.getCurrentUser().getLoginName();
+        public void onPreUpdate(AuditableEntity auditableEntity) {
+            auditableEntity.lastModified = new Date();
+            auditableEntity.modifiedBy = SecurityService.getCurrentLoginName();
         }
     }
 }

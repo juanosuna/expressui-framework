@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,10 +37,13 @@
 
 package com.expressui.core.util;
 
+import com.vaadin.ui.AbstractComponent;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Utility class for managing Strings
@@ -121,6 +124,18 @@ public class StringUtil {
     }
 
     /**
+     * Hyphenate and lower-case camel-case string.
+     *
+     * @param camelCase string in camel case
+     * @return
+     */
+    public static String hyphenateCamelCase(String camelCase) {
+        String[] camelCaseParts = StringUtils.splitByCharacterTypeCamelCase(camelCase);
+        String joined = StringUtils.join(camelCaseParts, "-");
+        return joined.toLowerCase();
+    }
+
+    /**
      * Capitalize first letter of given string
      *
      * @param str string to capitalize first letter of
@@ -128,6 +143,16 @@ public class StringUtil {
      */
     public static String capitaliseFirstLetter(String str) {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    /**
+     * Lower-case first letter of given string
+     *
+     * @param str string to lower-case first letter of
+     * @return new String with first letter lower-cased
+     */
+    public static String lowerCaseFirstLetter(String str) {
+        return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 
     /**
@@ -142,5 +167,33 @@ public class StringUtil {
         } else {
             return s == null;
         }
+    }
+
+    /**
+     * Generate style names from an object's class and all its parents in class hierarchy, useful for UI component.
+     *
+     * @param prefix        to prepend to style name
+     * @param topLevelClass style names are only generated up to this top level class in the class hierarchical. Higher
+     *                      level classes are ignored
+     * @param object        object to reflectively get class from
+     * @return
+     */
+    public static List<String> generateStyleNamesFromClassHierarchy(String prefix, Class topLevelClass, Object object) {
+        List<String> styles = new ArrayList<String>();
+        Class currentClass = object.getClass();
+        while (topLevelClass.isAssignableFrom(currentClass)) {
+            String simpleName = currentClass.getSimpleName();
+            String style = StringUtil.hyphenateCamelCase(simpleName);
+            styles.add(prefix + "-" + style);
+            currentClass = currentClass.getSuperclass();
+        }
+
+        return styles;
+    }
+
+    public static String generateDebugId(String prefix, Object mainComponent, AbstractComponent subComponent, String suffix) {
+        Class currentClass = mainComponent.getClass();
+        String simpleName = currentClass.getSimpleName();
+        return prefix + "-" + StringUtil.hyphenateCamelCase(simpleName) + "-" + suffix + "-" + subComponent.hashCode();
     }
 }

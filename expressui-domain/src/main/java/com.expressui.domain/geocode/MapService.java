@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -129,7 +129,7 @@ public class MapService extends RestClientService {
     }
 
     @Bean
-    public GeocodeClient getGeocodeClient(@Value("${geoCodeService.url}") String url) throws Exception {
+    public GeocodeClient getGeocodeClient(@Value("${geoCodeService.url:}") String url) throws Exception {
         return create(url, GeocodeClient.class);
     }
 

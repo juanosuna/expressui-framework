@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -60,7 +60,7 @@ public class MethodDelegate {
     public MethodDelegate(Object target, String methodName, Class<?>... parameterTypes) {
         this.target = target;
         method = ReflectionUtil.getMethod(target.getClass(), methodName, parameterTypes);
-        Assert.PROGRAMMING.assertTrue(method != null, "Cannot find method " + target.getClass().getName()
+        Assert.PROGRAMMING.notNull(method, "Cannot find method " + target.getClass().getName()
                 + "." + methodName + parameterTypes == null ? "" : " (" + parameterTypes + ")");
     }
 
@@ -79,5 +79,43 @@ public class MethodDelegate {
         } catch (InvocationTargetException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Get the target instance on which method can be invoked.
+     *
+     * @return target instance
+     */
+    public Object getTarget() {
+        return target;
+    }
+
+    /**
+     * Get the method that can be invoked.
+     *
+     * @return method
+     */
+    public Method getMethod() {
+        return method;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        MethodDelegate that = (MethodDelegate) o;
+
+        if (!method.equals(that.method)) return false;
+        if (!target.equals(that.target)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = target.hashCode();
+        result = 31 * result + method.hashCode();
+        return result;
     }
 }

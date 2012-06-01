@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2011 Brown Bag Consulting.
+  ~ Copyright (c) 2012 Brown Bag Consulting.
   ~ This file is part of the ExpressUI project.
   ~ Author: Juan Osuna
   ~
@@ -47,11 +47,10 @@
         <param-value>
             classpath:/spring/applicationContext-properties.xml
             classpath:/spring/applicationContext-data-access.xml
-            classpath:/spring/applicationContext-core-scan.xml
             classpath:/spring/applicationContext-messages.xml
+            classpath:/spring/applicationContext-core-scan.xml
             classpath:/spring/applicationContext-domain-scan.xml
             classpath:/spring/applicationContext-scan.xml
-            classpath:/spring/applicationContext-security.xml
         </param-value>
     </context-param>
 
@@ -80,8 +79,6 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>dispatcher</servlet-name>
-        <!--<url-pattern>/*</url-pattern>-->
-        <!--<url-pattern>/mvc/*</url-pattern>-->
         <url-pattern>/app/*</url-pattern>
         <url-pattern>/VAADIN/*</url-pattern>
     </servlet-mapping>
@@ -99,7 +96,7 @@
     </filter-mapping>
 
     <session-config>
-        <session-timeout>60</session-timeout>
+        <session-timeout>30</session-timeout>
     </session-config>
 
     <welcome-file-list>

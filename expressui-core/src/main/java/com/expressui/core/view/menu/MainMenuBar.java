@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,46 +38,95 @@
 package com.expressui.core.view.menu;
 
 import com.expressui.core.MainApplication;
-import com.expressui.core.view.page.Page;
-import com.vaadin.ui.MenuBar;
+import com.expressui.core.view.RootComponent;
+import com.vaadin.terminal.Sizeable;
+import com.vaadin.ui.*;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
 
 /**
- * User: Juan
- * Date: 12/31/11
+ * Main menu bar displayed for navigation. Bar consists of left and right root nodes. Each root node
+ * can contain a tree of nested menu nodes, where each node is a link to a page or an action.
  */
-public class MainMenuBar {
+@Component
+@Scope(SCOPE_SESSION)
+public class MainMenuBar extends RootComponent {
 
-    private List<MainMenuItem> children = new ArrayList<MainMenuItem>();
+    private MenuBarNode leftMenuBarRoot;
+    private MenuBarNode rightMenuBarRoot;
 
-    private MenuBar menuBar;
+    @Override
+    public void postConstruct() {
+        super.postConstruct();
 
-    public MainMenuBar(MenuBar menuBar) {
-        this.menuBar = menuBar;
+        HorizontalLayout menuBarLayout = new HorizontalLayout();
+        setDebugId(menuBarLayout, "menuBarLayout");
+        menuBarLayout.setWidth(100, Sizeable.UNITS_PERCENTAGE);
+        setCompositionRoot(menuBarLayout);
+
+        leftMenuBarRoot = new MenuBarNode();
+        rightMenuBarRoot = new MenuBarNode();
     }
 
-    public MainMenuItem addPage(String caption, Class<? extends Page> pageClass) {
-        MainMenuItem mainMenuItem = new MainMenuItem(this, caption, pageClass);
-        children.add(mainMenuItem);
-
-        MainApplication.getInstance().getLabelRegistry().putTypeLabel(pageClass.getName(), caption);
-        return mainMenuItem;
+    @Override
+    public void postWire() {
+        super.postWire();
     }
 
-    public MainMenuItem addCommand(String caption, Object target, String methodName) {
-        MainMenuItem mainMenuItem = new MainMenuItem(this, caption, target, methodName);
-        children.add(mainMenuItem);
-
-        return mainMenuItem;
+    @Override
+    public void onDisplay() {
     }
 
-    MenuBar getMenuBar() {
-        return menuBar;
+    /**
+     * Get the root node displayed on the left.
+     *
+     * @return left root node
+     */
+    public MenuBarNode getLeftMenuBarRoot() {
+        return leftMenuBarRoot;
     }
 
-    public List<MainMenuItem> getChildren() {
-        return children;
+    /**
+     * Get the root node displayed on the right.
+     *
+     * @return right root node
+     */
+    public MenuBarNode getRightMenuBarRoot() {
+        return rightMenuBarRoot;
+    }
+
+    /**
+     * Refresh the menu bar, useful when security permissions change, e.g. when user logs in and is no longer anonymous.
+     */
+    public void refresh() {
+        removeAllComponents();
+        MenuBar leftMenuBar = leftMenuBarRoot.createMenuBar();
+        addComponent(leftMenuBar);
+
+        MenuBar rightMenuBar = rightMenuBarRoot.createMenuBar();
+        addComponent(rightMenuBar);
+        setComponentAlignment(rightMenuBar, Alignment.MIDDLE_RIGHT);
+
+        if (leftMenuBar.getSize() == 0 && rightMenuBar.getSize() == 0) {
+            if (securityService.getCurrentUser().getRoles().isEmpty()) {
+                getMainApplication().showError("Menu bar contains no viewable items because current user is not assigned any roles.");
+            } else {
+                getMainApplication().showError("Menu bar contains no viewable items, either because none have been coded"
+                        + " or assigned roles do not allow any to be viewed.");
+            }
+        }
+
+        addPopupCodeIfEnabled();
+    }
+
+    private void addPopupCodeIfEnabled() {
+        if (isCodePopupEnabled()) {
+            Button codePopupButton = codePopup.createPopupCodeButton(getMainApplication().getClass(),
+                    MainApplication.class);
+            AbstractOrderedLayout layout = ((AbstractOrderedLayout) getCompositionRoot());
+            layout.addComponent(codePopupButton, 1);
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -65,12 +65,12 @@ public @interface AssertTrueForProperties {
     Class<? extends Payload>[] payload() default {};
 
     /**
-     * Specifies which property should be associated with the error message, from a user perspective.
+     * Specifies which property should be associated with the error message, from a UI perspective.
      * For example, if zipCode is not consistent with selected country, then setting errorProperty
      * to zipCode would cause the validation error to be displayed with the zipCode field rather
      * than country field.
      *
-     * @return property associated with error, from end-user perspective
+     * @return property associated with error, from UI perspective
      */
     String errorProperty();
 }

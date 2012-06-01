@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,16 +37,17 @@
 
 package com.expressui.core.view.tomanyrelationship;
 
-import com.expressui.core.view.EntityComponent;
+import com.expressui.core.view.TypedComponent;
+import com.vaadin.ui.Alignment;
 
 import javax.annotation.PostConstruct;
 
 /**
  * A to-many relationship component.
  *
- * @param <T> Type of entity in the many part of the relationshipo
+ * @param <T> Type of entity in the many part of the relationship
  */
-public abstract class ToManyRelationship<T> extends EntityComponent<T> {
+public abstract class ToManyRelationship<T> extends TypedComponent<T> {
 
     protected ToManyRelationship() {
         super();
@@ -64,9 +65,12 @@ public abstract class ToManyRelationship<T> extends EntityComponent<T> {
     public void postConstruct() {
         super.postConstruct();
 
-        addStyleName("p-to-many-relationship");
+        useVerticalLayout();
+        setWidthSizeFull();
 
         addComponent(getResults());
+
+        addCodePopupButtonIfEnabled(Alignment.TOP_LEFT, ToManyRelationship.class);
     }
 
     @Override
@@ -74,5 +78,10 @@ public abstract class ToManyRelationship<T> extends EntityComponent<T> {
         super.postWire();
 
         getResults().postWire();
+    }
+
+    @Override
+    public void onDisplay() {
+        getResults().onDisplay();
     }
 }

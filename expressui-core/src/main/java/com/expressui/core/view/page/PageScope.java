@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -42,10 +42,16 @@ import com.expressui.core.util.assertion.Assert;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 
+/**
+ * When user leaves the Page, this custom Spring scope tells ExpressUI to purge
+ * it from Spring's ApplicationContext and the UI. This results is
+ * a small delay but lower memory consumption.
+ */
 public class PageScope implements Scope {
 
+    @Override
     public Object get(String key, ObjectFactory unscoped) {
-        Assert.PROGRAMMING.assertTrue(currentPageConversation() != null);
+        Assert.PROGRAMMING.notNull(currentPageConversation());
 
         if (!currentPageConversation().containsKey(key)) {
             Object bean = unscoped.getObject();
@@ -54,14 +60,16 @@ public class PageScope implements Scope {
         return currentPageConversation().get(key);
     }
 
+    @Override
     public Object remove(String key) {
-        Assert.PROGRAMMING.assertTrue(currentPageConversation() != null);
+        Assert.PROGRAMMING.notNull(currentPageConversation());
 
         return currentPageConversation().remove(key);
     }
 
+    @Override
     public String getConversationId() {
-        Assert.PROGRAMMING.assertTrue(currentPageConversation() != null);
+        Assert.PROGRAMMING.notNull(currentPageConversation());
 
         return currentPageConversation().getId();
     }

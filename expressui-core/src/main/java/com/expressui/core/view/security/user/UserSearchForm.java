@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,26 +37,29 @@
 
 package com.expressui.core.view.security.user;
 
-import com.expressui.core.view.field.FormFields;
+import com.expressui.core.dao.security.query.UserQuery;
+import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.form.SearchForm;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import static com.expressui.core.dao.security.UserDao.UserQuery;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
+/**
+ * Search form for finding users.
+ */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"serial"})
 public class UserSearchForm extends SearchForm<UserQuery> {
 
     @Override
-    public void configureFields(FormFields formFields) {
-        formFields.setPosition("loginName", 1, 1);
+    public void init(FormFieldSet formFields) {
+        formFields.setCoordinates("loginName", 1, 1);
     }
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return "User Search Form";
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,14 +37,15 @@
 
 package com.expressui.sample.view.contact;
 
-import com.expressui.core.view.field.FormFields;
 import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.form.FormFieldSet;
+import com.expressui.core.view.form.FormTab;
 import com.expressui.core.view.security.select.UserSelect;
 import com.expressui.sample.dao.StateDao;
 import com.expressui.sample.entity.*;
-import com.expressui.sample.util.formatter.PhonePropertyFormatter;
-import com.expressui.sample.util.validator.PhoneConversionValidator;
+import com.expressui.sample.formatter.PhonePropertyFormatter;
+import com.expressui.sample.validator.PhoneConversionValidator;
 import com.expressui.sample.view.select.AccountSelect;
 import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
@@ -71,55 +72,54 @@ public class ContactForm extends EntityForm<Contact> {
     private AccountSelect accountSelect;
 
     @Override
-    public void configureFields(FormFields formFields) {
-        formFields.setPosition("Overview", "firstName", 1, 1);
-        formFields.setPosition("Overview", "lastName", 1, 2);
+    public void init(FormFieldSet formFields) {
 
-        formFields.setPosition("Overview", "title", 2, 1);
-        formFields.setPosition("Overview", "birthDate", 2, 2);
+        FormTab overview = formFields.createTab("Overview");
+        overview.setCoordinates("firstName", 1, 1);
+        overview.setCoordinates("lastName", 1, 2);
 
-        formFields.setPosition("Overview", "account.name", 3, 1);
-        formFields.setPosition("Overview", "leadSource", 3, 2);
+        overview.setCoordinates("title", 2, 1);
+        overview.setCoordinates("birthDate", 2, 2);
 
-        formFields.setPosition("Overview", "email", 4, 1);
-        formFields.setPosition("Overview", "doNotEmail", 4, 2);
+        overview.setCoordinates("account.name", 3, 1);
+        overview.setCoordinates("leadSource", 3, 2);
 
-        formFields.setPosition("Overview", "mainPhone", 5, 1);
-        formFields.setPosition("Overview", "mainPhoneType", 5, 1);
-        formFields.setPosition("Overview", "doNotCall", 5, 2);
+        overview.setCoordinates("email", 4, 1);
+        overview.setCoordinates("doNotEmail", 4, 2);
 
-        formFields.setPosition("Overview", "assignedTo.loginName", 6, 1);
+        overview.setCoordinates("mainPhone", 5, 1);
+        overview.setCoordinates("mainPhoneType", 5, 1);
+        overview.setCoordinates("doNotCall", 5, 2);
 
-        formFields.setPosition("Mailing Address", "mailingAddress.street", 1, 1);
-        formFields.setPosition("Mailing Address", "mailingAddress.city", 1, 2);
-        formFields.setPosition("Mailing Address", "mailingAddress.country", 2, 1);
-        formFields.setPosition("Mailing Address", "mailingAddress.zipCode", 2, 2);
-        formFields.setPosition("Mailing Address", "mailingAddress.state", 3, 1);
+        overview.setCoordinates("assignedTo.loginName", 6, 1);
 
-        formFields.setPosition("Other Address", "otherAddress.street", 1, 1);
-        formFields.setPosition("Other Address", "otherAddress.city", 1, 2);
-        formFields.setPosition("Other Address", "otherAddress.country", 2, 1);
-        formFields.setPosition("Other Address", "otherAddress.zipCode", 2, 2);
-        formFields.setPosition("Other Address", "otherAddress.state", 3, 1);
-        formFields.setTabOptional("Other Address", this, "addOtherAddress", this, "removeOtherAddress");
+        FormTab mailingAddress = formFields.createTab("Mailing Address");
+        mailingAddress.setCoordinates("mailingAddress.street", 1, 1);
+        mailingAddress.setCoordinates("mailingAddress.city", 1, 2);
+        mailingAddress.setCoordinates("mailingAddress.country", 2, 1);
+        mailingAddress.setCoordinates("mailingAddress.zipCode", 2, 2);
+        mailingAddress.setCoordinates("mailingAddress.state", 3, 1);
 
-        formFields.setPosition("Description", "description", 1, 1);
+        FormTab otherAddress = formFields.createTab("Other Address");
+        otherAddress.setCoordinates("otherAddress.street", 1, 1);
+        otherAddress.setCoordinates("otherAddress.city", 1, 2);
+        otherAddress.setCoordinates("otherAddress.country", 2, 1);
+        otherAddress.setCoordinates("otherAddress.zipCode", 2, 2);
+        otherAddress.setCoordinates("otherAddress.state", 3, 1);
+        otherAddress.setOptional(this, "addOtherAddress", this, "removeOtherAddress");
+
+        FormTab description = formFields.createTab("Description");
+        description.setCoordinates("description", 1, 1);
 
         formFields.setLabel("description", null);
-        formFields.setLabel("mainPhoneType", null);
         formFields.setLabel("account.name", "Account");
-        formFields.setWidth("mainPhoneType", 7, Sizeable.UNITS_EM);
         formFields.setLabel("assignedTo.loginName", "Assigned to");
+        formFields.setLabel("mainPhoneType", null);
+        formFields.setWidth("mainPhoneType", 7, Sizeable.UNITS_EM);
+        formFields.setToolTip("mainPhone", Phone.TOOL_TIP);
 
-        formFields.addValidator("mainPhone", PhoneConversionValidator.class);
+        formFields.addConversionValidator("mainPhone", PhoneConversionValidator.class);
         formFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
-
-        formFields.setDescription("mainPhone",
-                "<strong>Example formats:</strong>" +
-                        "<ul>" +
-                        "  <li>US: (919) 975-5331</li>" +
-                        "  <li>Germany: +49 30/70248804</li>" +
-                        "</ul>");
 
         formFields.clearSelectItems("mailingAddress.state");
         formFields.addValueChangeListener("mailingAddress.country", this, "mailingCountryChanged");
@@ -154,31 +154,15 @@ public class ContactForm extends EntityForm<Contact> {
         Country newCountry = (Country) event.getProperty().getValue();
         List<State> states = stateDao.findByCountry(newCountry);
 
-        String fullStatePropertyId = addressPropertyId + ".state";
-        FormFields formFields = getFormFields();
-        formFields.setVisible(fullStatePropertyId, !states.isEmpty());
-        formFields.setSelectItems(fullStatePropertyId, states);
-
-        refreshZipCodeToolTip(addressPropertyId, newCountry);
-    }
-
-    private void refreshZipCodeToolTip(String addressPropertyId, Country newCountry) {
-        String fullZipCodePropertyId = addressPropertyId + ".zipCode";
-        FormFields formFields = getFormFields();
-
-        if (newCountry != null && newCountry.getMinPostalCode() != null && newCountry.getMaxPostalCode() != null) {
-            formFields.setDescription(fullZipCodePropertyId,
-                    "<strong>Postal code range:</strong>" +
-                            "<ul>" +
-                            "  <li>" + newCountry.getMinPostalCode() + " - " + newCountry.getMaxPostalCode() + "</li>" +
-                            "</ul>");
-        } else {
-            formFields.setDescription(fullZipCodePropertyId, null);
+        getFormFieldSet().setVisible(addressPropertyId + ".state", !states.isEmpty());
+        getFormFieldSet().setSelectItems(addressPropertyId + ".state", states);
+        if (newCountry != null) {
+            getFormFieldSet().setToolTip(addressPropertyId + ".zipCode", newCountry.getZipCodeToolTip());
         }
     }
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         if (getEntity().getName() == null) {
             return "Contact Form - New";
         } else {

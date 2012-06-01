@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -182,7 +182,7 @@ public class Role extends WritableEntity {
         Permission foundPermission = null;
         for (Permission permission : permissions) {
             if (permission.getTargetType().equals(type) && permission.getField() == null) {
-                Assert.DATABASE.assertTrue(foundPermission == null, "Database must not contain two records" +
+                Assert.DATABASE.isNull(foundPermission, "Database must not contain two records" +
                         " with the same type and field: " + type);
                 foundPermission = permission;
             }
@@ -205,7 +205,7 @@ public class Role extends WritableEntity {
         for (Permission permission : permissions) {
             if (permission.getTargetType().equals(type) && permission.getField() != null
                     && permission.getField().equals(field)) {
-                Assert.DATABASE.assertTrue(foundPermission == null, "Database must not contain two records" +
+                Assert.DATABASE.isNull(foundPermission, "Database must not contain two records" +
                         " with the same type and field: " + type + "." + field);
                 foundPermission = permission;
             }
@@ -267,8 +267,7 @@ public class Role extends WritableEntity {
      */
     public boolean isViewAllowed(String type, String field) {
         return getPermission(type, field) == null ?
-                allowOrDenyByDefault == AllowOrDeny.ALLOW && isViewAllowed(type)
-                : getPermission(type, field).isView();
+                isViewAllowed(type) : getPermission(type, field).isView();
     }
 
     /**
@@ -280,8 +279,6 @@ public class Role extends WritableEntity {
      */
     public boolean isEditAllowed(String type, String field) {
         return getPermission(type, field) == null ?
-                allowOrDenyByDefault == AllowOrDeny.ALLOW && isEditAllowed(type)
-                : getPermission(type, field).isEdit();
-
+                isEditAllowed(type) || isCreateAllowed(type) : getPermission(type, field).isEdit();
     }
 }

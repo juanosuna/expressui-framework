@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,8 +37,7 @@
 
 package com.expressui.core.view.entityselect;
 
-import com.expressui.core.MainApplication;
-import com.expressui.core.view.EntityComponent;
+import com.expressui.core.view.TypedComponent;
 import com.expressui.core.view.form.SearchForm;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -53,7 +52,7 @@ import javax.annotation.PostConstruct;
  *
  * @param <T> type of entity to be selected
  */
-public abstract class EntitySelect<T> extends EntityComponent<T> {
+public abstract class EntitySelect<T> extends TypedComponent<T> {
 
     private Window popupWindow;
 
@@ -62,7 +61,7 @@ public abstract class EntitySelect<T> extends EntityComponent<T> {
     }
 
     /**
-     * Get the search form component of this page
+     * Get the search form component.
      *
      * @return search form component
      */
@@ -80,11 +79,21 @@ public abstract class EntitySelect<T> extends EntityComponent<T> {
         popupWindow.setHeight("95%");
     }
 
+    /**
+     * Type caption is null to avoid redundant captions.
+     *
+     * @return null
+     */
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return null;
     }
 
+    /**
+     * Caption is null to avoid redundant captions.
+     *
+     * @return null
+     */
     @Override
     public String getCaption() {
         return null;
@@ -95,11 +104,15 @@ public abstract class EntitySelect<T> extends EntityComponent<T> {
     public void postConstruct() {
         super.postConstruct();
 
-        addStyleName("p-entity-select");
+        useVerticalLayout();
+        setWidthSizeFull();
+
         getResults().selectPageSize(5);
 
         addComponent(getSearchForm());
         addComponent(getResults());
+
+        addCodePopupButtonIfEnabled(EntitySelect.class);
     }
 
     @Override
@@ -110,12 +123,18 @@ public abstract class EntitySelect<T> extends EntityComponent<T> {
         getResults().postWire();
     }
 
+    @Override
+    public void onDisplay() {
+        getSearchForm().onDisplay();
+        getResults().onDisplay();
+    }
+
     /**
      * Open a popup window with this component
      */
     public void open() {
-        popupWindow = new Window(getEntityCaption());
-        popupWindow.addStyleName("p-entity-select-window");
+        popupWindow = new Window(getTypeCaption());
+        popupWindow.addStyleName("e-entity-select-window");
         popupWindow.addStyleName("opaque");
         VerticalLayout layout = (VerticalLayout) popupWindow.getContent();
         layout.setMargin(true);
@@ -131,13 +150,15 @@ public abstract class EntitySelect<T> extends EntityComponent<T> {
         configurePopupWindow(popupWindow);
         popupWindow.addComponent(this);
 
-        MainApplication.getInstance().getMainWindow().addWindow(popupWindow);
+        getMainApplication().getMainWindow().addWindow(popupWindow);
+
+        onDisplay();
     }
 
     /**
-     * Close this popup
+     * Close this popup.
      */
     public void close() {
-        MainApplication.getInstance().getMainWindow().removeWindow(popupWindow);
+        getMainApplication().getMainWindow().removeWindow(popupWindow);
     }
 }

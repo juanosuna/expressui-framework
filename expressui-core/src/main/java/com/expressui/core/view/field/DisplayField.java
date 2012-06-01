@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -41,54 +41,51 @@ import com.expressui.core.util.BeanPropertyType;
 import com.expressui.core.util.StringUtil;
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.field.format.DefaultFormats;
-import com.expressui.core.view.field.format.JDKFormatPropertyFormatter;
 import com.expressui.core.view.form.EntityForm;
 import com.vaadin.data.util.PropertyFormatter;
 import org.springframework.beans.BeanUtils;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.text.Format;
 
 /**
- * A field for non-editable display in the UI, e.g. as a column in results table.
- * For editable fields, use FormField.
+ * A field for display in the UI, e.g. as a column in results table or input field in a form.
  */
-public class DisplayField {
+public abstract class DisplayField {
 
-    private DisplayFields displayFields;
+    private FieldSet fieldSet;
 
     private String propertyId;
     private BeanPropertyType beanPropertyType;
     private FormLink formLink;
     private PropertyFormatter propertyFormatter;
-    private boolean isSortable = true;
-    private String columnHeader;
+    private String label;
 
     /**
-     * Construct with reference to parent and property name this field is bound to
+     * Construct with reference to fieldSet this field belongs to and the property name this field is bound to, e.g.
+     * an entity object.
      *
-     * @param displayFields parent that contains collection of all display fields
-     * @param propertyId    name of the property this field is bound to
+     * @param fieldSet   fieldSet that contains this field
+     * @param propertyId name of the property this field is bound to
      */
-    public DisplayField(DisplayFields displayFields, String propertyId) {
-        this.displayFields = displayFields;
+    public DisplayField(FieldSet fieldSet, String propertyId) {
+        this.fieldSet = fieldSet;
         this.propertyId = propertyId;
-        beanPropertyType = BeanPropertyType.getBeanPropertyType(getDisplayFields().getEntityType(), propertyId);
-        Assert.PROGRAMMING.assertTrue(beanPropertyType != null, "beanPropertyType must not be null");
+        beanPropertyType = BeanPropertyType.getBeanPropertyType(getFieldSet().getType(), propertyId);
+        Assert.PROGRAMMING.notNull(beanPropertyType != null, "beanPropertyType must not be null");
     }
 
     /**
-     * Get parent collection of all display properties bound to UI component, e.g. results table
+     * Get FieldSet that contains this field.
      *
-     * @return parent DisplayFields that contains this DisplayField
+     * @return FieldSet that contains this field
      */
-    public DisplayFields getDisplayFields() {
-        return displayFields;
+    public FieldSet getFieldSet() {
+        return fieldSet;
     }
 
     /**
-     * Get the name of the property this field is bound to
+     * Get the name of the property this field is bound to, e.g. in an entity object
      *
      * @return name of the property
      */
@@ -96,6 +93,11 @@ public class DisplayField {
         return propertyId;
     }
 
+    /**
+     * Get static type information about the property this field is bound to
+     *
+     * @return bean property type information
+     */
     protected BeanPropertyType getBeanPropertyType() {
         return beanPropertyType;
     }
@@ -111,7 +113,7 @@ public class DisplayField {
 
     /**
      * Get the PropertyFormatter used to format values for display and parse values
-     * entered by user.
+     * entered by user. If one is not already set, generates a default one automatically from DefaultFormats.
      *
      * @return Vaadin property formatter
      */
@@ -133,18 +135,8 @@ public class DisplayField {
         this.propertyFormatter = propertyFormatter;
     }
 
-    /**
-     * Set the JDK format used to format values for display and parse values
-     * entered by user.
-     *
-     * @param format JDK format
-     */
-    public void setFormat(Format format) {
-        setPropertyFormatter(new JDKFormatPropertyFormatter(format));
-    }
-
     private PropertyFormatter generateDefaultPropertyFormatter() {
-        DefaultFormats defaultFormats = getDisplayFields().getDefaultFormats();
+        DefaultFormats defaultFormats = getFieldSet().defaultFormats;
 
         if (getBeanPropertyType().getBusinessType() == BeanPropertyType.BusinessType.DATE) {
             return defaultFormats.getDateFormat();
@@ -161,43 +153,27 @@ public class DisplayField {
     }
 
     /**
-     * Ask if this field is a sortable column in results table
-     *
-     * @return true if sortable
-     */
-    public boolean isSortable() {
-        return isSortable;
-    }
-
-    /**
-     * Set whether or not this field is a sortable column in results table
-     *
-     * @param sortable true if sortable
-     */
-    public void setSortable(boolean sortable) {
-        isSortable = sortable;
-    }
-
-    /**
-     * Get the label used for this field, e.g. column header.
+     * Get the label used for this field. Generates one automatically, if not already set.
+     * Generated one can be derived from the property name, @Label annotation on the bound property
+     * or looked up from domainMessageSource bean, using property name as key.
      *
      * @return display label
      */
     public String getLabel() {
-        if (columnHeader == null) {
-            columnHeader = generateLabelText();
+        if (label == null) {
+            label = generateLabelText();
         }
 
-        return columnHeader;
+        return label;
     }
 
     /**
-     * Set the label used for this field, e.g. column header.
+     * Set the label used for this field.
      *
-     * @param columnHeader label
+     * @param label label
      */
-    public void setLabel(String columnHeader) {
-        this.columnHeader = columnHeader;
+    public void setLabel(String label) {
+        this.label = label;
     }
 
     String generateLabelText() {
@@ -212,13 +188,18 @@ public class DisplayField {
         return labelText;
     }
 
-    String getLabelSectionDisplayName() {
-        return "Column";
-    }
+    /**
+     * Get name for the type of label or section in a form where the label is found.
+     * This is used internally by security admin components to indicate to the user
+     * where components are located for assigning permissions.
+     *
+     * @return label section display name
+     */
+    abstract protected String getLabelSectionDisplayName();
 
     private String getLabelTextFromMessageSource() {
-        String fullPropertyPath = displayFields.getEntityType().getName() + "." + getPropertyId();
-        return displayFields.getMessageSource().getMessage(fullPropertyPath);
+        String fullPropertyPath = fieldSet.getType().getName() + "." + getPropertyId();
+        return fieldSet.domainMessageSource.getMessage(fullPropertyPath);
     }
 
     private String getLabelTextFromAnnotation() {
@@ -242,7 +223,7 @@ public class DisplayField {
 
     /**
      * Set a link to open an entity form related to this field. Enables embedding
-     * links in results table to open up related entity
+     * links in results table to open up related entity form.
      *
      * @param propertyId property path that is many-to-one relationship with another entity
      * @param entityForm entity form component to open when link is clicked
@@ -312,7 +293,7 @@ public class DisplayField {
 
     @Override
     public String toString() {
-        return "EntityField{" +
+        return "DisplayField{" +
                 "propertyId='" + getPropertyId() + '\'' +
                 '}';
     }

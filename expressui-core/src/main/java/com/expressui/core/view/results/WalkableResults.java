@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,7 +38,8 @@
 package com.expressui.core.view.results;
 
 /**
- * Crud results that can be walked, i.e. navigating next/previous for edit/view.
+ * Results that can be walked, i.e. navigating next/previous for editing and viewing
+ * current entity.
  */
 public interface WalkableResults {
 
@@ -48,7 +49,7 @@ public interface WalkableResults {
     void editOrViewPreviousItem();
 
     /**
-     * Ask if there is a previous item available (if user hasn't already at the first item).
+     * Ask if there is a previous item available (if user isn't already at the first item).
      */
     boolean hasPreviousItem();
 
@@ -58,7 +59,7 @@ public interface WalkableResults {
     void editOrViewNextItem();
 
     /**
-     * Ask if there is a next item available (if user hasn't already at the last item).
+     * Ask if there is a next item available (if user isn't already at the last item).
      */
     boolean hasNextItem();
 }

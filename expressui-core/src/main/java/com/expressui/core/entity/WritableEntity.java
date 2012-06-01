@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -48,15 +48,18 @@ import java.util.UUID;
 /**
  * Base class for entities that are writable by end users.
  * <p/>
- * This class requires that entities use a generated Long id as the primary key. This is a surrogate key
+ * This class requires that these entities use a generated Long id as the primary key. This is a surrogate key
  * that should have no business meaning.
  * <p/>
  * It also generates a unique UUID that is used in the default equals and hashcode logic. Developers are free
  * to override this logic and use their own logic based on business keys, which is the "ideal" best practice.
  * However, the UUID approach also correctly solves the equality problem where transient and non-transient entities
- * are compared and/or added to collections.
- * Even though these UUIDs seem like clutter in the database, they pragmatically relieve developers
- * from having to properly implement equals/hashcode by identifying business keys for every entity.
+ * can be compared and/or added to collections.
+ * <p/>
+ * Even though UUIDs seem like clutter in the database, they pragmatically relieve developers
+ * from having to properly implement equals/hashcode by identifying business keys for every entity. So,
+ * the UUID approach offers a good default strategy.
+ * <p/>
  * Of course, even with the UUIDs, developers should make sure to annotate business keys so that unique
  * constraints are generated in the DDL, even if these business keys are not used in equals/hashcode.
  */
@@ -76,6 +79,11 @@ public abstract class WritableEntity extends AuditableEntity {
         uuid = UUID.randomUUID().toString();
     }
 
+    /**
+     * Get the Id or primary key for this entity.
+     *
+     * @return id or primary key for this entity
+     */
     public Long getId() {
         return id;
     }
@@ -118,5 +126,4 @@ public abstract class WritableEntity extends AuditableEntity {
                 "uuid=" + getUuid() +
                 '}';
     }
-
 }

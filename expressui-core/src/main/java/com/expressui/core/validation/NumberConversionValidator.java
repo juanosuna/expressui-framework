@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -40,7 +40,7 @@ package com.expressui.core.validation;
 
 import com.expressui.core.util.ReflectionUtil;
 import com.expressui.core.view.field.FormField;
-import com.expressui.core.view.field.format.JDKFormatPropertyFormatter;
+import com.expressui.core.view.field.format.JDKBridgePropertyFormatter;
 import com.vaadin.data.util.PropertyFormatter;
 
 import java.text.Format;
@@ -62,8 +62,8 @@ public class NumberConversionValidator extends AbstractConversionValidator {
         if (propertyFormatter == null) {
             parsedValue = value;
         } else {
-            if (propertyFormatter instanceof JDKFormatPropertyFormatter) {
-                parsedValue = parseWithJDKFormat(value, ((JDKFormatPropertyFormatter) propertyFormatter).getFormat());
+            if (propertyFormatter instanceof JDKBridgePropertyFormatter) {
+                parsedValue = parseWithJDKFormat(value, ((JDKBridgePropertyFormatter) propertyFormatter).getFormat());
             } else {
                 parsedValue = propertyFormatter.parse(value.toString());
             }

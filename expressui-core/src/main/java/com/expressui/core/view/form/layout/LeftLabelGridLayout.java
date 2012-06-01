@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,6 +38,7 @@
 package com.expressui.core.view.form.layout;
 
 
+import com.expressui.core.util.StringUtil;
 import com.expressui.core.view.field.FormField;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Field;
@@ -45,13 +46,12 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 
 /**
- * User: Juan
- * Date: 7/27/11
+ * Form grid layout where labels are placed to the left of fields.
  */
 public class LeftLabelGridLayout extends FormGridLayout {
 
     /**
-     * Construct layout with given number of columns and rows
+     * Construct layout with given number of columns and rows, from ExpressUI perspective
      *
      * @param columns number of columns
      * @param rows    number of rows
@@ -71,17 +71,11 @@ public class LeftLabelGridLayout extends FormGridLayout {
      * @param formField field to find label coordinate
      * @return label coordinate
      */
-    public int getLabelColumn(FormField formField) {
+    private int getLabelColumn(FormField formField) {
         return (formField.getColumnStart() - 1) * 3;
     }
 
-    /**
-     * Get the column coordinate of the given field.
-     *
-     * @param formField field to find column coordinate
-     * @return field column coordinate
-     */
-    public int getFieldColumn(FormField formField) {
+    private int getFieldColumn(FormField formField) {
         return getLabelColumn(formField) + 1;
     }
 
@@ -91,7 +85,7 @@ public class LeftLabelGridLayout extends FormGridLayout {
      * @param formField field to find spacer coordinate
      * @return spacer coordinate
      */
-    public int getSpacerColumn(FormField formField) {
+    private int getSpacerColumn(FormField formField) {
         if (formField.getColumnEnd() == null) {
             return getFieldColumn(formField) + 1;
         } else {
@@ -105,7 +99,7 @@ public class LeftLabelGridLayout extends FormGridLayout {
      * @param formField field to find column end coordinate
      * @return column end coordinate
      */
-    public Integer getColumnEnd(FormField formField) {
+    private Integer getColumnEnd(FormField formField) {
         if (formField.getColumnEnd() == null) {
             return null;
         } else {
@@ -120,7 +114,7 @@ public class LeftLabelGridLayout extends FormGridLayout {
      * @param formField field to find start row coordinate
      * @return start row coordinate
      */
-    public int getRowStart(FormField formField) {
+    private int getRowStart(FormField formField) {
         return formField.getRowStart() - 1;
     }
 
@@ -130,7 +124,7 @@ public class LeftLabelGridLayout extends FormGridLayout {
      * @param formField field to find end row coordinate
      * @return end row coordinate
      */
-    public int getRowEnd(FormField formField) {
+    private int getRowEnd(FormField formField) {
         return formField.getRowEnd() - 1;
     }
 
@@ -160,6 +154,8 @@ public class LeftLabelGridLayout extends FormGridLayout {
         Label label = formField.getFieldLabel();
 
         HorizontalLayout fieldLayout = new HorizontalLayout();
+        String id = StringUtil.generateDebugId("e", this, fieldLayout, "fieldLayout");
+        fieldLayout.setDebugId(id);
         fieldLayout.setSizeUndefined();
         Field field = formField.getField();
         fieldLayout.addComponent(field);

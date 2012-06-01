@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -52,8 +52,8 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * Represents type information about a bean property with a type tree. Provides reflection
- * and contextual information about the bean property type.
+ * Provides reflection and contextual information about the bean property type.
+ * Represents type information about a bean property within a static tree structure.
  */
 public class BeanPropertyType {
     private static Map<String, BeanPropertyType> cache = new HashMap<String, BeanPropertyType>();
@@ -82,8 +82,8 @@ public class BeanPropertyType {
         BeanPropertyType beanPropertyType = null;
         for (String property : properties) {
             Class propertyType = BeanUtils.findPropertyType(property, new Class[]{currentPropertyType});
-            Assert.PROGRAMMING.assertTrue(propertyType != null && !propertyType.equals(Object.class),
-                    "Invalid property path: " + clazz + "." + property);
+            Assert.PROGRAMMING.isTrue(propertyType != null && !propertyType.equals(Object.class),
+                    "Invalid property path: " + clazz + "." + propertyPath);
 
             Class propertyPathType;
             Class collectionValueType = null;
@@ -354,8 +354,7 @@ public class BeanPropertyType {
             }
             if (validAnnotation == null) {
                 Field field = ReflectionUtil.getField(containingType, id);
-                Assert.PROGRAMMING.assertTrue(field != null, "Cannot find field: "
-                        + containingType.getName() + "." + id);
+                Assert.PROGRAMMING.notNull(field, "Cannot find field: " + containingType.getName() + "." + id);
 
                 validAnnotation = field.getAnnotation(Valid.class);
             }

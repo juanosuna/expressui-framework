@@ -41,17 +41,18 @@ import com.expressui.core.dao.query.EntityQuery;
 import com.expressui.core.dao.query.StructuredEntityQuery;
 import com.expressui.core.dao.query.ToManyRelationshipQuery;
 import com.expressui.core.entity.IdentifiableEntity;
+import com.expressui.core.entity.UserOwnedEntity;
+import com.expressui.core.entity.security.User;
 import com.expressui.core.util.ReflectionUtil;
+import com.expressui.core.util.assertion.Assert;
 import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import javax.persistence.criteria.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -59,9 +60,12 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Base class for entity DAOs. All methods that write to the database are marked @Transactional.
- *
- * @see com.expressui.core.entity.IdentifiableEntity
+ * A generic Data Access Object, which can be used directly without subclassing with type parameters.
+ * Instead, type parameters are available at the method level.
+ * This is useful for performing standard database operations where no type-specific
+ * implementation is needed, thus avoiding empty type-specific DAOs.
+ * <p/>
+ * Methods that write to the database are marked @Transactional.
  */
 @Repository
 public class GenericDao {
@@ -70,7 +74,7 @@ public class GenericDao {
     private EntityManager entityManager;
 
     /**
-     * Get the EntityManager.
+     * Get the JPA EntityManager.
      *
      * @return the EntityManager
      */
@@ -79,7 +83,7 @@ public class GenericDao {
     }
 
     /**
-     * Get a managed reference to the given entity, which may be detached. The managed reference is retrieved
+     * Get a managed reference to the given entity, which may have been detached. The managed reference is retrieved
      * using given entity's primary key. This is useful when you need an managed reference to an entity and don't
      * care about merging it's state.
      *
@@ -88,12 +92,38 @@ public class GenericDao {
      * @see javax.persistence.EntityManager#getReference(Class, Object)
      */
     public <T> T getReference(T entity) {
-        Object primaryKey = ((IdentifiableEntity) entity).getId();
+        Object primaryKey = getId(entity);
+        Assert.PROGRAMMING.notNull(primaryKey, "entity argument must be persistent and have a primary key");
         return getEntityManager().getReference(getEntityType(entity), primaryKey);
     }
 
+    /**
+     * Get the type of the given entity.
+     *
+     * @param entity entity to check
+     * @param <T>    entity
+     * @return type of the given entity
+     */
     private <T> Class<? extends T> getEntityType(T entity) {
-        return (Class<? extends T>) entity.getClass();
+        return Hibernate.getClass(entity);
+    }
+
+
+    /**
+     * Create entity of given type
+     *
+     * @param entityType type of entity to create
+     * @param <T>        type of entity
+     * @return newly created entity
+     */
+    public <T> T create(Class<? extends T> entityType) {
+        try {
+            return entityType.newInstance();
+        } catch (InstantiationException e) {
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -143,13 +173,43 @@ public class GenericDao {
     }
 
     /**
+     * Save a given entity, i.e. persist if new and merge if already persistent
+     *
+     * @param entity to save
+     * @param <T>    managed instance
+     */
+    public <T> void save(T entity) {
+        if (isPersistent(entity)) {
+            merge(entity);
+        } else {
+            persist(entity);
+        }
+    }
+
+    /**
      * Refresh given entity.
      *
-     * @param entity
+     * @param entity to refresh
      * @see javax.persistence.EntityManager#refresh(Object)
      */
     public <T> void refresh(T entity) {
         getEntityManager().refresh(entity);
+    }
+
+    /**
+     * Get the id or primary key of the given entity.
+     *
+     * @param entity persistent entity
+     * @param <T>    type of given entity
+     * @return id or primary key
+     */
+    public <T> Serializable getId(T entity) {
+        Serializable id = (Serializable) getEntityManager().getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(entity);
+        if (id == null) {
+            id = ((IdentifiableEntity) entity).getId();
+        }
+
+        return id;
     }
 
     /**
@@ -159,7 +219,7 @@ public class GenericDao {
      * @return true if entity has primary key
      */
     public <T> boolean isPersistent(T entity) {
-        Serializable id = (Serializable) getEntityManager().getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(entity);
+        Serializable id = getId(entity);
         if (id == null) {
             return false;
         } else {
@@ -189,8 +249,9 @@ public class GenericDao {
     /**
      * Find entity by primary key.
      *
-     * @param id primary key
-     * @return initialized entity
+     * @param entityType type of entity
+     * @param id         primary key
+     * @return found entity
      * @see javax.persistence.EntityManager#find(Class, Object)
      */
     public <T> T find(Class<? extends T> entityType, Serializable id) {
@@ -202,9 +263,10 @@ public class GenericDao {
      * marked as @NaturalId. The benefit of calling this method is that Hibernate will try to look up the entity
      * in the secondary cache.
      *
+     * @param entityType    type of entity
      * @param propertyName  name of the property in the entity that is marked @NaturalId
      * @param propertyValue value to search for
-     * @return entity
+     * @return found entity
      */
     public <T> T findByNaturalId(Class<? extends T> entityType, String propertyName, Object propertyValue) {
         Session session = (Session) getEntityManager().getDelegate();
@@ -217,8 +279,33 @@ public class GenericDao {
     }
 
     /**
-     * Find all entities of this DAO's type.
+     * Find single entity owned by a given user, e.g Profile
      *
+     * @param entityType type of entity
+     * @param user       user to query
+     * @param <T>        type of entity
+     * @return found entity
+     */
+    public <T> T findUserOwnedEntity(Class<? extends T> entityType, User user) {
+        Assert.PROGRAMMING.isTrue(UserOwnedEntity.class.isAssignableFrom(entityType),
+                "This entityType " + entityType + " must implement " + UserOwnedEntity.class.getName());
+
+        Query query = getEntityManager().createQuery("SELECT e FROM " + entityType.getSimpleName()
+                + " e where e.user = :user");
+
+        query.setParameter("user", user);
+
+        try {
+            return (T) query.getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Find all entities of given type.
+     *
+     * @param entityType type of entity
      * @return list of all entities
      */
     public <T> List<T> findAll(Class<? extends T> entityType) {
@@ -228,8 +315,9 @@ public class GenericDao {
     }
 
     /**
-     * Get a count of all entities of this DAO's type.
+     * Get a count of all entities of given type.
      *
+     * @param entityType type of entity
      * @return count of all records in the database
      */
     public <T> Long countAll(Class<? extends T> entityType) {
@@ -238,6 +326,11 @@ public class GenericDao {
         return (Long) query.getSingleResult();
     }
 
+    /**
+     * Utility method for setting hints on given query to read-only, thus enabling caching
+     *
+     * @param query query to set hints on
+     */
     public static void setReadOnly(Query query) {
         query.setHint("org.hibernate.cacheable", true);
         query.setHint("org.hibernate.cacheRegion", "ReadOnlyQuery");
@@ -245,18 +338,11 @@ public class GenericDao {
     }
 
     /**
-     * Execute the given structured query. The main benefits of a structured query are that it can be
-     * re-executed to fetch different pages in the result set, to sort on different properties, and to
-     * keep track of the result set count.
-     * Another benefit is performance. Normally, Hibernate does not support fetch joins with paging.
-     * However, a structure query works around this limitation by breaking the query into multiple queries
-     * executed in stages. First, it fetches the count. Second, it fetches
-     * the ids matching the query and paging criteria. Lastly, it fetches the full entities using fetch joins
-     * using the ids returned from the previous query. Using this staged approach, fetch joins are not
-     * executed in the same query as paging.
+     * Execute the given structured entity query.
      *
      * @param structuredEntityQuery query that can be re-executed as paging, sort and other criteria change
-     * @return list of entities of this DAO's type
+     * @return list of found entities
+     * @see com.expressui.core.dao.query.StructuredEntityQuery
      */
     public <T> List<T> execute(StructuredEntityQuery<T> structuredEntityQuery) {
         return new StructuredQueryExecutor(
@@ -265,11 +351,12 @@ public class GenericDao {
     }
 
     /**
-     * Execute the given structured query that finds child entities that reference a parent entity in a
-     * to-many relationship. Provides same benefits as StructuredEntityQuery.
+     * Execute the given structured entity query that finds child entities that reference a parent entity in a
+     * to-many relationship.
      *
      * @param toManyRelationshipQuery query that can be re-executed as paging, sort and other criteria change
-     * @return list of entities of this DAO's type
+     * @return list of found entities
+     * @see com.expressui.core.dao.query.ToManyRelationshipQuery
      */
     public <T, P> List<T> execute(ToManyRelationshipQuery<T, P> toManyRelationshipQuery) {
         return new ToManyRelationshipQueryExecutor(
@@ -310,17 +397,17 @@ public class GenericDao {
 
         private List<Serializable> executeImpl(boolean isCount) {
             CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
-            CriteriaQuery c = builder.createQuery();
-            Root rootEntity = c.from(getEntityType());
+            CriteriaQuery query = builder.createQuery();
+            Root rootEntity = query.from(getEntityType());
 
             if (isCount) {
-                c.select(builder.count(rootEntity));
+                query.select(builder.count(rootEntity));
             } else {
-                c.select(rootEntity.get("id"));
+                query.select(rootEntity.get("id"));
             }
 
-            List<Predicate> criteria = structuredQuery.buildCriteria(builder, rootEntity);
-            c.where(builder.and(criteria.toArray(new Predicate[0])));
+            List<Predicate> criteria = structuredQuery.buildCriteria(builder, query, rootEntity);
+            query.where(builder.and(criteria.toArray(new Predicate[0])));
 
             if (!isCount && structuredQuery.getOrderByPropertyId() != null) {
                 Path path = structuredQuery.buildOrderBy(rootEntity);
@@ -328,13 +415,13 @@ public class GenericDao {
                     path = rootEntity.get(structuredQuery.getOrderByPropertyId());
                 }
                 if (structuredQuery.getOrderDirection().equals(EntityQuery.OrderDirection.ASC)) {
-                    c.orderBy(builder.asc(path));
+                    query.orderBy(builder.asc(path));
                 } else {
-                    c.orderBy(builder.desc(path));
+                    query.orderBy(builder.desc(path));
                 }
             }
 
-            TypedQuery<Serializable> typedQuery = getEntityManager().createQuery(c);
+            TypedQuery<Serializable> typedQuery = getEntityManager().createQuery(query);
             structuredQuery.setParameters(typedQuery);
 
             if (!isCount) {
@@ -397,5 +484,4 @@ public class GenericDao {
             }
         }
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -47,6 +47,10 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 
+/**
+ * Validates that permission is not already redundant with existing permission with the
+ * same role, entity type and field.
+ */
 @Target({TYPE})
 @Retention(RUNTIME)
 @Constraint(validatedBy = PermissionValidator.class)

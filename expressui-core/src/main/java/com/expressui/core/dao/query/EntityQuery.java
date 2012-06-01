@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -39,6 +39,7 @@ package com.expressui.core.dao.query;
 
 import com.expressui.core.dao.GenericDao;
 import com.expressui.core.util.ReflectionUtil;
+import com.expressui.core.util.assertion.Assert;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import javax.annotation.PostConstruct;
@@ -50,15 +51,17 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Query that keeps track of the page while walking result set, page display size, sort property and other parameter
- * values for executing the JPA query. Subclasses should keep track of any specific parameter values required for each
- * entity type.
+ * Query for finding entities, similar to a DAO but adds support for paging and sorting result sets.
+ * <p/>
+ * Generically typed subclasses should add entity-specific properties, to be passed as parameter values to the query.
  *
  * @param <T> type of entity being queried
  */
 public abstract class EntityQuery<T> {
 
-    private Integer pageSize = 10;
+    public static final Integer DEFAULT_PAGE_SIZE = 10;
+
+    private Integer pageSize = DEFAULT_PAGE_SIZE;
     private Integer firstResult = 0;
     private Long resultCount = 0L;
     private String orderByPropertyId;
@@ -66,50 +69,57 @@ public abstract class EntityQuery<T> {
 
     private PropertyDescriptor[] descriptors;
 
+    /**
+     * Generic DAO for actually executing the query.
+     */
     @Resource
-    private GenericDao genericDao;
+    public GenericDao genericDao;
 
     protected EntityQuery() {
         descriptors = PropertyUtils.getPropertyDescriptors(this);
     }
 
+    /**
+     * Lifecycle method called after this bean has been constructed.
+     */
     @PostConstruct
     public void postConstruct() {
     }
 
+    /**
+     * Lifecycle method called after all beans have been wired.
+     */
+    public void postWire() {
+    }
+
+    /**
+     * Get the type of entity being queried
+     *
+     * @return type of entity
+     */
     public Class getEntityType() {
         return ReflectionUtil.getGenericArgumentType(getClass());
     }
 
-    public GenericDao getGenericDao() {
-        return genericDao;
-    }
-
     /**
-     * Execute the query. Subclass implementation should make the appropriate call to the DAO for this entity type.
+     * Execute the query. Implementation should call the appropriate DAO method for
+     * executing the query for this entity type.
      *
      * @return list of matching entities for the page range specified by this query
      */
     public abstract List<T> execute();
 
     /**
-     * Can be overridden if any initialization is required after all Spring beans have been wired.
-     * Overriding methods should call super.
-     */
-    public void postWire() {
-    }
-
-    /**
-     * Get the number of records to display to the user in a given page.
+     * Get the number of records to display in a page.
      *
-     * @return Number of records
+     * @return number of records
      */
     public Integer getPageSize() {
         return pageSize;
     }
 
     /**
-     * Set the number of records to display to the user in a given page.
+     * Set the number of records to display in a page.
      *
      * @param pageSize number of records
      */
@@ -118,27 +128,27 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Get the offset of the first record to display
+     * Get the zero-based index of the first record to display
      *
-     * @return offset of the first record
+     * @return index of the first record
      */
     public Integer getFirstResult() {
         return firstResult;
     }
 
     /**
-     * Set the offset of the first record to display
+     * Set the zero-based index of the first record to display
      *
-     * @param firstResult offset of the first record
+     * @param firstResult index of the first record
      */
     public void setFirstResult(Integer firstResult) {
         this.firstResult = firstResult;
     }
 
     /**
-     * Get the offset of the last record to display. This is derived from the first result and the page size.
+     * Get the index of the last record to display. This is derived from the first result and the page size.
      *
-     * @return offset of the last record
+     * @return index of the last record
      */
     public Integer getLastResult() {
         return Math.min(firstResult + pageSize, resultCount.intValue());
@@ -153,19 +163,24 @@ public abstract class EntityQuery<T> {
         return resultCount;
     }
 
+    /**
+     * Set a count of the number of results found after executing the query.
+     *
+     * @param resultCount number of results found
+     */
     public void setResultCount(Long resultCount) {
         this.resultCount = resultCount;
     }
 
     /**
-     * Set to first page in the result set
+     * Set index to 0, first page in the result set
      */
     public void firstPage() {
         firstResult = 0;
     }
 
     /**
-     * Set to next page in the result set
+     * Increment index to next page in the result set
      */
     public void nextPage() {
         firstResult = Math.min(firstResult + pageSize, Math.max(resultCount.intValue() - pageSize, 0));
@@ -174,7 +189,7 @@ public abstract class EntityQuery<T> {
     /**
      * Ask if there is a next page.
      *
-     * @return true if there are some results after the current page
+     * @return true if there are more results after the current page
      */
     public boolean hasNextPage() {
         if (resultCount > 0) {
@@ -185,7 +200,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Set to previous page.
+     * Decrement index to previous page.
      */
     public void previousPage() {
         firstResult = Math.max(firstResult - pageSize, 0);
@@ -194,21 +209,21 @@ public abstract class EntityQuery<T> {
     /**
      * Ask if there is previous page.
      *
-     * @return true if there are some results before the current page
+     * @return true if there are results before the current page, false if index is 0
      */
     public boolean hasPreviousPage() {
         return Math.max(firstResult - pageSize, 0) < firstResult;
     }
 
     /**
-     * Set to last page.
+     * Set index to last page in result set.
      */
     public void lastPage() {
         firstResult = Math.max(resultCount.intValue() - pageSize, 0);
     }
 
     /**
-     * Get the property to used in the ORDER BY clause in the query
+     * Get the property to be used in the ORDER BY clause of the query
      *
      * @return name of the bean property
      */
@@ -222,7 +237,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Set the property to be used in the ORDER BY clause in the query.
+     * Set the property to be used in the ORDER BY clause of the query.
      *
      * @param orderByPropertyId name of the bean property
      */
@@ -231,7 +246,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Get the ORDER BY direction, i.e. ascending or descending
+     * Get the ORDER BY direction, i.e. ascending or descending. Default is ascending.
      *
      * @return ORDER BY direction
      */
@@ -240,7 +255,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Set ORDER BY direction, i.e. ascending or descending
+     * Set ORDER BY direction, i.e. ascending or descending. Default is ascending.
      *
      * @param orderDirection ORDER BY direction
      */
@@ -249,8 +264,8 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Clear this query so that all filters and sort-criteria are removed. The method uses reflection
-     * to clear any filters defined as bean properties by subclasses. Once cleared, re-execution of query
+     * Clear this query so that all filters (query parameters) and sort-criteria are removed. The method uses
+     * reflection to clear any filters defined as bean properties by subclasses. Once cleared, re-execution of query
      * results in all records being found.
      * <p/>
      * If a subclass wants to apply a default filter that is always applied,
@@ -280,10 +295,40 @@ public abstract class EntityQuery<T> {
                 }
             }
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            Assert.PROGRAMMING.fail(e);
         } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
+            Assert.PROGRAMMING.fail(e);
         }
+    }
+
+    /**
+     * Ask if string is not empty.
+     *
+     * @param s string to check
+     * @return true if string has value
+     */
+    public static boolean hasValue(String s) {
+        return !isEmpty(s);
+    }
+
+    /**
+     * Ask if object is not null
+     *
+     * @param o object to check
+     * @return true if object is not null
+     */
+    public static boolean hasValue(Object o) {
+        return !isEmpty(o);
+    }
+
+    /**
+     * Ask if collection is not empty, is not null and has at least 1 member.
+     *
+     * @param c collection to check
+     * @return true if not empty
+     */
+    public static boolean hasValue(Collection c) {
+        return !isEmpty(c);
     }
 
     /**
@@ -298,8 +343,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Ask if given object is null. Subclasses may use this convenient, utility method to determine if
-     * parameter values are not empty and should be applied to the query.
+     * Ask if given object is null.
      *
      * @param o object to check
      * @return true if null
@@ -309,8 +353,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Ask if given collection is empty or null. Subclasses may use this convenient, utility method to determine if
-     * parameter values are not empty and should be applied to the query.
+     * Ask if given collection is empty or null.
      *
      * @param c collection to check
      * @return true if empty or null

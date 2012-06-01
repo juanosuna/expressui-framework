@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,9 +37,10 @@
 
 package com.expressui.core.view.security.role;
 
+import com.expressui.core.dao.security.query.RoleQuery;
 import com.expressui.core.entity.security.Role;
-import com.expressui.core.view.field.DisplayFields;
 import com.expressui.core.view.results.CrudResults;
+import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.core.view.results.ResultsTable;
 import com.vaadin.terminal.Sizeable;
 import org.springframework.context.annotation.Scope;
@@ -47,9 +48,11 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-import static com.expressui.core.dao.security.RoleDao.RoleQuery;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
+/**
+ * Results of roles.
+ */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"serial"})
@@ -72,15 +75,15 @@ public class RoleResults extends CrudResults<Role> {
     }
 
     @Override
-    public void configureFields(DisplayFields displayFields) {
-        displayFields.setPropertyIds(
+    public void init(ResultsFieldSet resultsFields) {
+        resultsFields.setPropertyIds(
                 "name",
                 "allowOrDenyByDefault",
                 "lastModified",
                 "modifiedBy"
         );
 
-        displayFields.setLabel("allowOrDenyByDefault", "Allow/Deny");
+        resultsFields.setLabel("allowOrDenyByDefault", "Default Allow/Deny");
     }
 
     @Override

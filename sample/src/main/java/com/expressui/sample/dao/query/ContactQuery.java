@@ -53,10 +53,6 @@ import java.util.Set;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
-/**
- * User: Juan
- * Date: 1/13/12
- */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class ContactQuery extends StructuredEntityQuery<Contact> {
@@ -90,55 +86,55 @@ public class ContactQuery extends StructuredEntityQuery<Contact> {
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, Root<Contact> rootEntity) {
-        List<Predicate> criteria = new ArrayList<Predicate>();
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<Contact> contact) {
+        List<Predicate> predicates = new ArrayList<Predicate>();
 
-        if (!isEmpty(lastName)) {
-            ParameterExpression<String> p = builder.parameter(String.class, "lastName");
-            criteria.add(builder.like(builder.upper(rootEntity.<String>get("lastName")), p));
+        if (hasValue(lastName)) {
+            ParameterExpression<String> lastNameExp = builder.parameter(String.class, "lastName");
+            predicates.add(builder.like(builder.upper(contact.<String>get("lastName")), lastNameExp));
         }
-        if (!isEmpty(states)) {
-            ParameterExpression<Set> p = builder.parameter(Set.class, "states");
-            criteria.add(builder.in(rootEntity.get("mailingAddress").get("state")).value(p));
+        if (hasValue(states)) {
+            ParameterExpression<Set> statesExp = builder.parameter(Set.class, "states");
+            predicates.add(builder.in(contact.get("mailingAddress").get("state")).value(statesExp));
         }
-        if (!isEmpty(country)) {
-            ParameterExpression<Country> p = builder.parameter(Country.class, "country");
-            criteria.add(builder.equal(rootEntity.get("mailingAddress").get("country"), p));
+        if (hasValue(country)) {
+            ParameterExpression<Country> countryExp = builder.parameter(Country.class, "country");
+            predicates.add(builder.equal(contact.get("mailingAddress").get("country"), countryExp));
         }
 
-        return criteria;
+        return predicates;
     }
 
     @Override
     public void setParameters(TypedQuery typedQuery) {
-        if (!isEmpty(lastName)) {
+        if (hasValue(lastName)) {
             typedQuery.setParameter("lastName", "%" + lastName.toUpperCase() + "%");
         }
-        if (!isEmpty(states)) {
+        if (hasValue(states)) {
             typedQuery.setParameter("states", states);
         }
-        if (!isEmpty(country)) {
+        if (hasValue(country)) {
             typedQuery.setParameter("country", country);
         }
     }
 
     @Override
-    public Path buildOrderBy(Root<Contact> rootEntity) {
+    public Path buildOrderBy(Root<Contact> contact) {
         if (getOrderByPropertyId().equals("mailingAddress.country")) {
-            return rootEntity.join("mailingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
+            return contact.join("mailingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
         } else if (getOrderByPropertyId().equals("mailingAddress.state.code")) {
-            return rootEntity.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
+            return contact.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
         } else if (getOrderByPropertyId().equals("account.name")) {
-            return rootEntity.join("account", JoinType.LEFT).get("name");
+            return contact.join("account", JoinType.LEFT).get("name");
         } else {
             return null;
         }
     }
 
     @Override
-    public void addFetchJoins(Root<Contact> rootEntity) {
-        rootEntity.fetch("mailingAddress", JoinType.LEFT).fetch("state", JoinType.LEFT);
-        rootEntity.fetch("account", JoinType.LEFT);
+    public void addFetchJoins(Root<Contact> contact) {
+        contact.fetch("mailingAddress", JoinType.LEFT).fetch("state", JoinType.LEFT);
+        contact.fetch("account", JoinType.LEFT);
     }
 
     @Override

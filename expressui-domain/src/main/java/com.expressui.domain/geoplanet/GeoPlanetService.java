@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -96,7 +96,7 @@ public class GeoPlanetService extends RestClientService {
     }
 
     @Bean
-    public GeoPlanetClient getGeoPlanetClient(@Value("${geoPlanetService.url}") String url) throws Exception {
+    public GeoPlanetClient getGeoPlanetClient(@Value("${geoPlanetService.url:}") String url) throws Exception {
         return create(url, GeoPlanetClient.class);
     }
 

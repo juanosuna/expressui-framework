@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,18 +37,17 @@
 
 package com.expressui.core.view.tomanyrelationship;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.dao.query.ToManyRelationshipQuery;
-import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.BeanPropertyType;
+import com.expressui.core.util.CollectionsUtil;
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.menu.ActionContextMenu;
 import com.expressui.core.view.results.Results;
-import com.expressui.core.view.util.MessageSource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
+import com.vaadin.ui.Window;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.vaadin.dialogs.ConfirmDialog;
 
@@ -64,14 +63,8 @@ import java.util.Collection;
  */
 public abstract class ToManyRelationshipResults<T> extends Results<T> {
 
-    @Resource(name = "uiMessageSource")
-    MessageSource uiMessageSource;
-
     @Resource
     ActionContextMenu actionContextMenu;
-
-    @Resource
-    private SecurityService securityService;
 
     HorizontalLayout crudButtons;
 
@@ -84,12 +77,10 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         super();
     }
 
-    /**
-     * Get display caption for this results component.
-     *
-     * @return display caption
-     */
-    public abstract String getEntityCaption();
+    @Override
+    public String getTypeCaption() {
+        return null;
+    }
 
     /**
      * Get the property id in the parent entity for referencing the child entity
@@ -119,18 +110,19 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         super.postConstruct();
 
         crudButtons = new HorizontalLayout();
+        setDebugId(crudButtons, "crudButtons");
         crudButtons.setMargin(false);
         crudButtons.setSpacing(true);
 
-        addButton = new Button(uiMessageSource.getMessage("entityResults.add"), this, "add");
-        addButton.setDescription(uiMessageSource.getMessage("entityResults.add.description"));
-        addButton.setIcon(new ThemeResource("icons/16/add.png"));
+        addButton = new Button(uiMessageSource.getMessage("toManyRelationshipResults.add"), this, "add");
+        addButton.setDescription(uiMessageSource.getMessage("toManyRelationshipResults.add.description"));
+        addButton.setIcon(new ThemeResource("../expressui/icons/16/add.png"));
         addButton.addStyleName("small default");
         crudButtons.addComponent(addButton);
 
-        removeButton = new Button(uiMessageSource.getMessage("entityResults.remove"), this, "remove");
-        removeButton.setDescription(uiMessageSource.getMessage("entityResults.remove.description"));
-        removeButton.setIcon(new ThemeResource("icons/16/delete.png"));
+        removeButton = new Button(uiMessageSource.getMessage("toManyRelationshipResults.remove"), this, "remove");
+        removeButton.setDescription(uiMessageSource.getMessage("toManyRelationshipResults.remove.description"));
+        removeButton.setIcon(new ThemeResource("../expressui/icons/16/delete.png"));
         removeButton.setEnabled(false);
         removeButton.addStyleName("small default");
         crudButtons.addComponent(removeButton);
@@ -140,8 +132,14 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
 
         getResultsTable().setMultiSelect(true);
 
-        actionContextMenu.addAction("entityResults.remove", this, "remove");
+        actionContextMenu.addAction("toManyRelationshipResults.remove", this, "remove");
         addSelectionChangedListener(this, "selectionChanged");
+
+        addCodePopupButtonIfEnabled(ToManyRelationshipResults.class);
+    }
+
+    @Override
+    public void onDisplay() {
     }
 
     /**
@@ -157,9 +155,13 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
      */
     public void setReferencesToParentAndPersist(T... values) {
         for (T value : values) {
-            T referenceValue = getGenericDao().getReference(value);
+            T referenceValue = genericDao.getReference(value);
             setReferenceToParent(referenceValue);
-            getGenericDao().persist(referenceValue);
+            if (getEntityDao() == null) {
+                genericDao.persist(referenceValue);
+            } else {
+                getEntityDao().persist(referenceValue);
+            }
         }
         searchImpl(false);
     }
@@ -171,9 +173,9 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
      */
     public void setReferenceToParent(T value) {
         try {
-            BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getEntityType(), getParentPropertyId());
-            Assert.PROGRAMMING.assertTrue(!beanPropertyType.isCollectionType(),
-                    "Parent property id (" + getEntityType() + "." + getParentPropertyId() + ") must not be a collection type");
+            BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getType(), getParentPropertyId());
+            Assert.PROGRAMMING.isTrue(!beanPropertyType.isCollectionType(),
+                    "Parent property id (" + getType() + "." + getParentPropertyId() + ") must not be a collection type");
             PropertyUtils.setProperty(value, getParentPropertyId(), getEntityQuery().getParent());
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
@@ -190,7 +192,7 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
      * @return type of parent entity
      */
     public Class getParentEntityType() {
-        BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getEntityType(), getParentPropertyId());
+        BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getType(), getParentPropertyId());
         return beanPropertyType.getContainerType();
     }
 
@@ -204,10 +206,10 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         addButton.setVisible(!isReadOnly);
         removeButton.setVisible(!isReadOnly);
         if (isReadOnly) {
-            actionContextMenu.setActionEnabled("entityResults.remove", false);
+            actionContextMenu.setActionEnabled("toManyRelationshipResults.remove", false);
             getResultsTable().removeActionHandler(actionContextMenu);
         } else {
-            actionContextMenu.setActionEnabled("entityResults.remove", true);
+            actionContextMenu.setActionEnabled("toManyRelationshipResults.remove", true);
             getResultsTable().addActionHandler(actionContextMenu);
         }
     }
@@ -221,10 +223,10 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         removeButton.setVisible(isEditable);
 
         if (isEditable) {
-            actionContextMenu.setActionEnabled("entityResults.remove", true);
+            actionContextMenu.setActionEnabled("toManyRelationshipResults.remove", true);
             getResultsTable().addActionHandler(actionContextMenu);
         } else {
-            actionContextMenu.setActionEnabled("entityResults.remove", false);
+            actionContextMenu.setActionEnabled("toManyRelationshipResults.remove", false);
             getResultsTable().removeActionHandler(actionContextMenu);
         }
 
@@ -235,16 +237,12 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
      * Invoked when user clicks action to remove selected entities.
      */
     public void remove() {
-        ConfirmDialog.show(MainApplication.getInstance().getMainWindow(),
-                uiMessageSource.getMessage("entityResults.confirmationCaption"),
-                uiMessageSource.getMessage("entityResults.confirmationPrompt"),
-                uiMessageSource.getMessage("entityResults.confirmationYes"),
-                uiMessageSource.getMessage("entityResults.confirmationNo"),
+        getMainApplication().showConfirmationDialog(
                 new ConfirmDialog.Listener() {
                     public void onClose(ConfirmDialog dialog) {
                         if (dialog.isConfirmed()) {
                             Collection<T> selectedValues = getSelectedValues();
-                            removeConfirmed((T[]) selectedValues.toArray());
+                            removeConfirmed(CollectionsUtil.toArray(getType(), selectedValues));
                         }
                     }
                 });
@@ -257,7 +255,7 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
      */
     public void removeConfirmed(T... values) {
         for (T value : values) {
-            value = getGenericDao().getReference(value);
+            value = genericDao.getReference(value);
             try {
                 PropertyUtils.setProperty(value, getParentPropertyId(), null);
             } catch (IllegalAccessException e) {
@@ -267,10 +265,24 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
-            getGenericDao().persist(value);
+            if (getEntityDao() == null) {
+                genericDao.persist(value);
+            } else {
+                getEntityDao().persist(value);
+            }
         }
+        showRemoveSuccessfulMessage();
         searchImpl(false);
         removeButton.setEnabled(false);
+    }
+
+    protected void showRemoveSuccessfulMessage() {
+        Window.Notification notification = new Window.Notification(
+                uiMessageSource.getMessage("toManyRelationshipResults.removed"),
+                Window.Notification.TYPE_HUMANIZED_MESSAGE);
+        notification.setDelayMsec(Window.Notification.DELAY_NONE);
+        notification.setPosition(Window.Notification.POSITION_CENTERED);
+        getMainApplication().showNotification(notification);
     }
 
     /**
@@ -283,11 +295,11 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
 
         Collection itemIds = (Collection) getResultsTable().getValue();
         if (itemIds.size() > 0 && isEditable && !isViewMode()) {
-            actionContextMenu.setActionEnabled("entityResults.remove", true);
+            actionContextMenu.setActionEnabled("toManyRelationshipResults.remove", true);
             getResultsTable().addActionHandler(actionContextMenu);
             removeButton.setEnabled(true);
         } else {
-            actionContextMenu.setActionEnabled("entityResults.remove", false);
+            actionContextMenu.setActionEnabled("toManyRelationshipResults.remove", false);
             getResultsTable().removeActionHandler(actionContextMenu);
             removeButton.setEnabled(false);
         }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,11 +37,6 @@
 
 package com.expressui.sample.entity;
 
-/**
- * User: Juan
- * Date: 6/8/11
- * Time: 11:23 AM
- */
 public enum PhoneType {
     HOME("Home"),
     MOBILE("Mobile"),

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -62,9 +62,9 @@ public abstract class ManyToManyRelationshipResults<T, A extends IdentifiableEnt
     @Override
     public void setReferencesToParentAndPersist(T... values) {
         for (T value : values) {
-            BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getEntityType(), getParentPropertyId());
-            Assert.PROGRAMMING.assertTrue(beanPropertyType.isCollectionType(),
-                    "Parent property id (" + getEntityType() + "." + getParentPropertyId() + ") must be a collection type");
+            BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getType(), getParentPropertyId());
+            Assert.PROGRAMMING.isTrue(beanPropertyType.isCollectionType(),
+                    "Parent property id (" + getType() + "." + getParentPropertyId() + ") must be a collection type");
             A associationEntity = createAssociationEntity(value);
             if (!getAssociationDao().isPersistent(associationEntity)) {
                 getAssociationDao().persist(associationEntity);
@@ -76,9 +76,9 @@ public abstract class ManyToManyRelationshipResults<T, A extends IdentifiableEnt
     @Override
     public void removeConfirmed(T... values) {
         for (T value : values) {
-            BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getEntityType(), getParentPropertyId());
-            Assert.PROGRAMMING.assertTrue(beanPropertyType.isCollectionType(),
-                    "Parent property id (" + getEntityType() + "." + getParentPropertyId() + ") must be a collection type");
+            BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getType(), getParentPropertyId());
+            Assert.PROGRAMMING.isTrue(beanPropertyType.isCollectionType(),
+                    "Parent property id (" + getType() + "." + getParentPropertyId() + ") must be a collection type");
 
             A associationEntity = createAssociationEntity(value);
             getAssociationDao().remove(associationEntity);

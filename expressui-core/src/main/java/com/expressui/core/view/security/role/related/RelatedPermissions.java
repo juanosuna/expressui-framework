@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -39,13 +39,13 @@ package com.expressui.core.view.security.role.related;
 
 import com.expressui.core.dao.query.ToManyRelationshipQuery;
 import com.expressui.core.dao.security.PermissionDao;
-import com.expressui.core.entity.WritableEntity;
+import com.expressui.core.dao.security.query.RelatedPermissionsQuery;
 import com.expressui.core.entity.security.Permission;
 import com.expressui.core.entity.security.Role;
 import com.expressui.core.util.StringUtil;
-import com.expressui.core.view.field.DisplayFields;
-import com.expressui.core.view.field.FormFields;
 import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.form.FormFieldSet;
+import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.core.view.tomanyrelationship.ToManyCompositionRelationshipResults;
 import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
 import com.vaadin.data.Property;
@@ -59,9 +59,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.expressui.core.dao.security.PermissionDao.RelatedPermissionsQuery;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
+/**
+ * Component for viewing/editing permissions related to a role.
+ */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"rawtypes", "serial"})
@@ -71,7 +73,7 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
     private RelatedPermissionsResults relatedPermissionsResults;
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return "Permissions";
     }
 
@@ -107,8 +109,8 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
         }
 
         @Override
-        public void configureFields(DisplayFields displayFields) {
-            displayFields.setPropertyIds(
+        public void init(ResultsFieldSet resultsFields) {
+            resultsFields.setPropertyIds(
                     "targetType",
                     "field",
                     "permissions",
@@ -126,11 +128,6 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
         public String getParentPropertyId() {
             return "role";
         }
-
-        @Override
-        public String getEntityCaption() {
-            return "Permissions";
-        }
     }
 
     @Component
@@ -143,18 +140,18 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
         private RelatedPermissionsQuery relatedPermissionsQuery;
 
         @Override
-        public void configureFields(FormFields formFields) {
-            formFields.setPosition("targetType", 1, 1);
-            formFields.setPosition("targetTypeLabel", 1, 2);
+        public void init(FormFieldSet formFields) {
+            formFields.setCoordinates("targetType", 1, 1);
+            formFields.setCoordinates("targetTypeLabel", 1, 2);
 
-            formFields.setPosition("field", 2, 1);
-            formFields.setPosition("fieldLabel", 2, 2);
+            formFields.setCoordinates("field", 2, 1);
+            formFields.setCoordinates("fieldLabel", 2, 2);
 
-            formFields.setPosition("view", 3, 1);
-            formFields.setPosition("edit", 3, 2);
+            formFields.setCoordinates("view", 3, 1);
+            formFields.setCoordinates("edit", 3, 2);
 
-            formFields.setPosition("create", 4, 1);
-            formFields.setPosition("delete", 4, 2);
+            formFields.setCoordinates("create", 4, 1);
+            formFields.setCoordinates("delete", 4, 2);
 
             formFields.setField("targetType", new Select());
             formFields.addValueChangeListener("targetType", this, "targetTypeChanged");
@@ -167,35 +164,35 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
         }
 
         public void syncCRUDCheckboxes(Property.ValueChangeEvent event) {
-            Field viewField = getFormFields().getFormField("view").getField();
+            Field viewField = getFormFieldSet().getFormField("view").getField();
             Boolean isViewChecked = (Boolean) viewField.getValue();
 
-            Field fieldField = getFormFields().getFormField("field").getField();
+            Field fieldField = getFormFieldSet().getFormField("field").getField();
             Boolean isFieldSelected = fieldField.getValue() != null;
 
-            String targetType = (String) getFormFields().getFormField("targetType").getField().getValue();
+            String targetType = (String) getFormFieldSet().getFormField("targetType").getField().getValue();
 
             boolean hasProperties = !StringUtil.isEmpty(targetType) && !labelRegistry.getPropertyIds(targetType).isEmpty();
 
-            getFormFields().setEnabled("field", hasProperties);
+            getFormFieldSet().setEnabled("field", hasProperties);
 
-            getFormFields().setEnabled("create", hasProperties && isViewChecked && !isFieldSelected);
-            getFormFields().setEnabled("edit", hasProperties && isViewChecked);
-            getFormFields().setEnabled("delete", hasProperties && isViewChecked && !isFieldSelected);
+            getFormFieldSet().setEnabled("create", hasProperties && isViewChecked && !isFieldSelected);
+            getFormFieldSet().setEnabled("edit", hasProperties && isViewChecked);
+            getFormFieldSet().setEnabled("delete", hasProperties && isViewChecked && !isFieldSelected);
         }
 
         @Override
         public void postWire() {
             super.postWire();
 
-            getFormFields().setSelectItems("targetType", getTargetTypeItems());
+            getFormFieldSet().setSelectItems("targetType", getTargetTypeItems());
         }
 
         @Override
         public void create() {
             super.create();
 
-            getFormFields().setSelectItems("targetType", getTargetTypeItems());
+            getFormFieldSet().setSelectItems("targetType", getTargetTypeItems());
             syncIsRequiredIndicator(null);
 //            getFormFields().setRequired("field", false);
 //            syncTabAndSaveButtonErrors();
@@ -206,15 +203,15 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
         public void refresh() {
             super.refresh();
 
-            getFormFields().setSelectItems("targetType", getTargetTypeItems());
+            getFormFieldSet().setSelectItems("targetType", getTargetTypeItems());
             syncIsRequiredIndicator(null);
         }
 
         @Override
-        public void load(WritableEntity entity, boolean selectFirstTab) {
+        public void load(Permission entity, boolean selectFirstTab) {
             super.load(entity, selectFirstTab);
 
-            getFormFields().setSelectItems("targetType", getTargetTypeItems());
+            getFormFieldSet().setSelectItems("targetType", getTargetTypeItems());
             syncIsRequiredIndicator(null);
         }
 
@@ -247,7 +244,7 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
 
             if (newTargetType != null) {
                 Map<Object, String> fieldItems = getFieldItems(newTargetType);
-                getFormFields().setSelectItems("field", fieldItems, "None");
+                getFormFieldSet().setSelectItems("field", fieldItems, "None");
 
                 syncCRUDCheckboxes(null);
 
@@ -256,7 +253,7 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
         }
 
         public void syncIsRequiredIndicator(Property.ValueChangeEvent event) {
-            getFormFields().setRequired("field", anotherPermissionHasNullField(getEntity().getTargetType()));
+            getFormFieldSet().setRequired("field", anotherPermissionHasNullField(getEntity().getTargetType()));
             syncTabAndSaveButtonErrors();
         }
 
@@ -295,13 +292,13 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
         }
 
         private List<Permission> getExistingPermissionsForParentRole() {
-            Role role = (Role) relatedPermissionsQuery.getParent();
+            Role role = relatedPermissionsQuery.getParent();
 
             return permissionDao.findByRole(role);
         }
 
         @Override
-        public String getEntityCaption() {
+        public String getTypeCaption() {
             if (getEntity().getTargetType() == null) {
                 return "Permission Form - New";
             } else {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -40,7 +40,7 @@ package com.expressui.sample.entity;
 
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
-import com.expressui.sample.util.validator.ValidPhone;
+import com.expressui.sample.validator.ValidPhone;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.constraints.Email;

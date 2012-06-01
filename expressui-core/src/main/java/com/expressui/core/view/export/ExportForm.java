@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,9 +37,8 @@
 
 package com.expressui.core.view.export;
 
-import com.expressui.core.MainApplication;
-import com.expressui.core.view.field.FormFields;
-import com.expressui.core.view.form.GridForm;
+import com.expressui.core.view.form.FormFieldSet;
+import com.expressui.core.view.form.TypedForm;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
@@ -58,7 +57,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)
-public class ExportForm extends GridForm<ExportParameters> {
+public class ExportForm extends TypedForm<ExportParameters> {
 
     private Window popupWindow;
 
@@ -69,10 +68,21 @@ public class ExportForm extends GridForm<ExportParameters> {
     private ExportParameters exportParameters;
 
     @Override
+    public void postConstruct() {
+        super.postConstruct();
+
+        addCodePopupButtonIfEnabled();
+    }
+
+    @Override
     public void postWire() {
         super.postWire();
         BeanItem beanItem = createBeanItem(exportParameters);
-        getForm().setItemDataSource(beanItem, getFormFields().getPropertyIds());
+        getForm().setItemDataSource(beanItem, getFormFieldSet().getPropertyIds());
+    }
+
+    @Override
+    public void onDisplay() {
     }
 
     @Override
@@ -81,25 +91,30 @@ public class ExportForm extends GridForm<ExportParameters> {
     }
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return uiMessageSource.getMessage("exportForm.export");
     }
 
+    /**
+     * Get export parameters.
+     *
+     * @return export parameters
+     */
     public ExportParameters getExportParameters() {
         return exportParameters;
     }
 
     @Override
-    protected void configureFields(FormFields formFields) {
-        formFields.setPosition("exportFilename", 1, 1);
-        formFields.setPosition("workbookName", 1, 2);
-        formFields.setPosition("sheetName", 1, 3);
+    protected void init(FormFieldSet formFields) {
+        formFields.setCoordinates("exportFilename", 1, 1);
+        formFields.setCoordinates("workbookName", 1, 2);
+        formFields.setCoordinates("sheetName", 1, 3);
 
-        formFields.setPosition("dateFormat", 2, 1);
-        formFields.setPosition("doubleFormat", 2, 2);
+        formFields.setCoordinates("dateFormat", 2, 1);
+        formFields.setCoordinates("doubleFormat", 2, 2);
 
-        formFields.setPosition("displayRowHeaders", 3, 1);
-        formFields.setPosition("displayTotals", 3, 2);
+        formFields.setCoordinates("displayRowHeaders", 3, 1);
+        formFields.setCoordinates("displayTotals", 3, 2);
     }
 
     @Override
@@ -107,28 +122,36 @@ public class ExportForm extends GridForm<ExportParameters> {
         footerLayout.setSpacing(true);
         footerLayout.setMargin(true);
 
-        exportButton = new Button(uiMessageSource.getMessage("exportForm.export"));
-        exportButton.setDescription(uiMessageSource.getMessage("exportForm.export.description"));
-        exportButton.setIcon(new ThemeResource("icons/16/excel.bmp"));
-        exportButton.addStyleName("small default");
-        footerLayout.addComponent(exportButton);
-
         closeButton = new Button(uiMessageSource.getMessage("exportForm.close"), this, "close");
         closeButton.setDescription(uiMessageSource.getMessage("exportForm.description.close"));
-        closeButton.setIcon(new ThemeResource("icons/16/delete.png"));
+        closeButton.setIcon(new ThemeResource("../expressui/icons/16/delete.png"));
         closeButton.addStyleName("small default");
         footerLayout.addComponent(closeButton);
+
+        exportButton = new Button(uiMessageSource.getMessage("exportForm.export"));
+        exportButton.setDescription(uiMessageSource.getMessage("exportForm.export.description"));
+        exportButton.setIcon(new ThemeResource("../expressui/icons/16/excel.bmp"));
+        exportButton.addStyleName("small default");
+        footerLayout.addComponent(exportButton);
     }
 
-
+    /**
+     * Set listener invoked when user clicks export button.
+     *
+     * @param target     target object
+     * @param methodName name of listener method
+     */
     public void setExportButtonListener(Object target, String methodName) {
         exportButton.removeListener(Button.ClickEvent.class, target, methodName);
         exportButton.addListener(Button.ClickEvent.class, target, methodName);
     }
 
+    /**
+     * Popup this export form.
+     */
     public void open() {
-        popupWindow = new Window(getEntityCaption());
-        popupWindow.addStyleName("p-entityResults-export-window");
+        popupWindow = new Window(getTypeCaption());
+        popupWindow.addStyleName("e-exportForm-window");
         popupWindow.addStyleName("opaque");
         VerticalLayout layout = (VerticalLayout) popupWindow.getContent();
         layout.setMargin(true);
@@ -139,10 +162,15 @@ public class ExportForm extends GridForm<ExportParameters> {
         popupWindow.setClosable(true);
 
         popupWindow.addComponent(this);
-        MainApplication.getInstance().getMainWindow().addWindow(popupWindow);
+        getMainApplication().getMainWindow().addWindow(popupWindow);
+
+        onDisplay();
     }
 
+    /**
+     * Close/cancel this export form.
+     */
     public void close() {
-        MainApplication.getInstance().getMainWindow().removeWindow(popupWindow);
+        getMainApplication().getMainWindow().removeWindow(popupWindow);
     }
 }

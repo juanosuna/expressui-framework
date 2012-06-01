@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -36,6 +36,8 @@
  */
 
 package com.expressui.core.util.assertion;
+
+import java.util.Collection;
 
 /**
  * Utility class for making assertions based on the classification of the error.
@@ -84,7 +86,7 @@ public class Assert {
      *
      * @param condition boolean expression
      */
-    public void assertTrue(boolean condition) {
+    public void isTrue(boolean condition) {
         if (!condition) {
             throw assertionExceptionType.create();
         }
@@ -96,10 +98,55 @@ public class Assert {
      * @param condition boolean expression
      * @param message   to be embedded in thrown exception
      */
-    public void assertTrue(boolean condition, String message) {
+    public void isTrue(boolean condition, String message) {
         if (!condition) {
             throw assertionExceptionType.create(message);
         }
+    }
+
+    public void isNull(Object object, String message) {
+        isTrue(object == null, message);
+    }
+
+    public void isNull(Object object) {
+        isNull(object, "argument must be null");
+    }
+
+    public void notNull(Object object, String message) {
+        isTrue(object != null, message);
+    }
+
+    public void notNull(Object object) {
+        notNull(object, "argument must not be null");
+    }
+
+    public void size(Collection collection, int size, String message) {
+        isTrue(collection.size() == size, message);
+    }
+
+    public void size(Collection collection, int size) {
+        isTrue(collection.size() == size, "collection argument must be size " + size);
+    }
+
+    public void empty(Collection collection, String message) {
+        size(collection, 0, message);
+    }
+
+    public void empty(Collection collection) {
+        size(collection, 0);
+    }
+
+    public void notEmpty(Collection collection) {
+        isTrue(collection.size() > 0, "collection must not be empty");
+    }
+
+    public void instanceOf(Object object, Class type, String message) {
+        isTrue(type.isInstance(object), message);
+    }
+
+    public void instanceOf(Object object, Class type) {
+        instanceOf(object, type, "object " + (object != null ? object.getClass().getName() : "null") +
+                " must be an instance of " + type);
     }
 
     /**

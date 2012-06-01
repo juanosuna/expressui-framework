@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,6 +37,8 @@
 
 package com.expressui.core.view.form;
 
+import com.expressui.core.dao.query.EntityQuery;
+import com.expressui.core.dao.query.StructuredEntityQuery;
 import com.expressui.core.view.results.Results;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.terminal.ThemeResource;
@@ -47,27 +49,36 @@ import com.vaadin.ui.HorizontalLayout;
 import javax.annotation.PostConstruct;
 
 /**
- * Search form bound to a POJO that contains query criteria.
+ * Search form bound to a subclass of EntityQuery that contains query execution logic and properties
+ * with criteria parameter values.
  *
- * @param <T> type of POJO
+ * @param <T> type of EntityQuery
  */
-public abstract class SearchForm<T> extends GridForm<T> {
+public abstract class SearchForm<T extends EntityQuery> extends TypedForm<T> {
 
-    private Results results;
+    private Results<T> results;
 
     @PostConstruct
     @Override
     public void postConstruct() {
         super.postConstruct();
 
-        getForm().addStyleName("p-search-form");
+        if (StructuredEntityQuery.class.isAssignableFrom(getType())) {
+            addCodePopupButtonIfEnabled(SearchForm.class, StructuredEntityQuery.class);
+        } else {
+            addCodePopupButtonIfEnabled(SearchForm.class, EntityQuery.class);
+        }
     }
 
     @Override
     public void postWire() {
         super.postWire();
         BeanItem beanItem = createBeanItem(getResults().getEntityQuery());
-        getForm().setItemDataSource(beanItem, getFormFields().getPropertyIds());
+        getForm().setItemDataSource(beanItem, getFormFieldSet().getPropertyIds());
+    }
+
+    @Override
+    public void onDisplay() {
     }
 
     /**
@@ -75,11 +86,16 @@ public abstract class SearchForm<T> extends GridForm<T> {
      *
      * @return results UI component
      */
-    public Results getResults() {
+    public Results<T> getResults() {
         return results;
     }
 
-    public void setResults(Results results) {
+    /**
+     * Set results UI component connected to this search form.
+     *
+     * @param results results UI component
+     */
+    public void setResults(Results<T> results) {
         this.results = results;
     }
 
@@ -88,31 +104,28 @@ public abstract class SearchForm<T> extends GridForm<T> {
         footerLayout.setSpacing(true);
         footerLayout.setMargin(true);
 
-        Button clearButton = new Button(uiMessageSource.getMessage("entitySearchForm.clear"), this, "clear");
-        clearButton.setDescription(uiMessageSource.getMessage("entitySearchForm.clear.description"));
-        clearButton.setIcon(new ThemeResource("icons/16/clear.png"));
+        Button clearButton = new Button(uiMessageSource.getMessage("searchForm.clear"), this, "clear");
+        clearButton.setDescription(uiMessageSource.getMessage("searchForm.clear.description"));
+        clearButton.setIcon(new ThemeResource("../expressui/icons/16/clear.png"));
         clearButton.addStyleName("small default");
         footerLayout.addComponent(clearButton);
-        // alignment doesn't work
-//        footerLayout.setComponentAlignment(clearButton, Alignment.MIDDLE_RIGHT);
 
-        Button searchButton = new Button(uiMessageSource.getMessage("entitySearchForm.search"), this, "search");
-        searchButton.setDescription(uiMessageSource.getMessage("entitySearchForm.search.description"));
-        searchButton.setIcon(new ThemeResource("icons/16/search.png"));
+        Button searchButton = new Button(uiMessageSource.getMessage("searchForm.search"), this, "search");
+        searchButton.setDescription(uiMessageSource.getMessage("searchForm.search.description"));
+        searchButton.setIcon(new ThemeResource("../expressui/icons/16/search.png"));
         searchButton.addStyleName("small default");
         footerLayout.addComponent(searchButton);
-//        footerLayout.setComponentAlignment(searchButton, Alignment.MIDDLE_RIGHT);
     }
 
     /**
-     * Clear the contains of the search form and execute empty query, thus
+     * Clear the contents of the search form and execute empty query, thus
      * returning all results.
      */
     public void clear() {
         getResults().getEntityQuery().clear();
         getResults().getResultsTable().setSortContainerPropertyId(null);
         BeanItem beanItem = createBeanItem(getResults().getEntityQuery());
-        getForm().setItemDataSource(beanItem, getFormFields().getPropertyIds());
+        getForm().setItemDataSource(beanItem, getFormFieldSet().getPropertyIds());
 
         getResults().search();
         requestRepaintAll();

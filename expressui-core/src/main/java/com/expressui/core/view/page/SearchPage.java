@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,33 +37,19 @@
 
 package com.expressui.core.view.page;
 
-import com.expressui.core.entity.security.User;
-import com.expressui.core.security.SecurityService;
-import com.expressui.core.view.EntityComponent;
-import com.expressui.core.view.field.LabelRegistry;
+import com.expressui.core.view.TypedComponent;
 import com.expressui.core.view.form.SearchForm;
 import com.expressui.core.view.results.Results;
+import com.vaadin.ui.Alignment;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 
 /**
- * A main page for the user to work with entities of a particular type.
- * <p/>
- * The difference between main page and a regular page: a main page is presented to the user
- * as a Vaadin Tab in the initial "home page" of the application, a TabSheet. A regular page can be
- * presented anywhere in the application, e.g. a pop-up EntitySelect  also provides a search form
- * and results for selecting a entity in a many-to-one relationship.
+ * A page consisting of a SearchForm and Results for working with entities of a particular type.
  *
- * @param <T> type of business entity for this page
+ * @param <T> type of entity for this page
  */
-public abstract class SearchPage<T> extends EntityComponent<T> implements Page {
-
-    @Resource
-    private SecurityService securityService;
-
-    @Resource
-    private LabelRegistry labelRegistry;
+public abstract class SearchPage<T> extends TypedComponent<T> implements Page {
 
     /**
      * Get the search form component of this page
@@ -84,12 +70,17 @@ public abstract class SearchPage<T> extends EntityComponent<T> implements Page {
     public void postConstruct() {
         super.postConstruct();
 
-        addStyleName("p-page");
+        useVerticalLayout();
+        setWidthSizeFull();
 
-        labelRegistry.putTypeLabel(getEntityType().getName(), getEntityCaption());
+        labelRegistry.putTypeLabel(getType().getName(), getTypeCaption());
 
-        addComponent(getSearchForm());
-        addComponent(getResults());
+        if (isViewAllowed()) {
+            addComponent(getSearchForm());
+            addComponent(getResults());
+        }
+
+        addCodePopupButtonIfEnabled(Alignment.TOP_LEFT, SearchPage.class);
     }
 
     @Override
@@ -101,18 +92,13 @@ public abstract class SearchPage<T> extends EntityComponent<T> implements Page {
     }
 
     @Override
-    public void onLoad() {
-    }
-
-    public String getCaption() {
-        return null;
+    public void onDisplay() {
+        getSearchForm().onDisplay();
+        getResults().onDisplay();
     }
 
     @Override
-    public boolean isViewAllowed() {
-        User user = securityService.getCurrentUser();
-
-        return user.isViewAllowed(getEntityType().getName())
-                && !getResults().getDisplayFields().getViewablePropertyIds().isEmpty();
+    public String getCaption() {
+        return null;
     }
 }

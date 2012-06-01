@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -40,9 +40,10 @@ package com.expressui.sample.entity;
 
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
+import com.expressui.core.validation.ValidUrl;
 import com.expressui.core.view.field.format.DefaultFormats;
 import com.expressui.domain.ecbfx.EcbfxService;
-import com.expressui.sample.util.validator.ValidPhone;
+import com.expressui.sample.validator.ValidPhone;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.constraints.Email;
@@ -141,7 +142,7 @@ public class Account extends WritableEntity {
         this.name = name;
     }
 
-    @Size(min = 4, max = 64)
+    @ValidUrl
     public String getWebsite() {
         return website;
     }

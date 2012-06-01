@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -45,13 +45,17 @@ import javax.persistence.Embeddable;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
-/**
- * User: Juan
- * Date: 7/19/11
- */
 @SuppressWarnings("serial")
 @Embeddable
 public class Phone implements Serializable {
+
+    public static final String TOOL_TIP =
+            "<strong>Example formats:</strong>" +
+                    "<ul>" +
+                    "  <li>US: (919) 975-5331</li>" +
+                    "  <li>Germany: +49 30/70248804</li>" +
+                    "</ul>";
+
     private Integer countryCode;
     private Long phoneNumber;
 

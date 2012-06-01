@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,28 +37,55 @@
 
 package com.expressui.domain;
 
-import com.expressui.core.util.ConfigureSystemProperties;
-import org.apache.commons.httpclient.HttpClient;
+import com.expressui.core.util.ApplicationProperties;
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.conn.params.ConnRoutePNames;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.jboss.resteasy.client.spring.RestClientProxyFactoryBean;
 
 import javax.annotation.Resource;
 import java.net.URI;
 
+/**
+ * A client for creating and using various REST client services, using RESTEasy.
+ */
 public abstract class RestClientService {
 
     @Resource
-    private ConfigureSystemProperties configureSystemProperties;
+    private ApplicationProperties applicationProperties;
 
+    /**
+     * Create a REST client
+     *
+     * @param uri   uri of the service
+     * @param clazz client class
+     * @param <T>   class type
+     * @return REST client
+     * @throws Exception
+     */
     public <T> T create(String uri, Class<T> clazz) throws Exception {
         RestClientProxyFactoryBean restClientFactory = new RestClientProxyFactoryBean();
         restClientFactory.setBaseUri(new URI(uri));
         restClientFactory.setServiceInterface(clazz);
-        if (configureSystemProperties.getHttpProxyHost() != null && configureSystemProperties.getHttpProxyPort() != null) {
-            HttpClient httpClient = new HttpClient();
-            httpClient.getHostConfiguration().setProxy(
-                    configureSystemProperties.getHttpProxyHost(),
-                    configureSystemProperties.getHttpProxyPort());
+        if (applicationProperties.getHttpProxyHost() != null && applicationProperties.getHttpProxyPort() != null) {
 
+            DefaultHttpClient httpClient = new DefaultHttpClient();
+            HttpHost proxy = new HttpHost(applicationProperties.getHttpProxyHost(),
+                    applicationProperties.getHttpProxyPort());
+
+            if (applicationProperties.getHttpProxyUsername() != null
+                    && applicationProperties.getHttpProxyPassword() != null) {
+
+                httpClient.getCredentialsProvider().setCredentials(
+                        new AuthScope(applicationProperties.getHttpProxyHost(),
+                                applicationProperties.getHttpProxyPort()),
+                        new UsernamePasswordCredentials(applicationProperties.getHttpProxyUsername(),
+                                applicationProperties.getHttpProxyPassword()));
+            }
+
+            httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
             restClientFactory.setHttpClient(httpClient);
         }
         restClientFactory.afterPropertiesSet();

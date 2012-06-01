@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -40,6 +40,7 @@ package com.expressui.sample.entity.derived;
 import com.expressui.sample.entity.SalesStage;
 
 public class TotalSalesStage {
+
     private SalesStage salesStage;
     private long count;
 

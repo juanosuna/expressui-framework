@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -45,11 +45,11 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import static com.expressui.core.entity.ReferenceEntity.CACHE_REGION;
+import static com.expressui.core.entity.ReferenceEntity.READ_ONLY_CACHE;
 
 @Entity
 @Table
-@Cache(usage = CacheConcurrencyStrategy.READ_WRITE, region = CACHE_REGION)
+@Cache(usage = CacheConcurrencyStrategy.READ_ONLY, region = READ_ONLY_CACHE)
 public class Industry extends ReferenceEntity {
 
     public Industry() {

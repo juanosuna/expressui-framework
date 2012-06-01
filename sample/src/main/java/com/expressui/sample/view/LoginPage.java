@@ -37,63 +37,60 @@
 
 package com.expressui.sample.view;
 
-import com.expressui.core.MainApplication;
-import com.expressui.core.security.SecurityService;
+import com.expressui.core.security.exception.*;
+import com.expressui.core.view.RootComponent;
+import com.expressui.core.view.menu.MainMenuBar;
 import com.expressui.core.view.page.Page;
 import com.expressui.sample.view.dashboard.SampleDashboardPage;
 import com.vaadin.ui.Alignment;
-import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.LoginForm;
-import com.vaadin.ui.VerticalLayout;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.Window;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
+import static com.expressui.core.view.page.Page.SCOPE_PAGE;
+
 @Component
-@Scope("page")
+@Scope(SCOPE_PAGE)
 @SuppressWarnings({"serial"})
-public class LoginPage extends CustomComponent implements Page {
+public class LoginPage extends RootComponent implements Page {
 
     @Resource
-    private SecurityService securityService;
-
-    private LoginForm loginForm;
+    private MainMenuBar mainMenuBar;
 
     @PostConstruct
     @Override
     public void postConstruct() {
-        VerticalLayout layout = new VerticalLayout();
-        layout.setMargin(true);
-        layout.setSpacing(true);
-        setCompositionRoot(layout);
+        super.postConstruct();
 
-        setCustomSizeUndefined();
-        loginForm = new LoginForm();
-        loginForm.setCaption("Login Form");
+        useHorizontalLayout();
+        setSizeFull();
 
+        LoginForm loginForm = new LoginForm();
+        loginForm.addStyleName("border");
+        loginForm.setSizeUndefined();
+        loginForm.setLoginButtonCaption("Login");
+        loginForm.setUsernameCaption("Username");
+        loginForm.setPasswordCaption("Password");
         loginForm.addListener(new LoginHandler());
-        layout.addComponent(loginForm);
-        layout.setComponentAlignment(loginForm, Alignment.MIDDLE_CENTER);
-    }
 
-    private void setCustomSizeUndefined() {
-        setSizeUndefined();
-        getCompositionRoot().setSizeUndefined();
-    }
+        Panel panel = new Panel();
+        panel.addStyleName("loginPage");
+        panel.setCaption("Login");
+        panel.addStyleName("border");
+        panel.setSizeUndefined();
+        panel.addComponent(loginForm);
 
-    @Override
-    public void postWire() {
-    }
-
-    @Override
-    public void onLoad() {
+        addComponent(panel);
+        setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
     }
 
     @Override
-    public boolean isViewAllowed() {
-        return true;
+    public void onDisplay() {
     }
 
     private class LoginHandler implements LoginForm.LoginListener {
@@ -101,11 +98,48 @@ public class LoginPage extends CustomComponent implements Page {
             String userName = event.getLoginParameter("username");
             String password = event.getLoginParameter("password");
 
-            boolean authenticated = securityService.login(userName, password);
-            if (authenticated) {
-                MainApplication.getInstance().refreshView();
-                MainApplication.getInstance().selectPage(SampleDashboardPage.class);
+            try {
+                securityService.login(userName, password);
+
+                getMainApplication().setCodePopupEnabled(true);
+
+                // Once logged in, hide Login and Registration pages
+                mainMenuBar.getRightMenuBarRoot().getChild("Login").setVisible(false);
+                mainMenuBar.getRightMenuBarRoot().getChild("Register").setVisible(false);
+                mainMenuBar.getRightMenuBarRoot().getChild("My Account").setCaption("My Account ("
+                        + securityService.getCurrentUser().getLoginName() + ")");
+
+                // Refresh menu bar so that user can now see everything they have access to
+                getMainApplication().mainMenuBar.refresh();
+
+                getMainApplication().displayPage(SampleDashboardPage.class);
+
+            } catch (AuthenticationException e) {
+                // Show error notification when user enters bad credentials or account is locked, etc.
+                Window.Notification notification = new Window.Notification(convertAuthenticationExceptionToMessage(e),
+                        Window.Notification.TYPE_ERROR_MESSAGE);
+                notification.setPosition(Window.Notification.POSITION_CENTERED_BOTTOM);
+                notification.setDelayMsec(2000);
+                getMainApplication().showNotification(notification);
             }
+        }
+    }
+
+    private String convertAuthenticationExceptionToMessage(AuthenticationException e) {
+        if (e instanceof IncorrectCredentialsException || e instanceof LoginNameNotFoundException) {
+            return "Invalid username or password";
+        } else if (e instanceof AccountExpiredException) {
+            return "Account expired";
+        } else if (e instanceof CredentialsExpiredException) {
+            return "Credentials expired";
+        } else if (e instanceof AccountExpiredException) {
+            return "Account has expired";
+        } else if (e instanceof AccountLockedException) {
+            return "Account has been locked";
+        } else if (e instanceof AccountDisabledException) {
+            return "Account has been disabled";
+        } else {
+            return "Authentication failed";
         }
     }
 }

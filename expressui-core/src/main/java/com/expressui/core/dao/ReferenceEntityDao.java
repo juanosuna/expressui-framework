@@ -43,10 +43,21 @@ import org.springframework.stereotype.Repository;
 import javax.persistence.Query;
 import java.util.List;
 
+/**
+ * Entity DAO for handling reference entities.
+ */
 @Repository
 @SuppressWarnings("unchecked")
 public class ReferenceEntityDao extends GenericDao {
 
+    /**
+     * Finds all reference entities of given type ordered by ReferenceEntity.ORDER_BY_PROPERTY,
+     * ReferenceEntity.DISPLAY_PROPERTY.
+     *
+     * @param entityType type of entity
+     * @param <T>        type of entity
+     * @return all reference entities
+     */
     @Override
     public <T> List<T> findAll(Class<? extends T> entityType) {
         Query query = getEntityManager().createQuery("SELECT e FROM " + entityType.getSimpleName() + " e"

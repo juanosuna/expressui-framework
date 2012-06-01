@@ -50,10 +50,6 @@ import java.util.List;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
-/**
- * User: Juan
- * Date: 1/13/12
- */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class RelatedOpportunitiesQuery extends ToManyRelationshipQuery<Opportunity, Account> {
@@ -71,41 +67,41 @@ public class RelatedOpportunitiesQuery extends ToManyRelationshipQuery<Opportuni
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, Root<Opportunity> rootEntity) {
-        List<Predicate> criteria = new ArrayList<Predicate>();
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<Opportunity> opportunity) {
+        List<Predicate> predicates = new ArrayList<Predicate>();
 
-        if (!isEmpty(account)) {
-            ParameterExpression<Account> p = builder.parameter(Account.class, "account");
-            criteria.add(builder.equal(rootEntity.get("account"), p));
+        if (hasValue(account)) {
+            ParameterExpression<Account> accountExp = builder.parameter(Account.class, "account");
+            predicates.add(builder.equal(opportunity.get("account"), accountExp));
         }
 
-        return criteria;
+        return predicates;
     }
 
     @Override
     public void setParameters(TypedQuery typedQuery) {
-        if (!isEmpty(account)) {
+        if (hasValue(account)) {
             typedQuery.setParameter("account", account);
         }
     }
 
     @Override
-    public Path buildOrderBy(Root<Opportunity> rootEntity) {
+    public Path buildOrderBy(Root<Opportunity> opportunity) {
         if (getOrderByPropertyId().equals("account.name")) {
-            return rootEntity.join("account", JoinType.LEFT).get("name");
+            return opportunity.join("account", JoinType.LEFT).get("name");
         } else {
             return null;
         }
     }
 
     @Override
-    public void addFetchJoins(Root<Opportunity> rootEntity) {
-        rootEntity.fetch("account", JoinType.LEFT);
+    public void addFetchJoins(Root<Opportunity> opportunity) {
+        opportunity.fetch("account", JoinType.LEFT);
     }
 
     @Override
     public String toString() {
-        return "RelatedOpportunities{" +
+        return "RelatedOpportunitiesQuery{" +
                 "account='" + account + '\'' +
                 '}';
     }
