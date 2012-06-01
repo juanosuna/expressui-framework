@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!--
-  ~ Copyright (c) 2011 Brown Bag Consulting.
+  ~ Copyright (c) 2012 Brown Bag Consulting.
   ~ This file is part of the ExpressUI project.
   ~ Author: Juan Osuna
   ~
@@ -46,13 +46,14 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <spring.version>3.1.0.RELEASE</spring.version>
-        <spring.security.version>3.1.0.RELEASE</spring.security.version>
-        <hibernate.version>4.0.0.Final</hibernate.version>
+        <spring.version>3.1.1.RELEASE</spring.version>
+        <hibernate.version>4.1.2.Final</hibernate.version>
+        <hibernate.validator.version>4.3.0.Final</hibernate.validator.version>
         <hibernate.plugin.version>3.6.9.Final</hibernate.plugin.version>
-        <vaadin.version>6.7.4</vaadin.version>
+        <vaadin.version>6.7.9</vaadin.version>
         <gwt.version>2.4.0</gwt.version>
-        <h2.version>1.3.162</h2.version>
+        <h2.version>1.3.166</h2.version>
+        <resteasy.version>2.3.3.Final</resteasy.version>
     </properties>
 
     <distributionManagement>
@@ -142,25 +143,11 @@
                 <artifactId>spring-beans</artifactId>
                 <version>${spring.version}</version>
             </dependency>
+
             <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-core</artifactId>
-                <version>${spring.security.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-web</artifactId>
-                <version>${spring.security.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-acl</artifactId>
-                <version>${spring.security.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security</groupId>
-                <artifactId>spring-security-config</artifactId>
-                <version>${spring.security.version}</version>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jpa</artifactId>
+                <version>1.0.3.RELEASE</version>
             </dependency>
 
             <!-- Hibernate -->
@@ -185,7 +172,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>4.2.0.Final</version>
+                <version>${hibernate.validator.version}</version>
             </dependency>
 
             <dependency>
@@ -203,8 +190,14 @@
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
-                <version>2.5.0</version>
+                <version>2.5.2</version>
                 <type>pom</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jasypt</groupId>
+                <artifactId>jasypt</artifactId>
+                <version>1.9.0</version>
             </dependency>
 
             <dependency>
@@ -222,7 +215,7 @@
             <dependency>
                 <groupId>org.vaadin.addons</groupId>
                 <artifactId>customfield</artifactId>
-                <version>0.9.3</version>
+                <version>1.0.0</version>
             </dependency>
 
             <dependency>
@@ -234,7 +227,7 @@
             <dependency>
                 <groupId>org.vaadin.addons</groupId>
                 <artifactId>animator</artifactId>
-                <version>1.6.4</version>
+                <version>1.6.6</version>
             </dependency>
 
             <dependency>
@@ -270,19 +263,31 @@
             <dependency>
                 <groupId>org.vaadin.vol</groupId>
                 <artifactId>openlayers-wrapper</artifactId>
-                <version>0.9.1</version>
+                <version>1.1.0</version>
             </dependency>
 
             <dependency>
                 <groupId>org.vaadin.addons</groupId>
                 <artifactId>tableexport</artifactId>
-                <version>1.2.9</version>
+                <version>1.3.0</version>
             </dependency>
 
             <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi</artifactId>
-                <version>3.8-beta4</version>
+                <version>3.8</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.vaadin.addons</groupId>
+                <artifactId>codelabel</artifactId>
+                <version>1.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.vaadin.addons</groupId>
+                <artifactId>sessionguard</artifactId>
+                <version>0.0.5</version>
             </dependency>
 
             <!-- Misc -->
@@ -329,7 +334,7 @@
             <dependency>
                 <groupId>com.googlecode.libphonenumber</groupId>
                 <artifactId>libphonenumber</artifactId>
-                <version>4.3</version>
+                <version>4.8</version>
             </dependency>
 
             <dependency>
@@ -342,19 +347,19 @@
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>resteasy-jaxrs</artifactId>
-                <version>2.2.3.GA</version>
+                <version>${resteasy.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>resteasy-jaxb-provider</artifactId>
-                <version>2.2.3.GA</version>
+                <version>${resteasy.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>
                 <artifactId>resteasy-spring</artifactId>
-                <version>2.2.3.GA</version>
+                <version>${resteasy.version}</version>
             </dependency>
 
             <dependency>
@@ -420,7 +425,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.8</version>
+                        <version>2.8.1</version>
                         <configuration>
                             <failOnError>false</failOnError>
                         </configuration>
@@ -449,12 +454,12 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.8</version>
+                    <version>2.8.1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.10</version>
+                    <version>2.12</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -493,7 +498,7 @@
                 <plugin>
                     <groupId>org.mortbay.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>8.0.4.v20111024</version>
+                    <version>8.1.3.v20120416</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -509,7 +514,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
-                    <version>3.0</version>
+                    <version>3.1</version>
                 </plugin>
 
                 <plugin>
@@ -521,7 +526,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-report-plugin</artifactId>
-                    <version>2.10</version>
+                    <version>2.12</version>
                 </plugin>
 
                 <plugin>
@@ -533,19 +538,19 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>2.7</version>
+                    <version>2.9.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>2.3.2</version>
+                    <version>2.3.3</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
-                    <version>2.5</version>
+                    <version>2.7.1</version>
                 </plugin>
 
                 <plugin>
@@ -608,7 +613,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
+                <version>2.4</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
@@ -618,7 +623,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.10</version>
+                <version>2.12</version>
                 <configuration>
                     <systemPropertyVariables>
                         <property>
@@ -646,7 +651,7 @@
                     <dependency>
                         <groupId>org.hibernate</groupId>
                         <artifactId>hibernate-validator</artifactId>
-                        <version>4.2.0.Final</version>
+                        <version>${hibernate.validator.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,8 +37,8 @@
 
 package com.expressui.sample.view.dashboard;
 
-import com.expressui.core.view.field.DisplayFields;
 import com.expressui.core.view.results.CrudResults;
+import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.RecentContactsQuery;
 import com.expressui.sample.entity.Contact;
 import com.expressui.sample.view.account.AccountForm;
@@ -75,8 +75,8 @@ public class RecentContactResults extends CrudResults<Contact> {
     }
 
     @Override
-    public void configureFields(DisplayFields displayFields) {
-        displayFields.setPropertyIds(
+    public void init(ResultsFieldSet resultsFields) {
+        resultsFields.setPropertyIds(
                 "name",
                 "mailingAddress.street",
                 "mailingAddress.city",
@@ -85,7 +85,13 @@ public class RecentContactResults extends CrudResults<Contact> {
                 "lastModified"
         );
 
-        displayFields.setSortable("name", false);
-        displayFields.setLabel("mailingAddress.state.code", "State");
+        resultsFields.setSortable("name", false); // full name is a derived field
+        resultsFields.setLabel("mailingAddress.state.code", "State");
+    }
+
+    @Override
+    public void postConstruct() {
+        super.postConstruct();
+        getResultsTable().setAlwaysRecalculateColumnWidths(false);
     }
 }

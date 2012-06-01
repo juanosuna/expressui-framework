@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,27 +38,24 @@
 package com.expressui.core.dao.security;
 
 import com.expressui.core.dao.EntityDao;
-import com.expressui.core.dao.query.StructuredEntityQuery;
-import com.expressui.core.dao.query.ToManyRelationshipQuery;
 import com.expressui.core.entity.security.Role;
-import com.expressui.core.entity.security.User;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
 import javax.persistence.Query;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-
+/**
+ * Role DAO with RelatedRolesQuery.
+ */
 @Repository
 @SuppressWarnings("unchecked")
 public class RoleDao extends EntityDao<Role, Long> {
 
+    /**
+     * Find all Roles ordered by name.
+     *
+     * @return all roles
+     */
     @Override
     public List<Role> findAll() {
         Query query = getEntityManager().createQuery("SELECT r FROM Role r ORDER BY r.name");
@@ -67,145 +64,17 @@ public class RoleDao extends EntityDao<Role, Long> {
         return query.getResultList();
     }
 
+    /**
+     * Find Role by given name
+     *
+     * @param name to query
+     * @return found Role
+     */
     public Role findByName(String name) {
         Query query = getEntityManager().createQuery("SELECT r FROM Role r WHERE r.name = :name");
 
         query.setParameter("name", name);
 
         return (Role) query.getSingleResult();
-    }
-
-    @Component
-    @Scope(SCOPE_PROTOTYPE)
-    public static class RoleQuery extends StructuredEntityQuery<Role> {
-
-        @Resource
-        private RoleDao roleDao;
-
-        private String name;
-        private User doesNotBelongToUser;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public User getDoesNotBelongToUser() {
-            return doesNotBelongToUser;
-        }
-
-        public void setDoesNotBelongToUser(User doesNotBelongToUser) {
-            this.doesNotBelongToUser = doesNotBelongToUser;
-        }
-
-        @Override
-        public List<Role> execute() {
-            return roleDao.execute(this);
-        }
-
-        @Override
-        public List<Predicate> buildCriteria(CriteriaBuilder builder, Root<Role> rootEntity) {
-            List<Predicate> criteria = new ArrayList<Predicate>();
-
-            if (!isEmpty(name)) {
-                ParameterExpression<String> p = builder.parameter(String.class, "name");
-                criteria.add(builder.like(builder.upper(rootEntity.<String>get("name")), p));
-            }
-
-            if (!isEmpty(doesNotBelongToUser)) {
-                ParameterExpression<User> p = builder.parameter(User.class, "doesNotBelongToUser");
-                Join join = rootEntity.join("userRoles", JoinType.LEFT);
-                criteria.add(builder.or(
-                        builder.notEqual(join.get("user"), p),
-                        builder.isNull(join.get("user"))
-                ));
-            }
-
-            return criteria;
-        }
-
-        @Override
-        public void setParameters(TypedQuery typedQuery) {
-            if (!isEmpty(name)) {
-                typedQuery.setParameter("name", "%" + name.toUpperCase() + "%");
-            }
-            if (!isEmpty(doesNotBelongToUser)) {
-                typedQuery.setParameter("doesNotBelongToUser", doesNotBelongToUser);
-            }
-        }
-
-        @Override
-        public void clear() {
-            User doesNotBelongToUser = this.doesNotBelongToUser;
-            super.clear();
-            this.doesNotBelongToUser = doesNotBelongToUser;
-        }
-
-        @Override
-        public String toString() {
-            return "RoleQuery{" +
-                    "name='" + name + '\'' +
-                    '}';
-        }
-    }
-
-    @Component
-    @Scope(SCOPE_PROTOTYPE)
-    public static class RelatedRolesQuery extends ToManyRelationshipQuery<Role, User> {
-
-        @Resource
-        private RoleDao roleDao;
-
-        private User user;
-
-        @Override
-        public void setParent(User parent) {
-            this.user = parent;
-        }
-
-        @Override
-        public User getParent() {
-            return user;
-        }
-
-        @Override
-        public List<Role> execute() {
-            return roleDao.execute(this);
-        }
-
-        @Override
-        public List<Predicate> buildCriteria(CriteriaBuilder builder, Root<Role> rootEntity) {
-            List<Predicate> criteria = new ArrayList<Predicate>();
-
-            if (!isEmpty(user)) {
-                ParameterExpression<User> p = builder.parameter(User.class, "user");
-                criteria.add(builder.equal(rootEntity.join("userRoles").get("user"), p));
-            }
-
-            return criteria;
-        }
-
-        @Override
-        public void setParameters(TypedQuery typedQuery) {
-            if (!isEmpty(user)) {
-                typedQuery.setParameter("user", user);
-            }
-        }
-
-        @Override
-        public void addFetchJoins(Root<Role> rootEntity) {
-            rootEntity.fetch("userRoles", JoinType.INNER).fetch("user", JoinType.INNER);
-        }
-
-        @Override
-        public String toString() {
-            return "RelatedRoles{" +
-                    "user='" + user + '\'' +
-                    '}';
-        }
-
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,26 +38,40 @@
 package com.expressui.core.view.form.layout;
 
 
+import com.expressui.core.util.StringUtil;
 import com.expressui.core.view.field.FormField;
-import com.vaadin.data.Property;
-import com.vaadin.data.util.EnhancedNestedMethodProperty;
 import com.vaadin.ui.*;
 
 /**
- * A special layout for forms, which can support labels on top
- * of fields or to the left.
+ * A special layout for forms, which handles labels and can support labels on top
+ * of fields or to the left. Note some differences between ExpressUI and Vaadin
+ * columns and rows:
+ * <ul>
+ * <li>ExpressUI columns and rows start at 1, where as Vaadin starts as 0.</li>
+ * <li>In left-label layout, ExpressUI column includes label, field and spacers, whereas Vaadin has separate columns
+ * for each.</li>
+ * </ul>
+ * Compared to Vaadin, ExpressUI simplifies the layout so the developer does not have to worry about labels and spacers.
  */
 public abstract class FormGridLayout extends CustomComponent implements Layout {
 
-    private GridLayout gridLayout;
+    private GridLayout rootLayout;
 
-    public FormGridLayout(int columns, int rows) {
-        gridLayout = new GridLayout(columns, rows);
-        setCompositionRoot(gridLayout);
+    /**
+     * Construct specifying the actual number of columns and rows, from Vaadin perspective
+     *
+     * @param columns number of columns
+     * @param rows    number of rows
+     */
+    protected FormGridLayout(int columns, int rows) {
+        rootLayout = new GridLayout(columns, rows);
+        String id = StringUtil.generateDebugId("e", this, rootLayout, "rootLayout");
+        rootLayout.setDebugId(id);
+        setCompositionRoot(rootLayout);
     }
 
     /**
-     * Set the number of columns in the form.
+     * Set the number of columns in the form, from ExpressUI perspective.
      *
      * @param columns number of columns in the two-dimension form grid
      */
@@ -79,57 +93,116 @@ public abstract class FormGridLayout extends CustomComponent implements Layout {
 
     @Override
     public void setMargin(boolean enabled) {
-        gridLayout.setEnabled(enabled);
+        rootLayout.setEnabled(enabled);
     }
 
     @Override
     public void setMargin(boolean top, boolean right, boolean bottom, boolean left) {
-        gridLayout.setMargin(top, right, bottom, left);
+        rootLayout.setMargin(top, right, bottom, left);
     }
 
-    public void addComponent(Component component, int column1, int row1, int column2, int row2) throws GridLayout.OverlapsException, GridLayout.OutOfBoundsException {
-        gridLayout.addComponent(component, column1, row1, column2, row2);
+    /**
+     * Add and position component in layout.
+     *
+     * @param component component to add
+     * @param column1   column start position from Vaadin perspective
+     * @param row1      row start position from Vaadin perspective
+     * @param column2   column end position from Vaadin perspective
+     * @param row2      row end position from Vaadin perspective
+     * @throws GridLayout.OverlapsException
+     * @throws GridLayout.OutOfBoundsException
+     *
+     */
+    protected void addComponent(Component component, int column1, int row1, int column2, int row2) throws GridLayout.OverlapsException, GridLayout.OutOfBoundsException {
+        rootLayout.addComponent(component, column1, row1, column2, row2);
     }
 
+    /**
+     * Do not use. Throws UnsupportedOperationException. Instead use:
+     * addComponent(Component component, int column1, int row1, int column2, int row2)
+     *
+     * @param component
+     */
     @Override
     public void addComponent(Component component) {
-//        Field field = (Field) component;
-//        EnhancedNestedMethodProperty property = (EnhancedNestedMethodProperty) field.getPropertyDataSource();
-//        String propertyName = property.getPropertyName();
-
-//        gridLayout.addComponent(component);
+        throw new UnsupportedOperationException("Do not call this method. Instead use: " +
+                "addComponent(Component component, int column1, int row1, int column2, int row2) ");
     }
 
-    public void setColumns(int columns) {
-        gridLayout.setColumns(columns);
+    /**
+     * Set number of columns from Vaadin perspective, used internally.
+     *
+     * @param columns number of columns
+     */
+    protected void setColumns(int columns) {
+        rootLayout.setColumns(columns);
     }
 
+    /**
+     * Set number of rows from Vaadin perspective, used internally.
+     *
+     * @param rows number of rows
+     */
     public void setRows(int rows) {
-        gridLayout.setRows(rows);
+        rootLayout.setRows(rows);
     }
 
-    public Component getComponent(int x, int y) {
-        return gridLayout.getComponent(x, y);
+    /**
+     * Get component at column, row coordinates
+     *
+     * @param column coordinate
+     * @param row    coordinate
+     * @return component
+     */
+    protected Component getComponent(int column, int row) {
+        return rootLayout.getComponent(column, row);
     }
 
-    public void addComponent(Component c, int column, int row) throws GridLayout.OverlapsException, GridLayout.OutOfBoundsException {
-        gridLayout.addComponent(c, column, row);
+    /**
+     * Add and position component to layout
+     *
+     * @param component component
+     * @param column    column from Vaadin perspective
+     * @param row       row from Vaadin perspective
+     * @throws GridLayout.OverlapsException
+     * @throws GridLayout.OutOfBoundsException
+     *
+     */
+    protected void addComponent(Component component, int column, int row) throws GridLayout.OverlapsException, GridLayout.OutOfBoundsException {
+        rootLayout.addComponent(component, column, row);
     }
 
-    public void removeComponent(int column, int row) {
-        gridLayout.removeComponent(column, row);
+    /**
+     * Remove component at column, row coordinates
+     *
+     * @param column coordinate
+     * @param row    coordinate
+     */
+    protected void removeComponent(int column, int row) {
+        rootLayout.removeComponent(column, row);
     }
 
-    public void setComponentAlignment(Component childComponent, Alignment alignment) {
-        gridLayout.setComponentAlignment(childComponent, alignment);
+    /**
+     * Set component alignment.
+     *
+     * @param childComponent component to align
+     * @param alignment      alignment
+     */
+    protected void setComponentAlignment(Component childComponent, Alignment alignment) {
+        rootLayout.setComponentAlignment(childComponent, alignment);
     }
 
+    /**
+     * Set whether or not spacing is enabled
+     *
+     * @param enabled true if spacing is enabled
+     */
     public void setSpacing(boolean enabled) {
-        gridLayout.setSpacing(enabled);
+        rootLayout.setSpacing(enabled);
     }
 
     @Override
     public void removeAllComponents() {
-        gridLayout.removeAllComponents();
+        rootLayout.removeAllComponents();
     }
 }

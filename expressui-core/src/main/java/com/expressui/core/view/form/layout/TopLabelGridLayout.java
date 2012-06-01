@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,14 +38,23 @@
 package com.expressui.core.view.form.layout;
 
 
+import com.expressui.core.util.StringUtil;
 import com.expressui.core.view.field.FormField;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Field;
 import com.vaadin.ui.VerticalLayout;
 
 /**
- * Form layout that places labels on top of the fields
+ * Form grid layout that places labels on top of the fields
  */
 public class TopLabelGridLayout extends FormGridLayout {
+
+    /**
+     * Construct layout with given number of columns and rows, from ExpressUI perspective
+     *
+     * @param columns number of columns
+     * @param rows    number of rows
+     */
     public TopLabelGridLayout(int columns, int rows) {
         super(columns, rows);
     }
@@ -68,16 +77,17 @@ public class TopLabelGridLayout extends FormGridLayout {
     }
 
     private void addFieldImpl(FormField formField) {
-
-        VerticalLayout verticalLayout = new VerticalLayout();
-//        verticalLayout.setSizeUndefined();
-        verticalLayout.addComponent(formField.getFieldLabel());
-        verticalLayout.addComponent(formField.getField());
+        VerticalLayout fieldLayout = new VerticalLayout();
+        fieldLayout.setWidth(SIZE_UNDEFINED, Sizeable.UNITS_PERCENTAGE);
+        String id = StringUtil.generateDebugId("e", this, fieldLayout, "fieldLayout");
+        fieldLayout.setDebugId(id);
+        fieldLayout.addComponent(formField.getFieldLabel());
+        fieldLayout.addComponent(formField.getField());
         if (formField.getColumnEnd() != null && formField.getRowEnd() != null) {
-            addComponent(verticalLayout, formField.getColumnStart() - 1, formField.getRowStart() - 1,
+            addComponent(fieldLayout, formField.getColumnStart() - 1, formField.getRowStart() - 1,
                     formField.getColumnEnd() - 1, formField.getRowEnd() - 1);
         } else {
-            addComponent(verticalLayout, formField.getColumnStart() - 1, formField.getRowStart() - 1);
+            addComponent(fieldLayout, formField.getColumnStart() - 1, formField.getRowStart() - 1);
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -39,7 +39,7 @@ package com.expressui.core.dao;
 
 import com.expressui.core.dao.query.StructuredEntityQuery;
 import com.expressui.core.dao.query.ToManyRelationshipQuery;
-import com.expressui.core.entity.IdentifiableEntity;
+import com.expressui.core.entity.security.User;
 import com.expressui.core.util.ReflectionUtil;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,11 +52,12 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Base class for entity DAOs. All methods that write to the database are marked @Transactional.
+ * Base class for entity DAOs with parameter type.
+ * <p/>
+ * Methods that write to the database are marked @Transactional.
  *
- * @param <T>  entity type that must implement IdentifiableEntity
+ * @param <T>  entity type
  * @param <ID> entity's primary key type that must implement Serializable
- * @see IdentifiableEntity
  */
 public abstract class EntityDao<T, ID extends Serializable> {
 
@@ -74,20 +75,12 @@ public abstract class EntityDao<T, ID extends Serializable> {
         idType = ReflectionUtil.getGenericArgumentType(getClass(), 1);
     }
 
-    public void setEntityType(Class<T> entityType) {
-        this.entityType = entityType;
-    }
-
-    public void setIdType(Class<ID> idType) {
-        this.idType = idType;
-    }
-
     /**
      * Get the entity type declared as the subclass's generic first argument.
      *
      * @return the entity type declared as the subclass's generic first argument
      */
-    protected Class<T> getEntityType() {
+    public Class<T> getEntityType() {
         if (entityType == null) {
             throw new UnsupportedOperationException();
         }
@@ -100,7 +93,7 @@ public abstract class EntityDao<T, ID extends Serializable> {
      *
      * @return the entity's primary key type declared as the subclass's generic second argument
      */
-    protected Class<ID> getIdType() {
+    public Class<ID> getIdType() {
         if (idType == null) {
             throw new UnsupportedOperationException();
         }
@@ -118,16 +111,35 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
-     * Get a managed reference to the given entity, which may be detached. The managed reference is retrieved
+     * Get the id or primary key of the given entity.
+     *
+     * @param entity persistent entity
+     * @return id or primary key
+     */
+    public <T> Serializable getId(T entity) {
+        return genericDao.getId(entity);
+    }
+
+    /**
+     * Get a managed reference to the given entity, which may have been detached. The managed reference is retrieved
      * using given entity's primary key. This is useful when you need an managed reference to an entity and don't
      * care about merging it's state.
      *
      * @param entity for getting the primary key
      * @return attached but hollow entity
-     * @see EntityManager#getReference(Class, Object)
+     * @see javax.persistence.EntityManager#getReference(Class, Object)
      */
     public T getReference(T entity) {
         return genericDao.getReference(entity);
+    }
+
+    /**
+     * Create new entity
+     *
+     * @return newly created entity
+     */
+    public T create() {
+        return genericDao.create(getEntityType());
     }
 
     /**
@@ -174,9 +186,18 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
+     * Save a given entity, i.e. persist if new and merge if already persistent
+     *
+     * @param entity to save
+     */
+    public <T> void save(T entity) {
+        genericDao.save(entity);
+    }
+
+    /**
      * Refresh given entity.
      *
-     * @param entity
+     * @param entity to refresh
      * @see EntityManager#refresh(Object)
      */
     public void refresh(T entity) {
@@ -254,35 +275,44 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
-     * Execute the given structured query. The main benefits of a structured query are that it can be
-     * re-executed to fetch different pages in the result set, to sort on different properties, and to
-     * keep track of the result set count.
-     * Another benefit is performance. Normally, Hibernate does not support fetch joins with paging.
-     * However, a structure query works around this limitation by breaking the query into multiple queries
-     * executed in stages. First, it fetches the count. Second, it fetches
-     * the ids matching the query and paging criteria. Lastly, it fetches the full entities using fetch joins
-     * using the ids returned from the previous query. Using this staged approach, fetch joins are not
-     * executed in the same query as paging.
+     * Find single entity owned by a given user, e.g Profile
+     *
+     * @param user user to query
+     * @return found entity
+     */
+    public T findUserOwnedEntity(User user) {
+        return genericDao.findUserOwnedEntity(getEntityType(), user);
+    }
+
+    /**
+     * Utility method for setting hints on given query to read-only, thus enabling caching
+     *
+     * @param query query to set hints on
+     */
+    public static void setReadOnly(Query query) {
+        GenericDao.setReadOnly(query);
+    }
+
+    /**
+     * Execute the given structured entity query.
      *
      * @param structuredEntityQuery query that can be re-executed as paging, sort and other criteria change
-     * @return list of entities of this DAO's type
+     * @return list of found entities
+     * @see com.expressui.core.dao.query.StructuredEntityQuery
      */
     public List<T> execute(StructuredEntityQuery structuredEntityQuery) {
         return genericDao.execute(structuredEntityQuery);
     }
 
     /**
-     * Execute the given structured query that finds child entities that reference a parent entity in a
-     * to-many relationship. Provides same benefits as StructuredEntityQuery.
+     * Execute the given structured entity query that finds child entities that reference a parent entity in a
+     * to-many relationship.
      *
      * @param toManyRelationshipQuery query that can be re-executed as paging, sort and other criteria change
-     * @return list of entities of this DAO's type
+     * @return list of found entities
+     * @see com.expressui.core.dao.query.ToManyRelationshipQuery
      */
     public List<T> execute(ToManyRelationshipQuery toManyRelationshipQuery) {
         return genericDao.execute(toManyRelationshipQuery);
-    }
-
-    public static void setReadOnly(Query query) {
-        GenericDao.setReadOnly(query);
     }
 }

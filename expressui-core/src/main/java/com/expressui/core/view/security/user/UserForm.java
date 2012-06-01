@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -42,8 +42,8 @@ import com.expressui.core.dao.security.UserRoleDao;
 import com.expressui.core.entity.security.Role;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.entity.security.UserRole;
-import com.expressui.core.view.field.FormFields;
 import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.security.user.related.RelatedRoles;
 import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
 import com.vaadin.ui.PasswordField;
@@ -56,6 +56,9 @@ import java.util.List;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
+/**
+ * Form for viewing or editing users.
+ */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"rawtypes", "serial"})
@@ -79,27 +82,33 @@ public class UserForm extends EntityForm<User> {
     }
 
     @Override
-    public void configureFields(FormFields formFields) {
-        formFields.setPosition("loginName", 1, 1);
-        formFields.setPosition("loginPassword", 1, 2);
+    public void init(FormFieldSet formFields) {
+        formFields.setCoordinates("loginName", 1, 1);
+        formFields.setCoordinates("loginPassword", 1, 2);
         formFields.setField("loginPassword", new PasswordField());
+        formFields.setCoordinates("repeatLoginPassword", 2, 2);
+        formFields.setField("repeatLoginPassword", new PasswordField());
 
-        formFields.setPosition("accountExpired", 2, 1);
-        formFields.setPosition("accountLocked", 2, 2);
-        formFields.setPosition("credentialsExpired", 3, 1);
-        formFields.setPosition("enabled", 3, 2);
+        formFields.setCoordinates("accountExpired", 3, 1);
+        formFields.setCoordinates("accountLocked", 3, 2);
 
-        addPersistListener(this, "onPersist");
-    }
-
-    public void onPersist() {
-        Role anyUserRole = roleDao.findByName("ROLE_USER");
-        UserRole userRole = new UserRole(getEntity(), anyUserRole);
-        userRoleDao.persist(userRole);
+        formFields.setCoordinates("credentialsExpired", 4, 1);
+        formFields.setCoordinates("enabled", 4, 2);
     }
 
     @Override
-    public String getEntityCaption() {
+    public void postSave(User user) {
+        super.postSave(user);
+
+        Role anyUserRole = roleDao.findByName("ROLE_USER");
+        if (!user.hasRole(anyUserRole)) {
+            UserRole userRole = new UserRole(user, anyUserRole);
+            userRoleDao.persist(userRole);
+        }
+    }
+
+    @Override
+    public String getTypeCaption() {
         return "User Form";
     }
 }

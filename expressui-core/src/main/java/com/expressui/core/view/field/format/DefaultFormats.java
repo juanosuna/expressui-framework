@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -45,7 +45,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 
 /**
- * Defines some default formats, e.g. dates.
+ * Defines some default formats, e.g. for dates, times, numbers
  */
 @Component
 public class DefaultFormats {
@@ -59,10 +59,20 @@ public class DefaultFormats {
         return emptyFormat;
     }
 
+    /**
+     * Get default number format, NumberFormat.getNumberInstance()
+     *
+     * @return default number format
+     */
     public PropertyFormatter getNumberFormat() {
-        return new JDKFormatPropertyFormatter(numberFormat);
+        return new JDKBridgePropertyFormatter(numberFormat);
     }
 
+    /**
+     * Set default number format
+     *
+     * @param numberFormat default number format
+     */
     public void setNumberFormat(Format numberFormat) {
         this.numberFormat = numberFormat;
     }
@@ -73,7 +83,7 @@ public class DefaultFormats {
      * @return default date format
      */
     public PropertyFormatter getDateFormat() {
-        return new JDKFormatPropertyFormatter(dateFormat);
+        return new JDKBridgePropertyFormatter(dateFormat);
     }
 
     /**
@@ -91,7 +101,7 @@ public class DefaultFormats {
      * @return default date-time format
      */
     public PropertyFormatter getDateTimeFormat() {
-        return new JDKFormatPropertyFormatter(dateTimeFormat);
+        return new JDKBridgePropertyFormatter(dateTimeFormat);
     }
 
     /**

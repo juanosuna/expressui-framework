@@ -50,10 +50,6 @@ import java.util.List;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
-/**
- * User: Juan
- * Date: 1/13/12
- */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings("rawtypes")
@@ -72,46 +68,45 @@ public class RelatedContactsQuery extends ToManyRelationshipQuery<Contact, Accou
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, Root<Contact> rootEntity) {
-        List<Predicate> criteria = new ArrayList<Predicate>();
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<Contact> contact) {
+        List<Predicate> predicates = new ArrayList<Predicate>();
 
-        if (!isEmpty(account)) {
-            ParameterExpression<Account> p = builder.parameter(Account.class, "account");
-            criteria.add(builder.equal(rootEntity.get("account"), p));
+        if (hasValue(account)) {
+            ParameterExpression<Account> accountExp = builder.parameter(Account.class, "account");
+            predicates.add(builder.equal(contact.get("account"), accountExp));
         }
 
-        return criteria;
+        return predicates;
     }
 
     @Override
     public void setParameters(TypedQuery typedQuery) {
-        if (!isEmpty(account)) {
+        if (hasValue(account)) {
             typedQuery.setParameter("account", account);
         }
     }
 
     @Override
-    public Path buildOrderBy(Root<Contact> rootEntity) {
+    public Path buildOrderBy(Root<Contact> contact) {
         if (getOrderByPropertyId().equals("mailingAddress.country")) {
-            return rootEntity.join("mailingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
+            return contact.join("mailingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
         } else if (getOrderByPropertyId().equals("mailingAddress.state.code")) {
-            return rootEntity.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
+            return contact.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
         } else {
             return null;
         }
     }
 
     @Override
-    public void addFetchJoins(Root<Contact> rootEntity) {
-        rootEntity.fetch("mailingAddress", JoinType.LEFT);
-        rootEntity.fetch("account", JoinType.LEFT);
+    public void addFetchJoins(Root<Contact> contact) {
+        contact.fetch("mailingAddress", JoinType.LEFT);
+        contact.fetch("account", JoinType.LEFT);
     }
 
     @Override
     public String toString() {
-        return "RelatedContacts{" +
+        return "RelatedContactsQuery{" +
                 "account='" + account + '\'' +
                 '}';
     }
-
 }

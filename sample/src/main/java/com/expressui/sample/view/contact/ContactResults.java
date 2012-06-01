@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,13 +37,11 @@
 
 package com.expressui.sample.view.contact;
 
-import com.expressui.core.view.field.DisplayFields;
 import com.expressui.core.view.results.CrudResults;
-import com.expressui.core.view.results.ResultsTable;
+import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.ContactQuery;
 import com.expressui.sample.entity.Contact;
 import com.expressui.sample.view.account.AccountForm;
-import com.vaadin.terminal.Sizeable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -76,8 +74,9 @@ public class ContactResults extends CrudResults<Contact> {
     }
 
     @Override
-    public void configureFields(DisplayFields displayFields) {
-        displayFields.setPropertyIds(
+    public void init(ResultsFieldSet resultsFields) {
+
+        resultsFields.setPropertyIds(
                 "firstName",
                 "lastName",
                 "account.name",
@@ -87,13 +86,8 @@ public class ContactResults extends CrudResults<Contact> {
                 "modifiedBy"
         );
 
-        displayFields.setLabel("mailingAddress.state.code", "State");
-        displayFields.setLabel("account.name", "Account");
-        displayFields.setFormLink("account.name", "account", accountForm);
-    }
-
-    @Override
-    public void configureTable(ResultsTable resultsTable) {
-        resultsTable.setWidth(61, Sizeable.UNITS_EM);
+        resultsFields.setLabel("mailingAddress.state.code", "State");
+        resultsFields.setLabel("account.name", "Account");
+        resultsFields.setFormLink("account.name", "account", accountForm);
     }
 }

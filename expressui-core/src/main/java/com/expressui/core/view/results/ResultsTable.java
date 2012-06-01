@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -72,13 +72,14 @@ public class ResultsTable extends Table {
 
     private void initialize() {
         setSizeUndefined();
-        setEditable(true);
+        alwaysRecalculateColumnWidths = true;
+        setEditable(false);
         setTableFieldFactory(new TableButtonLinkFactory());
 
-        EnhancedBeanItemContainer dataSource = new EnhancedBeanItemContainer(results.getEntityType(),
-                results.getDisplayFields());
-        dataSource.setNonSortablePropertyIds(results.getDisplayFields().getNonSortablePropertyIds());
-        String[] propertyIds = results.getDisplayFields().getViewablePropertyIdsAsArray();
+        EnhancedBeanItemContainer dataSource = new EnhancedBeanItemContainer(results.getType(),
+                results.getResultsFieldSet());
+        dataSource.setNonSortablePropertyIds(results.getResultsFieldSet().getNonSortablePropertyIds());
+        String[] propertyIds = results.getResultsFieldSet().getViewablePropertyIdsAsArray();
         for (String propertyId : propertyIds) {
             dataSource.addNestedContainerProperty(propertyId);
         }
@@ -90,10 +91,29 @@ public class ResultsTable extends Table {
         setColumnCollapsingAllowed(true);
         setCacheRate(1);
 
-        setVisibleColumns(results.getDisplayFields().getViewablePropertyIdsAsArray());
-        setColumnHeaders(results.getDisplayFields().getViewableLabelsAsArray());
+        setVisibleColumns(results.getResultsFieldSet().getViewablePropertyIdsAsArray());
+        setColumnHeaders(results.getResultsFieldSet().getViewableLabelsAsArray());
     }
 
+    /**
+     * EXPERIMENTAL Vaadin feature: will tell the client to re-calculate column widths
+     * if set to true. Currently no setter: extend to enable.
+     */
+    public boolean getAlwaysRecalculateColumnWidths() {
+        return alwaysRecalculateColumnWidths;
+    }
+
+    /**
+     * EXPERIMENTAL Vaadin feature: will tell the client to re-calculate column widths
+     * if set to true. Currently no setter: extend to enable.
+     */
+    public void setAlwaysRecalculateColumnWidths(boolean alwaysRecalculateColumnWidths) {
+        this.alwaysRecalculateColumnWidths = alwaysRecalculateColumnWidths;
+    }
+
+    /**
+     * @see com.vaadin.ui.Table.enableContentRefreshing
+     */
     public void turnOnContentRefreshing() {
         enableContentRefreshing(true);
     }
@@ -108,7 +128,7 @@ public class ResultsTable extends Table {
         if (propertyId.length > 1) {
             throw new RuntimeException("Cannot sort on more than one column");
         } else if (propertyId.length == 1) {
-            if (results.getDisplayFields().getField(propertyId[0].toString()).isSortable()) {
+            if (results.getResultsFieldSet().getResultsField(propertyId[0].toString()).isSortable()) {
                 results.getEntityQuery().setOrderByPropertyId(propertyId[0].toString());
                 if (ascending[0]) {
                     results.getEntityQuery().setOrderDirection(EntityQuery.OrderDirection.ASC);
@@ -152,7 +172,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Go first page and re-execute query.
+     * Go to first page and re-execute query.
      */
     public void firstPage() {
         clearSelection();
@@ -161,7 +181,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Go previous page and re-execute query.
+     * Go to previous page and re-execute query.
      */
     public void previousPage() {
         clearSelection();
@@ -170,7 +190,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Go next page and re-execute query.
+     * Go to next page and re-execute query.
      */
     public void nextPage() {
         clearSelection();
@@ -179,7 +199,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Go last page and re-execute query.
+     * Go to last page and re-execute query.
      */
     public void lastPage() {
         clearSelection();
@@ -215,7 +235,7 @@ public class ResultsTable extends Table {
     protected String formatPropertyValue(Object rowId, Object colId, Property property) {
 
         if (property.getValue() != null) {
-            DisplayField displayField = results.getDisplayFields().getField(colId.toString());
+            DisplayField displayField = results.getResultsFieldSet().getField(colId.toString());
             PropertyFormatter propertyFormatter = displayField.getPropertyFormatter();
 
             if (EmptyPropertyFormatter.class.equals(propertyFormatter.getClass())) {
@@ -232,7 +252,7 @@ public class ResultsTable extends Table {
         public Field createField(Container container, Object itemId,
                                  Object propertyId, Component uiContext) {
 
-            DisplayField.FormLink formLink = results.getDisplayFields().getField(propertyId.toString()).getFormLink();
+            DisplayField.FormLink formLink = results.getResultsFieldSet().getField(propertyId.toString()).getFormLink();
 
             if (formLink != null) {
                 BeanItem item = getContainerDataSource().getItem(itemId);

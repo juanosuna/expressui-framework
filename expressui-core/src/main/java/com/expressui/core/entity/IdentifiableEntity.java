@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -40,7 +40,7 @@ package com.expressui.core.entity;
 import java.io.Serializable;
 
 /**
- * Any entity that is identifiable with the serializable id property
+ * Any entity that is identifiable with the serializable id property as primary key.
  */
 public interface IdentifiableEntity {
     /**

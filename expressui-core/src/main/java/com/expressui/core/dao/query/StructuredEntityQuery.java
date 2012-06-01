@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,15 +38,39 @@
 package com.expressui.core.dao.query;
 
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Path;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A query structured to be re-executable as criteria, sort criteria and paging changes. Subclass
- * needs to implement methods for specifying criteria, parameters, sorting and fetch joins.
+ * A query designed to be re-executed as the user pages through results and applies different sort criteria. A subclass
+ * must implement methods for translating query parameters into JPA criteria, sort property to an order-by clause
+ * and specifying any fetch-joins used to eagerly fetch nested entities.
+ * <p/>
+ * Although ExpressUI supports a traditional DAO approach as well, developers are encouraged to subclass
+ * StructuredEntityQuery wherever possible, because it solves a difficult challenge in using Hibernate efficiently.
+ * <p/>
+ * Hibernate has a limitation where paging does not work as expected with fetch-join clauses. When fetch-join
+ * clauses are added to a query, Hibernate pulls all the results into memory and pages through results in memory.
+ * Obviously, this is not practical for large result sets!
+ * <p/>
+ * A StructuredEntityQuery works around this limitation by breaking the query into 3 stages:
+ * <ol><li>Execute query and get count of all results</li><li>Execute query and fetch only the primary keys of the
+ * current page</li><li>Fetch records matching previously found primary keys but with added fetch-join clauses</li></ol>
+ * This approach essentially breaks paging apart from fetching nested entities.
+ * <p/>
+ * <strong>Design Hint:</strong> Annotate JPA properties using a lazy rather than an eager fetch strategy and override
+ * addFetchJoins to specify any nested entities whose properties are referenced in the results. This design approach
+ * offers the best performance by avoiding the N+1 select problem, where additional cascading queries are generated for
+ * each nested entity referenced in the results. If you see 10 extra queries being generated in the log when displaying
+ * a page of 10 results, then you know you have the N+1 select problem!
+ * <p/>
+ * Unfortunately subclassing StructuredEntityQuery requires knowledge of the JPA criteria API, which is not
+ * terribly friendly. However, this approach not only brings significant performance benefits but also reduces query
+ * code to a minimum by allowing query logic to be reused in the different scenarios, i.e. with different query
+ * parameters and sort criteria. Simple string-based JPQL or HQL queries initially look easier to read but become
+ * messy once you have to restructure them dynamically to handle different query parameters, sort criteria as well as
+ * paging and join strategies.
  *
  * @param <T> type of entity being queried
  * @see com.expressui.core.dao.EntityDao#execute(StructuredEntityQuery)
@@ -60,15 +84,18 @@ public abstract class StructuredEntityQuery<T> extends EntityQuery<T> {
      * @param rootEntity root type in the from clause
      * @return a list of predicates, one for every part of the criteria
      */
-    public abstract List<Predicate> buildCriteria(CriteriaBuilder builder, Root<T> rootEntity);
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<T> rootEntity) {
+        return new ArrayList<Predicate>();
+    }
 
     /**
-     * Set the parameter values for the query. The parameter names should matched those defined by the buildCriteria
+     * Set the parameter values for the query. The parameter names should match those defined by the buildCriteria
      * implementation.
      *
      * @param typedQuery interface for setting parameters
      */
-    public abstract void setParameters(TypedQuery typedQuery);
+    public void setParameters(TypedQuery typedQuery) {
+    }
 
     /**
      * Build the Path used for sorting.
@@ -81,7 +108,7 @@ public abstract class StructuredEntityQuery<T> extends EntityQuery<T> {
     }
 
     /**
-     * Adding any fetch joins required to improve performance, i.e. to avoid N+1 select problem
+     * Add any fetch joins required to improve performance, i.e. to avoid N+1 select problem
      *
      * @param rootEntity root type in the from clause
      */
@@ -90,6 +117,6 @@ public abstract class StructuredEntityQuery<T> extends EntityQuery<T> {
 
     @Override
     public List<T> execute() {
-        return getGenericDao().execute(this);
+        return genericDao.execute(this);
     }
 }

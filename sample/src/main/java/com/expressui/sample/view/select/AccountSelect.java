@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -39,7 +39,7 @@ package com.expressui.sample.view.select;
 
 import com.expressui.core.view.entityselect.EntitySelect;
 import com.expressui.core.view.entityselect.EntitySelectResults;
-import com.expressui.core.view.field.DisplayFields;
+import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.AccountQuery;
 import com.expressui.sample.entity.Account;
 import com.expressui.sample.view.account.AccountSearchForm;
@@ -72,7 +72,7 @@ public class AccountSelect extends EntitySelect<Account> {
     }
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return "Select Account";
     }
 
@@ -89,8 +89,8 @@ public class AccountSelect extends EntitySelect<Account> {
         }
 
         @Override
-        public void configureFields(DisplayFields displayFields) {
-            displayFields.setPropertyIds(
+        public void init(ResultsFieldSet resultsFields) {
+            resultsFields.setPropertyIds(
                     "name",
                     "tickerSymbol",
                     "website",
@@ -98,7 +98,7 @@ public class AccountSelect extends EntitySelect<Account> {
                     "billingAddress.country"
             );
 
-            displayFields.setLabel("billingAddress.state.code", "State");
+            resultsFields.setLabel("billingAddress.state.code", "State");
         }
     }
 }

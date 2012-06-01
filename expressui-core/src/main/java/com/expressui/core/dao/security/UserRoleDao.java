@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -41,6 +41,9 @@ import com.expressui.core.dao.EntityDao;
 import com.expressui.core.entity.security.UserRole;
 import org.springframework.stereotype.Repository;
 
+/**
+ * UserRole DAO
+ */
 @Repository
 public class UserRoleDao extends EntityDao<UserRole, UserRole.Id> {
 }

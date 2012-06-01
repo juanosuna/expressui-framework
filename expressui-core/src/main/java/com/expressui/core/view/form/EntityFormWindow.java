@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -39,29 +39,30 @@ package com.expressui.core.view.form;
 
 import com.expressui.core.MainApplication;
 import com.expressui.core.util.MethodDelegate;
-import com.expressui.core.view.results.ResultsConnectedEntityForm;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Popup window for displaying entity form.
  */
 public class EntityFormWindow extends Window {
 
+    private ResultsConnectedEntityForm resultsConnectedEntityForm;
     private EntityForm entityForm;
 
-    private List<MethodDelegate> closeListeners = new ArrayList<MethodDelegate>();
+    private Set<MethodDelegate> closeListeners = new LinkedHashSet<MethodDelegate>();
 
     /**
-     * Construct window to display entity form that is not connected to results.
+     * Construct window to display entity form that is not connected to results, i.e.
+     * user cannot step through results with previous/next buttons.
      *
      * @param entityForm form to display inside window
      */
     protected EntityFormWindow(EntityForm entityForm) {
-        super(entityForm.getEntityCaption());
+        super(entityForm.getTypeCaption());
 
         initialize();
         this.entityForm = entityForm;
@@ -69,17 +70,20 @@ public class EntityFormWindow extends Window {
         entityForm.addCancelListener(this, "close");
         entityForm.addCloseListener(this, "close");
         entityForm.addSaveListener(this, "refreshCaption");
+        entityForm.onDisplay();
     }
 
     /**
-     * Construct window to display a results-connected entity form.
+     * Construct window to display a results-connected entity form, i.e.
+     * user can step through results with previous/next buttons.
      *
      * @param resultsConnectedEntityForm results-connected form
      */
     protected EntityFormWindow(ResultsConnectedEntityForm resultsConnectedEntityForm) {
-        super(resultsConnectedEntityForm.getEntityForm().getEntityCaption());
+        super(resultsConnectedEntityForm.getEntityForm().getTypeCaption());
 
         initialize();
+        this.resultsConnectedEntityForm = resultsConnectedEntityForm;
         this.entityForm = resultsConnectedEntityForm.getEntityForm();
         addComponent(resultsConnectedEntityForm);
         resultsConnectedEntityForm.getEntityForm().addCancelListener(this, "close");
@@ -87,14 +91,18 @@ public class EntityFormWindow extends Window {
         resultsConnectedEntityForm.addWalkListener(this, "refreshCaption");
         entityForm.addSaveListener(this, "refreshCaption");
         resultsConnectedEntityForm.refreshNavigationButtonStates();
+        entityForm.onDisplay();
     }
 
+    /**
+     * Refreshes caption, as user steps through results.
+     */
     void refreshCaption() {
-        setCaption(entityForm.getEntityCaption());
+        setCaption(entityForm.getTypeCaption());
     }
 
     private void initialize() {
-        addStyleName("p-entity-form-window");
+        addStyleName("e-entity-form-window");
         addStyleName("opaque");
         VerticalLayout layout = (VerticalLayout) getContent();
         layout.setMargin(true);
@@ -110,7 +118,7 @@ public class EntityFormWindow extends Window {
     }
 
     /**
-     * Open window to display entity form that is not connected to results
+     * Open window to display entity form that is connected to results
      *
      * @param resultsConnectedEntityForm results-connected form
      * @return window
@@ -129,10 +137,21 @@ public class EntityFormWindow extends Window {
         return new EntityFormWindow(entityForm);
     }
 
+    /**
+     * Listener method called that in turn notifies all close listeners.
+     *
+     * @param closeEvent ignored
+     */
     public void onClose(CloseEvent closeEvent) {
         for (MethodDelegate closeListener : closeListeners) {
             closeListener.execute();
         }
+
+        if (resultsConnectedEntityForm != null) {
+            resultsConnectedEntityForm.removeListeners(this);
+        }
+
+        entityForm.removeListeners(this);
     }
 
     /**

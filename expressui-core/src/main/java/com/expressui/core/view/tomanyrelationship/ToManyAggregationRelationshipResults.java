@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -77,7 +77,7 @@ public abstract class ToManyAggregationRelationshipResults<T> extends ToManyRela
     }
 
     /**
-     * Invoked when user sellects entities to be added to the relationship.
+     * Invoked when user selects entities to be added to the relationship.
      */
     public void itemsSelected() {
         getEntitySelect().close();

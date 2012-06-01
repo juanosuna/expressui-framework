@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -39,10 +39,11 @@ package com.expressui.core.view.security.role.related;
 
 import com.expressui.core.dao.query.ToManyRelationshipQuery;
 import com.expressui.core.dao.security.UserRoleDao;
+import com.expressui.core.dao.security.query.RelatedUsersQuery;
 import com.expressui.core.entity.security.Role;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.entity.security.UserRole;
-import com.expressui.core.view.field.DisplayFields;
+import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.core.view.security.select.UserSelect;
 import com.expressui.core.view.tomanyrelationship.ManyToManyRelationshipResults;
 import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
@@ -51,9 +52,11 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-import static com.expressui.core.dao.security.UserDao.RelatedUsersQuery;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
+/**
+ * Component to viewing/editing users related to user-role association.
+ */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"rawtypes", "serial"})
@@ -63,7 +66,7 @@ public class RelatedUsers extends ToManyRelationship<User> {
     private RelatedUsersResults relatedUsersResults;
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return "Users";
     }
 
@@ -108,8 +111,8 @@ public class RelatedUsers extends ToManyRelationship<User> {
         }
 
         @Override
-        public void configureFields(DisplayFields displayFields) {
-            displayFields.setPropertyIds(
+        public void init(ResultsFieldSet resultsFields) {
+            resultsFields.setPropertyIds(
                     "loginName",
                     "lastModified",
                     "modifiedBy"
@@ -129,11 +132,6 @@ public class RelatedUsers extends ToManyRelationship<User> {
         @Override
         public UserRole createAssociationEntity(User user) {
             return new UserRole(user, relatedUsersQuery.getParent());
-        }
-
-        @Override
-        public String getEntityCaption() {
-            return "Users";
         }
     }
 

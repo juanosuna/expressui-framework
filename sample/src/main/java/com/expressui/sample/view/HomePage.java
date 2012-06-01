@@ -37,10 +37,10 @@
 
 package com.expressui.sample.view;
 
+import com.expressui.core.view.RootComponent;
 import com.expressui.core.view.page.Page;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.Sizeable;
-import com.vaadin.ui.CustomComponent;
 import com.vaadin.ui.Embedded;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -49,16 +49,20 @@ import javax.annotation.PostConstruct;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
+
 @Component
-@Scope("session")
-public class HomePage extends CustomComponent implements Page {
+@Scope(SCOPE_SESSION)
+public class HomePage extends RootComponent implements Page {
 
     @PostConstruct
     @Override
     public void postConstruct() {
+        super.postConstruct();
+
         try {
             URL url = new URL("http://www.expressui.com");
-            Embedded browser = new Embedded("", new ExternalResource(url));
+            Embedded browser = new Embedded("ExpressUI Home Page", new ExternalResource(url));
             browser.setWidth(100, Sizeable.UNITS_PERCENTAGE);
             browser.setHeight(1250, Sizeable.UNITS_PIXELS);
             browser.setType(Embedded.TYPE_BROWSER);
@@ -69,15 +73,6 @@ public class HomePage extends CustomComponent implements Page {
     }
 
     @Override
-    public void postWire() {
-    }
-
-    @Override
-    public void onLoad() {
-    }
-
-    @Override
-    public boolean isViewAllowed() {
-        return true;
+    public void onDisplay() {
     }
 }

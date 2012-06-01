@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright (c) 2011 Brown Bag Consulting.
+  ~ Copyright (c) 2012 Brown Bag Consulting.
   ~ This file is part of the ExpressUI project.
   ~ Author: Juan Osuna
   ~
@@ -39,15 +39,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
 
     <bean id="uiMessageSource" class="com.expressui.core.view.util.MessageSource">
         <property name="basename" value="classpath:uiMessages/messages"/>
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
 
-    <bean id="entityMessageSource" class="com.expressui.core.view.util.MessageSource">
-        <property name="basename" value="classpath:entityMessages/messages"/>
+    <bean id="domainMessageSource" class="com.expressui.core.view.util.MessageSource">
+        <property name="basename" value="classpath:domainMessages/messages"/>
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
 

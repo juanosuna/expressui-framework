@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,13 +37,11 @@
 
 package com.expressui.sample.view.account;
 
-import com.expressui.core.view.field.DisplayFields;
-import com.expressui.core.view.field.format.JDKFormatPropertyFormatter;
+import com.expressui.core.view.field.format.JDKBridgePropertyFormatter;
 import com.expressui.core.view.results.CrudResults;
-import com.expressui.core.view.results.ResultsTable;
+import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.AccountQuery;
 import com.expressui.sample.entity.Account;
-import com.vaadin.terminal.Sizeable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -75,8 +73,8 @@ public class AccountResults extends CrudResults<Account> {
     }
 
     @Override
-    public void configureFields(DisplayFields displayFields) {
-        displayFields.setPropertyIds(
+    public void init(ResultsFieldSet resultsFields) {
+        resultsFields.setPropertyIds(
                 "name",
                 "billingAddress.state.code",
                 "billingAddress.country",
@@ -87,20 +85,15 @@ public class AccountResults extends CrudResults<Account> {
                 "modifiedBy"
         );
 
-        displayFields.setLabel("billingAddress.state.code", "State");
-        displayFields.setLabel("mainPhone", "Phone");
-        displayFields.setLabel("numberOfEmployees", "# of Employees");
-        displayFields.setLabel("annualRevenueInUSD", "Annual Revenue");
-        displayFields.setSortable("mainPhone", false);
+        resultsFields.setLabel("billingAddress.state.code", "State");
+        resultsFields.setLabel("mainPhone", "Phone");
+        resultsFields.setLabel("numberOfEmployees", "# of Employees");
+        resultsFields.setLabel("annualRevenueInUSD", "Annual Revenue");
+        resultsFields.setSortable("mainPhone", false);
 
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
         numberFormat.setMaximumFractionDigits(0);
-        JDKFormatPropertyFormatter formatter = new JDKFormatPropertyFormatter(numberFormat);
-        displayFields.setPropertyFormatter("annualRevenueInUSD", formatter);
-    }
-
-    @Override
-    public void configureTable(ResultsTable resultsTable) {
-        resultsTable.setWidth(70, Sizeable.UNITS_EM);
+        JDKBridgePropertyFormatter formatter = new JDKBridgePropertyFormatter(numberFormat);
+        resultsFields.setPropertyFormatter("annualRevenueInUSD", formatter);
     }
 }

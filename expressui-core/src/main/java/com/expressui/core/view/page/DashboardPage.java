@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,58 +38,58 @@
 package com.expressui.core.view.page;
 
 import com.expressui.core.view.RootComponent;
-import com.expressui.core.view.results.Results;
-import com.expressui.core.view.util.MessageSource;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.GridLayout;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Panel;
+import com.expressui.core.view.TypedComponent;
+import com.expressui.core.view.ViewBean;
+import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ChameleonTheme;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
- * Dashboard for displaying as the first tab in the application. Components can be added to
- * the Dashboard grid layout, using X,Y coordinates, in the same way that fields are
- * added to entity forms.
+ * Dashboard for displaying a grid of any custom components. Components can be added to
+ * the Dashboard's grid layout, using X, Y coordinates, in the same way that fields are
+ * added to forms.
  */
 public abstract class DashboardPage extends RootComponent implements Page {
 
-    @Resource
-    protected MessageSource entityMessageSource;
-
-    @Resource
-    protected MessageSource uiMessageSource;
-
-    private GridLayout gridLayout;
+    private GridLayout rootLayout;
 
     @PostConstruct
     @Override
     public void postConstruct() {
         super.postConstruct();
-        gridLayout = new GridLayout();
-        gridLayout.setMargin(true);
-        gridLayout.setSpacing(true);
+        rootLayout = new GridLayout();
+        setDebugId(rootLayout, "rootLayout");
+        rootLayout.setMargin(true);
+        rootLayout.setSpacing(true);
 
-        setCompositionRoot(gridLayout);
+        setCompositionRoot(rootLayout);
         setSizeUndefined();
-        getCompositionRoot().setSizeUndefined();
+
+        addCodePopupButtonIfEnabled(DashboardPage.class);
     }
 
-    /**
-     * Can be overridden if any initialization is required after all Spring beans have been wired.
-     * Overriding methods should call super.
-     */
     @Override
     public void postWire() {
         super.postWire();
+        Set<ViewBean> viewBeanComponents = findViewBeanComponents();
+        for (ViewBean viewBeanComponent : viewBeanComponents) {
+            viewBeanComponent.postWire();
+        }
     }
 
     @Override
-    public void onLoad() {
+    public void onDisplay() {
     }
 
+    /**
+     * Default caption is null, since Dashboard is not associated with any specific entity type.
+     *
+     * @return null
+     */
     @Override
     public String getCaption() {
         return null;
@@ -118,29 +118,31 @@ public abstract class DashboardPage extends RootComponent implements Page {
      * @param endColumn   end column coordinate in Dashboard grid
      */
     public void addComponent(Component component, String caption, int startRow, int startColumn, int endRow, int endColumn) {
+        if (component instanceof TypedComponent && !((TypedComponent) component).isViewAllowed()) return;
+
         Panel panel = new Panel(caption);
         panel.addStyleName(ChameleonTheme.PANEL_BUBBLE);
-        HorizontalLayout layout = new HorizontalLayout();
-        panel.setContent(layout);
-        layout.setMargin(true);
-        layout.setSpacing(true);
-        layout.addComponent(component);
-        int rows = Math.max(gridLayout.getRows() - 1, endRow);
-        int columns = Math.max(gridLayout.getColumns() - 1, endColumn);
+        HorizontalLayout panelLayout = new HorizontalLayout();
+        panelLayout.setSizeUndefined();
+        panel.setSizeUndefined();
+        panel.setContent(panelLayout);
+        panelLayout.setMargin(true);
+        panelLayout.setSpacing(true);
+        panelLayout.addComponent(component);
+        int rows = Math.max(rootLayout.getRows() - 1, endRow);
+        int columns = Math.max(rootLayout.getColumns() - 1, endColumn);
 
-        if (gridLayout.getRows() < rows) {
-            gridLayout.setRows(rows);
+        if (rootLayout.getRows() < rows) {
+            rootLayout.setRows(rows);
         }
-        if (gridLayout.getColumns() < columns) {
-            gridLayout.setColumns(columns);
+        if (rootLayout.getColumns() < columns) {
+            rootLayout.setColumns(columns);
         }
 
         removeComponent(startRow, startColumn);
-        gridLayout.addComponent(panel, startColumn - 1, startRow - 1, endColumn - 1, endRow - 1);
-        if (component instanceof Results) {
-            ((Results) component).search();
-        }
+        rootLayout.addComponent(panel, startColumn - 1, startRow - 1, endColumn - 1, endRow - 1);
     }
+
 
     /**
      * Remove component from the dashboard
@@ -149,11 +151,22 @@ public abstract class DashboardPage extends RootComponent implements Page {
      * @param startColumn start column coordinate in Dashboard grid
      */
     public void removeComponent(int startRow, int startColumn) {
-        gridLayout.removeComponent(startColumn - 1, startRow - 1);
+        rootLayout.removeComponent(startColumn - 1, startRow - 1);
     }
 
-    @Override
-    public boolean isViewAllowed() {
-        return true;
+    private Set<ViewBean> findViewBeanComponents() {
+        Set<ViewBean> viewBeans = new HashSet<ViewBean>();
+
+        Iterator<Component> iterator = rootLayout.getComponentIterator();
+        while (iterator.hasNext()) {
+            Panel panel = (Panel) iterator.next();
+            ComponentContainer layout = panel.getContent();
+            Component component = layout.getComponentIterator().next();
+            if (component instanceof ViewBean) {
+                viewBeans.add((ViewBean) component);
+            }
+        }
+
+        return viewBeans;
     }
 }

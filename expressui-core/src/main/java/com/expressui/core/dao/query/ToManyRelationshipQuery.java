@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -43,9 +43,15 @@ import java.util.List;
  * A structured query for finding entities that are related to a parent through a "to-many" relationship.
  *
  * @param <T> type of entity being queried
- * @param <P> type of the parent of the to-many relationship
+ * @param <P> type of the parent in the to-many relationship
  */
 public abstract class ToManyRelationshipQuery<T, P> extends StructuredEntityQuery<T> {
+
+    @Override
+    public void postConstruct() {
+        super.postConstruct();
+        setPageSize(5);
+    }
 
     /**
      * Get the parent entity for the query.
@@ -63,6 +69,6 @@ public abstract class ToManyRelationshipQuery<T, P> extends StructuredEntityQuer
 
     @Override
     public List<T> execute() {
-        return getGenericDao().execute(this);
+        return genericDao.execute(this);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,6 +37,7 @@
 
 package com.expressui.core.view.field;
 
+import com.expressui.core.util.StringUtil;
 import com.expressui.core.view.entityselect.EntitySelect;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.util.MessageSource;
@@ -83,7 +84,7 @@ public class SelectField extends CustomField {
         this.entityForm = entityForm;
         this.propertyId = propertyId;
         this.entitySelect = entitySelect;
-        this.uiMessageSource = entityForm.getUiMessageSource();
+        this.uiMessageSource = entityForm.uiMessageSource;
         initialize();
     }
 
@@ -97,7 +98,7 @@ public class SelectField extends CustomField {
     }
 
     /**
-     * Make clear and search button (in)visible
+     * Make clear and search buttons (in)visible
      *
      * @param isVisible true to make visible
      */
@@ -113,8 +114,10 @@ public class SelectField extends CustomField {
         FormField.initTextFieldDefaults(field);
         field.setReadOnly(true);
 
-        HorizontalLayout layout = new HorizontalLayout();
-        layout.addComponent(field);
+        HorizontalLayout selectFieldLayout = new HorizontalLayout();
+        String id = StringUtil.generateDebugId("e", this, selectFieldLayout, "selectFieldLayout");
+        selectFieldLayout.setDebugId(id);
+        selectFieldLayout.addComponent(field);
 
         searchButton = new Button();
         searchButton.setDescription(uiMessageSource.getMessage("selectField.search.description"));
@@ -126,23 +129,23 @@ public class SelectField extends CustomField {
                 entitySelect.open();
             }
         });
-        layout.addComponent(searchButton);
+        selectFieldLayout.addComponent(searchButton);
 
         clearButton = new Button();
         clearButton.setDescription(uiMessageSource.getMessage("selectField.clear.description"));
         clearButton.setSizeUndefined();
         clearButton.addStyleName("borderless");
         clearButton.setIcon(new ThemeResource("../runo/icons/16/cancel.png"));
-        layout.addComponent(clearButton);
+        selectFieldLayout.addComponent(clearButton);
 
         entitySelect.getResults().setSelectButtonListener(this, "itemSelected");
         clearButton.addListener(Button.ClickEvent.class, this, "itemCleared");
 
-        setCompositionRoot(layout);
+        setCompositionRoot(selectFieldLayout);
     }
 
     /**
-     * Invoked when user selects item.
+     * Listener method invoked when user selects item.
      */
     public void itemSelected() {
         Object selectedValue = getSelectedValue();
@@ -163,7 +166,7 @@ public class SelectField extends CustomField {
     }
 
     /**
-     * Invoked when user clicks clear button.
+     * Listener method invoked when user clicks clear button.
      */
     public void itemCleared() {
         Object entity = entityForm.getEntity();

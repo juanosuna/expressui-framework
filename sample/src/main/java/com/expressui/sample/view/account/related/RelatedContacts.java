@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -38,12 +38,12 @@
 package com.expressui.sample.view.account.related;
 
 import com.expressui.core.dao.query.ToManyRelationshipQuery;
-import com.expressui.core.view.field.DisplayFields;
+import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.core.view.tomanyrelationship.ToManyAggregationRelationshipResults;
 import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
 import com.expressui.sample.dao.query.RelatedContactsQuery;
 import com.expressui.sample.entity.Contact;
-import com.expressui.sample.util.formatter.PhonePropertyFormatter;
+import com.expressui.sample.formatter.PhonePropertyFormatter;
 import com.expressui.sample.view.select.ContactSelect;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -60,7 +60,7 @@ public class RelatedContacts extends ToManyRelationship<Contact> {
     private RelatedContactsResults relatedContactsResults;
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return "Company Contacts";
     }
 
@@ -91,8 +91,8 @@ public class RelatedContacts extends ToManyRelationship<Contact> {
         }
 
         @Override
-        public void configureFields(DisplayFields displayFields) {
-            displayFields.setPropertyIds(
+        public void init(ResultsFieldSet resultsFields) {
+            resultsFields.setPropertyIds(
                     "name",
                     "title",
                     "mailingAddress.state.code",
@@ -100,11 +100,11 @@ public class RelatedContacts extends ToManyRelationship<Contact> {
                     "mainPhone"
             );
 
-            displayFields.setLabel("mailingAddress.state.code", "State");
-            displayFields.setLabel("mainPhone", "Phone");
-            displayFields.setSortable("name", false);
-            displayFields.setSortable("mainPhone", false);
-            displayFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
+            resultsFields.setLabel("mailingAddress.state.code", "State");
+            resultsFields.setLabel("mainPhone", "Phone");
+            resultsFields.setSortable("name", false);
+            resultsFields.setSortable("mainPhone", false);
+            resultsFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
         }
 
         @Override
@@ -115,11 +115,6 @@ public class RelatedContacts extends ToManyRelationship<Contact> {
         @Override
         public String getParentPropertyId() {
             return "account";
-        }
-
-        @Override
-        public String getEntityCaption() {
-            return "Contacts";
         }
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -65,7 +65,6 @@ public class OpportunityDao extends EntityDao<Opportunity, Long> {
                         "year(opportunity.actualCloseDate), sum(opportunity.amountInUSD)) " +
                         "from Opportunity opportunity " +
                         "where opportunity.salesStage.id = 'Closed Won' " +
-                        "and year(opportunity.actualCloseDate) > 2003 " +
                         "group by year(opportunity.actualCloseDate)" +
                         " order by year(opportunity.actualCloseDate)");
 
@@ -78,7 +77,6 @@ public class OpportunityDao extends EntityDao<Opportunity, Long> {
                         "year(opportunity.actualCloseDate), sum(opportunity.amountInUSD)) " +
                         "from Opportunity opportunity " +
                         "where opportunity.salesStage.id = 'Closed Lost' " +
-                        "and year(opportunity.actualCloseDate) > 2003 " +
                         "group by year(opportunity.actualCloseDate)" +
                         " order by year(opportunity.actualCloseDate)");
 

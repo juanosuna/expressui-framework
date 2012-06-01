@@ -52,10 +52,6 @@ import java.util.Set;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
-/**
- * User: Juan
- * Date: 1/13/12
- */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class OpportunityQuery extends StructuredEntityQuery<Opportunity> {
@@ -80,43 +76,43 @@ public class OpportunityQuery extends StructuredEntityQuery<Opportunity> {
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, Root<Opportunity> rootEntity) {
-        List<Predicate> criteria = new ArrayList<Predicate>();
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<Opportunity> opportunity) {
+        List<Predicate> predicates = new ArrayList<Predicate>();
 
-        if (!isEmpty(accountName)) {
-            ParameterExpression<String> p = builder.parameter(String.class, "accountName");
-            criteria.add(builder.like(builder.upper(rootEntity.get("account").<String>get("name")), p));
+        if (hasValue(accountName)) {
+            ParameterExpression<String> accountNameExp = builder.parameter(String.class, "accountName");
+            predicates.add(builder.like(builder.upper(opportunity.get("account").<String>get("name")), accountNameExp));
         }
-        if (!isEmpty(salesStages)) {
-            ParameterExpression<Set> p = builder.parameter(Set.class, "salesStages");
-            criteria.add(builder.in(rootEntity.get("salesStage")).value(p));
+        if (hasValue(salesStages)) {
+            ParameterExpression<Set> salesStagesExp = builder.parameter(Set.class, "salesStages");
+            predicates.add(builder.in(opportunity.get("salesStage")).value(salesStagesExp));
         }
 
-        return criteria;
+        return predicates;
     }
 
     @Override
     public void setParameters(TypedQuery typedQuery) {
-        if (!isEmpty(accountName)) {
+        if (hasValue(accountName)) {
             typedQuery.setParameter("accountName", "%" + accountName.toUpperCase() + "%");
         }
-        if (!isEmpty(salesStages)) {
+        if (hasValue(salesStages)) {
             typedQuery.setParameter("salesStages", salesStages);
         }
     }
 
     @Override
-    public Path buildOrderBy(Root<Opportunity> rootEntity) {
+    public Path buildOrderBy(Root<Opportunity> opportunity) {
         if (getOrderByPropertyId().equals("account.name")) {
-            return rootEntity.join("account", JoinType.LEFT).get("name");
+            return opportunity.join("account", JoinType.LEFT).get("name");
         } else {
             return null;
         }
     }
 
     @Override
-    public void addFetchJoins(Root<Opportunity> rootEntity) {
-        rootEntity.fetch("account", JoinType.LEFT);
+    public void addFetchJoins(Root<Opportunity> opportunity) {
+        opportunity.fetch("account", JoinType.LEFT);
     }
 
     @Override
@@ -126,5 +122,4 @@ public class OpportunityQuery extends StructuredEntityQuery<Opportunity> {
                 ", salesStages=" + salesStages +
                 '}';
     }
-
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -39,10 +39,10 @@ package com.expressui.sample.view.select;
 
 import com.expressui.core.view.entityselect.EntitySelect;
 import com.expressui.core.view.entityselect.EntitySelectResults;
-import com.expressui.core.view.field.DisplayFields;
+import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.ContactQuery;
 import com.expressui.sample.entity.Contact;
-import com.expressui.sample.util.formatter.PhonePropertyFormatter;
+import com.expressui.sample.formatter.PhonePropertyFormatter;
 import com.expressui.sample.view.contact.ContactSearchForm;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -73,7 +73,7 @@ public class ContactSelect extends EntitySelect<Contact> {
     }
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return "Select Contact";
     }
 
@@ -90,8 +90,8 @@ public class ContactSelect extends EntitySelect<Contact> {
         }
 
         @Override
-        public void configureFields(DisplayFields displayFields) {
-            displayFields.setPropertyIds(
+        public void init(ResultsFieldSet resultsFields) {
+            resultsFields.setPropertyIds(
                     "name",
                     "title",
                     "mailingAddress.state.code",
@@ -99,10 +99,10 @@ public class ContactSelect extends EntitySelect<Contact> {
                     "mainPhone"
             );
 
-            displayFields.setLabel("mailingAddress.state.code", "State");
-            displayFields.setLabel("mainPhone", "Phone");
-            displayFields.setSortable("name", false);
-            displayFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
+            resultsFields.setLabel("mailingAddress.state.code", "State");
+            resultsFields.setLabel("mainPhone", "Phone");
+            resultsFields.setSortable("name", false);
+            resultsFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
         }
     }
 }

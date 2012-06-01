@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,9 +37,10 @@
 
 package com.expressui.sample.view.opportunity;
 
-import com.expressui.core.view.field.FormFields;
 import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.form.FormFieldSet;
+import com.expressui.core.view.form.FormTab;
 import com.expressui.core.view.security.select.UserSelect;
 import com.expressui.sample.entity.Opportunity;
 import com.expressui.sample.view.select.AccountSelect;
@@ -62,26 +63,28 @@ public class OpportunityForm extends EntityForm<Opportunity> {
     private UserSelect userSelect;
 
     @Override
-    public void configureFields(FormFields formFields) {
+    public void init(FormFieldSet formFields) {
 
-        formFields.setPosition("Overview", "name", 1, 1);
-        formFields.setPosition("Overview", "opportunityType", 1, 2);
+        FormTab overview = formFields.createTab("Overview");
+        overview.setCoordinates("name", 1, 1);
+        overview.setCoordinates("opportunityType", 1, 2);
 
-        formFields.setPosition("Overview", "account.name", 2, 1);
-        formFields.setPosition("Overview", "leadSource", 2, 2);
+        overview.setCoordinates("account.name", 2, 1);
+        overview.setCoordinates("leadSource", 2, 2);
 
-        formFields.setPosition("Overview", "salesStage", 3, 1);
-        formFields.setPosition("Overview", "assignedTo.loginName", 3, 2);
+        overview.setCoordinates("salesStage", 3, 1);
+        overview.setCoordinates("assignedTo.loginName", 3, 2);
 
-        formFields.setPosition("Overview", "amount", 4, 1);
-        formFields.setPosition("Overview", "currency", 4, 2);
+        overview.setCoordinates("amount", 4, 1);
+        overview.setCoordinates("currency", 4, 2);
 
-        formFields.setPosition("Overview", "probability", 5, 1);
-        formFields.setPosition("Overview", "amountWeightedInUSD", 5, 2);
+        overview.setCoordinates("probability", 5, 1);
+        overview.setCoordinates("amountWeightedInUSD", 5, 2);
 
-        formFields.setPosition("Overview", "expectedCloseDate", 6, 1);
+        overview.setCoordinates("expectedCloseDate", 6, 1);
 
-        formFields.setPosition("Description", "description", 1, 1);
+        FormTab description = formFields.createTab("Description");
+        description.setCoordinates("description", 1, 1);
 
         formFields.setLabel("description", null);
         formFields.setLabel("opportunityType", "Type");
@@ -96,7 +99,7 @@ public class OpportunityForm extends EntityForm<Opportunity> {
     }
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         if (getEntity().getName() == null) {
             return "Opportunity Form - New";
         } else {

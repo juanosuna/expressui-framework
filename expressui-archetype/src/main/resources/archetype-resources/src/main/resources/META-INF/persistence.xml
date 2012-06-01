@@ -1,0 +1,24 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<?xml version="1.0" encoding="UTF-8"?>
+
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
+             version="1.0">
+
+    <persistence-unit name="persistence-unit" transaction-type="RESOURCE_LOCAL">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <!--uncomment to use ExpressUI security and make sure Maven scripts generate related tables -->
+        <!--<class>com.expressui.core.entity.security.User</class>-->
+        <!--<class>com.expressui.core.entity.security.Role</class>-->
+        <!--<class>com.expressui.core.entity.security.UserRole</class>-->
+        <!--<class>com.expressui.core.entity.security.Permission</class>-->
+        <properties>
+            <property name="javax.persistence.validation.mode" value="auto"/>
+            <property name="hibernate.archive.autodetection" value="class"/>
+        </properties>
+    </persistence-unit>
+
+</persistence>

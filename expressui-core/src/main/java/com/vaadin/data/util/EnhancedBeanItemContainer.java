@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,7 +37,7 @@
 
 package com.vaadin.data.util;
 
-import com.expressui.core.view.field.DisplayFields;
+import com.expressui.core.view.field.FieldSet;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -47,26 +47,26 @@ import java.util.Set;
 public class EnhancedBeanItemContainer<BEANTYPE> extends BeanItemContainer<BEANTYPE> {
     private Class beanType;
     private Set<String> nonSortablePropertyIds = new HashSet<String>();
-    private DisplayFields displayFields;
+    private FieldSet fieldSet;
 
-    public EnhancedBeanItemContainer(Class<? super BEANTYPE> type, DisplayFields displayFields)
+    public EnhancedBeanItemContainer(Class<? super BEANTYPE> type, FieldSet fieldSet)
             throws IllegalArgumentException {
         super(type);
         beanType = type;
-        this.displayFields = displayFields;
+        this.fieldSet = fieldSet;
     }
 
-    public EnhancedBeanItemContainer(Class<? super BEANTYPE> type, Collection<? extends BEANTYPE> beantypes, DisplayFields displayFields)
+    public EnhancedBeanItemContainer(Class<? super BEANTYPE> type, Collection<? extends BEANTYPE> beantypes, FieldSet fieldSet)
             throws IllegalArgumentException {
         super(type, beantypes);
         beanType = type;
-        this.displayFields = displayFields;
+        this.fieldSet = fieldSet;
     }
 
     @Override
     public boolean addNestedContainerProperty(String propertyId) {
         return addContainerProperty(propertyId, new EnhancedNestedPropertyDescriptor(
-                propertyId, beanType, displayFields.getField(propertyId)));
+                propertyId, beanType, fieldSet.getField(propertyId)));
     }
 
     public Set<String> getNonSortablePropertyIds() {

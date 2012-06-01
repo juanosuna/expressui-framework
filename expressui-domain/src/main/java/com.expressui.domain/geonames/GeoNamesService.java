@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -92,7 +92,7 @@ public class GeoNamesService extends RestClientService {
     }
 
     @Bean
-    public GeoNamesClient getGeoNamesClient(@Value("${geoNamesService.url}") String url) throws Exception {
+    public GeoNamesClient getGeoNamesClient(@Value("${geoNamesService.url:}") String url) throws Exception {
         return create(url, GeoNamesClient.class);
     }
 

@@ -16,7 +16,7 @@
         NAME varchar(64) not null,
         NUMBER_OF_EMPLOYEES integer check (NUMBER_OF_EMPLOYEES>=0),
         TICKER_SYMBOL varchar(25),
-        WEBSITE varchar(64),
+        WEBSITE varchar(255),
         ASSIGNED_TO_ID bigint,
         BILLING_ADDRESS_ID bigint not null,
         CURRENCY_ID varchar(255),
@@ -171,17 +171,14 @@
         MODIFIED_BY varchar(255) not null,
         VERSION integer,
         UUID varchar(255) not null unique,
-        COMPANY varchar(64) not null,
-        DO_NOT_CALL boolean not null,
-        DO_NOT_EMAIL boolean not null,
+        COMPANY_WEBSITE varchar(255) not null,
         EMAIL varchar(255) not null,
         FIRST_NAME varchar(64) not null,
         LAST_NAME varchar(64) not null,
-        MAIN_PHONE_COUNTRY_CODE integer,
-        MAIN_PHONE_PHONE_NUMBER bigint,
-        MAIN_PHONE_TYPE varchar(255) not null,
+        PHONE_COUNTRY_CODE integer,
+        PHONE_PHONE_NUMBER bigint,
+        PHONE_TYPE varchar(255),
         TITLE varchar(64),
-        ADDRESS_ID bigint not null,
         USER_ID bigint not null,
         primary key (ID)
     );
@@ -231,7 +228,7 @@
         CREDENTIALS_EXPIRED boolean not null,
         ENABLED boolean not null,
         LOGIN_NAME varchar(16) not null,
-        LOGIN_PASSWORD varchar(16) not null,
+        LOGIN_PASSWORD_ENCRYPTED varchar(255),
         primary key (ID),
         unique (LOGIN_NAME)
     );
@@ -397,14 +394,7 @@
         foreign key (ROLE_ID) 
         references SAMPLE.ROLE;
 
-    create index IDX_PROFILE_MAILING_ADDRESS on SAMPLE.PROFILE (ADDRESS_ID);
-
     create index IDX_PROFILE_USER on SAMPLE.PROFILE (USER_ID);
-
-    alter table SAMPLE.PROFILE 
-        add constraint FK_PROFILE_MAILING_ADDRESS 
-        foreign key (ADDRESS_ID) 
-        references SAMPLE.ADDRESS;
 
     alter table SAMPLE.PROFILE 
         add constraint FK_PROFILE_USER 

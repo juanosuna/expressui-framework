@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,14 +37,10 @@
 
 package com.expressui.core.view.results;
 
-import com.expressui.core.dao.GenericDao;
 import com.expressui.core.dao.query.EntityQuery;
-import com.expressui.core.util.ReflectionUtil;
+import com.expressui.core.view.TypedComponent;
 import com.expressui.core.view.export.ExportForm;
 import com.expressui.core.view.export.ExportParameters;
-import com.expressui.core.view.field.DisplayFields;
-import com.expressui.core.view.field.LabelRegistry;
-import com.expressui.core.view.util.MessageSource;
 import com.vaadin.addon.tableexport.ExcelExport;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.MethodProperty;
@@ -59,26 +55,17 @@ import java.util.Collection;
 
 /**
  * Results component that is bound the results of a query.
- * Also, provides paging, sorting and adding/removing columns and re-ordering columns.
+ * Also provides paging, sorting and adding/removing columns and re-ordering columns.
  *
  * @param <T> type of entity displayed in the results
  */
-public abstract class Results<T> extends CustomComponent {
-
-    @Resource(name = "uiMessageSource")
-    private MessageSource uiMessageSource;
-
-    @Resource
-    private LabelRegistry labelRegistry;
+public abstract class Results<T> extends TypedComponent<T> {
 
     @Resource
     private ExportForm exportForm;
 
     @Resource
-    private DisplayFields displayFields;
-
-    @Resource
-    private GenericDao genericDao;
+    private ResultsFieldSet resultsFieldSet;
 
     private ResultsTable resultsTable;
     private TextField firstResultTextField;
@@ -99,18 +86,9 @@ public abstract class Results<T> extends CustomComponent {
     /**
      * Configure the fields/columns to be displayed in the results
      *
-     * @param displayFields used for configuring fields/columns
+     * @param resultsFields used for configuring fields/columns
      */
-    public abstract void configureFields(DisplayFields displayFields);
-
-    /**
-     * Get the DAO that can be used to execute queries and perform CRUD operations
-     *
-     * @return DAO of the entity type for these results
-     */
-    public GenericDao getGenericDao() {
-        return genericDao;
-    }
+    public abstract void init(ResultsFieldSet resultsFields);
 
     /**
      * Get the query used to create these results
@@ -124,17 +102,8 @@ public abstract class Results<T> extends CustomComponent {
      *
      * @return fields to be displayed in the results
      */
-    public DisplayFields getDisplayFields() {
-        return displayFields;
-    }
-
-    /**
-     * Type of business entity for this page.
-     *
-     * @return type of business entity for this page
-     */
-    public Class getEntityType() {
-        return ReflectionUtil.getGenericArgumentType(getClass());
+    public ResultsFieldSet getResultsFieldSet() {
+        return resultsFieldSet;
     }
 
     /**
@@ -155,44 +124,42 @@ public abstract class Results<T> extends CustomComponent {
         return crudButtons;
     }
 
-    public void setDisplayFields(DisplayFields displayFields) {
-        this.displayFields = displayFields;
-    }
-
-    /**
-     * Called after Spring constructs this bean. Overriding methods should call super.
-     */
     @PostConstruct
+    @Override
     public void postConstruct() {
-        addStyleName("p-results-component");
-
-        displayFields.setEntityType(getEntityType());
-        configureFields(displayFields);
+        super.postConstruct();
+        resultsFieldSet.setType(getType());
+        init(resultsFieldSet);
 
         resultsTable = new ResultsTable(this);
         configureTable(resultsTable);
 
-        VerticalLayout verticalLayout = new VerticalLayout();
-        setCompositionRoot(verticalLayout);
+        VerticalLayout rootLayout = new VerticalLayout();
+        setDebugId(rootLayout, "rootLayout");
+        setCompositionRoot(rootLayout);
 
         crudButtons = new HorizontalLayout();
         HorizontalLayout navigationLine = createNavigationLine();
-        if (resultsTable.getWidth() > 0) {
-            navigationLine.setWidth(resultsTable.getWidth(), resultsTable.getWidthUnits());
-        }
         addComponent(crudButtons);
         addComponent(navigationLine);
 
         addComponent(resultsTable);
 
-        setCustomSizeUndefined();
+        rootLayout.setMargin(false, false, false, true);
 
-        labelRegistry.registerLabels(displayFields);
+        setSizeUndefined();
+
+        labelRegistry.registerLabels(resultsFieldSet);
     }
 
-    private void setCustomSizeUndefined() {
-        setSizeUndefined();
-        getCompositionRoot().setSizeUndefined();
+    @Override
+    public void postWire() {
+        super.postWire();
+        MethodProperty pageProperty = new MethodProperty(this, "pageSize");
+        pageSizeMenu.setPropertyDataSource(pageProperty);
+        pageSizeMenu.addListener(Property.ValueChangeEvent.class, this, "search");
+        getEntityQuery().postWire();
+        exportForm.postWire();
     }
 
     /**
@@ -211,11 +178,7 @@ public abstract class Results<T> extends CustomComponent {
     private HorizontalLayout createNavigationLine() {
 
         HorizontalLayout resultCountDisplay = new HorizontalLayout();
-        Label showingLabel = new Label(uiMessageSource.getMessage("entityResults.showing")
-                + " &nbsp ", Label.CONTENT_XHTML);
-        showingLabel.setSizeUndefined();
-        showingLabel.addStyleName("small");
-        resultCountDisplay.addComponent(showingLabel);
+        setDebugId(resultCountDisplay, "resultCountDisplay");
         firstResultTextField = createFirstResultTextField();
         firstResultTextField.addStyleName("small");
         firstResultTextField.setSizeUndefined();
@@ -230,17 +193,18 @@ public abstract class Results<T> extends CustomComponent {
         resultCountDisplay.addComponent(spaceLabel);
 
         Button refreshButton = new Button(null, getResultsTable(), "refresh");
-        refreshButton.setDescription(uiMessageSource.getMessage("entityResults.refresh.description"));
+        refreshButton.setDescription(uiMessageSource.getMessage("results.refresh.description"));
         refreshButton.setSizeUndefined();
         refreshButton.addStyleName("borderless");
-        refreshButton.setIcon(new ThemeResource("icons/16/refresh-blue.png"));
+        refreshButton.setIcon(new ThemeResource("../expressui/icons/16/refresh-blue.png"));
         resultCountDisplay.addComponent(refreshButton);
 
         HorizontalLayout navigationButtons = new HorizontalLayout();
+        setDebugId(navigationButtons, "navigationButtons");
         navigationButtons.setMargin(false, true, false, false);
         navigationButtons.setSpacing(true);
 
-        String perPageText = uiMessageSource.getMessage("entityResults.pageSize");
+        String perPageText = uiMessageSource.getMessage("results.pageSize");
         pageSizeMenu = new Select();
         pageSizeMenu.addStyleName("small");
         pageSizeMenu.addItem(5);
@@ -261,47 +225,53 @@ public abstract class Results<T> extends CustomComponent {
         navigationButtons.addComponent(pageSizeMenu);
 
         firstButton = new Button(null, getResultsTable(), "firstPage");
-        firstButton.setDescription(uiMessageSource.getMessage("entityResults.first.description"));
+        firstButton.setDescription(uiMessageSource.getMessage("results.first.description"));
         firstButton.setSizeUndefined();
         firstButton.addStyleName("borderless");
-        firstButton.setIcon(new ThemeResource("icons/16/first.png"));
+        firstButton.setIcon(new ThemeResource("../expressui/icons/16/first.png"));
         navigationButtons.addComponent(firstButton);
 
         previousButton = new Button(null, getResultsTable(), "previousPage");
-        previousButton.setDescription(uiMessageSource.getMessage("entityResults.previous.description"));
+        previousButton.setDescription(uiMessageSource.getMessage("results.previous.description"));
         previousButton.setSizeUndefined();
         previousButton.addStyleName("borderless");
-        previousButton.setIcon(new ThemeResource("icons/16/previous.png"));
+        previousButton.setIcon(new ThemeResource("../expressui/icons/16/previous.png"));
         navigationButtons.addComponent(previousButton);
 
         nextButton = new Button(null, getResultsTable(), "nextPage");
-        nextButton.setDescription(uiMessageSource.getMessage("entityResults.next.description"));
+        nextButton.setDescription(uiMessageSource.getMessage("results.next.description"));
         nextButton.setSizeUndefined();
         nextButton.addStyleName("borderless");
-        nextButton.setIcon(new ThemeResource("icons/16/next.png"));
+        nextButton.setIcon(new ThemeResource("../expressui/icons/16/next.png"));
         navigationButtons.addComponent(nextButton);
 
         lastButton = new Button(null, getResultsTable(), "lastPage");
-        lastButton.setDescription(uiMessageSource.getMessage("entityResults.last.description"));
+        lastButton.setDescription(uiMessageSource.getMessage("results.last.description"));
         lastButton.setSizeUndefined();
         lastButton.addStyleName("borderless");
-        lastButton.setIcon(new ThemeResource("icons/16/last.png"));
+        lastButton.setIcon(new ThemeResource("../expressui/icons/16/last.png"));
         navigationButtons.addComponent(lastButton);
 
         excelButton = new Button(null, this, "openExportForm");
-        excelButton.setDescription(uiMessageSource.getMessage("entityResults.excel.description"));
+        excelButton.setDescription(uiMessageSource.getMessage("results.excel.description"));
         excelButton.setSizeUndefined();
         excelButton.addStyleName("borderless");
-        excelButton.setIcon(new ThemeResource("icons/16/excel.bmp"));
+        excelButton.setIcon(new ThemeResource("../expressui/icons/16/excel.bmp"));
         navigationButtons.addComponent(excelButton);
         exportForm.setExportButtonListener(this, "exportToExcel");
 
         HorizontalLayout navigationLine = new HorizontalLayout();
-        navigationLine.setWidth("100%");
-        navigationLine.setMargin(true, true, true, false);
+        setDebugId(navigationLine, "navigationLine");
+        navigationLine.setSizeUndefined();
+//        navigationLine.setWidth("100%");
+        navigationLine.setMargin(true, true, true, true);
 
         navigationLine.addComponent(resultCountDisplay);
         navigationLine.setComponentAlignment(resultCountDisplay, Alignment.BOTTOM_LEFT);
+
+        spaceLabel = new Label("", Label.CONTENT_XHTML);
+        spaceLabel.setWidth(2, Sizeable.UNITS_EM);
+        navigationLine.addComponent(spaceLabel);
 
         navigationLine.addComponent(navigationButtons);
         navigationLine.setComponentAlignment(navigationButtons, Alignment.BOTTOM_RIGHT);
@@ -315,7 +285,7 @@ public abstract class Results<T> extends CustomComponent {
         firstResultTextField.setInvalidAllowed(true);
         firstResultTextField.setInvalidCommitted(false);
         firstResultTextField.setWriteThrough(true);
-        firstResultTextField.addValidator(new IntegerValidator(uiMessageSource.getMessage("entityResults.firstResult.invalid")) {
+        firstResultTextField.addValidator(new IntegerValidator(uiMessageSource.getMessage("results.firstResult.invalid")) {
             @Override
             protected boolean isValidString(String value) {
                 boolean isValid = super.isValidString(value);
@@ -349,18 +319,6 @@ public abstract class Results<T> extends CustomComponent {
     }
 
     /**
-     * Can be overridden if any initialization is required after all Spring beans have been wired.
-     * Overriding methods should call super.
-     */
-    public void postWire() {
-        MethodProperty pageProperty = new MethodProperty(this, "pageSize");
-        pageSizeMenu.setPropertyDataSource(pageProperty);
-        pageSizeMenu.addListener(Property.ValueChangeEvent.class, this, "search");
-        getEntityQuery().postWire();
-        exportForm.postWire();
-    }
-
-    /**
      * Change the page size selection
      *
      * @param pageSize new page size
@@ -387,6 +345,21 @@ public abstract class Results<T> extends CustomComponent {
         getEntityQuery().setPageSize(pageSize);
     }
 
+    /**
+     * Ask if page-size menu is visible.
+     *
+     * @return true if visible
+     */
+    public boolean getPageSizeVisible() {
+        return pageSizeMenu.isVisible();
+    }
+
+    /**
+     * Set whether or not the page-size menu is visible, useful if the number of items is known to be small
+     * or when layout does not permit larger pages.
+     *
+     * @param isVisible true if visible
+     */
     public void setPageSizeVisible(boolean isVisible) {
         pageSizeMenu.setVisible(isVisible);
     }
@@ -445,7 +418,7 @@ public abstract class Results<T> extends CustomComponent {
      */
     protected void refreshResultCountLabel() {
         EntityQuery query = getEntityQuery();
-        String caption = uiMessageSource.getMessage("entityResults.caption",
+        String caption = uiMessageSource.getMessage("results.caption",
                 new Object[]{
                         query.getResultCount() == 0 ? 0 : query.getLastResult(),
                         query.getResultCount()});
@@ -453,15 +426,26 @@ public abstract class Results<T> extends CustomComponent {
         resultCountLabel.setValue(caption);
     }
 
+    /**
+     * Open the excel-export popup form.
+     */
     public void openExportForm() {
-        String entityLabel = labelRegistry.getTypeLabel(getEntityType().getName());
-        exportForm.getExportParameters().setWorkbookName(entityLabel + " Export");
-        exportForm.getExportParameters().setSheetName(entityLabel + " Export");
-        exportForm.getExportParameters().setExportFilename(entityLabel + " Export.xls");
+        String entityLabel = labelRegistry.getTypeLabel(getType().getName());
+        if (entityLabel == null) {
+            entityLabel = getType().getSimpleName();
+        }
+
+        entityLabel += " ";
+        exportForm.getExportParameters().setWorkbookName(entityLabel + "Export");
+        exportForm.getExportParameters().setSheetName(entityLabel + "Export");
+        exportForm.getExportParameters().setExportFilename("\"" + entityLabel + "Export.xls\"");
 
         exportForm.open();
     }
 
+    /**
+     * Export the single page of displayed data to Excel, using parameters configured by user in popup form.
+     */
     public void exportToExcel() {
         ExportParameters exportParameters = exportForm.getExportParameters();
 
@@ -479,5 +463,10 @@ public abstract class Results<T> extends CustomComponent {
         excelExport.setRowHeaders(exportParameters.isDisplayRowHeaders());
         excelExport.excludeCollapsedColumns();
         excelExport.export();
+    }
+
+    @Override
+    public String getTypeCaption() {
+        return null;
     }
 }

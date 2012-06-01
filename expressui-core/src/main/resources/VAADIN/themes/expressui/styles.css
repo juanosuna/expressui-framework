@@ -1,0 +1,330 @@
+/*
+ * Copyright (c) 2012 Brown Bag Consulting.
+ * This file is part of the ExpressUI project.
+ * Author: Juan Osuna
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License Version 3
+ * as published by the Free Software Foundation with the addition of the
+ * following permission added to Section 15 as permitted in Section 7(a):
+ * FOR ANY PART OF THE COVERED WORK IN WHICH THE COPYRIGHT IS OWNED BY
+ * Brown Bag Consulting, Brown Bag Consulting DISCLAIMS THE WARRANTY OF
+ * NON INFRINGEMENT OF THIRD PARTY RIGHTS.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * The interactive user interfaces in modified source and object code versions
+ * of this program must display Appropriate Legal Notices, as required under
+ * Section 5 of the GNU Affero General Public License.
+ *
+ * You can be released from the requirements of the license by purchasing
+ * a commercial license. Buying such a license is mandatory as soon as you
+ * develop commercial activities involving the ExpressUI software without
+ * disclosing the source code of your own applications. These activities
+ * include: offering paid services to customers as an ASP, providing
+ * services from a web application, shipping ExpressUI with a closed
+ * source product.
+ *
+ * For more information, please contact Brown Bag Consulting at this
+ * address: juan@brownbagconsulting.com.
+ */
+
+@import "../chameleon/styles.css";
+@import "../chameleon-blue/styles.css";
+
+/* All ExpressUI components have CSS classes named after their simple Java class-names */
+
+/* General styles for Vaadin components */
+
+.v-window-outerheader {
+    background: #787878;
+}
+
+.v-window-header {
+    color: white !important;
+    text-shadow: none !important;
+}
+
+/* General table style */
+.v-table-cell-content, .v-table-header-cell {
+    border-right: none;
+    padding: 4px 7px;
+}
+
+/* Turn links white when row is selected, to make link visible when blue highlight */
+.v-table-row.v-selected .v-button-link .v-button-caption, .v-table-row-odd.v-selected .v-button-link .v-button-caption {
+    color: white;
+}
+
+/* General error styles */
+.v-textfield-error, .v-checkbox-error, .v-textarea-error, .v-richtextarea-error,
+.v-select-error .v-select-option, .v-datefield-error .v-textfield, .v-ckeditortextfield-error,
+.v-filterselect-error {
+    border: 1px red solid !important; /* red border around form fields with invalid values */
+    /*background: none !important; *//* prevents background from obscuring red border */
+}
+
+.v-form-errormessage {
+    padding-left: 2em;
+    color: red;
+}
+
+/* Draw border around read-only fields */
+.v-textfield.v-readonly {
+    border: 1px solid #bcbdbe;
+}
+
+.v-required-field-indicator {
+    visibility: collapse;
+}
+
+/* Vaadin Select styles */
+
+/* Lay the options horizontally */
+.v-select-optiongroup-horizontal .v-select-option {
+    display: inline-block;
+}
+
+/* Avoid wrapping if the layout is too tight */
+.v-select-optiongroup-horizontal {
+    white-space: nowrap;
+}
+
+/* Some extra spacing is needed */
+.v-select-optiongroup-horizontal
+  .v-select-option.v-radiobutton {
+    padding-right: 10px;
+}
+
+/* Fixes problem with Firefox 7 where icons don't show up in buttons */
+.v-ff7 .v-button-wrap {
+    overflow: visible;
+}
+
+/* Styles for ExpressUI components */
+
+/* Menu bar styles at top of main window */
+.e-main-menu-bar {
+    font-size: large;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    background-color: #414141 !important;
+    color: #b8b8b8;
+    text-shadow: none !important;
+}
+
+.e-main-menu-bar .v-menubar, .v-menubar-menuitem, .v-menubar-submenu {
+    font-size: large;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+    background-color: #414141 !important;
+    color: #b8b8b8;
+    text-shadow: none !important;
+
+    background: none;
+    border: 0 none;
+    padding: 0;
+}
+
+.e-main-menu-bar .v-menubar-menuitem-caption a {
+    text-decoration: none;
+    color: #b8b8b8;
+}
+
+.e-main-menu-bar .v-menubar-menuitem-caption a:hover {
+    text-decoration: none;
+    color: white;
+}
+
+.e-main-menu-bar .v-menubar-menuitem-selected {
+    background-color: #ecffec;
+}
+
+/* Hide the tabs, used as a hack to cache pages in tab contents, which is visible below tabcontainer */
+.e-main-page-layout .v-tabsheet-tabcontainer {
+    visibility: collapse !important;
+}
+
+/* Background for all pages */
+.e-main-page-layout .v-tabsheet-content, e-main-window, .e-search-page, .e-dashboard-page, .e-home-page,
+.e-user-owned-entity-form-page, .e-login-page {
+    background-color: #ecffec;
+}
+
+/* Dashboard padding */
+.e-dashboard-page .v-gridlayout .v-gridlayout-spacing-on {
+    padding: .5em;
+}
+
+.e-dashboard-page .v-gridlayout .v-gridlayout-margin-left {
+    padding-left: 2em;
+}
+
+.e-dashboard-page .v-gridlayout .v-gridlayout-margin-right {
+    padding-right: 2em;
+}
+
+.e-dashboard-page .v-gridlayout .v-gridlayout-margin-top {
+    padding-top: 1em;
+}
+
+.e-dashboard-page .v-gridlayout .v-gridlayout-margin-bottom {
+    padding-bottom: 1em;
+}
+
+/* Draw border around fieldsets in main window */
+.e-search-form fieldset, .e-user-owned-entity-form-page fieldset {
+    background: #f9f9f9;
+    border: thin #add8e6 solid;
+}
+
+/* background that surrounds popup form to give contrast */
+.e-entity-form-window {
+    background: #d3d3d3;
+}
+
+/* background for search/results entity select popup, matches page background */
+.e-entity-select-window {
+    background: #ecffec;
+}
+
+/* TypedForm styles */
+.e-typed-form .v-form {
+    background: #ecffec;
+}
+
+.e-typed-form-footer {
+    padding-left: 1em;
+}
+
+/* TypedForm Tab styles */
+.e-typed-form .v-tabsheet-content {
+    border: none;
+    background-color: #ecffec;
+}
+
+.e-typed-form .v-tabsheet-tabitem {
+    background-color: green;
+    color: rgb(247, 248, 249);
+    border-left: 1px solid #ecffec;
+    border-bottom: none;
+}
+
+/* When tab selected, blend with form background */
+.e-typed-form .v-tabsheet-tabitem-selected {
+    background-color: #ecffec;
+    border-color: #ecffec;
+    color: black;
+}
+
+.e-typed-form .v-tabsheet-tabitem .v-caption {
+    background: transparent url(img/grad-light-top.png) repeat-x;
+    border: none;
+    margin: 0;
+}
+
+.e-typed-form .v-tabsheet-tabitem-selected .v-caption {
+    text-shadow: none;
+}
+
+.e-typed-form .v-tabsheet-tabitemcell {
+    background-color: transparent;
+}
+
+.e-typed-form .v-tabsheet-tabitemcell-first .v-tabsheet-tabitem {
+    border-left: none;
+}
+
+/* Padding between form fields */
+.e-typed-form .v-gridlayout .v-gridlayout-spacing-on {
+    padding: .5em;
+}
+
+.e-typed-form .v-gridlayout .v-gridlayout-margin-left {
+    padding-left: 2em;
+}
+
+.e-typed-form .v-gridlayout .v-gridlayout-margin-right {
+    padding-right: 2em;
+}
+
+.e-typed-form .v-gridlayout .v-gridlayout-margin-top {
+    padding-top: 1em;
+}
+
+.e-typed-form .v-gridlayout .v-gridlayout-margin-bottom {
+    padding-bottom: 1em;
+}
+
+/* Style for asterisk before required fields */
+.e-required-field-indicator {
+    color: red;
+    padding-left: 2px;
+}
+
+/* Style for code popup window used by sample app */
+.code-popup .v-window {
+    background: #ecffec repeat scroll 0 0;
+}
+
+.code-popup .v-window-closebox {
+    background: url("img/close.png") repeat scroll 0 0;
+    height: 26px;
+    right: 8px;
+    top: 8px;
+    width: 26px;
+    z-index: 5;
+}
+
+.code-popup .v-tabsheet-tabsheetpanel > div {
+    overflow: visible !important;
+}
+
+.code-popup .v-window {
+    overflow: visible
+}
+
+.code-popup .v-window-wrap {
+    border: 3px solid #A09F91;
+    border-radius: 12px 12px 12px 12px;
+    background: none no-repeat;
+    overflow: hidden;
+}
+
+.code-popup .popupContent {
+    font-family: Courier New, Courier, monospace;
+    font-size: x-large;
+    font-weight: bold;
+    font-style: normal;
+}
+
+.code-popup .v-window-wrap2 {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-radius: 9px 9px 9px 9px;
+}
+
+.code-popup .v-window-outerheader {
+    color: #8C8B7E;
+    font-size: large;
+    max-width: 1800px;
+    padding: 10px 40px 10px 22px;
+    text-align: center;
+    white-space: normal;
+}
+
+.code-popup div.v-window-header {
+    white-space: normal;
+}
+
+.code-popup .v-window-footer {
+    height: 5px;
+}
+
+/* Hack to hide popup */
+.olLayerGooglePoweredBy.olLayerGoogleV3.gmnoprint {
+    visibility: hidden;
+}

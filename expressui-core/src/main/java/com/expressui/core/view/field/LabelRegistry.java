@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -42,7 +42,8 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 /**
- * A registry for managing UI display labels.
+ * A registry for managing UI display labels, used internally by security permissions to provide
+ * admin user with meaningful names to link permissions with entities or UI components.
  */
 @Component
 public class LabelRegistry {
@@ -153,22 +154,22 @@ public class LabelRegistry {
     }
 
     /**
-     * Register all the labels from DisplayFields.
+     * Register all the labels from FieldSet.
      *
-     * @param displayFields collection of all fields associated with a display component
+     * @param fieldSet collection of all fields associated with a display component
      */
-    public void registerLabels(DisplayFields displayFields) {
-        Collection<DisplayField> fields = displayFields.getFields();
+    public void registerLabels(FieldSet fieldSet) {
+        Collection<DisplayField> displayFields = fieldSet.getFields();
 
-        for (DisplayField field : fields) {
-            String label = displayFields.getLabel(field.getPropertyId());
+        for (DisplayField displayField : displayFields) {
+            String label = fieldSet.getLabel(displayField.getPropertyId());
             if (label == null) {
-                label = field.getPropertyId();
+                label = displayField.getPropertyId();
             } else {
                 label = label.replaceAll("<.*>.*</.*>", "");
             }
-            putFieldLabel(displayFields.getEntityType().getName(), field.getPropertyId(),
-                    field.getLabelSectionDisplayName(), label);
+            putFieldLabel(fieldSet.getType().getName(), displayField.getPropertyId(),
+                    displayField.getLabelSectionDisplayName(), label);
 
         }
     }

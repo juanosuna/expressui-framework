@@ -38,9 +38,11 @@
 package com.expressui.sample.entity;
 
 
+import com.expressui.core.entity.UserOwnedEntity;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
-import com.expressui.sample.util.validator.ValidPhone;
+import com.expressui.core.validation.ValidUrl;
+import com.expressui.sample.validator.ValidPhone;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.constraints.Email;
@@ -53,9 +55,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table
-public class Profile extends WritableEntity {
-
-    public static final String DEFAULT_PHONE_COUNTRY = "US";
+public class Profile extends WritableEntity implements UserOwnedEntity {
 
     private String firstName;
 
@@ -63,29 +63,20 @@ public class Profile extends WritableEntity {
 
     private String title;
 
-    private String company;
+    private String companyWebsite;
 
     private String email;
 
-    private boolean doNotEmail;
-
     @Embedded
-    private Phone mainPhone;
+    private Phone phone;
 
     @Enumerated(EnumType.STRING)
-    private PhoneType mainPhoneType = PhoneType.BUSINESS;
-
-    private boolean doNotCall;
+    private PhoneType phoneType;
 
     @Index(name = "IDX_PROFILE_USER")
     @ForeignKey(name = "FK_PROFILE_USER")
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.REFRESH)
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private User user;
-
-    @Index(name = "IDX_PROFILE_MAILING_ADDRESS")
-    @ForeignKey(name = "FK_PROFILE_MAILING_ADDRESS")
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Address address = new Address(AddressType.MAILING);
 
     public Profile() {
     }
@@ -138,16 +129,18 @@ public class Profile extends WritableEntity {
         this.title = title;
     }
 
+    @NotNull
     @NotBlank
-    @Size(min = 1, max = 64)
-    public String getCompany() {
-        return company;
+    @ValidUrl
+    public String getCompanyWebsite() {
+        return companyWebsite;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    public void setCompanyWebsite(String company) {
+        this.companyWebsite = company;
     }
 
+    @NotNull
     @NotBlank
     @Email
     public String getEmail() {
@@ -158,40 +151,24 @@ public class Profile extends WritableEntity {
         this.email = email;
     }
 
-    public boolean isDoNotEmail() {
-        return doNotEmail;
-    }
-
-    public void setDoNotEmail(boolean doNotEmail) {
-        this.doNotEmail = doNotEmail;
-    }
-
     @ValidPhone
-    public Phone getMainPhone() {
-        return mainPhone;
+    public Phone getPhone() {
+        return phone;
     }
 
-    public void setMainPhone(Phone mainPhone) {
-        this.mainPhone = mainPhone;
+    public void setPhone(Phone mainPhone) {
+        this.phone = mainPhone;
     }
 
-    @NotNull
-    public PhoneType getMainPhoneType() {
-        return mainPhoneType;
+    public PhoneType getPhoneType() {
+        return phoneType;
     }
 
-    public void setMainPhoneType(PhoneType mainPhoneType) {
-        this.mainPhoneType = mainPhoneType;
+    public void setPhoneType(PhoneType mainPhoneType) {
+        this.phoneType = mainPhoneType;
     }
 
-    public boolean isDoNotCall() {
-        return doNotCall;
-    }
-
-    public void setDoNotCall(boolean doNotCall) {
-        this.doNotCall = doNotCall;
-    }
-
+    @Valid
     @NotNull
     public User getUser() {
         return user;
@@ -199,18 +176,5 @@ public class Profile extends WritableEntity {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    @Valid
-    @NotNull
-    public Address getAddress() {
-        return address;
-    }
-
-    public void setAddress(Address address) {
-        if (address != null) {
-            address.setAddressType(AddressType.MAILING);
-        }
-        this.address = address;
     }
 }

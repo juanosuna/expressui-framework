@@ -40,11 +40,7 @@ package com.expressui.core.view.menu;
 import com.expressui.core.util.MethodDelegate;
 import com.vaadin.ui.MenuBar;
 
-/**
- * User: Juan
- * Date: 1/1/12
- */
-public class MethodCommand implements MenuBar.Command {
+class MethodCommand implements MenuBar.Command {
     private MethodDelegate methodDelegate;
 
     public MethodCommand(MethodDelegate methodDelegate) {

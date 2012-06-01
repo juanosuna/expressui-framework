@@ -41,11 +41,7 @@ import com.expressui.core.MainApplication;
 import com.expressui.core.view.page.Page;
 import com.vaadin.ui.MenuBar;
 
-/**
- * User: Juan
- * Date: 1/1/12
- */
-public class PageCommand implements MenuBar.Command {
+class PageCommand implements MenuBar.Command {
     private Class<? extends Page> pageClass;
 
     public PageCommand(Class<? extends Page> pageClass) {
@@ -58,6 +54,6 @@ public class PageCommand implements MenuBar.Command {
 
     @Override
     public void menuSelected(MenuBar.MenuItem selectedItem) {
-        MainApplication.getInstance().selectPage(pageClass);
+        MainApplication.getInstance().displayPage(pageClass);
     }
 }

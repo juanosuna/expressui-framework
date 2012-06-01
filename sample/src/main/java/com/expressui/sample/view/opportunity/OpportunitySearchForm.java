@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011 Brown Bag Consulting.
+ * Copyright (c) 2012 Brown Bag Consulting.
  * This file is part of the ExpressUI project.
  * Author: Juan Osuna
  *
@@ -37,7 +37,7 @@
 
 package com.expressui.sample.view.opportunity;
 
-import com.expressui.core.view.field.FormFields;
+import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.form.SearchForm;
 import com.expressui.sample.dao.query.OpportunityQuery;
 import org.springframework.context.annotation.Scope;
@@ -51,15 +51,15 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 public class OpportunitySearchForm extends SearchForm<OpportunityQuery> {
 
     @Override
-    public void configureFields(FormFields formFields) {
-        formFields.setPosition("accountName", 1, 1);
-        formFields.setPosition("salesStages", 1, 2);
+    public void init(FormFieldSet formFields) {
+        formFields.setCoordinates("accountName", 1, 1);
+        formFields.setCoordinates("salesStages", 1, 2);
 
         formFields.setMultiSelectDimensions("salesStages", 3, 10);
     }
 
     @Override
-    public String getEntityCaption() {
+    public String getTypeCaption() {
         return "Opportunity Search Form";
     }
 }
