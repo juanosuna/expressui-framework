@@ -99,7 +99,7 @@ public class CodePopup {
         Window codeWindow = new Window();
         codeWindow.addStyleName("code-popup");
         codeWindow.setPositionX(20);
-        codeWindow.setPositionY(20);
+        codeWindow.setPositionY(40);
         codeWindow.setWidth("90%");
         codeWindow.setHeight("90%");
 
@@ -175,7 +175,7 @@ public class CodePopup {
         try {
             URL url = new URL(u);
             Embedded browser = new Embedded("", new ExternalResource(url));
-            browser.setHeight(1500, Sizeable.UNITS_PIXELS);
+            browser.setHeight(10000, Sizeable.UNITS_PIXELS);
             browser.setType(Embedded.TYPE_BROWSER);
             return browser;
         } catch (MalformedURLException e) {
