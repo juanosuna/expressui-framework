@@ -35,7 +35,7 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.core.formatter;
+package com.expressui.core.view.field.format;
 
 import com.vaadin.data.util.EnhancedPropertyFormatter;
 

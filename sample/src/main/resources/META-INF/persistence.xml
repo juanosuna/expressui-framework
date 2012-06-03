@@ -48,6 +48,8 @@
         <class>com.expressui.core.entity.security.User</class>
         <class>com.expressui.core.entity.security.UserRole</class>
         <properties>
+            <property name="hibernate.ejb.naming_strategy"
+                      value="com.expressui.core.util.UpperCaseAndUnderscoresNamingStrategy"/>
             <property name="javax.persistence.validation.mode" value="auto"/>
             <property name="hibernate.archive.autodetection" value="class"/>
         </properties>

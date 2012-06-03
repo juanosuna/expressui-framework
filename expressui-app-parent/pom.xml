@@ -42,7 +42,7 @@
     <parent>
         <groupId>com.expressui</groupId>
         <artifactId>expressui-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.0-RC1-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
@@ -50,7 +50,6 @@
     <groupId>com.expressui</groupId>
     <artifactId>expressui-app-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
 
     <properties>
         <DB>prod</DB>
@@ -83,28 +82,16 @@
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>hibernate3-maven-plugin</artifactId>
                         <configuration>
-                            <components>
-                                <component>
-                                    <name>hbm2ddl</name>
-                                    <outputDirectory>src/main/sql</outputDirectory>
-                                    <implementation>jpaconfiguration</implementation>
-                                </component>
-                            </components>
-                            <componentProperties>
-                                <propertyfile>${project.basedir}/src/main/resources/database.${DB}.properties
-                                </propertyfile>
-                                <export>false</export>
-                                <drop>false</drop>
-                                <create>true</create>
-                                <update>false</update>
-                                <jdk5>true</jdk5>
-                                <ejb3>true</ejb3>
-                                <format>true</format>
-                                <namingstrategy>${hibernate.naming_strategy}</namingstrategy>
-                                <outputfilename>create-schema.${DB}.sql</outputfilename>
-                                <scan-classes>true</scan-classes>
-                                <persistenceunit>persistence-unit</persistenceunit>
-                            </componentProperties>
+                            <hibernatetool destdir="src/main/sql">
+                                <classpath>
+                                    <path location="${project.build.directory}/classes" />
+                                    <path location="${project.basedir}/src/main/resources/META-INF/" />
+                                </classpath>
+                                <jpaconfiguration persistenceunit="persistence-unit"
+                                                  propertyfile="${project.basedir}/src/main/resources/database.${DB}.properties" />
+                                <hbm2ddl export="false" drop="false" create="true" update="false"
+                                         format="true" console="true" outputfilename="create-schema.${DB}.sql"/>
+                            </hibernatetool>
                         </configuration>
                         <executions>
                             <execution>
@@ -265,7 +252,6 @@
                             </execution>
                         </executions>
                     </plugin>
-
                 </plugins>
             </build>
         </profile>
@@ -276,13 +262,11 @@
         <dependency>
             <groupId>com.expressui</groupId>
             <artifactId>expressui-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>com.expressui</groupId>
             <artifactId>expressui-domain</artifactId>
-            <version>1.0-SNAPSHOT</version>
         </dependency>
 
         <dependency>
@@ -446,9 +430,7 @@
                     </reportPlugins>
                 </configuration>
             </plugin>
-
         </plugins>
-
     </build>
 
 </project>

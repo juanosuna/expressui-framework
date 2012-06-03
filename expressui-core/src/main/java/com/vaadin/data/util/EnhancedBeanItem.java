@@ -37,7 +37,6 @@
 
 package com.vaadin.data.util;
 
-
 import java.util.Map;
 
 @SuppressWarnings("serial")

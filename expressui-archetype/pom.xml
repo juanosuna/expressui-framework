@@ -1,53 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <groupId>com.expressui</groupId>
-  <artifactId>expressui-archetype</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>maven-archetype</packaging>
+    <parent>
+        <groupId>com.expressui</groupId>
+        <artifactId>expressui-parent</artifactId>
+        <version>1.0.0-RC1-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-  <name>expressui-archetype</name>
+    <groupId>com.expressui</groupId>
+    <artifactId>expressui-archetype</artifactId>
+    <packaging>maven-archetype</packaging>
 
-  <build>
-    <extensions>
-      <extension>
-        <groupId>org.apache.maven.archetype</groupId>
-        <artifactId>archetype-packaging</artifactId>
-        <version>2.2</version>
-      </extension>
-    </extensions>
+    <name>expressui-archetype</name>
 
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <artifactId>maven-archetype-plugin</artifactId>
-          <version>2.2</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
+    <build>
+        <extensions>
+            <extension>
+                <groupId>org.apache.maven.archetype</groupId>
+                <artifactId>archetype-packaging</artifactId>
+                <version>2.2</version>
+            </extension>
+        </extensions>
 
-  <description>ExpressUI Web Application</description>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-archetype-plugin</artifactId>
+                    <version>2.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
-  <developers>
-    <developer>
-      <id>josuna</id>
-      <name>Juan Osuna</name>
-      <email>juan@brownbagconsulting.com</email>
-      <organization>Brown Bag Consulting</organization>
-      <roles>
-        <role>developer</role>
-      </roles>
-      <timezone>-5</timezone>
-    </developer>
-  </developers>
+    <description>ExpressUI Web Application</description>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>expressui-public-snapshots</id>
-      <name>ExpressUI Public Snapshots</name>
-      <url>http://repo.expressui.com/nexus/content/repositories/snapshots</url>
-    </snapshotRepository>
-  </distributionManagement>
+    <developers>
+        <developer>
+            <id>josuna</id>
+            <name>Juan Osuna</name>
+            <email>juan@brownbagconsulting.com</email>
+            <organization>Brown Bag Consulting</organization>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>-5</timezone>
+        </developer>
+    </developers>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>expressui-public-snapshots</id>
+            <name>ExpressUI Public Snapshots</name>
+            <url>http://repo.expressui.com/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 </project>

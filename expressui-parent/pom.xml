@@ -43,17 +43,17 @@
     <groupId>com.expressui</groupId>
     <artifactId>expressui-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-RC1-SNAPSHOT</version>
 
     <properties>
         <spring.version>3.1.1.RELEASE</spring.version>
-        <hibernate.version>4.1.2.Final</hibernate.version>
+        <hibernate.version>4.1.4.Final</hibernate.version>
         <hibernate.validator.version>4.3.0.Final</hibernate.validator.version>
         <hibernate.plugin.version>3.6.9.Final</hibernate.plugin.version>
         <vaadin.version>6.7.9</vaadin.version>
         <gwt.version>2.4.0</gwt.version>
-        <h2.version>1.3.166</h2.version>
-        <resteasy.version>2.3.3.Final</resteasy.version>
+        <h2.version>1.3.167</h2.version>
+        <resteasy.version>2.3.4.Final</resteasy.version>
     </properties>
 
     <distributionManagement>
@@ -81,10 +81,14 @@
     </pluginRepositories>
 
     <scm>
-        <connection>git://github.com/juanosuna/expressui-framework.git</connection>
-        <developerConnection>git@github.com:juanosuna/expressui-framework.git</developerConnection>
+        <connection>scm:git://github.com/juanosuna/expressui-framework.git</connection>
+        <developerConnection>scm:git@github.com:juanosuna/expressui-framework.git</developerConnection>
         <url>http://www.expressui.com</url>
     </scm>
+
+    <prerequisites>
+        <maven>2.2.1</maven>
+    </prerequisites>
 
     <developers>
         <developer>
@@ -101,6 +105,38 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <!--ExpressUI -->
+            <dependency>
+                <groupId>com.expressui</groupId>
+                <artifactId>expressui-app-parent</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.expressui</groupId>
+                <artifactId>expressui-archetype</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.expressui</groupId>
+                <artifactId>expressui-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.expressui</groupId>
+                <artifactId>expressui-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.expressui</groupId>
+                <artifactId>expressui-main</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.expressui</groupId>
+                <artifactId>sample</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- Spring -->
             <dependency>
@@ -153,7 +189,7 @@
             <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-jpa</artifactId>
-                <version>1.0.3.RELEASE</version>
+                <version>1.1.0.RELEASE</version>
             </dependency>
 
             <!-- Hibernate -->
@@ -317,7 +353,7 @@
             <dependency>
                 <groupId>log4j</groupId>
                 <artifactId>log4j</artifactId>
-                <version>1.2.16</version>
+                <version>1.2.17</version>
             </dependency>
 
             <dependency>
@@ -413,11 +449,6 @@
             </activation>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-release-plugin</artifactId>
-                        <version>2.3.1</version>
-                    </plugin>
                     <!-- Adds source code to deployed modules, helpful for IDE source navigation -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -454,13 +485,30 @@
         </profile>
     </profiles>
 
-
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-install-plugin</artifactId>
+                    <version>2.3.1</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.3.1</version>
+                </plugin>
+
+                <plugin>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.4.1</version>
+                    <version>2.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -487,7 +535,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>hibernate3-maven-plugin</artifactId>
-                    <version>2.2</version>
+                    <version>3.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -509,7 +557,7 @@
                 <plugin>
                     <groupId>org.mortbay.jetty</groupId>
                     <artifactId>jetty-maven-plugin</artifactId>
-                    <version>8.1.3.v20120416</version>
+                    <version>8.1.4.v20120524</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -555,7 +603,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>2.3.3</version>
+                    <version>2.4.0</version>
                 </plugin>
 
                 <plugin>
@@ -614,17 +662,32 @@
                         </lifecycleMappingMetadata>
                     </configuration>
                 </plugin>
-
             </plugins>
-
         </pluginManagement>
-
 
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <version>2.7</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-install-plugin</artifactId>
+                <version>2.3.1</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.3.1</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.4</version>
+                <version>2.5</version>
                 <configuration>
                     <source>1.6</source>
                     <target>1.6</target>
@@ -647,7 +710,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>hibernate3-maven-plugin</artifactId>
-                <version>2.2</version>
+                <version>3.0</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.hibernate</groupId>
