@@ -40,12 +40,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.expressui</groupId>
-    <artifactId>expressui-parent</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0.0-RC1-SNAPSHOT</version>
-
     <properties>
+        <expressui.version>1.0.0-RC1-SNAPSHOT</expressui.version>
         <spring.version>3.1.1.RELEASE</spring.version>
         <hibernate.version>4.1.4.Final</hibernate.version>
         <hibernate.validator.version>4.3.0.Final</hibernate.validator.version>
@@ -55,6 +51,11 @@
         <h2.version>1.3.167</h2.version>
         <resteasy.version>2.3.4.Final</resteasy.version>
     </properties>
+
+    <groupId>com.expressui</groupId>
+    <artifactId>expressui-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>${expressui.version}</version>
 
     <distributionManagement>
         <snapshotRepository>
@@ -110,32 +111,32 @@
             <dependency>
                 <groupId>com.expressui</groupId>
                 <artifactId>expressui-app-parent</artifactId>
-                <version>${project.version}</version>
+                <version>${expressui.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.expressui</groupId>
                 <artifactId>expressui-archetype</artifactId>
-                <version>${project.version}</version>
+                <version>${expressui.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.expressui</groupId>
                 <artifactId>expressui-core</artifactId>
-                <version>${project.version}</version>
+                <version>${expressui.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.expressui</groupId>
                 <artifactId>expressui-domain</artifactId>
-                <version>${project.version}</version>
+                <version>${expressui.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.expressui</groupId>
                 <artifactId>expressui-main</artifactId>
-                <version>${project.version}</version>
+                <version>${expressui.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.expressui</groupId>
                 <artifactId>sample</artifactId>
-                <version>${project.version}</version>
+                <version>${expressui.version}</version>
             </dependency>
 
             <!-- Spring -->

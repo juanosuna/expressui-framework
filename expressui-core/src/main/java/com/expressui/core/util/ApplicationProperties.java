@@ -41,6 +41,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 
 /**
  * Access to core Spring-loaded properties.
@@ -202,11 +204,29 @@ public class ApplicationProperties {
      */
     @PostConstruct
     public void postConstruct() {
-        if (!StringUtil.isEmpty(System.getProperty("http.proxyHost")) && httpProxyHost != null) {
+        if (!StringUtil.isEmpty(httpProxyHost)) {
             System.setProperty("http.proxyHost", httpProxyHost);
         }
-        if (!StringUtil.isEmpty(System.getProperty("http.proxyPort")) && httpProxyPort != null) {
+        if (!StringUtil.isEmpty(httpProxyPort)) {
             System.setProperty("http.proxyPort", httpProxyPort.toString());
+        }
+        if (!StringUtil.isEmpty(httpProxyUsername) && !StringUtil.isEmpty(httpProxyPassword)) {
+            Authenticator.setDefault(new ProxyAuthenticator(httpProxyUsername, httpProxyPassword));
+        }
+    }
+
+    public static class ProxyAuthenticator extends Authenticator {
+
+        private String user, password;
+
+        public ProxyAuthenticator(String user, String password) {
+            this.user = user;
+            this.password = password;
+        }
+
+        @Override
+        protected PasswordAuthentication getPasswordAuthentication() {
+            return new PasswordAuthentication(user, password.toCharArray());
         }
     }
 }
