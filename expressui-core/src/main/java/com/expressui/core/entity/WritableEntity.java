@@ -39,10 +39,7 @@ package com.expressui.core.entity;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.util.UUID;
 
 /**
@@ -64,11 +61,11 @@ import java.util.UUID;
  * constraints are generated in the DDL, even if these business keys are not used in equals/hashcode.
  */
 @MappedSuperclass
+@GenericGenerator(name = "sequence", strategy = "com.expressui.core.util.TableNameSequenceGenerator")
 public abstract class WritableEntity extends AuditableEntity {
 
     @Id
-    @GeneratedValue(generator = "sequence")
-    @GenericGenerator(name = "sequence", strategy = "com.expressui.core.util.TableNameSequenceGenerator")
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @Column(unique = true, nullable = false, updatable = false)

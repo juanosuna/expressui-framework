@@ -51,7 +51,8 @@ import java.util.Properties;
 public class TableNameSequenceGenerator extends SequenceGenerator {
     @Override
     public void configure(Type type, Properties params, Dialect dialect) throws MappingException {
-        if (params.getProperty(SEQUENCE) == null || params.getProperty(SEQUENCE).length() == 0) {
+        if (params.getProperty(SEQUENCE) == null || params.getProperty(SEQUENCE).length() == 0
+                && dialect.supportsSequences()) {
             String tableName = params.getProperty(PersistentIdentifierGenerator.TABLE);
             if (tableName != null) {
                 String seqName = "SEQ_" + tableName;
@@ -60,4 +61,6 @@ public class TableNameSequenceGenerator extends SequenceGenerator {
         }
         super.configure(type, params, dialect);
     }
+
+
 }

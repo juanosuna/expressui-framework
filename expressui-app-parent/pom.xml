@@ -140,7 +140,7 @@
 
                         <configuration>
                             <driver>${hibernate.connection.driver_class}</driver>
-                            <url>${hibernate.connection.url.test}</url>
+                            <url>${hibernate.connection.url.maven}</url>
                             <username>${hibernate.connection.username}</username>
                             <password>${hibernate.connection.password}</password>
                             <delimiter>;</delimiter>

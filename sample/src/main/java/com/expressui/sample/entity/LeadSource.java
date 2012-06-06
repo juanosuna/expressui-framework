@@ -42,6 +42,7 @@ import com.expressui.core.entity.ReferenceEntity;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
@@ -49,7 +50,7 @@ import static com.expressui.core.entity.ReferenceEntity.READ_ONLY_CACHE;
 
 @Entity
 @Table
-@Cache(usage = CacheConcurrencyStrategy.READ_ONLY, region = READ_ONLY_CACHE)
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = READ_ONLY_CACHE)
 public class LeadSource extends ReferenceEntity {
 
     public LeadSource() {

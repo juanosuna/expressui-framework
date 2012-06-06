@@ -141,7 +141,7 @@
 }
 
 .e-main-menu-bar .v-menubar-menuitem-selected {
-    background-color: #ecffec;
+    background-color: #e8faee;
 }
 
 /* Hide the tabs, used as a hack to cache pages in tab contents, which is visible below tabcontainer */
@@ -152,7 +152,7 @@
 /* Background for all pages */
 .e-main-page-layout .v-tabsheet-content, e-main-window, .e-search-page, .e-dashboard-page, .e-home-page,
 .e-user-owned-entity-form-page, .e-login-page {
-    background-color: #ecffec;
+    background-color: #e8faee
 }
 
 /* Dashboard padding */
@@ -189,12 +189,12 @@
 
 /* background for search/results entity select popup, matches page background */
 .e-entity-select-window {
-    background: #ecffec;
+    background: #e8faee;
 }
 
 /* TypedForm styles */
 .e-typed-form .v-form {
-    background: #ecffec;
+    background: #e8faee;
 }
 
 .e-typed-form-footer {
@@ -204,20 +204,20 @@
 /* TypedForm Tab styles */
 .e-typed-form .v-tabsheet-content {
     border: none;
-    background-color: #ecffec;
+    background-color: #e8faee;
 }
 
 .e-typed-form .v-tabsheet-tabitem {
     background-color: green;
     color: rgb(247, 248, 249);
-    border-left: 1px solid #ecffec;
+    border-left: 1px solid #e8faee;
     border-bottom: none;
 }
 
 /* When tab selected, blend with form background */
 .e-typed-form .v-tabsheet-tabitem-selected {
-    background-color: #ecffec;
-    border-color: #ecffec;
+    background-color: #e8faee;
+    border-color: #e8faee;
     color: black;
 }
 
@@ -268,7 +268,7 @@
 
 /* Style for code popup window used by sample app */
 .code-popup .v-window {
-    background: #ecffec repeat scroll 0 0;
+    background: #e8faee repeat scroll 0 0;
 }
 
 .code-popup .v-window-closebox {

@@ -222,7 +222,7 @@ public class Role extends WritableEntity {
      */
     public boolean isViewAllowed(String type) {
         return getPermission(type) == null ? allowOrDenyByDefault == AllowOrDeny.ALLOW
-                : getPermission(type).isView();
+                : getPermission(type).setViewAllowed();
     }
 
     /**
@@ -233,7 +233,7 @@ public class Role extends WritableEntity {
      */
     public boolean isEditAllowed(String type) {
         return getPermission(type) == null ? allowOrDenyByDefault == AllowOrDeny.ALLOW
-                : getPermission(type).isEdit();
+                : getPermission(type).setEditAllowed();
     }
 
     /**
@@ -244,7 +244,7 @@ public class Role extends WritableEntity {
      */
     public boolean isCreateAllowed(String type) {
         return getPermission(type) == null ? allowOrDenyByDefault == AllowOrDeny.ALLOW
-                : getPermission(type).isCreate();
+                : getPermission(type).setCreateAllowed();
     }
 
     /**
@@ -255,7 +255,7 @@ public class Role extends WritableEntity {
      */
     public boolean isDeleteAllowed(String type) {
         return getPermission(type) == null ? allowOrDenyByDefault == AllowOrDeny.ALLOW
-                : getPermission(type).isDelete();
+                : getPermission(type).setDeleteAllowed();
     }
 
     /**
@@ -267,7 +267,7 @@ public class Role extends WritableEntity {
      */
     public boolean isViewAllowed(String type, String field) {
         return getPermission(type, field) == null ?
-                isViewAllowed(type) : getPermission(type, field).isView();
+                isViewAllowed(type) : getPermission(type, field).setViewAllowed();
     }
 
     /**
@@ -279,6 +279,6 @@ public class Role extends WritableEntity {
      */
     public boolean isEditAllowed(String type, String field) {
         return getPermission(type, field) == null ?
-                isEditAllowed(type) || isCreateAllowed(type) : getPermission(type, field).isEdit();
+                isEditAllowed(type) || isCreateAllowed(type) : getPermission(type, field).setEditAllowed();
     }
 }

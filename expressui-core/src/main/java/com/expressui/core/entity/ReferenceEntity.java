@@ -37,14 +37,21 @@
 
 package com.expressui.core.entity;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+
+import javax.persistence.Cacheable;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
+
+import static com.expressui.core.entity.ReferenceEntity.READ_ONLY_CACHE;
 
 /**
  * Base class for entities that are read-only by end users.  and that represent
  * things like menu selects states or countries.
  */
 @MappedSuperclass
+@Cacheable
 public abstract class ReferenceEntity implements IdentifiableEntity, Comparable {
 
     /**

@@ -50,7 +50,7 @@
         <property name="locations">
             <list>
                 <value>classpath:database.${DB}.properties</value>
-                <value>classpath:database.test.properties</value>
+                <value>classpath:database.test.${DB}.properties</value>
                 <value>classpath:application.properties</value>
             </list>
         </property>

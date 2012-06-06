@@ -61,6 +61,7 @@ public class SampleApplication extends MainApplication {
         rootNode.addPage("Accounts", AccountPage.class);
         rootNode.addPage("Opportunities", OpportunityPage.class);
         rootNode.addPage("Contacts", ContactPage.class);
+
         MenuBarNode securityNode = rootNode.addCaption("Security");
         securityNode.addPage("Users", UserPage.class);
         securityNode.addPage("Roles", RolePage.class);

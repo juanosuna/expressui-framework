@@ -147,24 +147,24 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
             formFields.setCoordinates("field", 2, 1);
             formFields.setCoordinates("fieldLabel", 2, 2);
 
-            formFields.setCoordinates("view", 3, 1);
-            formFields.setCoordinates("edit", 3, 2);
+            formFields.setCoordinates("viewAllowed", 3, 1);
+            formFields.setCoordinates("editAllowed", 3, 2);
 
-            formFields.setCoordinates("create", 4, 1);
-            formFields.setCoordinates("delete", 4, 2);
+            formFields.setCoordinates("createAllowed", 4, 1);
+            formFields.setCoordinates("deleteAllowed", 4, 2);
 
             formFields.setField("targetType", new Select());
             formFields.addValueChangeListener("targetType", this, "targetTypeChanged");
 
             formFields.setField("field", new Select());
 
-            formFields.addValueChangeListener("view", this, "syncCRUDCheckboxes");
+            formFields.addValueChangeListener("viewAllowed", this, "syncCRUDCheckboxes");
             formFields.addValueChangeListener("field", this, "syncCRUDCheckboxes");
             formFields.addValueChangeListener("field", this, "syncIsRequiredIndicator");
         }
 
         public void syncCRUDCheckboxes(Property.ValueChangeEvent event) {
-            Field viewField = getFormFieldSet().getFormField("view").getField();
+            Field viewField = getFormFieldSet().getFormField("viewAllowed").getField();
             Boolean isViewChecked = (Boolean) viewField.getValue();
 
             Field fieldField = getFormFieldSet().getFormField("field").getField();
@@ -176,9 +176,9 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
 
             getFormFieldSet().setEnabled("field", hasProperties);
 
-            getFormFieldSet().setEnabled("create", hasProperties && isViewChecked && !isFieldSelected);
-            getFormFieldSet().setEnabled("edit", hasProperties && isViewChecked);
-            getFormFieldSet().setEnabled("delete", hasProperties && isViewChecked && !isFieldSelected);
+            getFormFieldSet().setEnabled("createAllowed", hasProperties && isViewChecked && !isFieldSelected);
+            getFormFieldSet().setEnabled("editAllowed", hasProperties && isViewChecked);
+            getFormFieldSet().setEnabled("deleteAllowed", hasProperties && isViewChecked && !isFieldSelected);
         }
 
         @Override

@@ -65,10 +65,10 @@ public class Permission extends WritableEntity {
     private String targetType;
     private String field;
 
-    private boolean view;
-    private boolean create;
-    private boolean edit;
-    private boolean delete;
+    private boolean viewAllowed;
+    private boolean createAllowed;
+    private boolean editAllowed;
+    private boolean deleteAllowed;
 
     @Index(name = "IDX_PERMISSION_ROLE")
     @ForeignKey(name = "FK_PERMISSION_ROLE")
@@ -126,8 +126,8 @@ public class Permission extends WritableEntity {
      *
      * @return true to grant view access
      */
-    public boolean isView() {
-        return view;
+    public boolean setViewAllowed() {
+        return viewAllowed;
     }
 
     /**
@@ -135,8 +135,8 @@ public class Permission extends WritableEntity {
      *
      * @param view true to grant view access
      */
-    public void setView(boolean view) {
-        this.view = view;
+    public void setViewAllowed(boolean view) {
+        this.viewAllowed = view;
     }
 
     /**
@@ -144,8 +144,8 @@ public class Permission extends WritableEntity {
      *
      * @return true to grant create access
      */
-    public boolean isCreate() {
-        return create;
+    public boolean setCreateAllowed() {
+        return createAllowed;
     }
 
     /**
@@ -153,8 +153,8 @@ public class Permission extends WritableEntity {
      *
      * @param create true to grant create access
      */
-    public void setCreate(boolean create) {
-        this.create = create;
+    public void setCreateAllowed(boolean create) {
+        this.createAllowed = create;
     }
 
     /**
@@ -162,8 +162,8 @@ public class Permission extends WritableEntity {
      *
      * @return true to grant edit access
      */
-    public boolean isEdit() {
-        return edit;
+    public boolean setEditAllowed() {
+        return editAllowed;
     }
 
     /**
@@ -171,8 +171,8 @@ public class Permission extends WritableEntity {
      *
      * @param edit true to grant edit access
      */
-    public void setEdit(boolean edit) {
-        this.edit = edit;
+    public void setEditAllowed(boolean edit) {
+        this.editAllowed = edit;
     }
 
     /**
@@ -180,8 +180,8 @@ public class Permission extends WritableEntity {
      *
      * @return true to grant delete access
      */
-    public boolean isDelete() {
-        return delete;
+    public boolean setDeleteAllowed() {
+        return deleteAllowed;
     }
 
     /**
@@ -189,8 +189,8 @@ public class Permission extends WritableEntity {
      *
      * @param delete true to grant delete access
      */
-    public void setDelete(boolean delete) {
-        this.delete = delete;
+    public void setDeleteAllowed(boolean delete) {
+        this.deleteAllowed = delete;
     }
 
     /**
@@ -200,22 +200,22 @@ public class Permission extends WritableEntity {
      */
     public String getPermissions() {
         StringBuilder permissions = new StringBuilder();
-        if (isCreate()) {
+        if (setCreateAllowed()) {
             permissions.append("Create");
         }
-        if (isView()) {
+        if (setViewAllowed()) {
             if (permissions.length() > 0) {
                 permissions.append(", ");
             }
             permissions.append("View");
         }
-        if (isEdit()) {
+        if (setEditAllowed()) {
             if (permissions.length() > 0) {
                 permissions.append(", ");
             }
             permissions.append("Edit");
         }
-        if (isDelete()) {
+        if (setDeleteAllowed()) {
             if (permissions.length() > 0) {
                 permissions.append(", ");
             }

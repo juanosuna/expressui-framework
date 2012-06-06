@@ -53,6 +53,7 @@ import com.expressui.core.view.util.MessageSource;
 import com.github.wolfie.sessionguard.SessionGuard;
 import com.vaadin.Application;
 import com.vaadin.terminal.ExternalResource;
+import com.vaadin.terminal.ThemeResource;
 import com.vaadin.terminal.gwt.server.HttpServletRequestListener;
 import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.*;
@@ -231,7 +232,8 @@ public abstract class MainApplication extends Application implements ViewBean, H
 
         Link expressUILink = new Link(uiMessageSource.getMessage("mainApplication.footerMessage"),
                 new ExternalResource(uiMessageSource.getMessage("mainApplication.footerLink")));
-//        expressUILink.setIcon(new ThemeResource("../expressui/img/expressui_logo.png"));
+        expressUILink.setTargetName("_blank");
+        expressUILink.setIcon(new ThemeResource("../expressui/favicon.png"));
         expressUILink.setSizeUndefined();
         mainLayout.addComponent(expressUILink);
         mainLayout.setComponentAlignment(expressUILink, Alignment.TOP_CENTER);

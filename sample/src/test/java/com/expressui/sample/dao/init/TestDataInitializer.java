@@ -144,19 +144,19 @@ public class TestDataInitializer {
 
         Permission permission = new Permission(LoginPage.class.getName());
         permission.setRole(role);
-        permission.setView(true);
+        permission.setViewAllowed(true);
         permissionDao.persist(permission);
 
         permission = new Permission(RegistrationPage.class.getName());
         permission.setRole(role);
-        permission.setView(true);
+        permission.setViewAllowed(true);
         permissionDao.persist(permission);
 
         permission = new Permission(Profile.class.getName());
         permission.setRole(role);
-        permission.setView(true);
-        permission.setCreate(true);
-        permission.setEdit(true);
+        permission.setViewAllowed(true);
+        permission.setCreateAllowed(true);
+        permission.setEditAllowed(true);
         permissionDao.persist(permission);
 
         role = new Role("ROLE_ADMIN");
@@ -170,31 +170,31 @@ public class TestDataInitializer {
 
         permission = new Permission(ProfilePage.class.getName());
         permission.setRole(role);
-        permission.setView(false);
+        permission.setViewAllowed(false);
         permissionDao.persist(permission);
 
         permission = new Permission(Role.class.getName());
         permission.setRole(role);
-        permission.setView(true);
-        permission.setEdit(false);
-        permission.setDelete(false);
-        permission.setCreate(false);
+        permission.setViewAllowed(true);
+        permission.setEditAllowed(false);
+        permission.setDeleteAllowed(false);
+        permission.setCreateAllowed(false);
         permissionDao.persist(permission);
 
         permission = new Permission(User.class.getName());
         permission.setRole(role);
-        permission.setView(true);
-        permission.setEdit(false);
-        permission.setDelete(false);
-        permission.setCreate(false);
+        permission.setViewAllowed(true);
+        permission.setEditAllowed(false);
+        permission.setDeleteAllowed(false);
+        permission.setCreateAllowed(false);
         permissionDao.persist(permission);
 
         permission = new Permission(Permission.class.getName());
         permission.setRole(role);
-        permission.setView(true);
-        permission.setEdit(false);
-        permission.setDelete(false);
-        permission.setCreate(false);
+        permission.setViewAllowed(true);
+        permission.setEditAllowed(false);
+        permission.setDeleteAllowed(false);
+        permission.setCreateAllowed(false);
         permissionDao.persist(permission);
 
         roleDao.flush();
