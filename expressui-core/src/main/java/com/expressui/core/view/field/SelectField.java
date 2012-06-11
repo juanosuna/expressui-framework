@@ -260,11 +260,6 @@ public class SelectField extends CustomField {
     }
 
     @Override
-    public boolean isReadOnly() {
-        return field.isReadOnly();
-    }
-
-    @Override
     public void addValidator(Validator validator) {
         field.addValidator(validator);
     }
