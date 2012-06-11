@@ -177,12 +177,15 @@ public class GenericDao {
      *
      * @param entity to save
      * @param <T>    managed instance
+     * @return merged entity if entity was merged, else same as argument
      */
-    public <T> void save(T entity) {
+    @Transactional
+    public <T> T save(T entity) {
         if (isPersistent(entity)) {
-            merge(entity);
+            return merge(entity);
         } else {
             persist(entity);
+            return entity;
         }
     }
 
@@ -205,7 +208,7 @@ public class GenericDao {
      */
     public <T> Serializable getId(T entity) {
         Serializable id = (Serializable) getEntityManager().getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(entity);
-        if (id == null) {
+        if (id == null && entity instanceof IdentifiableEntity) {
             id = ((IdentifiableEntity) entity).getId();
         }
 

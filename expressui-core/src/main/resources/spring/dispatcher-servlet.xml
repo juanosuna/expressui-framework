@@ -50,9 +50,9 @@
           p:servletClass="com.expressui.core.util.SpringApplicationServlet">
         <property name="initParameters">
             <props>
-                <prop key="application">${mainApplication}</prop>
-                <prop key="productionMode">${productionMode}</prop>
-                <prop key="widgetset">${widgetset}</prop>
+                <prop key="application">${expressui.mainApplication}</prop>
+                <prop key="productionMode">${expressui.productionMode}</prop>
+                <prop key="widgetset">${expressui.widgetset}</prop>
             </props>
         </property>
     </bean>

@@ -118,7 +118,7 @@ public class ContactForm extends EntityForm<Contact> {
         formFields.setWidth("mainPhoneType", 7, Sizeable.UNITS_EM);
         formFields.setToolTip("mainPhone", Phone.TOOL_TIP);
 
-        formFields.addConversionValidator("mainPhone", PhoneConversionValidator.class);
+        formFields.addConversionValidator("mainPhone", new PhoneConversionValidator());
         formFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
 
         formFields.clearSelectItems("mailingAddress.state");

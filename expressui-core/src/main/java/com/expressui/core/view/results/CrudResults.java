@@ -62,7 +62,7 @@ import java.util.Collection;
  *
  * @param <T> type of entity in the results
  */
-public abstract class CrudResults<T extends WritableEntity> extends Results<T> implements WalkableResults {
+public abstract class CrudResults<T> extends Results<T> implements WalkableResults {
 
     @Resource
     private ActionContextMenu actionContextMenu;

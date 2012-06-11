@@ -37,6 +37,7 @@
 
 package com.expressui.sample.formatter;
 
+import com.expressui.core.util.StringUtil;
 import com.expressui.sample.entity.Phone;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
@@ -73,6 +74,10 @@ public class PhonePropertyFormatter extends EnhancedPropertyFormatter {
 
     @Override
     public Object parse(String formattedValue) throws Exception {
-        return new Phone(formattedValue, DEFAULT_PHONE_COUNTRY);
+        if (!StringUtil.isEmpty(formattedValue)) {
+            return new Phone(formattedValue, DEFAULT_PHONE_COUNTRY);
+        } else {
+            return null;
+        }
     }
 }

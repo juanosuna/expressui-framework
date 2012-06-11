@@ -41,11 +41,13 @@ import com.vaadin.data.Property;
 
 public abstract class EnhancedPropertyFormatter extends PropertyFormatter {
     /**
-     * Hack to fix bug introduced in Vaadin 6.7.3. prevents stack overflow
+     * Hack to fix bug introduced in Vaadin 6.7.3, prevents stack overflow
      */
     @Override
     public void setPropertyDataSource(Property newDataSource) {
-        if (this != newDataSource) {
+        if (this == newDataSource) {
+            super.setPropertyDataSource(getPropertyDataSource());
+        } else {
             super.setPropertyDataSource(newDataSource);
         }
     }

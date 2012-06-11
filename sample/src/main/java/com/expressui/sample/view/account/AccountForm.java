@@ -131,7 +131,7 @@ public class AccountForm extends EntityForm<Account> {
         formFields.setLabel("assignedTo.loginName", "Assigned to");
         formFields.setLabel("mainPhone", "Phone");
 
-        formFields.addConversionValidator("mainPhone", PhoneConversionValidator.class);
+        formFields.addConversionValidator("mainPhone", new PhoneConversionValidator());
         formFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
 
         formFields.clearSelectItems("billingAddress.state");

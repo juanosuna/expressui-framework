@@ -51,6 +51,10 @@ import java.text.ParsePosition;
  */
 public class NumberConversionValidator extends AbstractConversionValidator {
 
+    public NumberConversionValidator() {
+        super();
+    }
+
     public NumberConversionValidator(FormField formField, String errorMessage) {
         super(formField, errorMessage);
     }

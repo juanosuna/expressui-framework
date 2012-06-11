@@ -276,6 +276,15 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         removeButton.setEnabled(false);
     }
 
+    protected void showAddSuccessfulMessage() {
+        Window.Notification notification = new Window.Notification(
+                uiMessageSource.getMessage("toManyRelationshipResults.added"),
+                Window.Notification.TYPE_HUMANIZED_MESSAGE);
+        notification.setDelayMsec(Window.Notification.DELAY_NONE);
+        notification.setPosition(Window.Notification.POSITION_CENTERED);
+        getMainApplication().showNotification(notification);
+    }
+
     protected void showRemoveSuccessfulMessage() {
         Window.Notification notification = new Window.Notification(
                 uiMessageSource.getMessage("toManyRelationshipResults.removed"),

@@ -48,6 +48,10 @@ import com.vaadin.data.util.PropertyFormatter;
 @SuppressWarnings("serial")
 public class PhoneConversionValidator extends AbstractConversionValidator {
 
+    public PhoneConversionValidator() {
+        super();
+    }
+
     public PhoneConversionValidator(FormField formField) {
         super(formField);
     }

@@ -52,7 +52,7 @@ import javax.annotation.Resource;
  *
  * @param <T> type that must inherit from both UserOwnedEntity and WritableEntity
  */
-public abstract class UserOwnedEntityForm<T extends WritableEntity & UserOwnedEntity> extends EntityForm<T> {
+public abstract class UserOwnedEntityForm<T extends UserOwnedEntity> extends EntityForm<T> {
 
     @Resource
     private UserDao userDao;

@@ -56,7 +56,7 @@ import java.util.Collection;
  *
  * @param <T> type of the entities in the results
  */
-public abstract class ToManyCompositionRelationshipResults<T extends WritableEntity> extends ToManyRelationshipResults<T> implements WalkableResults {
+public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRelationshipResults<T> implements WalkableResults {
 
     private Button editButton;
 

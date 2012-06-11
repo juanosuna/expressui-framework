@@ -45,7 +45,6 @@ import com.vaadin.ui.Embedded;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -55,24 +54,23 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSIO
 @Scope(SCOPE_SESSION)
 public class HomePage extends RootComponent implements Page {
 
-    @PostConstruct
     @Override
     public void postConstruct() {
         super.postConstruct();
-
-        try {
-            URL url = new URL("http://www.expressui.com");
-            Embedded browser = new Embedded("ExpressUI Home Page", new ExternalResource(url));
-            browser.setWidth(100, Sizeable.UNITS_PERCENTAGE);
-            browser.setHeight(1250, Sizeable.UNITS_PIXELS);
-            browser.setType(Embedded.TYPE_BROWSER);
-            setCompositionRoot(browser);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
     public void onDisplay() {
+        try {
+
+            URL url = new URL("http://www.expressui.com");
+            Embedded browser = new Embedded("", new ExternalResource(url));
+            browser.setType(Embedded.TYPE_BROWSER);
+            browser.setWidth(100, Sizeable.UNITS_PERCENTAGE);
+            browser.setHeight(15000, Sizeable.UNITS_PIXELS);
+            setCompositionRoot(browser);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

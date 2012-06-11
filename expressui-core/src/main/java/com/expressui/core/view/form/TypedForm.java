@@ -44,6 +44,7 @@ import com.expressui.core.view.field.format.DefaultFormats;
 import com.expressui.core.view.form.layout.FormGridLayout;
 import com.expressui.core.view.menu.LayoutContextMenu;
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.EnhancedBeanItem;
@@ -511,6 +512,25 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
             FormGridLayout formGridLayout = (FormGridLayout) form.getLayout();
             FormField formField = getFormFieldSet().findByField(field);
             formGridLayout.removeField(formField);
+        }
+
+        // Fixes bug in Vaadin where clear action does not refresh the PropertyFormatter DataSources
+        @Override
+        protected void bindPropertyToField(final Object propertyId,
+                                           final Property property, final Field field) {
+            // check if field has a property that is Viewer set. In that case we
+            // expect developer has e.g. PropertyFormatter that he wishes to use and
+            // assign the property to the Viewer instead.
+            boolean hasFilterProperty = field.getPropertyDataSource() != null
+                    && (field.getPropertyDataSource() instanceof Property.Viewer);
+            if (hasFilterProperty) {
+                ((Property.Viewer) field.getPropertyDataSource())
+                        .setPropertyDataSource(property);
+                // need to reset DataSource property to itself to trigger refresh of field's value
+                field.setPropertyDataSource(field.getPropertyDataSource());
+            } else {
+                field.setPropertyDataSource(property);
+            }
         }
     }
 }

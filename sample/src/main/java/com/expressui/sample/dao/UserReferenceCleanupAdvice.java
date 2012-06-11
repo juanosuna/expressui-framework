@@ -58,7 +58,11 @@ public class UserReferenceCleanupAdvice {
     @PersistenceContext
     private EntityManager entityManager;
 
-    @Before("execution(* com.expressui.core.dao.GenericDao.remove(Object)) && args(user)")
+    /*
+        Using bean pointcuts is a workaround for a Spring bug, which occurs when AOP is used with 3.1 in various JEE
+        servers. See https://jira.springsource.org/browse/SPR-9335
+     */
+    @Before("(bean(genericDao) || bean(userDao)) && execution(* *.remove(Object)) && args(user)")
     @Transactional
     public void remove(User user) {
         Query query = entityManager.createQuery(

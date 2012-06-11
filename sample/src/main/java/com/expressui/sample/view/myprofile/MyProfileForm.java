@@ -81,7 +81,7 @@ public class MyProfileForm<T> extends UserOwnedEntityForm<Profile> {
         formFields.setWidth("phoneType", 7, Sizeable.UNITS_EM);
         formFields.setToolTip("phone", Phone.TOOL_TIP);
 
-        formFields.addConversionValidator("phone", PhoneConversionValidator.class);
+        formFields.addConversionValidator("phone", new PhoneConversionValidator());
         formFields.setPropertyFormatter("phone", new PhonePropertyFormatter());
 
         formFields.setField("user.loginPassword", new PasswordField());

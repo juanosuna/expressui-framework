@@ -608,7 +608,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Add a conversion validator to field.
+     * Add a conversion validator to field by reflectively instantiating given class.
      *
      * @param propertyId     property id to identify field to be validated
      * @param validatorClass class of the validator that to be instantiated and set on the field
@@ -627,6 +627,17 @@ public class FormFieldSet extends FieldSet {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Add a conversion validator to field.
+     *
+     * @param propertyId property id to identify field to be validated
+     * @param validator  validator to be attached to the field
+     */
+    public void addConversionValidator(String propertyId, AbstractConversionValidator validator) {
+        validator.setFormField(getFormField(propertyId));
+        getFormField(propertyId).addValidator(validator);
     }
 
     /**

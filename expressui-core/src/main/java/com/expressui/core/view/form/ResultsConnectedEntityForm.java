@@ -56,7 +56,7 @@ import java.util.Set;
  */
 public class ResultsConnectedEntityForm<T> extends CustomComponent {
 
-    private EntityForm<? extends WritableEntity> entityForm;
+    private EntityForm<T> entityForm;
     private WalkableResults results;
 
     private Button nextButton;
@@ -64,7 +64,7 @@ public class ResultsConnectedEntityForm<T> extends CustomComponent {
 
     private Set<MethodDelegate> walkListeners = new LinkedHashSet<MethodDelegate>();
 
-    public ResultsConnectedEntityForm(EntityForm<? extends WritableEntity> entityForm, WalkableResults results) {
+    public ResultsConnectedEntityForm(EntityForm<T> entityForm, WalkableResults results) {
         this.entityForm = entityForm;
         this.results = results;
 
@@ -188,7 +188,7 @@ public class ResultsConnectedEntityForm<T> extends CustomComponent {
     /**
      * Get entity form that is connected to results
      */
-    public EntityForm<? extends WritableEntity> getEntityForm() {
+    public EntityForm<T> getEntityForm() {
         return entityForm;
     }
 

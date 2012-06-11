@@ -68,7 +68,11 @@ public class UserQueryGuestRestrictionAdvice {
     @Resource
     private SecurityService securityService;
 
-    @Before("execution(* com.expressui.core.dao.security.query.UserQuery.execute())")
+    /*
+        Using bean pointcuts is a workaround for a Spring bug, which occurs when AOP is used with 3.1 in various JEE
+        servers. See https://jira.springsource.org/browse/SPR-9335
+     */
+    @Before("bean(userQuery) && execution(* *.execute(..))")
     public void restrictUserQuery(JoinPoint joinPoint) {
         if (securityService.getCurrentUser().hasRole("ROLE_GUEST")) {
             UserQuery userQuery = (UserQuery) joinPoint.getThis();
@@ -77,7 +81,11 @@ public class UserQueryGuestRestrictionAdvice {
         }
     }
 
-    @Before("execution(* com.expressui.core.dao.security.query.RelatedUsersQuery.execute())")
+    /*
+        Using bean pointcuts is a workaround for a Spring bug, which occurs when AOP is used with 3.1 in various JEE
+        servers. See https://jira.springsource.org/browse/SPR-9335
+     */
+    @Before("bean(relatedUsersQuery) && execution(* *.execute(..))")
     public void restrictRelatedUsersQuery(JoinPoint joinPoint) {
         if (securityService.getCurrentUser().hasRole("ROLE_GUEST")) {
             RelatedUsersQuery userQuery = (RelatedUsersQuery) joinPoint.getThis();

@@ -37,18 +37,40 @@
 
 package com.expressui.core.util;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 /**
- * Sets any default system properties that have not been already set elsewhere.
- * Sets DB to "dev" so that development database is used by default.
+ * Initializes the "DB" system property, which is needed to read database.${DB}.properties file.
+ * If DB system property is already set, then does nothing.
+ * If it is not set, it tries to read it from /application.properties.
+ * If it is not set in /application.properties, then sets it to default "prod".
  */
-public class DefaultSystemProperties {
+public class DBPropertyInitializer {
 
     /**
-     * Initialize any default system properties.
+     * Initialize "DB" system properties.
      */
     public void initialize() {
         if (System.getProperty("DB") == null) {
-            System.setProperty("DB", "dev");
+            String db = null;
+            Properties properties = new Properties() ;
+            try {
+                InputStream inputStream = getClass().getResourceAsStream("/application.properties");
+                if (inputStream != null) {
+                    properties.load(inputStream);
+                    db = (String) properties.get("DB");
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+
+            if (db == null) {
+                System.setProperty("DB", "prod");
+            } else {
+                System.setProperty("DB", db);
+            }
         }
     }
 }

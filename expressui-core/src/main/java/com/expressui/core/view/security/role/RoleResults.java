@@ -85,9 +85,4 @@ public class RoleResults extends CrudResults<Role> {
 
         resultsFields.setLabel("allowOrDenyByDefault", "Default Allow/Deny");
     }
-
-    @Override
-    public void configureTable(ResultsTable resultsTable) {
-        resultsTable.setWidth(61, Sizeable.UNITS_EM);
-    }
 }

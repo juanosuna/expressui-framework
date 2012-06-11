@@ -51,7 +51,7 @@ import javax.annotation.PostConstruct;
  *
  * @param <T> type of entity for this page
  */
-public abstract class UserOwnedEntityFormPage<T extends WritableEntity & UserOwnedEntity> extends TypedComponent<T> implements Page {
+public abstract class UserOwnedEntityFormPage<T extends UserOwnedEntity> extends TypedComponent<T> implements Page {
 
     @PostConstruct
     @Override

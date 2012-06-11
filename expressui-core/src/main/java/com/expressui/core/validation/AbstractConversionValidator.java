@@ -57,7 +57,7 @@ public abstract class AbstractConversionValidator implements Validator {
      * @param formField    form field that this conversion validator is bound to
      * @param errorMessage error message to display to user if validation fails
      */
-    public AbstractConversionValidator(FormField formField, String errorMessage) {
+    protected AbstractConversionValidator(FormField formField, String errorMessage) {
         this.formField = formField;
         this.errorMessage = errorMessage;
     }
@@ -71,6 +71,9 @@ public abstract class AbstractConversionValidator implements Validator {
         this.formField = formField;
     }
 
+    protected AbstractConversionValidator() {
+    }
+
     /**
      * Get error message that is displayed to user if validation were to fail. If error message is null, then this
      * class uses the message contained in any validation exception.
@@ -82,12 +85,29 @@ public abstract class AbstractConversionValidator implements Validator {
     }
 
     /**
+     * Set error message that is displayed to user if validation were to fail. If error message is null, then this
+     * class uses the message contained in any validation exception.
+     * @param errorMessage error message
+     */
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
+
+    /**
      * Get form field that this validator is bound to
      *
      * @return form field
      */
     public FormField getFormField() {
         return formField;
+    }
+
+    /**
+     *  Set form field that this validator is bound to.
+     * @param formField form field
+     */
+    public void setFormField(FormField formField) {
+        this.formField = formField;
     }
 
     /**

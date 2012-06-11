@@ -82,9 +82,4 @@ public class UserResults extends CrudResults<User> {
                 "modifiedBy"
         );
     }
-
-    @Override
-    public void configureTable(ResultsTable resultsTable) {
-        resultsTable.setWidth(61, Sizeable.UNITS_EM);
-    }
 }

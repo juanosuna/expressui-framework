@@ -15,12 +15,19 @@
         <!--<class>com.expressui.core.entity.security.Role</class>-->
         <!--<class>com.expressui.core.entity.security.UserRole</class>-->
         <!--<class>com.expressui.core.entity.security.Permission</class>-->
+
         <properties>
+            <!-- Tells JBoss not to manage JPA and let Spring take over; ignored by other app servers -->
+            <property name="jboss.as.jpa.managed" value="false"/>
+
+            <!-- Required by hibernate3-maven-plugin, which has a bug and ignores this in database properties file -->
             <property name="hibernate.ejb.naming_strategy"
                       value="com.expressui.core.util.UpperCaseAndUnderscoresNamingStrategy"/>
+
             <property name="javax.persistence.validation.mode" value="auto"/>
             <property name="hibernate.archive.autodetection" value="class"/>
         </properties>
+
     </persistence-unit>
 
 </persistence>

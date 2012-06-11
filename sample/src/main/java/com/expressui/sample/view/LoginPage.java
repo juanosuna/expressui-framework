@@ -42,10 +42,7 @@ import com.expressui.core.view.RootComponent;
 import com.expressui.core.view.menu.MainMenuBar;
 import com.expressui.core.view.page.Page;
 import com.expressui.sample.view.dashboard.SampleDashboardPage;
-import com.vaadin.ui.Alignment;
-import com.vaadin.ui.LoginForm;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.Window;
+import com.vaadin.ui.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -84,6 +81,7 @@ public class LoginPage extends RootComponent implements Page {
         panel.addStyleName("border");
         panel.setSizeUndefined();
         panel.addComponent(loginForm);
+        panel.addComponent(new Label("Tip: you may login as guest/guest!"));
 
         addComponent(panel);
         setComponentAlignment(panel, Alignment.MIDDLE_CENTER);

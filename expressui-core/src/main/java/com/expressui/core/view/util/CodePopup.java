@@ -175,7 +175,7 @@ public class CodePopup {
         try {
             URL url = new URL(u);
             Embedded browser = new Embedded("", new ExternalResource(url));
-            browser.setHeight(10000, Sizeable.UNITS_PIXELS);
+            browser.setHeight(15000, Sizeable.UNITS_PIXELS);
             browser.setType(Embedded.TYPE_BROWSER);
             return browser;
         } catch (MalformedURLException e) {

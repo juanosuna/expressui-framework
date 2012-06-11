@@ -126,7 +126,7 @@ public class Permission extends WritableEntity {
      *
      * @return true to grant view access
      */
-    public boolean setViewAllowed() {
+    public boolean isViewAllowed() {
         return viewAllowed;
     }
 
@@ -144,7 +144,7 @@ public class Permission extends WritableEntity {
      *
      * @return true to grant create access
      */
-    public boolean setCreateAllowed() {
+    public boolean isCreateAllowed() {
         return createAllowed;
     }
 
@@ -162,7 +162,7 @@ public class Permission extends WritableEntity {
      *
      * @return true to grant edit access
      */
-    public boolean setEditAllowed() {
+    public boolean isEditAllowed() {
         return editAllowed;
     }
 
@@ -180,7 +180,7 @@ public class Permission extends WritableEntity {
      *
      * @return true to grant delete access
      */
-    public boolean setDeleteAllowed() {
+    public boolean isDeleteAllowed() {
         return deleteAllowed;
     }
 
@@ -200,22 +200,22 @@ public class Permission extends WritableEntity {
      */
     public String getPermissions() {
         StringBuilder permissions = new StringBuilder();
-        if (setCreateAllowed()) {
+        if (isCreateAllowed()) {
             permissions.append("Create");
         }
-        if (setViewAllowed()) {
+        if (isViewAllowed()) {
             if (permissions.length() > 0) {
                 permissions.append(", ");
             }
             permissions.append("View");
         }
-        if (setEditAllowed()) {
+        if (isEditAllowed()) {
             if (permissions.length() > 0) {
                 permissions.append(", ");
             }
             permissions.append("Edit");
         }
-        if (setDeleteAllowed()) {
+        if (isDeleteAllowed()) {
             if (permissions.length() > 0) {
                 permissions.append(", ");
             }

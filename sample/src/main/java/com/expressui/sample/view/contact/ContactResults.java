@@ -75,7 +75,6 @@ public class ContactResults extends CrudResults<Contact> {
 
     @Override
     public void init(ResultsFieldSet resultsFields) {
-
         resultsFields.setPropertyIds(
                 "firstName",
                 "lastName",

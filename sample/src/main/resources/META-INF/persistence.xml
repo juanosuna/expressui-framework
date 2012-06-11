@@ -38,18 +38,26 @@
 
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
-             version="1.0">
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
 
     <persistence-unit name="persistence-unit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
+
+        <!-- Required so that hibernate3-maven-plugin (which doesn't use Spring) generates DDL for these classes -->
         <class>com.expressui.core.entity.security.Permission</class>
         <class>com.expressui.core.entity.security.Role</class>
         <class>com.expressui.core.entity.security.User</class>
         <class>com.expressui.core.entity.security.UserRole</class>
+
         <properties>
+            <!-- Tells JBoss not to manage JPA and let Spring take over; ignored by other app servers -->
+            <property name="jboss.as.jpa.managed" value="false"/>
+
+            <!-- Required by hibernate3-maven-plugin, which has a bug and ignores this in database properties file -->
             <property name="hibernate.ejb.naming_strategy"
                       value="com.expressui.core.util.UpperCaseAndUnderscoresNamingStrategy"/>
+
             <property name="javax.persistence.validation.mode" value="auto"/>
             <property name="hibernate.archive.autodetection" value="class"/>
         </properties>

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
   ~ Copyright (c) 2012 Brown Bag Consulting.
   ~ This file is part of the ExpressUI project.
@@ -36,24 +35,11 @@
   ~ address: juan@brownbagconsulting.com.
   -->
 
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans
-           http://www.springframework.org/schema/beans/spring-beans-3.1.xsd">
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.0">
+    <deployment>
+        <exclusions>
+            <module name="org.hibernate"/>
+        </exclusions>
+    </deployment>
+</jboss-deployment-structure>
 
-    <bean id="dbPropertyInitializer" class="com.expressui.core.util.DBPropertyInitializer"
-          init-method="initialize"/>
-
-    <bean id="propertiesConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
-          depends-on="dbPropertyInitializer">
-        <property name="ignoreResourceNotFound" value="true"/>
-        <property name="locations">
-            <list>
-                <value>classpath:database.${DB}.properties</value>
-                <value>classpath:database.test.${DB}.properties</value>
-                <value>classpath:application.properties</value>
-            </list>
-        </property>
-    </bean>
-
-</beans>

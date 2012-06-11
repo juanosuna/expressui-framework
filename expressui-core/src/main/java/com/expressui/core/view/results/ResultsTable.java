@@ -278,7 +278,7 @@ public class ResultsTable extends Table {
         public void buttonClick(Button.ClickEvent event) {
             Object parentBean = item.getBean();
             try {
-                WritableEntity propertyBean = (WritableEntity) PropertyUtils.getProperty(parentBean,
+                Object propertyBean = PropertyUtils.getProperty(parentBean,
                         formLink.getPropertyId());
                 EntityForm entityForm = formLink.getEntityForm();
                 entityForm.addCancelListener(results, "search");

@@ -37,7 +37,6 @@
 
 package com.expressui.core.view.form;
 
-import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.util.MethodDelegate;
 import com.expressui.core.validation.AssertTrueForProperties;
@@ -66,7 +65,7 @@ import java.util.*;
  *
  * @param <T> type of entity
  */
-public abstract class EntityForm<T extends WritableEntity> extends TypedForm<T> {
+public abstract class EntityForm<T> extends TypedForm<T> {
 
     @Resource
     private Validation validation;
@@ -355,7 +354,7 @@ public abstract class EntityForm<T extends WritableEntity> extends TypedForm<T> 
      * @param selectFirstTab true to select the first tab, once the entity is loaded
      */
     public void load(T entity, boolean selectFirstTab) {
-        T loadedEntity = (T) genericDao.find(getType(), entity.getId());
+        T loadedEntity = genericDao.find(getType(), genericDao.getId(entity));
         postLoad(loadedEntity);
         BeanItem beanItem = createBeanItem(loadedEntity);
         setItemDataSource(beanItem, getFormFieldSet().getPropertyIds());
@@ -581,7 +580,7 @@ public abstract class EntityForm<T extends WritableEntity> extends TypedForm<T> 
             clear();
         } else {
             T entity = (T) beanItem.getBean();
-            if (entity.getId() == null) {
+            if (genericDao.getId(entity) == null) {
                 create();
             } else {
                 load(entity);
@@ -621,7 +620,7 @@ public abstract class EntityForm<T extends WritableEntity> extends TypedForm<T> 
             preSave(getEntity());
 
             T entity = getEntity();
-            if (entity.getId() != null) {
+            if (genericDao.getId(entity) != null) {
                 T mergedEntity;
                 if (getEntityDao() == null) {
                     mergedEntity = genericDao.merge(entity);
@@ -695,7 +694,7 @@ public abstract class EntityForm<T extends WritableEntity> extends TypedForm<T> 
             createImpl();
         } else {
             T entity = (T) beanItem.getBean();
-            if (entity.getId() == null) {
+            if (genericDao.getId(entity) == null) {
                 createImpl();
             } else {
                 getForm().discard();
@@ -717,11 +716,11 @@ public abstract class EntityForm<T extends WritableEntity> extends TypedForm<T> 
      * @return true if no validation errors were found
      */
     public boolean validate(boolean clearConversionErrors) {
-        WritableEntity entity = getEntity();
+        Object entity = getEntity();
 
         clearAllErrors(clearConversionErrors);
 
-        Set<ConstraintViolation<WritableEntity>> constraintViolations = validation.validate(entity);
+        Set<ConstraintViolation<Object>> constraintViolations = validation.validate(entity);
         for (ConstraintViolation constraintViolation : constraintViolations) {
             String propertyPath = constraintViolation.getPropertyPath().toString();
 

@@ -83,5 +83,6 @@ public abstract class ToManyAggregationRelationshipResults<T> extends ToManyRela
         getEntitySelect().close();
         Collection<T> selectedValues = getEntitySelect().getResults().getSelectedValues();
         setReferencesToParentAndPersist((T[]) selectedValues.toArray());
+        showAddSuccessfulMessage();
     }
 }

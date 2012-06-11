@@ -62,22 +62,22 @@ public class ApplicationProperties {
     @Value("${http.proxyPassword:}")
     private String httpProxyPassword;
 
-    @Value("${restartApplicationUrl}")
+    @Value("${expressui.restartApplicationUrl}")
     private String restartApplicationUrl;
 
-    @Value("${codePopupEnabled:false}")
+    @Value("${expressui.codePopupEnabled:false}")
     private boolean codePopupEnabled = false;
 
-    @Value("${baseCodeUrl:}")
+    @Value("${expressui.baseCodeUrl:}")
     private String baseCodeUrl;
 
-    @Value("${baseDocUrl:}")
+    @Value("${expressui.baseDocUrl:}")
     private String baseDocUrl;
 
-    @Value("${sessionTimeout:30}")
+    @Value("${expressui.sessionTimeout:30}")
     private Integer sessionTimeout = 30;
 
-    @Value("${sessionTimeoutWarning:5}")
+    @Value("${expressui.sessionTimeoutWarning:5}")
     private Integer sessionTimeoutWarning = 5;
 
     /**

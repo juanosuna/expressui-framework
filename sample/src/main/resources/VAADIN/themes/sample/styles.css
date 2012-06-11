@@ -48,3 +48,7 @@
 .e-login-page .v-panel-caption {
     text-align: center;
 }
+
+.v-app-loginpage .v-textfield {
+    margin-bottom: 10px;
+}

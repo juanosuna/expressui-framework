@@ -284,7 +284,9 @@
         <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
-            <scope>provided</scope>
+            <!-- Could be provided but commented out here to avoid numerous warnings with
+                stacktraces running under JBoss -->
+            <!--<scope>provided</scope>-->
         </dependency>
 
         <!-- Testing Dependencies -->

@@ -189,9 +189,10 @@ public abstract class EntityDao<T, ID extends Serializable> {
      * Save a given entity, i.e. persist if new and merge if already persistent
      *
      * @param entity to save
+     * @return merged entity if entity was merged, else same as argument
      */
-    public <T> void save(T entity) {
-        genericDao.save(entity);
+    public <T> T save(T entity) {
+        return genericDao.save(entity);
     }
 
     /**

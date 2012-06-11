@@ -50,7 +50,7 @@ import java.io.Serializable;
  * @param <T> type of related entity
  * @param <A> type of association entity that links the two sides of the relationship
  */
-public abstract class ManyToManyRelationshipResults<T, A extends IdentifiableEntity> extends ToManyAggregationRelationshipResults<T> {
+public abstract class ManyToManyRelationshipResults<T, A> extends ToManyAggregationRelationshipResults<T> {
 
     /**
      * Get the DAO for accessing entities of the association type.

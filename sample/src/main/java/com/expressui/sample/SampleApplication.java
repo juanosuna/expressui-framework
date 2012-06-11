@@ -94,7 +94,7 @@ public class SampleApplication extends MainApplication {
         displayPage(LoginPage.class);
         mainMenuBar.refresh();
 
-        checkInternetConnectivity("http://www.google.com",
+        checkInternetConnectivity("http://www.expressui.com/?page_id=507&tag=demo",
                 "The sample application requires an Internet connection.</br>If it is running behind a proxy," +
                         " please configure http.proxyHost and http.proxyPort in application.properties.");
     }

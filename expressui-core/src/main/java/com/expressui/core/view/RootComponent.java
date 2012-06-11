@@ -143,6 +143,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
 
     @Override
     public void addComponent(Component c) {
+        Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
         ((ComponentContainer) getCompositionRoot()).addComponent(c);
     }
 
@@ -153,6 +154,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
      * @param alignment      alignment
      */
     public void setComponentAlignment(Component childComponent, Alignment alignment) {
+        Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
         Assert.PROGRAMMING.isTrue(getCompositionRoot() instanceof AbstractOrderedLayout,
                 "RootComponent.setComponentAlignment may only be called if using HorizontalLayout or VerticalLayout");
         ((AbstractOrderedLayout) getCompositionRoot()).setComponentAlignment(childComponent, alignment);
@@ -162,6 +164,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
      * Remove all child components.
      */
     public void removeAllComponents() {
+        Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
         ((AbstractComponentContainer) getCompositionRoot()).removeAllComponents();
     }
 
@@ -191,6 +194,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
      * Set width of this component to 100%.
      */
     public void setWidthSizeFull() {
+        Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
         setWidth(100, Sizeable.UNITS_PERCENTAGE);
         getCompositionRoot().setWidth(100, Sizeable.UNITS_PERCENTAGE);
     }
@@ -199,6 +203,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
      * Set height of this component to 100%.
      */
     public void setHeightSizeFull() {
+        Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
         setHeight(100, Sizeable.UNITS_PERCENTAGE);
         getCompositionRoot().setHeight(100, Sizeable.UNITS_PERCENTAGE);
     }
@@ -207,6 +212,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
      * Set both width and height of this component to 100%.
      */
     public void setSizeFull() {
+        Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
         super.setSizeFull();
         getCompositionRoot().setSizeFull();
     }
@@ -215,6 +221,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
      * Set width size to undefined.
      */
     public void setWidthUndefined() {
+        Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
         setWidth(-1, UNITS_PIXELS);
         getCompositionRoot().setWidth(-1, UNITS_PIXELS);
     }
@@ -223,6 +230,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
      * Set height size to undefined.
      */
     public void setHeightUndefined() {
+        Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
         setHeight(-1, UNITS_PIXELS);
         getCompositionRoot().setHeight(-1, UNITS_PIXELS);
     }
@@ -231,6 +239,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
      * Set size to undefined.
      */
     public void setSizeUndefined() {
+        Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
         super.setSizeUndefined();
         getCompositionRoot().setSizeUndefined();
     }

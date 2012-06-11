@@ -126,6 +126,7 @@ public class BeanPropertyType {
     private void initAnnotations() {
         PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(containerType, id);
         Method method = descriptor.getReadMethod();
+        Assert.PROGRAMMING.notNull(method);
         Annotation[] readMethodAnnotations = method.getAnnotations();
         Collections.addAll(annotations, readMethodAnnotations);
 
