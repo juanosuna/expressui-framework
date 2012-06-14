@@ -43,6 +43,7 @@ package com.expressui.core.security.exception;
  */
 public class AccountDisabledException extends AuthenticationException {
     public AccountDisabledException() {
+        this("Account has been disabled");
     }
 
     public AccountDisabledException(String message) {

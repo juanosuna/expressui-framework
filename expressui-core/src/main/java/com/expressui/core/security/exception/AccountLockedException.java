@@ -43,6 +43,7 @@ package com.expressui.core.security.exception;
  */
 public class AccountLockedException extends AuthenticationException {
     public AccountLockedException() {
+        this("Account has been locked");
     }
 
     public AccountLockedException(String message) {

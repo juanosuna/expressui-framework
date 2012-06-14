@@ -43,6 +43,7 @@ package com.expressui.core.security.exception;
  */
 public class AuthenticationException extends Exception {
     public AuthenticationException() {
+        this("Authentication failed");
     }
 
     public AuthenticationException(String message) {

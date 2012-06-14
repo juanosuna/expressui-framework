@@ -43,6 +43,7 @@ package com.expressui.core.security.exception;
  */
 public class LoginNameNotFoundException extends AuthenticationException {
     public LoginNameNotFoundException() {
+        this("Invalid login name");
     }
 
     public LoginNameNotFoundException(String message) {

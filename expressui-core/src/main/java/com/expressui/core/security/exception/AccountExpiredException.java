@@ -43,6 +43,7 @@ package com.expressui.core.security.exception;
  */
 public class AccountExpiredException extends AuthenticationException {
     public AccountExpiredException() {
+        this("Account expired");
     }
 
     public AccountExpiredException(String message) {

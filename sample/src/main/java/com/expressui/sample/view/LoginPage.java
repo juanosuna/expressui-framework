@@ -77,9 +77,9 @@ public class LoginPage extends RootComponent implements Page {
 
         Panel panel = new Panel();
         panel.addStyleName("loginPage");
-        panel.setCaption("Login");
         panel.addStyleName("border");
         panel.setSizeUndefined();
+        panel.setCaption("Login");
         panel.addComponent(loginForm);
         panel.addComponent(new Label("Tip: you may login as guest/guest!"));
 
@@ -99,11 +99,11 @@ public class LoginPage extends RootComponent implements Page {
             try {
                 securityService.login(userName, password);
 
-                getMainApplication().setCodePopupEnabled(true);
-
                 // Once logged in, hide Login and Registration pages
                 mainMenuBar.getRightMenuBarRoot().getChild("Login").setVisible(false);
                 mainMenuBar.getRightMenuBarRoot().getChild("Register").setVisible(false);
+
+                // Embed login name next to My Account caption
                 mainMenuBar.getRightMenuBarRoot().getChild("My Account").setCaption("My Account ("
                         + securityService.getCurrentUser().getLoginName() + ")");
 
@@ -114,30 +114,9 @@ public class LoginPage extends RootComponent implements Page {
 
             } catch (AuthenticationException e) {
                 // Show error notification when user enters bad credentials or account is locked, etc.
-                Window.Notification notification = new Window.Notification(convertAuthenticationExceptionToMessage(e),
-                        Window.Notification.TYPE_ERROR_MESSAGE);
-                notification.setPosition(Window.Notification.POSITION_CENTERED_BOTTOM);
-                notification.setDelayMsec(2000);
-                getMainApplication().showNotification(notification);
+                getMainApplication().showNotification(e.getMessage(), Window.Notification.TYPE_ERROR_MESSAGE,
+                        Window.Notification.POSITION_CENTERED_BOTTOM, 2000);
             }
-        }
-    }
-
-    private String convertAuthenticationExceptionToMessage(AuthenticationException e) {
-        if (e instanceof IncorrectCredentialsException || e instanceof LoginNameNotFoundException) {
-            return "Invalid username or password";
-        } else if (e instanceof AccountExpiredException) {
-            return "Account expired";
-        } else if (e instanceof CredentialsExpiredException) {
-            return "Credentials expired";
-        } else if (e instanceof AccountExpiredException) {
-            return "Account has expired";
-        } else if (e instanceof AccountLockedException) {
-            return "Account has been locked";
-        } else if (e instanceof AccountDisabledException) {
-            return "Account has been disabled";
-        } else {
-            return "Authentication failed";
         }
     }
 }

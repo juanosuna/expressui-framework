@@ -43,6 +43,7 @@ package com.expressui.core.security.exception;
  */
 public class CredentialsExpiredException extends AuthenticationException {
     public CredentialsExpiredException() {
+        this("Credentials expired");
     }
 
     public CredentialsExpiredException(String message) {

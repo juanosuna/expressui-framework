@@ -43,7 +43,7 @@
         <groupId>com.expressui</groupId>
         <artifactId>expressui-parent</artifactId>
         <version>1.0.0-RC1-SNAPSHOT</version>
-        <relativePath/>
+        <relativePath>../expressui-parent/pom.xml</relativePath>
     </parent>
 
     <description>ExpressUI Core Framework</description>

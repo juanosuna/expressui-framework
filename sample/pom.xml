@@ -61,7 +61,7 @@
         <groupId>com.expressui</groupId>
         <artifactId>expressui-app-parent</artifactId>
         <version>1.0.0-RC1-SNAPSHOT</version>
-        <relativePath/>
+        <relativePath>../expressui-app-parent/pom.xml</relativePath>
     </parent>
 
     <description>ExpressUI Sample Web Application</description>

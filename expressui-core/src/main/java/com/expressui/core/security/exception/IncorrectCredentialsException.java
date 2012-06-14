@@ -43,6 +43,7 @@ package com.expressui.core.security.exception;
  */
 public class IncorrectCredentialsException extends AuthenticationException {
     public IncorrectCredentialsException() {
+        this("Invalid password");
     }
 
     public IncorrectCredentialsException(String message) {

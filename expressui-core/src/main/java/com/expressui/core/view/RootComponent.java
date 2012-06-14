@@ -291,6 +291,6 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
      * @return true if code popups should be displayed
      */
     public boolean isCodePopupEnabled() {
-        return applicationProperties.isCodePopupEnabled() && getMainApplication().isCodePopupEnabled();
+        return applicationProperties.isCodePopupEnabled();
     }
 }

@@ -450,6 +450,21 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
+     * Show notification to user, more customizable that other show* methods.
+     *
+     * @param caption the message to show
+     * @param type type of message
+     * @param position desired notification position
+     * @param delayMsec desired delay in msec, -1 to require the user to click the message
+     */
+    public void showNotification(String caption, int type, int position, int delayMsec) {
+        Window.Notification notification = new Window.Notification(caption, type);
+        notification.setPosition(position);
+        notification.setDelayMsec(delayMsec);
+        getMainWindow().showNotification(notification);
+    }
+
+    /**
      * Show a yes/no confirmation dialog box.
      *
      * @param listener listener to capture whether user chooses yes or no
@@ -518,24 +533,6 @@ public abstract class MainApplication extends Application implements ViewBean, H
         WebApplicationContext context = (WebApplicationContext) getContext();
         HttpSession httpSession = context.getHttpSession();
         httpSession.invalidate();
-    }
-
-    /**
-     * Ask if code popups are enabled, useful for demo apps only.
-     *
-     * @return true if code popups are enabled
-     */
-    public boolean isCodePopupEnabled() {
-        return codePopupEnabled;
-    }
-
-    /**
-     * Set if code popups are enabled.
-     *
-     * @param codePopupEnabled true if code popups are enabled
-     */
-    public void setCodePopupEnabled(boolean codePopupEnabled) {
-        this.codePopupEnabled = codePopupEnabled;
     }
 
     /**
