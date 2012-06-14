@@ -61,11 +61,10 @@ public abstract class UserOwnedEntityForm<T extends UserOwnedEntity> extends Ent
     public void postCreate(T entity) {
         super.postCreate(entity);
 
-        User user = securityService.getCurrentUser();
+        User user = securityService.refreshCurrentUser();
         if (entity.getUser() == null) {
             entity.setUser(user);
         }
-
     }
 
     /**

@@ -39,12 +39,14 @@ package com.expressui.sample.view.profile;
 
 import com.expressui.core.dao.security.UserDao;
 import com.expressui.core.entity.security.User;
+import com.expressui.core.util.StringUtil;
 import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.security.select.UserSelect;
 import com.expressui.sample.entity.Profile;
 import com.expressui.sample.view.myprofile.MyProfileForm;
+import com.vaadin.data.Property;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -73,6 +75,16 @@ public class ProfileForm<T> extends EntityForm<Profile> {
 
         SelectField selectField = new SelectField(this, "user", userSelect);
         formFields.setField("user.loginName", selectField);
+        formFields.addValueChangeListener("user.loginName", this, "userChanged");
+
+        getFormFieldSet().setEnabled("user.loginPassword", false);
+        getFormFieldSet().setEnabled("user.repeatLoginPassword", false);
+    }
+
+    public void userChanged(Property.ValueChangeEvent event) {
+        Object value = event.getProperty().getValue();
+        getFormFieldSet().setEnabled("user.loginPassword", !StringUtil.isEmpty(value));
+        getFormFieldSet().setEnabled("user.repeatLoginPassword", !StringUtil.isEmpty(value));
     }
 
     @Override

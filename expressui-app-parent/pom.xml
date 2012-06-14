@@ -47,7 +47,6 @@
     </parent>
 
     <description>ExpressUI Web Application Parent</description>
-    <groupId>com.expressui</groupId>
     <artifactId>expressui-app-parent</artifactId>
     <packaging>pom</packaging>
 

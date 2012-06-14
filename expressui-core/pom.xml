@@ -47,7 +47,6 @@
     </parent>
 
     <description>ExpressUI Core Framework</description>
-    <groupId>com.expressui</groupId>
     <artifactId>expressui-core</artifactId>
     <packaging>jar</packaging>
 

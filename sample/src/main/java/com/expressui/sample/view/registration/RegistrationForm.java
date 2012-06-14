@@ -152,7 +152,7 @@ public class RegistrationForm extends MyProfileForm<Profile> {
         @Override
         public boolean isValid(Object value) {
             if (!StringUtil.isEmpty(value)) {
-                User user = userDao.findByNaturalId("loginName", value);
+                User user = userDao.findByLoginName((String) value);
                 return user == null;
             } else {
                 return true;

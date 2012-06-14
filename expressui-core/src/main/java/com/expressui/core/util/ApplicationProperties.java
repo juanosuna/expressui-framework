@@ -43,6 +43,8 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Access to core Spring-loaded properties.
@@ -79,6 +81,9 @@ public class ApplicationProperties {
 
     @Value("${expressui.sessionTimeoutWarning:5}")
     private Integer sessionTimeoutWarning = 5;
+
+    @Value("${expressui.pageSizeOptions:5,10,25,50,100}")
+    private String pageSizeOptions = "5,10,25,50,100";
 
     /**
      * Get the HTTP proxy hostname
@@ -197,6 +202,17 @@ public class ApplicationProperties {
 
     public Integer getSessionTimeoutWarning() {
         return sessionTimeoutWarning;
+    }
+
+    public List<Integer> getPageSizeOptions() {
+        String[] pageSizeStrings = pageSizeOptions.split(",");
+        List<Integer> pageSizes = new ArrayList<Integer>();
+        for (String pageSizeString : pageSizeStrings) {
+            Integer pageSize = Integer.parseInt(pageSizeString.trim());
+            pageSizes.add(pageSize);
+        }
+
+        return pageSizes;
     }
 
     /**

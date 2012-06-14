@@ -52,6 +52,7 @@ import com.vaadin.ui.*;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Results component that is bound the results of a query.
@@ -207,16 +208,11 @@ public abstract class Results<T> extends TypedComponent<T> {
         String perPageText = uiMessageSource.getMessage("results.pageSize");
         pageSizeMenu = new Select();
         pageSizeMenu.addStyleName("small");
-        pageSizeMenu.addItem(5);
-        pageSizeMenu.setItemCaption(5, "5 " + perPageText);
-        pageSizeMenu.addItem(10);
-        pageSizeMenu.setItemCaption(10, "10 " + perPageText);
-        pageSizeMenu.addItem(25);
-        pageSizeMenu.setItemCaption(25, "25 " + perPageText);
-        pageSizeMenu.addItem(50);
-        pageSizeMenu.setItemCaption(50, "50 " + perPageText);
-        pageSizeMenu.addItem(100);
-        pageSizeMenu.setItemCaption(100, "100 " + perPageText);
+        List<Integer> pageSizeOptions = applicationProperties.getPageSizeOptions();
+        for (Integer pageSizeOption : pageSizeOptions) {
+            pageSizeMenu.addItem(pageSizeOption);
+            pageSizeMenu.setItemCaption(pageSizeOption, pageSizeOption + " " + perPageText);
+        }
         pageSizeMenu.setFilteringMode(Select.FILTERINGMODE_OFF);
         pageSizeMenu.setNewItemsAllowed(false);
         pageSizeMenu.setNullSelectionAllowed(false);
@@ -313,8 +309,8 @@ public abstract class Results<T> extends TypedComponent<T> {
         lastButton.setEnabled(getEntityQuery().hasNextPage());
         nextButton.setEnabled(getEntityQuery().hasNextPage());
 
-        pageSizeMenu.setEnabled(getEntityQuery().getResultCount() > 10);
-        firstResultTextField.setEnabled(getEntityQuery().getResultCount() > 10);
+        pageSizeMenu.setEnabled(getEntityQuery().getResultCount() > 5);
+        firstResultTextField.setEnabled(getEntityQuery().getResultCount() > 5);
         excelButton.setEnabled(getEntityQuery().getResultCount() > 0);
     }
 

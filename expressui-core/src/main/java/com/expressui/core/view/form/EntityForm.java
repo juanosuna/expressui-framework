@@ -54,6 +54,7 @@ import com.vaadin.ui.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.persistence.OptimisticLockException;
 import javax.validation.ConstraintViolation;
 import javax.validation.metadata.ConstraintDescriptor;
 import java.lang.annotation.Annotation;
@@ -594,25 +595,45 @@ public abstract class EntityForm<T> extends TypedForm<T> {
 
     /**
      * Save changes to the entity, either persisting a transient entity or updating existing one, then close form.
+     *
+     * @return true if save was successful
      */
-    public void saveAndClose() {
-        save(true);
+    public boolean saveAndClose() {
+        return save(true);
     }
 
     /**
      * Save changes to the entity, either persisting a transient entity or updating existing one, while
      * keeping form open.
+     *
+     * @return true if save was successful
      */
-    public void saveAndStayOpen() {
-        save(false);
+    public boolean saveAndStayOpen() {
+        boolean successful = save(false);
+
+        if (successful) {
+            loadToManyRelationships();
+        }
+
+        return successful;
     }
 
     /**
      * Save changes to the entity, either persisting a transient entity or updating existing one.
      *
      * @param executeCloseListeners whether or not to execute close listeners
+     * @return true if save was successful
      */
-    public void save(boolean executeCloseListeners) {
+    public boolean save(boolean executeCloseListeners) {
+        try {
+            return saveImpl(executeCloseListeners);
+        } catch (OptimisticLockException e) {
+            showSaveConflictMessage();
+            return false;
+        }
+    }
+
+    private boolean saveImpl(boolean executeCloseListeners) throws OptimisticLockException {
         boolean isValid = validate(false);
         if (getForm().isValid() && isValid) {
             getForm().commit();
@@ -655,8 +676,10 @@ public abstract class EntityForm<T> extends TypedForm<T> {
                     closeListener.execute();
                 }
             }
+            return true;
         } else {
-            showSaveUnsuccessfulMessage();
+            showSaveValidationErrorMessage();
+            return false;
         }
     }
 
@@ -665,8 +688,20 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      */
     public void showSaveSuccessfulMessage() {
         Window.Notification notification = new Window.Notification("\"" + getTypeCaption()
-                + "\" " + uiMessageSource.getMessage("entityForm.saved"),
+                + "\" " + uiMessageSource.getMessage("entityForm.saveSuccessful"),
                 Window.Notification.TYPE_HUMANIZED_MESSAGE);
+        notification.setDelayMsec(Window.Notification.DELAY_NONE);
+        notification.setPosition(Window.Notification.POSITION_CENTERED);
+        getMainApplication().showNotification(notification);
+    }
+
+    /**
+     * Show notification message that save was successful because of conflict with another user's changes.
+     */
+    public void showSaveConflictMessage() {
+        Window.Notification notification = new Window.Notification(
+                uiMessageSource.getMessage("entityForm.saveConflictError"),
+                Window.Notification.TYPE_ERROR_MESSAGE);
         notification.setDelayMsec(Window.Notification.DELAY_NONE);
         notification.setPosition(Window.Notification.POSITION_CENTERED);
         getMainApplication().showNotification(notification);
@@ -675,9 +710,9 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     /**
      * Show notification message that save was unsuccessful.
      */
-    public void showSaveUnsuccessfulMessage() {
+    public void showSaveValidationErrorMessage() {
         Window.Notification notification = new Window.Notification("\"" + getTypeCaption()
-                + "\" " + uiMessageSource.getMessage("entityForm.notSaved"),
+                + "\" " + uiMessageSource.getMessage("entityForm.saveValidationError"),
                 Window.Notification.TYPE_ERROR_MESSAGE);
         notification.setDelayMsec(Window.Notification.DELAY_NONE);
         notification.setPosition(Window.Notification.POSITION_CENTERED);

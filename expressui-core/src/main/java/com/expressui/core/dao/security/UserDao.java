@@ -68,9 +68,12 @@ public class UserDao extends EntityDao<User, Long> {
         return query.getResultList();
     }
 
-    @Override
-    public User findByNaturalId(String propertyName, Object propertyValue) {
-        return super.findByNaturalId(propertyName, propertyValue);
-    }
+    public User findByLoginName(String loginName) {
+        Query query = getEntityManager().createQuery("SELECT u FROM User u " +
+                " LEFT JOIN FETCH u.userRoles ur LEFT JOIN FETCH ur.role r LEFT JOIN FETCH r.permissions" +
+                " WHERE u.loginName = :loginName");
+        query.setParameter("loginName", loginName);
 
+        return (User) query.getSingleResult();
+    }
 }

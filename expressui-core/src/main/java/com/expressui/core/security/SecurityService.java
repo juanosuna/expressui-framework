@@ -49,6 +49,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 
 import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
 
@@ -90,10 +91,18 @@ public class SecurityService {
         }
     }
 
+    /**
+     * Set the current login name
+     *
+     * @param loginName login name to set
+     */
     public static void setCurrentLoginName(String loginName) {
         currentLoginName.set(loginName);
     }
 
+    /**
+     * Remove current login name
+     */
     public static void removeCurrentLoginName() {
         currentLoginName.remove();
     }
@@ -107,15 +116,27 @@ public class SecurityService {
         return currentUser;
     }
 
-    private User findUser(String loginName) {
-        Assert.PROGRAMMING.notNull(loginName, "loginName must not be null");
-
-        User user = userDao.findByNaturalId("loginName", loginName);
-        if (user != null) {
-            user.hasRole("ROLE_BOGUS"); // force initialization of user and it's roles
+    public User refreshCurrentUser() {
+        User user = null;
+        try {
+            user = findUser(getCurrentLoginName());
+        } catch (LoginNameNotFoundException e) {
+            throw new RuntimeException(e); // should not occur after user logs in
         }
 
+        setCurrentUser(user);
+
         return user;
+    }
+
+    private User findUser(String loginName) throws LoginNameNotFoundException {
+        Assert.PROGRAMMING.notNull(loginName, "loginName must not be null");
+
+        try {
+            return userDao.findByLoginName(loginName);
+        } catch (NoResultException e) {
+            throw new LoginNameNotFoundException();
+        }
     }
 
     /**
@@ -161,9 +182,6 @@ public class SecurityService {
         loginName = loginName.trim();
 
         User user = findUser(loginName);
-        if (user == null) {
-            throw new LoginNameNotFoundException();
-        }
 
         BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
         if (!passwordEncryptor.checkPassword(loginPassword, user.getLoginPasswordEncrypted())) {

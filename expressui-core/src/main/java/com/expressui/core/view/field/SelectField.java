@@ -51,6 +51,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.vaadin.addon.customfield.CustomField;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Collection;
 
 /**
@@ -313,8 +314,28 @@ public class SelectField extends CustomField {
     }
 
     @Override
+    public void addListener(Class<?> eventType, Object target, Method method) {
+        field.addListener(eventType, target, method);
+    }
+
+    @Override
+    public void addListener(Class<?> eventType, Object target, String methodName) {
+        field.addListener(eventType, target, methodName);
+    }
+
+    @Override
     public void removeListener(ValueChangeListener listener) {
         field.removeListener(listener);
+    }
+
+    @Override
+    public void removeListener(Class<?> eventType, Object target) {
+        field.removeListener(eventType, target);
+    }
+
+    @Override
+    public void removeListener(Class<?> eventType, Object target, Method method) {
+        field.removeListener(eventType, target, method);
     }
 
     @Override
