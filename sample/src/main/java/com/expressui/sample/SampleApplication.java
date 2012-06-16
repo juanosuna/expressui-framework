@@ -39,6 +39,7 @@ package com.expressui.sample;
 
 import com.expressui.core.MainApplication;
 import com.expressui.core.security.exception.AuthenticationException;
+import com.expressui.core.util.UrlUtil;
 import com.expressui.core.view.menu.MenuBarNode;
 import com.expressui.core.view.security.role.RolePage;
 import com.expressui.core.view.security.user.UserPage;
@@ -94,7 +95,7 @@ public class SampleApplication extends MainApplication {
         displayPage(LoginPage.class);
         mainMenuBar.refresh();
 
-        checkInternetConnectivity("http://www.expressui.com/?page_id=507&tag=demo",
+        checkInternetConnectivity(UrlUtil.EXPRESSUI_TEST_PAGE,
                 "The sample application requires an Internet connection.</br>If it is running behind a proxy," +
                         " please configure http.proxyHost and http.proxyPort in application.properties.");
     }

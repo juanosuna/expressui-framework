@@ -5,6 +5,8 @@ package ${package}.view;
 
 import ${package}.entity.Person;
 import com.expressui.core.view.page.SearchPage;
+import com.expressui.core.util.UrlUtil;
+import com.vaadin.ui.AbstractComponentContainer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -31,6 +33,15 @@ public class PersonPage extends SearchPage<Person> {
     @Override
     public PersonResults getResults() {
         return personResults;
+    }
+
+    @PostConstruct
+    @Override
+    public void postConstruct() {
+        super.postConstruct();
+
+        // Used to track usage statistics only for sample application, you may remove for real application
+        UrlUtil.addTrackingUrl((AbstractComponentContainer) getCompositionRoot(), "archetype");
     }
 
     @Override

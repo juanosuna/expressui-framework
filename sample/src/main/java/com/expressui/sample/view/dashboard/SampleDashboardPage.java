@@ -37,6 +37,7 @@
 
 package com.expressui.sample.view.dashboard;
 
+import com.expressui.core.util.UrlUtil;
 import com.expressui.core.view.page.DashboardPage;
 import com.expressui.domain.geocode.MapService;
 import com.expressui.sample.dao.OpportunityDao;
@@ -44,6 +45,7 @@ import com.expressui.sample.entity.Contact;
 import com.expressui.sample.entity.derived.TotalSalesStage;
 import com.expressui.sample.entity.derived.TotalYearSales;
 import com.vaadin.terminal.Sizeable;
+import com.vaadin.ui.AbstractComponentContainer;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.vaadin.vaadinvisualizations.ColumnChart;
@@ -86,6 +88,9 @@ public class SampleDashboardPage extends DashboardPage {
         addComponent(createOpportunitySalesStageChart(), "Sales Stage Breakdown", 2, 1);
 
         // Map is shown at coordinates 2, 2 when user selects a contact, see contactSelectionChanged
+
+        // Used to track usage statistics only for sample application
+        UrlUtil.addTrackingUrl((AbstractComponentContainer) getCompositionRoot(), "sample");
     }
 
     private ColumnChart createOpportunityChartByYear() {

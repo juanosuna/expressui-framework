@@ -62,8 +62,7 @@ public class HomePage extends RootComponent implements Page {
     @Override
     public void onDisplay() {
         try {
-
-            URL url = new URL("http://www.expressui.com");
+            URL url = new URL("http://www.expressui.com/");
             Embedded browser = new Embedded("", new ExternalResource(url));
             browser.setType(Embedded.TYPE_BROWSER);
             browser.setWidth(100, Sizeable.UNITS_PERCENTAGE);

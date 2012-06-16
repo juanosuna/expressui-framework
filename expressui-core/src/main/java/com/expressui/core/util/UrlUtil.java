@@ -37,9 +37,17 @@
 
 package com.expressui.core.util;
 
+import com.vaadin.terminal.ExternalResource;
+import com.vaadin.terminal.Sizeable;
+import com.vaadin.ui.AbstractComponentContainer;
+import com.vaadin.ui.Embedded;
+
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
@@ -47,6 +55,7 @@ import java.net.URL;
  */
 public class UrlUtil {
 
+    public static String EXPRESSUI_TEST_PAGE = "http://www.expressui.com/?page_id=507&tag=";
     /**
      * Invoke URL and get the contents returned.
      *
@@ -56,7 +65,11 @@ public class UrlUtil {
      */
     public static String getContents(String urlStr) throws IOException {
         URL url = new URL(urlStr);
-        BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.connect();
+        InputStream inputStream = connection.getInputStream();
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
 
         StringBuilder builder = new StringBuilder();
         String line;
@@ -67,5 +80,23 @@ public class UrlUtil {
 
         in.close();
         return builder.toString();
+    }
+
+    /**
+     * Only used by sample application to track usage statistics
+     *
+     * @param container container for adding the embedded iframe to
+     */
+    public static void addTrackingUrl(AbstractComponentContainer container, String tag) {
+        try {
+            URL url = new URL(EXPRESSUI_TEST_PAGE + tag);
+            Embedded browser = new Embedded(null, new ExternalResource(url));
+            browser.setType(Embedded.TYPE_BROWSER);
+            browser.setWidth(0, Sizeable.UNITS_PIXELS);
+            browser.setHeight(0, Sizeable.UNITS_PIXELS);
+            container.addComponent(browser);
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
