@@ -48,6 +48,10 @@
             <name>ExpressUI Public Snapshots</name>
             <url>http://repo.expressui.com/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>expressui-releases</id>
+            <url>http://repo.expressui.com/nexus/content/repositories/releases</url>
+        </repository>
     </distributionManagement>
 
     <groupId>com.expressui</groupId>
@@ -56,7 +60,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>expressui-parent</module>
         <module>expressui-core</module>
         <module>expressui-domain</module>
         <module>sample</module>

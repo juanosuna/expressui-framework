@@ -65,6 +65,10 @@
             <name>ExpressUI Public Snapshots</name>
             <url>http://repo.expressui.com/nexus/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>expressui-releases</id>
+            <url>http://repo.expressui.com/nexus/content/repositories/releases</url>
+        </repository>
     </distributionManagement>
 
     <repositories>
