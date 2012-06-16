@@ -43,12 +43,11 @@ import com.expressui.core.dao.security.UserRoleDao;
 import com.expressui.core.entity.security.Role;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.entity.security.UserRole;
-import com.expressui.core.util.StringUtil;
 import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.sample.entity.Profile;
+import com.expressui.sample.validator.UniqueLoginNameValidator;
 import com.expressui.sample.view.LoginPage;
 import com.expressui.sample.view.myprofile.MyProfileForm;
-import com.vaadin.data.Validator;
 import com.vaadin.ui.Window;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -135,28 +134,4 @@ public class RegistrationForm extends MyProfileForm<Profile> {
         return "Registration";
     }
 
-    @Component
-    @Scope(SCOPE_PROTOTYPE)
-    public static class UniqueLoginNameValidator implements Validator {
-
-        @Resource
-        private UserDao userDao;
-
-        @Override
-        public void validate(Object value) throws InvalidValueException {
-            if (!isValid(value)) {
-                throw new InvalidValueException("Login name is already taken.");
-            }
-        }
-
-        @Override
-        public boolean isValid(Object value) {
-            if (!StringUtil.isEmpty(value)) {
-                User user = userDao.findByLoginName((String) value);
-                return user == null;
-            } else {
-                return true;
-            }
-        }
-    }
 }

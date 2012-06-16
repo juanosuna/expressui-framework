@@ -38,6 +38,7 @@
 package com.expressui.sample.view.profile;
 
 import com.expressui.core.dao.security.UserDao;
+import com.expressui.core.dao.security.query.UserQuery;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.util.StringUtil;
 import com.expressui.core.view.field.SelectField;
@@ -51,6 +52,8 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.persistence.criteria.*;
+import java.util.List;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
@@ -66,7 +69,17 @@ public class ProfileForm<T> extends EntityForm<Profile> {
     private UserSelect userSelect;
 
     @Resource
+    private ProfileUserQuery profileUserQuery;
+
+    @Resource
     private UserDao userDao;
+
+    @Override
+    public void postConstruct() {
+        super.postConstruct();
+
+        userSelect.getResults().setUserQuery(profileUserQuery);
+    }
 
     @Override
     public void init(FormFieldSet formFields) {
@@ -101,6 +114,22 @@ public class ProfileForm<T> extends EntityForm<Profile> {
             return "Profile Form - New";
         } else {
             return "Profile Form - " + getEntity().getName();
+        }
+    }
+
+    @Component
+    @Scope(SCOPE_PROTOTYPE)
+    public static class ProfileUserQuery extends UserQuery {
+        @Override
+        public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<User> user) {
+            List<Predicate> predicates = super.buildCriteria(builder, query, user);
+
+            Subquery<Profile> subquery = query.subquery(Profile.class);
+            Root profile = subquery.from(Profile.class);
+            subquery.select(profile.get("user"));
+            predicates.add(builder.not(user.in(subquery)));
+
+            return predicates;
         }
     }
 }

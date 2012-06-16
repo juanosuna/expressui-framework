@@ -35,74 +35,39 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.core.view.security.select;
+package com.expressui.sample.validator;
 
-import com.expressui.core.dao.security.query.UserQuery;
+import com.expressui.core.dao.security.UserDao;
 import com.expressui.core.entity.security.User;
-import com.expressui.core.view.entityselect.EntitySelect;
-import com.expressui.core.view.entityselect.EntitySelectResults;
-import com.expressui.core.view.results.ResultsFieldSet;
-import com.expressui.core.view.security.user.UserSearchForm;
-import org.springframework.context.annotation.Scope;
+import com.expressui.core.util.StringUtil;
+import com.vaadin.data.Validator;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-
 /**
- * Component for finding and selecting a user.
+ * Validates that user's login name is not already taken.
  */
 @Component
-@Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings({"serial"})
-public class UserSelect extends EntitySelect<User> {
+public class UniqueLoginNameValidator implements Validator {
 
     @Resource
-    private UserSearchForm userSearchForm;
-
-    @Resource
-    private UserSelectResults userSelectResults;
+    private UserDao userDao;
 
     @Override
-    public UserSearchForm getSearchForm() {
-        return userSearchForm;
-    }
-
-    @Override
-    public UserSelectResults getResults() {
-        return userSelectResults;
-    }
-
-    @Override
-    public String getTypeCaption() {
-        return "Select User";
-    }
-
-    @Component
-    @Scope(SCOPE_PROTOTYPE)
-    public static class UserSelectResults extends EntitySelectResults<User> {
-
-        @Resource
-        private UserQuery userQuery;
-
-        @Override
-        public UserQuery getEntityQuery() {
-            return userQuery;
+    public void validate(Object value) throws InvalidValueException {
+        if (!isValid(value)) {
+            throw new InvalidValueException("Login name is already taken.");
         }
+    }
 
-        public void setUserQuery(UserQuery userQuery) {
-            this.userQuery = userQuery;
-        }
-
-        @Override
-        public void init(ResultsFieldSet resultsFields) {
-            resultsFields.setPropertyIds(
-                    "loginName",
-                    "lastModified",
-                    "modifiedBy"
-            );
+    @Override
+    public boolean isValid(Object value) {
+        if (!StringUtil.isEmpty(value)) {
+            User user = userDao.findByLoginName((String) value);
+            return user == null;
+        } else {
+            return true;
         }
     }
 }
-

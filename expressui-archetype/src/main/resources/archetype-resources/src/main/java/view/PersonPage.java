@@ -7,6 +7,7 @@ import ${package}.entity.Person;
 import com.expressui.core.view.page.SearchPage;
 import com.expressui.core.util.UrlUtil;
 import com.vaadin.ui.AbstractComponentContainer;
+import javax.annotation.PostConstruct;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
