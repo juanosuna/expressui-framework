@@ -52,7 +52,7 @@
 
     <groupId>com.expressui</groupId>
     <artifactId>expressui-main</artifactId>
-    <version>1.0.0-RC1-SNAPSHOT</version>
+    <version>1.0.0-RC1</version>
     <packaging>pom</packaging>
 
     <modules>
