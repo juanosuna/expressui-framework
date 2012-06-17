@@ -140,7 +140,7 @@
         ASSIGNED_TO_ID bigint,
         CURRENCY_ID varchar(255),
         LEAD_SOURCE_ID varchar(255),
-        SALES_STAGE_ID varchar(255),
+        SALES_STAGE_ID varchar(255) not null,
         primary key (ID)
     );
 

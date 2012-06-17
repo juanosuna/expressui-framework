@@ -82,6 +82,7 @@ public class OpportunityForm extends EntityForm<Opportunity> {
         overview.setCoordinates("amountWeightedInUSD", 5, 2);
 
         overview.setCoordinates("expectedCloseDate", 6, 1);
+        overview.setCoordinates("actualCloseDate", 6, 2);
 
         FormTab description = formFields.createTab("Description");
         description.setCoordinates("description", 1, 1);

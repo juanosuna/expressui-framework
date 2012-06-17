@@ -40,6 +40,7 @@ package com.expressui.sample.entity;
 
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
+import com.expressui.core.validation.AssertTrueForProperties;
 import com.expressui.core.view.field.format.DefaultFormats;
 import com.expressui.domain.ecbfx.EcbfxService;
 import org.hibernate.annotations.ForeignKey;
@@ -56,6 +57,7 @@ import java.math.RoundingMode;
 import java.util.Date;
 
 import static com.expressui.core.util.ObjectUtil.isEqual;
+import static com.expressui.core.util.StringUtil.isEmpty;
 
 @Entity
 @Table
@@ -158,6 +160,33 @@ public class Opportunity extends WritableEntity {
         this.actualCloseDate = actualCloseDate;
     }
 
+    @AssertTrueForProperties(errorProperty = "actualCloseDate", message = "Required if Sales Stage is closed")
+    public boolean isActualCloseDateValidIfSalesStageClosed() {
+        if (getSalesStage() != null && getSalesStage().getId().startsWith("Closed")) {
+            return !isEmpty(getActualCloseDate());
+        } else {
+            return true;
+        }
+    }
+
+    @AssertTrueForProperties(errorProperty = "actualCloseDate", message = "Must be empty if Sales Stage is open")
+    public boolean isActualCloseDateValidIfSalesStageOpen() {
+        if (getSalesStage() != null && !getSalesStage().getId().startsWith("Closed")) {
+            return isEmpty(getActualCloseDate());
+        } else {
+            return true;
+        }
+    }
+
+    @AssertTrueForProperties(errorProperty = "expectedCloseDate", message = "Must be empty if Sales Stage is closed")
+    public boolean isExpectedCloseDateValidIfSalesStageClosed() {
+        if (getSalesStage() != null && getSalesStage().getId().startsWith("Closed")) {
+            return isEmpty(getExpectedCloseDate());
+        } else {
+            return true;
+        }
+    }
+
     @Min(0)
     public BigDecimal getAmount() {
         return amount;
@@ -252,6 +281,7 @@ public class Opportunity extends WritableEntity {
         this.leadSource = leadSource;
     }
 
+    @NotNull
     public SalesStage getSalesStage() {
         return salesStage;
     }
