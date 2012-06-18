@@ -25,7 +25,7 @@
     <parent>
         <groupId>com.expressui</groupId>
         <artifactId>expressui-app-parent</artifactId>
-        <version>1.0.0-RC1</version>
+        <version>1.0.0-RC2-SNAPSHOT</version>
         <relativePath>../expressui-app-parent/pom.xml</relativePath>
     </parent>
 
