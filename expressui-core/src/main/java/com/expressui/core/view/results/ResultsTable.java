@@ -73,7 +73,7 @@ public class ResultsTable extends Table {
     private void initialize() {
         setSizeUndefined();
         alwaysRecalculateColumnWidths = true;
-        setEditable(false);
+        setEditable(true); // set to enable Form links
         setTableFieldFactory(new TableButtonLinkFactory());
 
         EnhancedBeanItemContainer dataSource = new EnhancedBeanItemContainer(results.getType(),
@@ -249,6 +249,7 @@ public class ResultsTable extends Table {
     }
 
     private class TableButtonLinkFactory implements TableFieldFactory {
+        @Override
         public Field createField(Container container, Object itemId,
                                  Object propertyId, Component uiContext) {
 
