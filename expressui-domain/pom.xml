@@ -42,7 +42,7 @@
     <parent>
         <groupId>com.expressui</groupId>
         <artifactId>expressui-parent</artifactId>
-        <version>1.0.0-RC2-SNAPSHOT</version>
+        <version>1.0.0-RC2</version>
         <relativePath>../expressui-parent/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -58,6 +58,12 @@
         <dependency>
             <groupId>org.jboss.resteasy</groupId>
             <artifactId>resteasy-jaxrs</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
