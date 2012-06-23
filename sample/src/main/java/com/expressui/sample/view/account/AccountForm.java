@@ -91,13 +91,12 @@ public class AccountForm extends EntityForm<Account> {
 
         FormTab overview = formFields.createTab("Overview");
         overview.setCoordinates("name", 1, 1);
-        overview.setCoordinates("website", 1, 2);
+        overview.setCoordinates("assignedTo.loginName", 1, 2);
 
-        overview.setCoordinates("mainPhone", 2, 1);
-        overview.setCoordinates("assignedTo.loginName", 2, 2);
+        overview.setCoordinates("website", 2, 1);
+        overview.setCoordinates("accountTypes", 2, 2, 3, 2);
 
         overview.setCoordinates("email", 3, 1);
-        overview.setCoordinates("accountTypes", 3, 2);
 
         FormTab details = formFields.createTab("Details");
         details.setCoordinates("tickerSymbol", 1, 1);
@@ -114,6 +113,7 @@ public class AccountForm extends EntityForm<Account> {
         billingAddress.setCoordinates("billingAddress.country", 2, 1);
         billingAddress.setCoordinates("billingAddress.zipCode", 2, 2);
         billingAddress.setCoordinates("billingAddress.state", 3, 1);
+        billingAddress.setCoordinates("mainPhone", 3, 2);
 
         FormTab mailingAddress = formFields.createTab("Mailing Address");
         mailingAddress.setCoordinates("mailingAddress.street", 1, 1);

@@ -90,7 +90,7 @@ public class SampleApplication extends MainApplication {
         try {
             securityService.login("anonymous", "anonymous");
         } catch (AuthenticationException e) {
-            throw new RuntimeException("Anonymous account login failed");
+            throw new RuntimeException("Anonymous account login failed", e);
         }
         displayPage(LoginPage.class);
         mainMenuBar.refresh();

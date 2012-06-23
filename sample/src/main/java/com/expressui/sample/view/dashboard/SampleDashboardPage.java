@@ -63,9 +63,6 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSIO
 @Scope(SCOPE_SESSION)
 public class SampleDashboardPage extends DashboardPage {
 
-    public static final int PANEL_WIDTH = 680;
-    public static final int PANEL_HEIGHT = 375;
-
     @Resource
     private OpportunityDao opportunityDao;
 
@@ -79,6 +76,9 @@ public class SampleDashboardPage extends DashboardPage {
     @Override
     public void postConstruct() {
         super.postConstruct();
+
+        setCellPixelWidth(680);
+        setCellPixelHeight(375);
 
         addComponent(createOpportunityChartByYear(), "Sales - Won & Lost", 1, 1);
 
@@ -95,10 +95,6 @@ public class SampleDashboardPage extends DashboardPage {
 
     private ColumnChart createOpportunityChartByYear() {
         ColumnChart columnChart = new ColumnChart();
-        columnChart.setOption("width", PANEL_WIDTH);
-        columnChart.setOption("height", PANEL_HEIGHT);
-        columnChart.setWidth(PANEL_WIDTH, Sizeable.UNITS_PIXELS);
-        columnChart.setHeight(PANEL_HEIGHT, Sizeable.UNITS_PIXELS);
 
         columnChart.setOption("is3D", true);
         columnChart.setOption("isStacked", false);
@@ -125,10 +121,6 @@ public class SampleDashboardPage extends DashboardPage {
 
     public PieChart createOpportunitySalesStageChart() {
         PieChart pieChart = new PieChart();
-        pieChart.setOption("width", PANEL_WIDTH);
-        pieChart.setOption("height", PANEL_HEIGHT);
-        pieChart.setWidth(PANEL_WIDTH, Sizeable.UNITS_PIXELS);
-        pieChart.setHeight(PANEL_HEIGHT, Sizeable.UNITS_PIXELS);
 
         pieChart.setOption("title", "Opportunity Sales Stages");
         pieChart.setOption("is3D", true);
@@ -142,10 +134,7 @@ public class SampleDashboardPage extends DashboardPage {
     }
 
     private void configureRecentContactResults() {
-        recentContactResults.setWidth(PANEL_WIDTH, Sizeable.UNITS_PIXELS);
         recentContactResults.getResultsTable().setWidth(620, Sizeable.UNITS_PIXELS);
-        recentContactResults.setHeight(PANEL_HEIGHT, Sizeable.UNITS_PIXELS);
-
         recentContactResults.addSelectionChangedListener(this, "contactSelectionChanged");
         recentContactResults.setPageSizeVisible(false); // restrict page size, since dashboard cells are fixed size
     }
@@ -176,8 +165,6 @@ public class SampleDashboardPage extends DashboardPage {
     private void addContactLocationMap(String contactName, String formattedAddress) {
         OpenLayersMap map = mapService.createMap(formattedAddress, contactName, 16);
         if (map != null) {
-            map.setWidth(PANEL_WIDTH, Sizeable.UNITS_PIXELS);
-            map.setHeight(PANEL_HEIGHT, Sizeable.UNITS_PIXELS);
             addComponent(map, "Contact Location", 2, 2);
         }
     }

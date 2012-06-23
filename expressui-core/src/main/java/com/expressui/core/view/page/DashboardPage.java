@@ -40,8 +40,10 @@ package com.expressui.core.view.page;
 import com.expressui.core.view.RootComponent;
 import com.expressui.core.view.TypedComponent;
 import com.expressui.core.view.ViewBean;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ChameleonTheme;
+import org.vaadin.vaadinvisualizations.VisualizationComponent;
 
 import javax.annotation.PostConstruct;
 import java.util.HashSet;
@@ -56,6 +58,9 @@ import java.util.Set;
 public abstract class DashboardPage extends RootComponent implements Page {
 
     private GridLayout rootLayout;
+    private Integer cellPixelWidth;
+    private Integer cellPixelHeight;
+
 
     @PostConstruct
     @Override
@@ -95,6 +100,22 @@ public abstract class DashboardPage extends RootComponent implements Page {
         return null;
     }
 
+    public Integer getCellPixelWidth() {
+        return cellPixelWidth;
+    }
+
+    public void setCellPixelWidth(Integer cellPixelWidth) {
+        this.cellPixelWidth = cellPixelWidth;
+    }
+
+    public Integer getCellPixelHeight() {
+        return cellPixelHeight;
+    }
+
+    public void setCellPixelHeight(Integer cellPixelHeight) {
+        this.cellPixelHeight = cellPixelHeight;
+    }
+
     /**
      * Add a component to the dashboard.
      *
@@ -125,6 +146,9 @@ public abstract class DashboardPage extends RootComponent implements Page {
         HorizontalLayout panelLayout = new HorizontalLayout();
         panelLayout.setSizeUndefined();
         panel.setSizeUndefined();
+
+        setWidthAndHeightIfNotNull(component);
+
         panel.setContent(panelLayout);
         panelLayout.setMargin(true);
         panelLayout.setSpacing(true);
@@ -143,6 +167,20 @@ public abstract class DashboardPage extends RootComponent implements Page {
         rootLayout.addComponent(panel, startColumn - 1, startRow - 1, endColumn - 1, endRow - 1);
     }
 
+    private void setWidthAndHeightIfNotNull(Component component) {
+        if (cellPixelWidth != null) {
+            component.setWidth(cellPixelWidth, Sizeable.UNITS_PIXELS);
+            if (component instanceof VisualizationComponent) {
+                ((VisualizationComponent) component).setOption("width", cellPixelWidth);
+            }
+        }
+        if (cellPixelHeight != null) {
+            component.setHeight(cellPixelHeight, Sizeable.UNITS_PIXELS);
+            if (component instanceof VisualizationComponent) {
+                ((VisualizationComponent) component).setOption("height", cellPixelHeight);
+            }
+        }
+    }
 
     /**
      * Remove component from the dashboard
@@ -159,11 +197,14 @@ public abstract class DashboardPage extends RootComponent implements Page {
 
         Iterator<Component> iterator = rootLayout.getComponentIterator();
         while (iterator.hasNext()) {
-            Panel panel = (Panel) iterator.next();
-            ComponentContainer layout = panel.getContent();
-            Component component = layout.getComponentIterator().next();
-            if (component instanceof ViewBean) {
-                viewBeans.add((ViewBean) component);
+            Component dashboardComponent = iterator.next();
+            if (dashboardComponent instanceof Panel) {
+                Panel panel = (Panel) dashboardComponent;
+                ComponentContainer layout = panel.getContent();
+                Component component = layout.getComponentIterator().next();
+                if (component instanceof ViewBean) {
+                    viewBeans.add((ViewBean) component);
+                }
             }
         }
 

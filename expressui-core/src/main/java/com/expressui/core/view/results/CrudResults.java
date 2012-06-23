@@ -210,7 +210,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         EntityFormWindow entityFormWindow = EntityFormWindow.open(resultsConnectedEntityForm);
         entityFormWindow.addCloseListener(this, "search");
         if (!getEntityForm().getViewableToManyRelationships().isEmpty()) {
-            entityFormWindow.setHeight("95%");
+            entityFormWindow.setHeight("100%");
         }
     }
 
