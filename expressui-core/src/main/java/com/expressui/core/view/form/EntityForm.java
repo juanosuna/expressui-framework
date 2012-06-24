@@ -154,14 +154,6 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         for (ToManyRelationship toManyRelationship : toManyRelationships) {
             toManyRelationship.postWire();
         }
-
-        Collection<FormField> formFields = getFormFieldSet().getFormFields();
-        for (FormField formField : formFields) {
-            Field field = formField.getField();
-            if (field instanceof SelectField) {
-                ((SelectField) field).getEntitySelect().postWire();
-            }
-        }
     }
 
     @Override
@@ -319,7 +311,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      * @return true if entity has primary key
      */
     public boolean isEntityPersistent() {
-        return genericDao.isPersistent(getEntity());
+        return genericDao.isPersistent(getBean());
     }
 
     /**
@@ -382,7 +374,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         List<ToManyRelationship> toManyRelationships = getViewableToManyRelationships();
         if (toManyRelationships.size() > 0) {
             for (ToManyRelationship toManyRelationship : toManyRelationships) {
-                Object parent = getEntity();
+                Object parent = getBean();
                 toManyRelationship.getResults().getEntityQuery().clear();
                 toManyRelationship.getResults().getEntityQuery().setParent(parent);
                 toManyRelationship.getResults().search();
@@ -638,9 +630,9 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         if (getForm().isValid() && isValid) {
             getForm().commit();
 
-            preSave(getEntity());
+            preSave(getBean());
 
-            T entity = getEntity();
+            T entity = getBean();
             if (genericDao.getId(entity) != null) {
                 T mergedEntity;
                 if (getEntityDao() == null) {
@@ -751,7 +743,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      * @return true if no validation errors were found
      */
     public boolean validate(boolean clearConversionErrors) {
-        Object entity = getEntity();
+        Object entity = getBean();
 
         clearAllErrors(clearConversionErrors);
 

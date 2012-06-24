@@ -37,6 +37,7 @@
 
 package com.expressui.sample.view.opportunity;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.form.FormFieldSet;
@@ -94,6 +95,7 @@ public class OpportunityForm extends EntityForm<Opportunity> {
 
         formFields.setToolTip("salesStage", "Change to sales stage changes probability");
         formFields.setToolTip("probability", "Change in probability changes value weighted in USD");
+        formFields.setToolTip("amount", "Change in amount changes value weighted in USD");
         formFields.setToolTip("currency", "Change in currency changes value weighted in USD");
 
         SelectField selectField = new SelectField(this, "assignedTo", userSelect);
@@ -104,11 +106,23 @@ public class OpportunityForm extends EntityForm<Opportunity> {
     }
 
     @Override
+    public void onDisplay() {
+        super.onDisplay();
+        MainApplication.getInstance().showTrayMessage(
+                "<h3>Feature Tips:</h3>" +
+                        "<ul>" +
+                        "<li>Change Sales Stage to see how other fields are automatically recalculated" +
+                        "<li>Input invalid data and then mouse-over input to see error message" +
+                        "</ul>"
+        );
+    }
+
+    @Override
     public String getTypeCaption() {
-        if (getEntity().getName() == null) {
+        if (getBean().getName() == null) {
             return "Opportunity Form - New";
         } else {
-            return "Opportunity Form - " + getEntity().getName();
+            return "Opportunity Form - " + getBean().getName();
         }
     }
 }

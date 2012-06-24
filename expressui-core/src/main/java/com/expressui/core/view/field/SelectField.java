@@ -39,7 +39,7 @@ package com.expressui.core.view.field;
 
 import com.expressui.core.util.StringUtil;
 import com.expressui.core.view.entityselect.EntitySelect;
-import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.form.TypedForm;
 import com.expressui.core.view.util.MessageSource;
 import com.vaadin.data.Property;
 import com.vaadin.data.Validator;
@@ -55,7 +55,7 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 
 /**
- * A custom field in an EntityForm for selecting an entity in a many-to-one relationship. EntitySelect represents the
+ * A custom field in a TypedForm for selecting an entity in a many-to-one relationship. EntitySelect represents the
  * popup selection window, whereas this custom field consists of a text input that displays a property in the selected
  * entity and the popup button for opening EntitySelect.
  *
@@ -71,21 +71,21 @@ public class SelectField extends CustomField {
     private Button clearButton;
     private Button searchButton;
 
-    private EntityForm entityForm;
+    private TypedForm typedForm;
     private String propertyId;
 
     /**
-     * Construct in the given entity form for given property id
+     * Construct in the given typed form for given property id
      *
-     * @param entityForm   entity form that contains this field
+     * @param typedForm    typed form that contains this field
      * @param propertyId   property id bound to this field
      * @param entitySelect popup component for selecting entity
      */
-    public SelectField(EntityForm entityForm, String propertyId, EntitySelect entitySelect) {
-        this.entityForm = entityForm;
+    public SelectField(TypedForm typedForm, String propertyId, EntitySelect entitySelect) {
+        this.typedForm = typedForm;
         this.propertyId = propertyId;
         this.entitySelect = entitySelect;
-        this.uiMessageSource = entityForm.uiMessageSource;
+        this.uiMessageSource = typedForm.uiMessageSource;
         initialize();
     }
 
@@ -150,9 +150,9 @@ public class SelectField extends CustomField {
      */
     public void itemSelected() {
         Object selectedValue = getSelectedValue();
-        Object entity = entityForm.getEntity();
+        Object bean = typedForm.getBean();
         try {
-            PropertyUtils.setProperty(entity, propertyId, selectedValue);
+            PropertyUtils.setProperty(bean, propertyId, selectedValue);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {
@@ -170,9 +170,9 @@ public class SelectField extends CustomField {
      * Listener method invoked when user clicks clear button.
      */
     public void itemCleared() {
-        Object entity = entityForm.getEntity();
+        Object bean = typedForm.getBean();
         try {
-            PropertyUtils.setProperty(entity, propertyId, null);
+            PropertyUtils.setProperty(bean, propertyId, null);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         } catch (InvocationTargetException e) {

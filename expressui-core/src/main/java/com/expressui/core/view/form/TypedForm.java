@@ -40,6 +40,7 @@ package com.expressui.core.view.form;
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.TypedComponent;
 import com.expressui.core.view.field.FormField;
+import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.field.format.DefaultFormats;
 import com.expressui.core.view.form.layout.FormGridLayout;
 import com.expressui.core.view.menu.LayoutContextMenu;
@@ -57,10 +58,7 @@ import org.vaadin.peter.contextmenu.ContextMenu;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * A form that can be data-bound to any domain class.
@@ -164,6 +162,19 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
 
         addComponent(animate(tabsAndForm));
         labelRegistry.registerLabels(getFormFieldSet());
+    }
+
+    @Override
+    public void postWire() {
+        super.postWire();
+
+        Collection<FormField> formFields = getFormFieldSet().getFormFields();
+        for (FormField formField : formFields) {
+            Field field = formField.getField();
+            if (field instanceof SelectField) {
+                ((SelectField) field).getEntitySelect().postWire();
+            }
+        }
     }
 
     private void initializeTabs(VerticalLayout layout) {
@@ -347,7 +358,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
             tab.setVisible(false);
         }
 
-        BeanItem beanItem = createBeanItem(getEntity());
+        BeanItem beanItem = createBeanItem(getBean());
         getForm().setItemDataSource(beanItem, getFormFieldSet().getPropertyIds());
 
         resetContextMenu();
@@ -450,7 +461,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
      *
      * @return data-bound domain object
      */
-    public T getEntity() {
+    public T getBean() {
         BeanItem beanItem = (BeanItem) getForm().getItemDataSource();
         if (beanItem == null) {
             return null;

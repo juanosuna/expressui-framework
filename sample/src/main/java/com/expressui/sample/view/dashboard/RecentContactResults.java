@@ -80,13 +80,11 @@ public class RecentContactResults extends CrudResults<Contact> {
                 "name",
                 "mailingAddress.street",
                 "mailingAddress.city",
-                "mailingAddress.state.code",
                 "mailingAddress.country",
                 "lastModified"
         );
 
         resultsFields.setSortable("name", false); // full name is a derived field
-        resultsFields.setLabel("mailingAddress.state.code", "State");
     }
 
     @Override

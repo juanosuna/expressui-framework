@@ -37,7 +37,6 @@
 
 package com.expressui.core.view.tomanyrelationship;
 
-import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.form.EntityFormWindow;
@@ -118,7 +117,7 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
         EntityFormWindow entityFormWindow = EntityFormWindow.open(getEntityForm());
         entityFormWindow.addCloseListener(this, "search");
 
-        T value = getEntityForm().getEntity();
+        T value = getEntityForm().getBean();
         setReferenceToParent(value);
     }
 

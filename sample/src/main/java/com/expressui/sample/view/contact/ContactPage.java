@@ -37,6 +37,7 @@
 
 package com.expressui.sample.view.contact;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.view.page.SearchPage;
 import com.expressui.sample.entity.Contact;
 import org.springframework.context.annotation.Scope;
@@ -65,6 +66,18 @@ public class ContactPage extends SearchPage<Contact> {
     @Override
     public ContactResults getResults() {
         return contactResults;
+    }
+
+    @Override
+    public void onDisplay() {
+        super.onDisplay();
+        MainApplication.getInstance().showTrayMessage(
+                "<h3>Feature Tips:</h3>" +
+                        "<ul>" +
+                        "<li>Two-step query: find and select an account, then find contacts associated with the account" +
+                        "<li>Add and remove results columns by clicking arrow next to Modified By" +
+                        "</ul>"
+        );
     }
 
     @Override

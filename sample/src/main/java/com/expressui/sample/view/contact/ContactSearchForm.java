@@ -37,12 +37,14 @@
 
 package com.expressui.sample.view.contact;
 
+import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.form.SearchForm;
 import com.expressui.sample.dao.StateDao;
 import com.expressui.sample.dao.query.ContactQuery;
 import com.expressui.sample.entity.Country;
 import com.expressui.sample.entity.State;
+import com.expressui.sample.view.select.AccountSelect;
 import com.vaadin.data.Property;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -58,30 +60,17 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 public class ContactSearchForm extends SearchForm<ContactQuery> {
 
     @Resource
-    private StateDao stateDao;
+    private AccountSelect accountSelect;
 
     @Override
     public void init(FormFieldSet formFields) {
-
         formFields.setCoordinates("lastName", 1, 1);
-        formFields.setCoordinates("country", 1, 2);
-        formFields.setCoordinates("states", 1, 3);
+        formFields.setCoordinates("account.name", 1, 2);
 
-        formFields.setToolTip("country", "Select US, Canada, Mexico, or Australia to see states");
+        formFields.setLabel("account.name", "Account Name");
 
-        formFields.clearSelectItems("states");
-        formFields.setVisible("states", false);
-        formFields.setMultiSelectDimensions("states", 5, 15);
-
-        formFields.addValueChangeListener("country", this, "countryChanged");
-    }
-
-    public void countryChanged(Property.ValueChangeEvent event) {
-        Country newCountry = (Country) event.getProperty().getValue();
-        List<State> states = stateDao.findByCountry(newCountry);
-
-        getFormFieldSet().setSelectItems("states", states);
-        getFormFieldSet().setVisible("states", !states.isEmpty());
+        SelectField selectField = new SelectField(this, "account", accountSelect);
+        formFields.setField("account.name", selectField);
     }
 
     @Override

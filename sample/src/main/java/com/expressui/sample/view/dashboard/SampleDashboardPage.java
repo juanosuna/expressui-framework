@@ -37,6 +37,7 @@
 
 package com.expressui.sample.view.dashboard;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.util.UrlUtil;
 import com.expressui.core.view.page.DashboardPage;
 import com.expressui.domain.geocode.MapService;
@@ -77,17 +78,17 @@ public class SampleDashboardPage extends DashboardPage {
     public void postConstruct() {
         super.postConstruct();
 
-        setCellPixelWidth(680);
+        setCellPixelWidth(670);
         setCellPixelHeight(375);
 
-        addComponent(createOpportunityChartByYear(), "Sales - Won & Lost", 1, 1);
-
         configureRecentContactResults();
-        addComponent(recentContactResults, "Recent Contacts", 1, 2);
+        addComponent(recentContactResults, "Recent Contacts", 1, 1);
 
-        addComponent(createOpportunitySalesStageChart(), "Sales Stage Breakdown", 2, 1);
+        // Map is shown at coordinates 1, 2 when user selects a contact, see contactSelectionChanged
 
-        // Map is shown at coordinates 2, 2 when user selects a contact, see contactSelectionChanged
+        addComponent(createOpportunityChartByYear(), "Sales - Won & Lost", 2, 1);
+
+        addComponent(createOpportunitySalesStageChart(), "Sales Stage Breakdown", 2, 2);
 
         // Used to track usage statistics only for sample application
         UrlUtil.addTrackingUrl((AbstractComponentContainer) getCompositionRoot(), "sample");
@@ -134,7 +135,7 @@ public class SampleDashboardPage extends DashboardPage {
     }
 
     private void configureRecentContactResults() {
-        recentContactResults.getResultsTable().setWidth(620, Sizeable.UNITS_PIXELS);
+        recentContactResults.getResultsTable().setWidth(600, Sizeable.UNITS_PIXELS);
         recentContactResults.addSelectionChangedListener(this, "contactSelectionChanged");
         recentContactResults.setPageSizeVisible(false); // restrict page size, since dashboard cells are fixed size
     }
@@ -148,6 +149,15 @@ public class SampleDashboardPage extends DashboardPage {
             Object firstItem = recentContactResults.getResultsTable().getContainerDataSource().getIdByIndex(0);
             recentContactResults.getResultsTable().select(firstItem);
         }
+
+        MainApplication.getInstance().showTrayMessage(
+                "<h3>Feature Tips:</h3>" +
+                        "<ul>" +
+                        "<li>Click on Java buttons to show code and Javadoc behind each UI component" +
+                        "<li>Select different contact to update location map" +
+                        "<li>Click on My Account to update your profile" +
+                        "</ul>"
+        );
     }
 
     public void contactSelectionChanged() {
@@ -165,11 +175,11 @@ public class SampleDashboardPage extends DashboardPage {
     private void addContactLocationMap(String contactName, String formattedAddress) {
         OpenLayersMap map = mapService.createMap(formattedAddress, contactName, 16);
         if (map != null) {
-            addComponent(map, "Contact Location", 2, 2);
+            addComponent(map, "Contact Location", 1, 2);
         }
     }
 
     private void removeContactLocationMap() {
-        removeComponent(2, 2);
+        removeComponent(1, 2);
     }
 }

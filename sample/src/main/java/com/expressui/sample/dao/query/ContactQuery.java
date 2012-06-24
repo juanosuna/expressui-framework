@@ -38,18 +38,15 @@
 package com.expressui.sample.dao.query;
 
 import com.expressui.core.dao.query.StructuredEntityQuery;
+import com.expressui.sample.entity.Account;
 import com.expressui.sample.entity.Contact;
-import com.expressui.sample.entity.Country;
-import com.expressui.sample.entity.State;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
@@ -58,8 +55,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 public class ContactQuery extends StructuredEntityQuery<Contact> {
 
     private String lastName;
-    private Set<State> states = new HashSet<State>();
-    private Country country;
+    private Account account;
 
     public String getLastName() {
         return lastName;
@@ -69,20 +65,12 @@ public class ContactQuery extends StructuredEntityQuery<Contact> {
         this.lastName = lastName;
     }
 
-    public Set<State> getStates() {
-        return states;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setStates(Set<State> states) {
-        this.states = states;
-    }
-
-    public Country getCountry() {
-        return country;
-    }
-
-    public void setCountry(Country country) {
-        this.country = country;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     @Override
@@ -93,13 +81,9 @@ public class ContactQuery extends StructuredEntityQuery<Contact> {
             ParameterExpression<String> lastNameExp = builder.parameter(String.class, "lastName");
             predicates.add(builder.like(builder.upper(contact.<String>get("lastName")), lastNameExp));
         }
-        if (hasValue(states)) {
-            ParameterExpression<Set> statesExp = builder.parameter(Set.class, "states");
-            predicates.add(builder.in(contact.get("mailingAddress").get("state")).value(statesExp));
-        }
-        if (hasValue(country)) {
-            ParameterExpression<Country> countryExp = builder.parameter(Country.class, "country");
-            predicates.add(builder.equal(contact.get("mailingAddress").get("country"), countryExp));
+        if (hasValue(account)) {
+            ParameterExpression<Account> accountExp = builder.parameter(Account.class, "account");
+            predicates.add(builder.equal(contact.get("account"), accountExp));
         }
 
         return predicates;
@@ -110,11 +94,8 @@ public class ContactQuery extends StructuredEntityQuery<Contact> {
         if (hasValue(lastName)) {
             typedQuery.setParameter("lastName", "%" + lastName.toUpperCase() + "%");
         }
-        if (hasValue(states)) {
-            typedQuery.setParameter("states", states);
-        }
-        if (hasValue(country)) {
-            typedQuery.setParameter("country", country);
+        if (hasValue(account)) {
+            typedQuery.setParameter("account", account);
         }
     }
 
@@ -141,7 +122,7 @@ public class ContactQuery extends StructuredEntityQuery<Contact> {
     public String toString() {
         return "ContactQuery{" +
                 "lastName='" + lastName + '\'' +
-                ", states=" + states +
+                ", account=" + account +
                 '}';
     }
 }

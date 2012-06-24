@@ -90,10 +90,12 @@ public class LoginPage extends RootComponent implements Page {
 
     @Override
     public void onDisplay() {
-        MainApplication.getInstance().showTrayMessage(
-                "<h3>Feature Tip:</h3>" +
+        MainApplication.getInstance().showTrayMessage(5000,
+                "<h3>Feature Tips:</h3>" +
                         "<ul>" +
-                        "<li>Download and run demo locally to explore admin security features" +
+                        "<li>You may also register as another guest user" +
+                        "<li>Download this <a href=\"https://github.com/juanosuna/expressui-framework/downloads\" " +
+                        "target=\"_blank\" style=\"color:yellow\">sample app</a> to play with security permissions as an admin user" +
                         "</ul>"
         );
     }

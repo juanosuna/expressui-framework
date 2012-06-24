@@ -37,6 +37,7 @@
 
 package com.expressui.sample.view.opportunity;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.view.page.SearchPage;
 import com.expressui.sample.entity.Opportunity;
 import org.springframework.context.annotation.Scope;
@@ -65,6 +66,17 @@ public class OpportunityPage extends SearchPage<Opportunity> {
     @Override
     public OpportunityResults getResults() {
         return opportunityResults;
+    }
+
+    @Override
+    public void onDisplay() {
+        super.onDisplay();
+        MainApplication.getInstance().showTrayMessage(
+                "<h3>Feature Tips:</h3>" +
+                        "<ul>" +
+                        "<li>Edit an Opportunity to see field-specific business logic in action" +
+                        "</ul>"
+        );
     }
 
     @Override

@@ -110,10 +110,10 @@ public class ProfileForm<T> extends EntityForm<Profile> {
 
     @Override
     public String getTypeCaption() {
-        if (getEntity().getName() == null) {
+        if (getBean().getName() == null) {
             return "Profile Form - New";
         } else {
-            return "Profile Form - " + getEntity().getName();
+            return "Profile Form - " + getBean().getName();
         }
     }
 

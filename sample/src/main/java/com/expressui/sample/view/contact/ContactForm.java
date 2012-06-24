@@ -37,6 +37,7 @@
 
 package com.expressui.sample.view.contact;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.form.FormFieldSet;
@@ -135,11 +136,11 @@ public class ContactForm extends EntityForm<Contact> {
     }
 
     public void addOtherAddress() {
-        getEntity().setOtherAddress(new Address(AddressType.OTHER));
+        getBean().setOtherAddress(new Address(AddressType.OTHER));
     }
 
     public void removeOtherAddress() {
-        getEntity().setOtherAddress(null);
+        getBean().setOtherAddress(null);
     }
 
     public void mailingCountryChanged(Property.ValueChangeEvent event) {
@@ -162,11 +163,25 @@ public class ContactForm extends EntityForm<Contact> {
     }
 
     @Override
+    public void onDisplay() {
+        super.onDisplay();
+        MainApplication.getInstance().showTrayMessage(
+                "<h3>Feature Tips:</h3>" +
+                        "<ul>" +
+                        "<li>Right-mouse click on form tabs to add and remove sections" +
+                        "<li>Enter phone as 704.555.1212 and see how it is automatically formatted" +
+                        "<li>Input invalid data and then mouse-over input to see error message" +
+                        "<li>Go to an address tab and see how zip codes are validated against selected country" +
+                        "</ul>"
+        );
+    }
+
+    @Override
     public String getTypeCaption() {
-        if (getEntity().getName() == null) {
+        if (getBean().getName() == null) {
             return "Contact Form - New";
         } else {
-            return "Contact Form - " + getEntity().getName();
+            return "Contact Form - " + getBean().getName();
         }
     }
 }

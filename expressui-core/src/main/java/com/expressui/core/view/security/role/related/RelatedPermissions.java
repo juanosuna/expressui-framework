@@ -223,7 +223,7 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
             for (String targetType : targetTypes.keySet()) {
                 boolean isTargetTypeWithNullFieldAvailable = true;
                 for (Permission existingPermission : existingPermissions) {
-                    if (!existingPermission.equals(getEntity()) && existingPermission.getTargetType().equals(targetType)
+                    if (!existingPermission.equals(getBean()) && existingPermission.getTargetType().equals(targetType)
                             && existingPermission.getField() == null) {
                         isTargetTypeWithNullFieldAvailable = false;
                         break;
@@ -253,7 +253,7 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
         }
 
         public void syncIsRequiredIndicator(Property.ValueChangeEvent event) {
-            getFormFieldSet().setRequired("field", anotherPermissionHasNullField(getEntity().getTargetType()));
+            getFormFieldSet().setRequired("field", anotherPermissionHasNullField(getBean().getTargetType()));
             syncTabAndSaveButtonErrors();
         }
 
@@ -261,7 +261,7 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
             List<Permission> existingPermissions = getExistingPermissionsForParentRole();
             for (Permission existingPermission : existingPermissions) {
                 if (existingPermission.getTargetType().equals(targetType) && existingPermission.getField() == null
-                        && !existingPermission.equals(getEntity())) {
+                        && !existingPermission.equals(getBean())) {
                     return true;
                 }
             }
@@ -275,7 +275,7 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
             Map<Object, String> fieldItems = labelRegistry.getPropertyIds(targetType);
             for (Permission existingPermission : existingPermissions) {
                 if (existingPermission.getTargetType().equals(targetType) && existingPermission.getField() != null
-                        && !existingPermission.equals(getEntity())) {
+                        && !existingPermission.equals(getBean())) {
                     fieldItems.remove(existingPermission.getField());
                 }
             }
@@ -299,13 +299,13 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
 
         @Override
         public String getTypeCaption() {
-            if (getEntity().getTargetType() == null) {
+            if (getBean().getTargetType() == null) {
                 return "Permission Form - New";
             } else {
-                if (getEntity().getField() == null) {
-                    return "Permission Form - " + getEntity().getTargetTypeLabel();
+                if (getBean().getField() == null) {
+                    return "Permission Form - " + getBean().getTargetTypeLabel();
                 } else {
-                    return "Permission Form - " + getEntity().getTargetTypeLabel() + "." + getEntity().getFieldLabel();
+                    return "Permission Form - " + getBean().getTargetTypeLabel() + "." + getBean().getFieldLabel();
                 }
             }
         }

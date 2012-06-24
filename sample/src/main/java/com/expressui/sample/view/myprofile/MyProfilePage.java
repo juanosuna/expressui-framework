@@ -37,6 +37,7 @@
 
 package com.expressui.sample.view.myprofile;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.view.page.UserOwnedEntityFormPage;
 import com.expressui.sample.entity.Profile;
 import org.springframework.context.annotation.Scope;
@@ -57,6 +58,18 @@ public class MyProfilePage extends UserOwnedEntityFormPage<Profile> {
     @Override
     public MyProfileForm getEntityForm() {
         return myProfileForm;
+    }
+
+    @Override
+    public void onDisplay() {
+        super.onDisplay();
+        MainApplication.getInstance().showTrayMessage(
+                "<h3>Feature Tips:</h3>" +
+                        "<ul>" +
+                        "<li>This page shows form for editing a user-owned entity where no search is required" +
+                        "<li>Password is stored with asymmetrical encryption" +
+                        "</ul>"
+        );
     }
 
     @Override

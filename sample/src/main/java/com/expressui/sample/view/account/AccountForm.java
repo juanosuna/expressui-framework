@@ -148,11 +148,11 @@ public class AccountForm extends EntityForm<Account> {
     }
 
     public void addMailingAddress() {
-        getEntity().setMailingAddress(new Address(AddressType.MAILING));
+        getBean().setMailingAddress(new Address(AddressType.MAILING));
     }
 
     public void removeMailingAddress() {
-        getEntity().setMailingAddress(null);
+        getBean().setMailingAddress(null);
     }
 
     public void billingCountryChanged(Property.ValueChangeEvent event) {
@@ -182,16 +182,18 @@ public class AccountForm extends EntityForm<Account> {
                         "<ul>" +
                         "<li>Right-mouse click on form tabs to add and remove sections" +
                         "<li>Add any number of contacts or opportunities to the one-to-many entity relationship" +
+                        "<li>Open two browsers and modify the same entity concurrently to see handling of optimistic locking" +
+                        "<li>Input invalid data and then mouse-over input to see error message" +
                         "</ul>"
         );
     }
 
     @Override
     public String getTypeCaption() {
-        if (getEntity().getName() == null) {
+        if (getBean().getName() == null) {
             return "Account Form - New";
         } else {
-            return "Account Form - " + getEntity().getName();
+            return "Account Form - " + getBean().getName();
         }
     }
 }

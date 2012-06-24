@@ -38,7 +38,6 @@
 package com.expressui.core.view.page;
 
 import com.expressui.core.entity.UserOwnedEntity;
-import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.view.TypedComponent;
 import com.expressui.core.view.form.EntityForm;
@@ -95,8 +94,8 @@ public abstract class UserOwnedEntityFormPage<T extends UserOwnedEntity> extends
 
         if (entity == null) {
             getEntityForm().create();
-            if (getEntityForm().getEntity().getUser() == null) {
-                getEntityForm().getEntity().setUser(user);
+            if (getEntityForm().getBean().getUser() == null) {
+                getEntityForm().getBean().setUser(user);
             }
         } else {
             getEntityForm().load(entity);

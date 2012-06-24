@@ -464,10 +464,21 @@ public abstract class MainApplication extends Application implements ViewBean, H
         getMainWindow().showNotification(notification);
     }
 
+    /**
+     * Show message in tray area, bottom right with 5000 milliseconds delay
+     *
+     * @param message message to display
+     */
     public void showTrayMessage(String message) {
-        showTrayMessage(0, message);
+        showTrayMessage(2000, message);
     }
 
+    /**
+     * Show message in tray area
+     *
+     * @param delayMSec delay in milliseconds to display message
+     * @param message   message to display
+     */
     public void showTrayMessage(int delayMSec, String message) {
         Window.Notification notification = new Window.Notification(message, Window.Notification.TYPE_TRAY_NOTIFICATION);
         notification.setPosition(Window.Notification.POSITION_BOTTOM_RIGHT);

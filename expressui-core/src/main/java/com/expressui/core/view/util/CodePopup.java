@@ -66,6 +66,9 @@ public class CodePopup {
     @Resource
     private ApplicationProperties applicationProperties;
 
+    @Resource
+    public MessageSource uiMessageSource;
+
     /**
      * Create a popup code button.
      *
@@ -83,7 +86,7 @@ public class CodePopup {
         });
         codeButton.setIcon(new ThemeResource("../expressui/icons/32/java.png"));
         codeButton.setStyleName(BaseTheme.BUTTON_LINK);
-
+        codeButton.setDescription(uiMessageSource.getToolTip("codePopup.toolTip"));
         return codeButton;
     }
 

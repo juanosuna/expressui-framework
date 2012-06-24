@@ -37,6 +37,7 @@
 
 package com.expressui.sample.view;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.view.RootComponent;
 import com.expressui.core.view.page.Page;
 import com.vaadin.terminal.ExternalResource;
@@ -71,5 +72,12 @@ public class HomePage extends RootComponent implements Page {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+
+        MainApplication.getInstance().showTrayMessage(
+                "<h3>Feature Tip:</h3>" +
+                        "<ul>" +
+                        "<li>This illustrates how to embed any external page into ExpressUI" +
+                        "</ul>"
+        );
     }
 }

@@ -37,6 +37,7 @@
 
 package com.expressui.sample.view.account;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.view.page.SearchPage;
 import com.expressui.sample.entity.Account;
 import org.springframework.context.annotation.Scope;
@@ -65,6 +66,18 @@ public class AccountPage extends SearchPage<Account> {
     @Override
     public AccountResults getResults() {
         return accountResults;
+    }
+
+    @Override
+    public void onDisplay() {
+        super.onDisplay();
+        MainApplication.getInstance().showTrayMessage(
+                "<h3>Feature Tips:</h3>" +
+                        "<ul>" +
+                        "<li>Select US, Canada, Mexico or Australia to see dependent states" +
+                        "<li>Click any column to sort with database query" +
+                        "</ul>"
+        );
     }
 
     @Override

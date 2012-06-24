@@ -104,8 +104,8 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * EXPERIMENTAL Vaadin feature: will tell the client to re-calculate column widths
-     * if set to true. Currently no setter: extend to enable.
+     * EXPERIMENTAL Vaadin feature: tells the client to re-calculate column widths
+     * if set to true.
      */
     public void setAlwaysRecalculateColumnWidths(boolean alwaysRecalculateColumnWidths) {
         this.alwaysRecalculateColumnWidths = alwaysRecalculateColumnWidths;
