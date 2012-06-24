@@ -42,7 +42,7 @@
     <parent>
         <groupId>com.expressui</groupId>
         <artifactId>expressui-parent</artifactId>
-        <version>1.0.0-RC3-SNAPSHOT</version>
+        <version>1.0.0-RC3</version>
         <relativePath>../expressui-parent/pom.xml</relativePath>
     </parent>
 
