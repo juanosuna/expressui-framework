@@ -24,10 +24,10 @@ public class PersonForm extends EntityForm<Person> {
 
     @Override
     public String getTypeCaption() {
-        if (getEntity().getLastName() == null) {
+        if (getBean().getLastName() == null) {
             return "Person Form - New";
         } else {
-            return "Person Form - " + getEntity().getLastName();
+            return "Person Form - " + getBean().getLastName();
         }
     }
 }
