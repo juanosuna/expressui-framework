@@ -266,6 +266,10 @@
     padding-left: 2px;
 }
 
+.expressui-tool-tip {
+    font-size: large;
+}
+
 /* Style for code popup window used by sample app */
 .code-popup .v-window {
     background: #e8faee repeat scroll 0 0;

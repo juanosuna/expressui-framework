@@ -121,7 +121,7 @@ public class SelectField extends CustomField {
         selectFieldLayout.addComponent(field);
 
         searchButton = new Button();
-        searchButton.setDescription(uiMessageSource.getMessage("selectField.search.description"));
+        searchButton.setDescription(uiMessageSource.getToolTip("selectField.search.toolTip"));
         searchButton.setSizeUndefined();
         searchButton.addStyleName("borderless");
         searchButton.setIcon(new ThemeResource("../chameleon/img/magnifier.png"));
@@ -133,7 +133,7 @@ public class SelectField extends CustomField {
         selectFieldLayout.addComponent(searchButton);
 
         clearButton = new Button();
-        clearButton.setDescription(uiMessageSource.getMessage("selectField.clear.description"));
+        clearButton.setDescription(uiMessageSource.getToolTip("selectField.clear.toolTip"));
         clearButton.setSizeUndefined();
         clearButton.addStyleName("borderless");
         clearButton.setIcon(new ThemeResource("../runo/icons/16/cancel.png"));

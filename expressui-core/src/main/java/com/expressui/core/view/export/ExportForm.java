@@ -123,13 +123,13 @@ public class ExportForm extends TypedForm<ExportParameters> {
         footerLayout.setMargin(true);
 
         closeButton = new Button(uiMessageSource.getMessage("exportForm.close"), this, "close");
-        closeButton.setDescription(uiMessageSource.getMessage("exportForm.description.close"));
+        closeButton.setDescription(uiMessageSource.getToolTip("exportForm.close.toolTip"));
         closeButton.setIcon(new ThemeResource("../expressui/icons/16/delete.png"));
         closeButton.addStyleName("small default");
         footerLayout.addComponent(closeButton);
 
         exportButton = new Button(uiMessageSource.getMessage("exportForm.export"));
-        exportButton.setDescription(uiMessageSource.getMessage("exportForm.export.description"));
+        exportButton.setDescription(uiMessageSource.getToolTip("exportForm.export.toolTip"));
         exportButton.setIcon(new ThemeResource("../expressui/icons/16/excel.bmp"));
         exportButton.addStyleName("small default");
         footerLayout.addComponent(exportButton);

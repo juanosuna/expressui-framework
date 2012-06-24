@@ -156,7 +156,7 @@ public class Country extends ReferenceEntity {
 
     public String getZipCodeToolTip() {
         if (getMinPostalCode() != null && getMaxPostalCode() != null) {
-            return "<strong>Postal code range:</strong>" +
+            return "Postal code range:" +
                     "<ul>" +
                     "  <li>" + getMinPostalCode() + " - " + getMaxPostalCode() + "</li>" +
                     "</ul>";

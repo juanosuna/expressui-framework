@@ -657,7 +657,7 @@ public class FormFieldSet extends FieldSet {
      * @param toolTip    description displayed to user
      */
     public void setToolTip(String propertyId, String toolTip) {
-        getFormField(propertyId).setToolTip(toolTip);
+        getFormField(propertyId).setToolTip("<span class=\"expressui-tool-tip\">" + toolTip + "</span>");
     }
 
     public void clearSelectItems(String propertyId) {

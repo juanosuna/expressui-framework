@@ -194,7 +194,7 @@ public abstract class Results<T> extends TypedComponent<T> {
         resultCountDisplay.addComponent(spaceLabel);
 
         Button refreshButton = new Button(null, getResultsTable(), "refresh");
-        refreshButton.setDescription(uiMessageSource.getMessage("results.refresh.description"));
+        refreshButton.setDescription(uiMessageSource.getToolTip("results.refresh.toolTip"));
         refreshButton.setSizeUndefined();
         refreshButton.addStyleName("borderless");
         refreshButton.setIcon(new ThemeResource("../expressui/icons/16/refresh-blue.png"));
@@ -221,35 +221,35 @@ public abstract class Results<T> extends TypedComponent<T> {
         navigationButtons.addComponent(pageSizeMenu);
 
         firstButton = new Button(null, getResultsTable(), "firstPage");
-        firstButton.setDescription(uiMessageSource.getMessage("results.first.description"));
+        firstButton.setDescription(uiMessageSource.getToolTip("results.first.toolTip"));
         firstButton.setSizeUndefined();
         firstButton.addStyleName("borderless");
         firstButton.setIcon(new ThemeResource("../expressui/icons/16/first.png"));
         navigationButtons.addComponent(firstButton);
 
         previousButton = new Button(null, getResultsTable(), "previousPage");
-        previousButton.setDescription(uiMessageSource.getMessage("results.previous.description"));
+        previousButton.setDescription(uiMessageSource.getToolTip("results.previous.toolTip"));
         previousButton.setSizeUndefined();
         previousButton.addStyleName("borderless");
         previousButton.setIcon(new ThemeResource("../expressui/icons/16/previous.png"));
         navigationButtons.addComponent(previousButton);
 
         nextButton = new Button(null, getResultsTable(), "nextPage");
-        nextButton.setDescription(uiMessageSource.getMessage("results.next.description"));
+        nextButton.setDescription(uiMessageSource.getToolTip("results.next.toolTip"));
         nextButton.setSizeUndefined();
         nextButton.addStyleName("borderless");
         nextButton.setIcon(new ThemeResource("../expressui/icons/16/next.png"));
         navigationButtons.addComponent(nextButton);
 
         lastButton = new Button(null, getResultsTable(), "lastPage");
-        lastButton.setDescription(uiMessageSource.getMessage("results.last.description"));
+        lastButton.setDescription(uiMessageSource.getToolTip("results.last.toolTip"));
         lastButton.setSizeUndefined();
         lastButton.addStyleName("borderless");
         lastButton.setIcon(new ThemeResource("../expressui/icons/16/last.png"));
         navigationButtons.addComponent(lastButton);
 
         excelButton = new Button(null, this, "openExportForm");
-        excelButton.setDescription(uiMessageSource.getMessage("results.excel.description"));
+        excelButton.setDescription(uiMessageSource.getToolTip("results.excel.toolTip"));
         excelButton.setSizeUndefined();
         excelButton.addStyleName("borderless");
         excelButton.setIcon(new ThemeResource("../expressui/icons/16/excel.bmp"));

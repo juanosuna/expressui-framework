@@ -105,13 +105,13 @@ public abstract class SearchForm<T extends EntityQuery> extends TypedForm<T> {
         footerLayout.setMargin(true);
 
         Button clearButton = new Button(uiMessageSource.getMessage("searchForm.clear"), this, "clear");
-        clearButton.setDescription(uiMessageSource.getMessage("searchForm.clear.description"));
+        clearButton.setDescription(uiMessageSource.getToolTip("searchForm.clear.toolTip"));
         clearButton.setIcon(new ThemeResource("../expressui/icons/16/clear.png"));
         clearButton.addStyleName("small default");
         footerLayout.addComponent(clearButton);
 
         Button searchButton = new Button(uiMessageSource.getMessage("searchForm.search"), this, "search");
-        searchButton.setDescription(uiMessageSource.getMessage("searchForm.search.description"));
+        searchButton.setDescription(uiMessageSource.getToolTip("searchForm.search.toolTip"));
         searchButton.setIcon(new ThemeResource("../expressui/icons/16/search.png"));
         searchButton.addStyleName("small default");
         footerLayout.addComponent(searchButton);

@@ -93,7 +93,7 @@ public class Opportunity extends WritableEntity {
 
     private BigDecimal amountInUSD;
 
-    private BigDecimal amountWeightedInUSD;
+    private BigDecimal valueWeightedInUSD;
 
     @Lob
     private String description;
@@ -195,7 +195,7 @@ public class Opportunity extends WritableEntity {
     public void setAmount(BigDecimal amount) {
         if (!isEqual(this.amount, amount)) {
             this.amount = amount;
-            amountWeightedInUSD = calculateAmountWeightedInUSD();
+            valueWeightedInUSD = calculateValueWeightedInUSD();
             amountInUSD = calculateAmountInUSD();
         }
     }
@@ -211,7 +211,7 @@ public class Opportunity extends WritableEntity {
     public void setCurrency(Currency currency) {
         if (!isEqual(this.currency, currency)) {
             this.currency = currency;
-            amountWeightedInUSD = calculateAmountWeightedInUSD();
+            valueWeightedInUSD = calculateValueWeightedInUSD();
             amountInUSD = calculateAmountInUSD();
         }
     }
@@ -223,23 +223,23 @@ public class Opportunity extends WritableEntity {
     public void setProbability(double probability) {
         if (this.probability != probability) {
             this.probability = probability;
-            amountWeightedInUSD = calculateAmountWeightedInUSD();
+            valueWeightedInUSD = calculateValueWeightedInUSD();
         }
     }
 
-    public BigDecimal getAmountWeightedInUSD() {
-        return amountWeightedInUSD;
+    public BigDecimal getValueWeightedInUSD() {
+        return valueWeightedInUSD;
     }
 
-    private BigDecimal calculateAmountWeightedInUSD() {
+    private BigDecimal calculateValueWeightedInUSD() {
         if (getAmount() == null || getCurrency() == null) {
             return null;
         } else {
             try {
                 BigDecimal amountInUSD = ecbfxService.convert(getAmount(), getCurrency().getId(), "USD");
                 amountInUSD = amountInUSD.setScale(0, RoundingMode.HALF_EVEN);
-                BigDecimal amountWeightedInUSD = amountInUSD.multiply(new BigDecimal(getProbability()));
-                return amountWeightedInUSD.setScale(0, RoundingMode.HALF_EVEN);
+                BigDecimal valueWeightedInUSD = amountInUSD.multiply(new BigDecimal(getProbability()));
+                return valueWeightedInUSD.setScale(0, RoundingMode.HALF_EVEN);
             } catch (Exception e) {
                 return null;
             }

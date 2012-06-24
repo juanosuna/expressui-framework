@@ -37,6 +37,7 @@
 
 package com.expressui.sample.view.account;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.view.field.format.UrlPropertyFormatter;
 import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.EntityForm;
@@ -131,6 +132,8 @@ public class AccountForm extends EntityForm<Account> {
         formFields.setLabel("assignedTo.loginName", "Assigned to");
         formFields.setLabel("mainPhone", "Phone");
 
+        formFields.setToolTip("currency", "Change to currency changes amount in USD");
+
         formFields.addConversionValidator("mainPhone", new PhoneConversionValidator());
         formFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
 
@@ -169,6 +172,18 @@ public class AccountForm extends EntityForm<Account> {
         if (newCountry != null) {
             getFormFieldSet().setToolTip(addressPropertyId + ".zipCode", newCountry.getZipCodeToolTip());
         }
+    }
+
+    @Override
+    public void onDisplay() {
+        super.onDisplay();
+        MainApplication.getInstance().showTrayMessage(
+                "<h3>Feature Tips:</h3>" +
+                        "<ul>" +
+                        "<li>Right-mouse click on form tabs to add and remove sections" +
+                        "<li>Add any number of contacts or opportunities to the one-to-many entity relationship" +
+                        "</ul>"
+        );
     }
 
     @Override

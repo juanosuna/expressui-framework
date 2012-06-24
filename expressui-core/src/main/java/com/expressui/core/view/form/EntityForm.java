@@ -201,25 +201,25 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         footerLayout.setMargin(true);
 
         cancelButton = new Button(uiMessageSource.getMessage("entityForm.cancel"), this, "cancel");
-        cancelButton.setDescription(uiMessageSource.getMessage("entityForm.cancel.description"));
+        cancelButton.setDescription(uiMessageSource.getToolTip("entityForm.cancel.toolTip"));
         cancelButton.setIcon(new ThemeResource("../expressui/icons/16/cancel.png"));
         cancelButton.addStyleName("small default");
         footerLayout.addComponent(cancelButton);
 
         refreshButton = new Button(uiMessageSource.getMessage("entityForm.refresh"), this, "refresh");
-        refreshButton.setDescription(uiMessageSource.getMessage("entityForm.refresh.description"));
+        refreshButton.setDescription(uiMessageSource.getToolTip("entityForm.refresh.toolTip"));
         refreshButton.setIcon(new ThemeResource("../expressui/icons/16/refresh.png"));
         refreshButton.addStyleName("small default");
         footerLayout.addComponent(refreshButton);
 
         saveAndStayOpenButton = new Button(uiMessageSource.getMessage("entityForm.saveAndStayOpen"), this, "saveAndStayOpen");
-        saveAndStayOpenButton.setDescription(uiMessageSource.getMessage("entityForm.save.description"));
+        saveAndStayOpenButton.setDescription(uiMessageSource.getToolTip("entityForm.saveAndStayOpen.toolTip"));
         saveAndStayOpenButton.setIcon(new ThemeResource("../expressui/icons/16/save.png"));
         saveAndStayOpenButton.addStyleName("small default");
         footerLayout.addComponent(saveAndStayOpenButton);
 
         saveAndCloseButton = new Button(uiMessageSource.getMessage("entityForm.saveAndClose"), this, "saveAndClose");
-        saveAndCloseButton.setDescription(uiMessageSource.getMessage("entityForm.save.description"));
+        saveAndCloseButton.setDescription(uiMessageSource.getToolTip("entityForm.saveAndClose.toolTip"));
         saveAndCloseButton.setIcon(new ThemeResource("../expressui/icons/16/save.png"));
         saveAndCloseButton.addStyleName("small default");
         footerLayout.addComponent(saveAndCloseButton);

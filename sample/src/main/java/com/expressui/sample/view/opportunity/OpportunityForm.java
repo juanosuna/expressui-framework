@@ -75,11 +75,11 @@ public class OpportunityForm extends EntityForm<Opportunity> {
         overview.setCoordinates("salesStage", 3, 1);
         overview.setCoordinates("assignedTo.loginName", 3, 2);
 
-        overview.setCoordinates("amount", 4, 1);
+        overview.setCoordinates("probability", 4, 1);
         overview.setCoordinates("currency", 4, 2);
 
-        overview.setCoordinates("probability", 5, 1);
-        overview.setCoordinates("amountWeightedInUSD", 5, 2);
+        overview.setCoordinates("amount", 5, 1);
+        overview.setCoordinates("valueWeightedInUSD", 5, 2);
 
         overview.setCoordinates("expectedCloseDate", 6, 1);
         overview.setCoordinates("actualCloseDate", 6, 2);
@@ -91,6 +91,10 @@ public class OpportunityForm extends EntityForm<Opportunity> {
         formFields.setLabel("opportunityType", "Type");
         formFields.setLabel("account.name", "Account");
         formFields.setLabel("assignedTo.loginName", "Assigned to");
+
+        formFields.setToolTip("salesStage", "Change to sales stage changes probability");
+        formFields.setToolTip("probability", "Change in probability changes value weighted in USD");
+        formFields.setToolTip("currency", "Change in currency changes value weighted in USD");
 
         SelectField selectField = new SelectField(this, "assignedTo", userSelect);
         formFields.setField("assignedTo.loginName", selectField);

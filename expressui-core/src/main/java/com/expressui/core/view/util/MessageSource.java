@@ -43,31 +43,111 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import java.util.Locale;
 
 /**
- * Provides access to internationalized messages.
+ * Provides access to internationalized messages in messages_* files.
  * <p/>
  * Subclasses Spring's ReloadableResourceBundleMessageSource and adds a few convenient
  * overloaded methods.
  */
 public class MessageSource extends ReloadableResourceBundleMessageSource {
 
+    /**
+     * Get message, use code itself if message not found
+     * @param code property key to look up message
+     * @return message value from messages_* file or code itself, if not found
+     */
     public String getMessageWithDefault(String code) {
         return getMessage(code, null, code);
     }
 
+    /**
+     * Get message
+     * @param code property key to look up message
+     * @return message value from messages_* file
+     */
     public String getMessage(String code) {
         return getMessage(code, null, null, getLocale());
     }
 
+    /**
+     * Get message
+     * @param code property key to look up message
+     * @param args passed for substitution in the message, {0}, {1}, {2}, etc.
+     * @return message value from messages_* file
+     */
     public String getMessage(String code, Object[] args) {
         return getMessage(code, args, code);
     }
 
+    /**
+     * Get message
+     * @param code property key to look up message
+     * @param defaultMessage message if property key not found in messages file
+     * @return message value from messages_* file
+     */
     public String getMessage(String code, String defaultMessage) {
         return getMessage(code, null, defaultMessage);
     }
 
+    /**
+     * Get message
+     * @param code property key to look up message
+     * @param args passed for substitution in the message, {0}, {1}, {2}, etc.
+     * @param defaultMessage message if property key not found in messages file
+     * @return message value from messages_* file
+     */
     public String getMessage(String code, Object[] args, String defaultMessage) {
         return getMessage(code, args, defaultMessage, getLocale());
+    }
+
+    /**
+     * Get message, use code itself if message not found. Tool tip is wrapped with span with expressui-tool-tip style.
+     * @param code property key to look up message
+     * @return message value from messages_* file or code itself, if not found
+     */
+    public String getToolTipWithDefault(String code) {
+        return wrapWithToolTipStyle(getMessage(code, null, code));
+    }
+
+    /**
+     * Gets message wrapped with span with express-ui-toolTip style
+     * @param code key
+     * @return message value from messages_* file
+     */
+    public String getToolTip(String code) {
+        return wrapWithToolTipStyle(getMessage(code, null, null, getLocale()));
+    }
+
+    /**
+     * Gets message wrapped with span with express-ui-toolTip style
+     * @param args passed for substitution in the message, {0}, {1}, {2}, etc.
+     * @param code key
+     * @return message value from messages_* file
+     */
+    public String getToolTip(String code, Object[] args) {
+        return wrapWithToolTipStyle(getMessage(code, args, code));
+    }
+
+    /**
+     * Gets message wrapped with span with express-ui-toolTip style
+     * @param code key
+     * @param defaultMessage message if property key not found in messages file
+     * @return message value from messages_* file
+     */
+    public String getToolTip(String code, String defaultMessage) {
+        return wrapWithToolTipStyle(getMessage(code, null, defaultMessage));
+    }
+
+    /**
+     * Gets message wrapped with span with express-ui-toolTip style
+     * @param code key
+     * @return message value from messages_* file
+     */
+    public String getToolTip(String code, Object[] args, String defaultMessage) {
+        return wrapWithToolTipStyle(getMessage(code, args, defaultMessage, getLocale()));
+    }
+
+    private static String wrapWithToolTipStyle(String message) {
+        return "<span class=\"expressui-tool-tip\">" + message + "</span>";
     }
 
     /**

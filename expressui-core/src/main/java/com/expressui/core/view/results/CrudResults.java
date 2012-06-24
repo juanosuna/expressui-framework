@@ -98,27 +98,27 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         crudButtons.setSpacing(true);
 
         newButton = new Button(uiMessageSource.getMessage("crudResults.new"), this, "create");
-        newButton.setDescription(uiMessageSource.getMessage("crudResults.new.description"));
+        newButton.setDescription(uiMessageSource.getToolTip("crudResults.new.toolTip"));
         newButton.setIcon(new ThemeResource("../expressui/icons/16/add.png"));
         newButton.addStyleName("small default");
         crudButtons.addComponent(newButton);
 
         viewButton = new Button(uiMessageSource.getMessage("crudResults.view"), this, "view");
-        viewButton.setDescription(uiMessageSource.getMessage("crudResults.view.description"));
+        viewButton.setDescription(uiMessageSource.getToolTip("crudResults.view.toolTip"));
         viewButton.setIcon(new ThemeResource("../expressui/icons/16/view.png"));
         viewButton.setEnabled(false);
         viewButton.addStyleName("small default");
         crudButtons.addComponent(viewButton);
 
         editButton = new Button(uiMessageSource.getMessage("crudResults.edit"), this, "edit");
-        editButton.setDescription(uiMessageSource.getMessage("crudResults.edit.description"));
+        editButton.setDescription(uiMessageSource.getToolTip("crudResults.edit.toolTip"));
         editButton.setIcon(new ThemeResource("../expressui/icons/16/edit.png"));
         editButton.setEnabled(false);
         editButton.addStyleName("small default");
         crudButtons.addComponent(editButton);
 
         deleteButton = new Button(uiMessageSource.getMessage("crudResults.delete"), this, "delete");
-        deleteButton.setDescription(uiMessageSource.getMessage("crudResults.delete.description"));
+        deleteButton.setDescription(uiMessageSource.getToolTip("crudResults.delete.toolTip"));
         deleteButton.setIcon(new ThemeResource("../expressui/icons/16/delete.png"));
         deleteButton.setEnabled(false);
         deleteButton.addStyleName("small default");

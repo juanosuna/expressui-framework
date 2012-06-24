@@ -216,7 +216,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
                 setIsRequiredEnable(tabName, false);
                 tab.setVisible(false);
             }
-            tab.setDescription(uiMessageSource.getMessage("typedForm.tab.description"));
+            tab.setDescription(uiMessageSource.getToolTip("typedForm.tab.toolTip"));
         }
 
         formTabSheet.setCloseHandler(new TabSheet.CloseHandler() {
@@ -273,7 +273,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
                 setFormVisible(!isFormVisible());
             }
         });
-        toggleFormVisibilityButton.setDescription(uiMessageSource.getMessage("typedForm.toggleSearchForm.description"));
+        toggleFormVisibilityButton.setDescription(uiMessageSource.getToolTip("typedForm.toggleSearchForm.toolTip"));
         toggleFormVisibilityButton.setIcon(new ThemeResource("../expressui/icons/collapse-icon.png"));
         toggleFormVisibilityButton.addStyleName("borderless");
 

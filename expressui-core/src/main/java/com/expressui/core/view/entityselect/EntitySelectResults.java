@@ -75,7 +75,7 @@ public abstract class EntitySelectResults<T> extends Results<T> {
         crudButtons.setSpacing(true);
 
         selectButton = new Button(uiMessageSource.getMessage("results.select"));
-        selectButton.setDescription(uiMessageSource.getMessage("results.select.description"));
+        selectButton.setDescription(uiMessageSource.getToolTip("results.select.toolTip"));
         selectButton.setEnabled(false);
         selectButton.addStyleName("small default");
         crudButtons.addComponent(selectButton);

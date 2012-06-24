@@ -452,9 +452,9 @@ public abstract class MainApplication extends Application implements ViewBean, H
     /**
      * Show notification to user, more customizable that other show* methods.
      *
-     * @param caption the message to show
-     * @param type type of message
-     * @param position desired notification position
+     * @param caption   the message to show
+     * @param type      type of message
+     * @param position  desired notification position
      * @param delayMsec desired delay in msec, -1 to require the user to click the message
      */
     public void showNotification(String caption, int type, int position, int delayMsec) {
@@ -462,6 +462,18 @@ public abstract class MainApplication extends Application implements ViewBean, H
         notification.setPosition(position);
         notification.setDelayMsec(delayMsec);
         getMainWindow().showNotification(notification);
+    }
+
+    public void showTrayMessage(String message) {
+        showTrayMessage(0, message);
+    }
+
+    public void showTrayMessage(int delayMSec, String message) {
+        Window.Notification notification = new Window.Notification(message, Window.Notification.TYPE_TRAY_NOTIFICATION);
+        notification.setPosition(Window.Notification.POSITION_BOTTOM_RIGHT);
+        notification.setDelayMsec(delayMSec);
+        notification.setHtmlContentAllowed(true);
+        MainApplication.getInstance().showNotification(notification);
     }
 
     /**

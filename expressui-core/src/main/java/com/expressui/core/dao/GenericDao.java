@@ -367,7 +367,7 @@ public class GenericDao {
                 toManyRelationshipQuery).execute();
     }
 
-    private class StructuredQueryExecutor {
+    class StructuredQueryExecutor {
 
         private Class entityType;
 
@@ -468,7 +468,7 @@ public class GenericDao {
         }
     }
 
-    private class ToManyRelationshipQueryExecutor extends StructuredQueryExecutor {
+    class ToManyRelationshipQueryExecutor extends StructuredQueryExecutor {
         public ToManyRelationshipQueryExecutor(Class entityType, ToManyRelationshipQuery toManyRelationshipQuery) {
             super(entityType, toManyRelationshipQuery);
         }

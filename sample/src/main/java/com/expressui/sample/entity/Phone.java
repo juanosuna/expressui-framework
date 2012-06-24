@@ -50,7 +50,7 @@ import java.io.Serializable;
 public class Phone implements Serializable {
 
     public static final String TOOL_TIP =
-            "<strong>Example formats:</strong>" +
+            "Phone input automatically transformed to standard formats, e.g.:" +
                     "<ul>" +
                     "  <li>US: (919) 975-5331</li>" +
                     "  <li>Germany: +49 30/70248804</li>" +

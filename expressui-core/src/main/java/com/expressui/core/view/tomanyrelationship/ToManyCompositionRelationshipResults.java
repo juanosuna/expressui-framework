@@ -77,7 +77,7 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
         super.postConstruct();
 
         editButton = new Button(uiMessageSource.getMessage("crudResults.edit"), this, "edit");
-        editButton.setDescription(uiMessageSource.getMessage("crudResults.edit.description"));
+        editButton.setDescription(uiMessageSource.getToolTip("crudResults.edit.toolTip"));
         editButton.setIcon(new ThemeResource("../expressui/icons/16/edit.png"));
         editButton.setEnabled(false);
         editButton.addStyleName("small default");

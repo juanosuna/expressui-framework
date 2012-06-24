@@ -67,6 +67,8 @@ public class ContactSearchForm extends SearchForm<ContactQuery> {
         formFields.setCoordinates("country", 1, 2);
         formFields.setCoordinates("states", 1, 3);
 
+        formFields.setToolTip("country", "Select US, Canada, Mexico, or Australia to see states");
+
         formFields.clearSelectItems("states");
         formFields.setVisible("states", false);
         formFields.setMultiSelectDimensions("states", 5, 15);

@@ -37,6 +37,7 @@
 
 package com.expressui.sample.view;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.security.exception.*;
 import com.expressui.core.view.RootComponent;
 import com.expressui.core.view.menu.MainMenuBar;
@@ -81,7 +82,7 @@ public class LoginPage extends RootComponent implements Page {
         panel.setSizeUndefined();
         panel.setCaption("Login");
         panel.addComponent(loginForm);
-        panel.addComponent(new Label("Tip: you may login as guest/guest!"));
+        panel.addComponent(new Label("Tip: login as guest/guest"));
 
         addComponent(panel);
         setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
@@ -89,6 +90,12 @@ public class LoginPage extends RootComponent implements Page {
 
     @Override
     public void onDisplay() {
+        MainApplication.getInstance().showTrayMessage(
+                "<h3>Feature Tip:</h3>" +
+                        "<ul>" +
+                        "<li>Download and run demo locally to explore admin security features" +
+                        "</ul>"
+        );
     }
 
     private class LoginHandler implements LoginForm.LoginListener {

@@ -94,7 +94,7 @@ public class ResultsConnectedEntityForm<T> extends CustomComponent {
         previousButtonLayout.addComponent(spaceLabel);
 
         previousButton = new Button(null, this, "previousItem");
-        previousButton.setDescription(entityForm.uiMessageSource.getMessage("entityForm.previous.description"));
+        previousButton.setDescription(entityForm.uiMessageSource.getToolTip("entityForm.previous.toolTip"));
         previousButton.setSizeUndefined();
         previousButton.addStyleName("borderless");
         previousButton.setIcon(new ThemeResource("../expressui/icons/16/previous.png"));
@@ -130,7 +130,7 @@ public class ResultsConnectedEntityForm<T> extends CustomComponent {
         nextButtonLayout.addComponent(spaceLabel);
 
         nextButton = new Button(null, this, "nextItem");
-        nextButton.setDescription(entityForm.uiMessageSource.getMessage("entityForm.next.description"));
+        nextButton.setDescription(entityForm.uiMessageSource.getToolTip("entityForm.next.toolTip"));
         nextButton.setSizeUndefined();
         nextButton.addStyleName("borderless");
         nextButton.setIcon(new ThemeResource("../expressui/icons/16/next.png"));

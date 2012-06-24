@@ -115,13 +115,13 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
         crudButtons.setSpacing(true);
 
         addButton = new Button(uiMessageSource.getMessage("toManyRelationshipResults.add"), this, "add");
-        addButton.setDescription(uiMessageSource.getMessage("toManyRelationshipResults.add.description"));
+        addButton.setDescription(uiMessageSource.getToolTip("toManyRelationshipResults.add.toolTip"));
         addButton.setIcon(new ThemeResource("../expressui/icons/16/add.png"));
         addButton.addStyleName("small default");
         crudButtons.addComponent(addButton);
 
         removeButton = new Button(uiMessageSource.getMessage("toManyRelationshipResults.remove"), this, "remove");
-        removeButton.setDescription(uiMessageSource.getMessage("toManyRelationshipResults.remove.description"));
+        removeButton.setDescription(uiMessageSource.getToolTip("toManyRelationshipResults.remove.toolTip"));
         removeButton.setIcon(new ThemeResource("../expressui/icons/16/delete.png"));
         removeButton.setEnabled(false);
         removeButton.addStyleName("small default");

@@ -77,17 +77,17 @@ public class OpportunityResults extends CrudResults<Opportunity> {
         resultsFields.setPropertyIds(
                 "name",
                 "salesStage",
-                "amountWeightedInUSD",
+                "valueWeightedInUSD",
                 "expectedCloseDate",
                 "lastModified",
                 "modifiedBy"
         );
 
-        resultsFields.setLabel("amountWeightedInUSD", "Weighted Amount");
+        resultsFields.setLabel("valueWeightedInUSD", "Weighted Amount");
 
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
         numberFormat.setMaximumFractionDigits(0);
         JDKBridgePropertyFormatter formatter = new JDKBridgePropertyFormatter(numberFormat);
-        resultsFields.setPropertyFormatter("amountWeightedInUSD", formatter);
+        resultsFields.setPropertyFormatter("valueWeightedInUSD", formatter);
     }
 }
