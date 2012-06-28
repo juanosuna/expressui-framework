@@ -39,6 +39,7 @@ package com.expressui.core.dao.query;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,7 +85,7 @@ public abstract class StructuredEntityQuery<T> extends EntityQuery<T> {
      * @param rootEntity root type in the from clause
      * @return a list of predicates, one for every part of the criteria
      */
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<T> rootEntity) {
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery<T> query, Root<T> rootEntity) {
         return new ArrayList<Predicate>();
     }
 
@@ -94,7 +95,7 @@ public abstract class StructuredEntityQuery<T> extends EntityQuery<T> {
      *
      * @param typedQuery interface for setting parameters
      */
-    public void setParameters(TypedQuery typedQuery) {
+    public void setParameters(TypedQuery<Serializable> typedQuery) {
     }
 
     /**

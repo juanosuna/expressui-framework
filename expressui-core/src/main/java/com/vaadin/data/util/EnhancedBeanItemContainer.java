@@ -80,7 +80,7 @@ public class EnhancedBeanItemContainer<BEANTYPE> extends BeanItemContainer<BEANT
     @Override
     public Collection<?> getSortableContainerPropertyIds() {
         LinkedList<Object> sortables = new LinkedList<Object>();
-        for (Object propertyId : getContainerPropertyIds()) {
+        for (String propertyId : getContainerPropertyIds()) {
             if (!nonSortablePropertyIds.contains(propertyId)) {
                 sortables.add(propertyId);
             }

@@ -45,6 +45,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,7 +68,7 @@ public class RelatedOpportunitiesQuery extends ToManyRelationshipQuery<Opportuni
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<Opportunity> opportunity) {
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery<Opportunity> query, Root<Opportunity> opportunity) {
         List<Predicate> predicates = new ArrayList<Predicate>();
 
         if (hasValue(account)) {
@@ -79,7 +80,7 @@ public class RelatedOpportunitiesQuery extends ToManyRelationshipQuery<Opportuni
     }
 
     @Override
-    public void setParameters(TypedQuery typedQuery) {
+    public void setParameters(TypedQuery<Serializable> typedQuery) {
         if (hasValue(account)) {
             typedQuery.setParameter("account", account);
         }

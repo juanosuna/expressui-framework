@@ -41,7 +41,6 @@ import com.expressui.core.view.results.CrudResults;
 import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.RecentContactsQuery;
 import com.expressui.sample.entity.Contact;
-import com.expressui.sample.view.account.AccountForm;
 import com.expressui.sample.view.contact.ContactForm;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -60,9 +59,6 @@ public class RecentContactResults extends CrudResults<Contact> {
 
     @Resource
     private ContactForm contactForm;
-
-    @Resource
-    private AccountForm accountForm;
 
     @Override
     public RecentContactsQuery getEntityQuery() {

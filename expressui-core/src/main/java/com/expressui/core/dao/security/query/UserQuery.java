@@ -48,6 +48,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +79,7 @@ public class UserQuery extends StructuredEntityQuery<User> {
     /**
      * Set login name to query
      *
-     * @param loginName
+     * @param loginName login name
      */
     public void setLoginName(String loginName) {
         this.loginName = loginName;
@@ -108,7 +109,7 @@ public class UserQuery extends StructuredEntityQuery<User> {
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<User> user) {
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery<User> query, Root<User> user) {
         List<Predicate> predicates = new ArrayList<Predicate>();
 
         if (hasValue(loginName)) {
@@ -128,7 +129,7 @@ public class UserQuery extends StructuredEntityQuery<User> {
     }
 
     @Override
-    public void setParameters(TypedQuery typedQuery) {
+    public void setParameters(TypedQuery<Serializable> typedQuery) {
         if (hasValue(loginName)) {
             typedQuery.setParameter("loginName", "%" + loginName.toUpperCase() + "%");
         }

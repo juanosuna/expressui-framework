@@ -151,10 +151,7 @@ public class UserRole extends AuditableEntity {
 
             Id id = (Id) o;
 
-            if (!roleId.equals(id.roleId)) return false;
-            if (!userId.equals(id.userId)) return false;
-
-            return true;
+            return roleId.equals(id.roleId) && userId.equals(id.userId);
         }
 
         @Override

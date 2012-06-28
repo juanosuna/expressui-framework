@@ -121,7 +121,7 @@ public abstract class FormGridLayout extends CustomComponent implements Layout {
      * Do not use. Throws UnsupportedOperationException. Instead use:
      * addComponent(Component component, int column1, int row1, int column2, int row2)
      *
-     * @param component
+     * @param component component to be added
      */
     @Override
     public void addComponent(Component component) {

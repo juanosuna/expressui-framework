@@ -45,6 +45,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +66,7 @@ public class ProfileQuery extends StructuredEntityQuery<Profile> {
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<Profile> profile) {
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery<Profile> query, Root<Profile> profile) {
         List<Predicate> predicates = new ArrayList<Predicate>();
 
         if (hasValue(loginName)) {
@@ -77,7 +78,7 @@ public class ProfileQuery extends StructuredEntityQuery<Profile> {
     }
 
     @Override
-    public void setParameters(TypedQuery typedQuery) {
+    public void setParameters(TypedQuery<Serializable> typedQuery) {
         if (hasValue(loginName)) {
             typedQuery.setParameter("loginName", "%" + loginName.toUpperCase() + "%");
         }

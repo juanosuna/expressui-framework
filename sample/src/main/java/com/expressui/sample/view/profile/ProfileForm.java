@@ -60,7 +60,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 @Component
 @Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings({"rawtypes", "serial"})
-public class ProfileForm<T> extends EntityForm<Profile> {
+public class ProfileForm extends EntityForm<Profile> {
 
     @Resource
     private MyProfileForm myProfileForm;
@@ -121,12 +121,12 @@ public class ProfileForm<T> extends EntityForm<Profile> {
     @Scope(SCOPE_PROTOTYPE)
     public static class ProfileUserQuery extends UserQuery {
         @Override
-        public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<User> user) {
+        public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery<User> query, Root<User> user) {
             List<Predicate> predicates = super.buildCriteria(builder, query, user);
 
-            Subquery<Profile> subquery = query.subquery(Profile.class);
-            Root profile = subquery.from(Profile.class);
-            subquery.select(profile.get("user"));
+            Subquery<User> subquery = query.subquery(User.class);
+            Root<Profile> profile = subquery.from(Profile.class);
+            subquery.select(profile.<User>get("user"));
             predicates.add(builder.not(user.in(subquery)));
 
             return predicates;

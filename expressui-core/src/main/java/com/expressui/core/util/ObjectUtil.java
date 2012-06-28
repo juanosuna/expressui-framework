@@ -54,11 +54,8 @@ public class ObjectUtil {
      * @return true if they are equal
      */
     public static boolean isEqual(Object a, Object b) {
-        if (a == null && b == null) return true;
-        if (a == null && b != null) return false;
-        if (a != null && b == null) return false;
+        return a == null && b == null || a != null && b != null && a.equals(b);
 
-        return a.equals(b);
     }
 
     /**
@@ -72,8 +69,8 @@ public class ObjectUtil {
      */
     public static boolean isEqualDeep(Collection a, Collection b) {
         if (a == null && b == null) return true;
-        if (a == null && b != null) return false;
-        if (a != null && b == null) return false;
+        if (a == null) return false;
+        if (b == null) return false;
 
         for (Object o : a) {
             if (!b.contains(a)) return false;

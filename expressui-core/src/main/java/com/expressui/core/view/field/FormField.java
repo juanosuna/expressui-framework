@@ -280,8 +280,6 @@ public class FormField extends DisplayField {
      * <p/>
      * In most cases, applications will not need to access Vaadin APIs directly. However,
      * it is exposed in case Vaadin features are needed that are not exposed by ExpressUI.
-     *
-     * @return Vaadin field
      */
     public void setField(Field field) {
         setField(field, true);
@@ -411,7 +409,7 @@ public class FormField extends DisplayField {
      * Set the menu options in a select.
      *
      * @param items list of items
-     * @see ReferenceEntity.DISPLAY_PROPERTY
+     * @see com.expressui.core.entity.ReferenceEntity.DISPLAY_PROPERTY
      */
     public void setSelectItems(List items) {
         // could be either collection or single item

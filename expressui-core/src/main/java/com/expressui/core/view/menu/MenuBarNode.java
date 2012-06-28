@@ -145,7 +145,7 @@ public class MenuBarNode {
      * Get child node associated with given name
      *
      * @param name key to look up child
-     * @return
+     * @return child node
      */
     public MenuBarNode getChild(String name) {
         return children.get(name);

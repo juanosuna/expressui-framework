@@ -37,8 +37,6 @@
 
 package com.expressui.sample.dao;
 
-import com.expressui.core.entity.security.Role;
-import com.expressui.core.entity.security.User;
 import com.expressui.core.security.SecurityService;
 import org.junit.Before;
 import org.junit.runner.RunWith;
@@ -56,7 +54,7 @@ import javax.annotation.Resource;
         "classpath:/spring/applicationContext-core-scan.xml",
         "classpath:/spring/applicationContext-domain-scan.xml",
         "classpath:/spring/applicationContext-scan.xml",
-        "classpath:/spring/applicationContext-test-scope.xml",
+        "classpath:/spring/applicationContext-test-scope.xml"
 })
 @Transactional
 public abstract class AbstractDomainTest {

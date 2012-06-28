@@ -47,11 +47,8 @@ import java.net.URL;
  */
 public class UrlValidator implements ConstraintValidator<ValidUrl, String> {
 
-    private ValidUrl validUrl;
-
     @Override
     public void initialize(ValidUrl constraintAnnotation) {
-        validUrl = constraintAnnotation;
     }
 
     @Override

@@ -53,8 +53,8 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings({"rawtypes", "serial"})
-public class MyProfileForm<T> extends UserOwnedEntityForm<Profile> {
+@SuppressWarnings({"serial"})
+public class MyProfileForm<T extends Profile> extends UserOwnedEntityForm<Profile> {
 
     @Override
     public void init(FormFieldSet formFields) {

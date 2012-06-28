@@ -61,7 +61,7 @@ public abstract class SearchPage<T> extends TypedComponent<T> implements Page {
     /**
      * Get the results component for this page.
      *
-     * @return
+     * @return Results component embedded in this page
      */
     public abstract Results<T> getResults();
 

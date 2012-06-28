@@ -41,6 +41,7 @@ import com.expressui.core.util.assertion.Assert;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 /**
  * A type for representing a method on a specific instance.
@@ -61,7 +62,7 @@ public class MethodDelegate {
         this.target = target;
         method = ReflectionUtil.getMethod(target.getClass(), methodName, parameterTypes);
         Assert.PROGRAMMING.notNull(method, "Cannot find method " + target.getClass().getName()
-                + "." + methodName + parameterTypes == null ? "" : " (" + parameterTypes + ")");
+                + "." + methodName + (parameterTypes == null ? "" : " (" + Arrays.toString(parameterTypes) + ")"));
     }
 
     /**
@@ -106,10 +107,7 @@ public class MethodDelegate {
 
         MethodDelegate that = (MethodDelegate) o;
 
-        if (!method.equals(that.method)) return false;
-        if (!target.equals(that.target)) return false;
-
-        return true;
+        return method.equals(that.method) && target.equals(that.target);
     }
 
     @Override

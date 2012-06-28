@@ -102,8 +102,7 @@ public abstract class TypedComponent<T> extends RootComponent {
 
     public boolean isViewAllowed() {
         User currentUser = securityService.getCurrentUser();
-        boolean isViewAllowed = currentUser.isViewAllowed(getType().getName());
-        return isViewAllowed;
+        return currentUser.isViewAllowed(getType().getName());
     }
 
     @Override
@@ -111,9 +110,7 @@ public abstract class TypedComponent<T> extends RootComponent {
         Class[] allClasses = new Class[classes.length + 2];
         allClasses[0] = getClass();
         allClasses[1] = getType();
-        for (int i = 0; i < classes.length; i++) {
-            allClasses[i + 2] = classes[i];
-        }
+        System.arraycopy(classes, 0, allClasses, 2, classes.length);
 
         return allClasses;
     }

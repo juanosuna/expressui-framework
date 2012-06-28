@@ -53,10 +53,10 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSIO
 public class MyProfilePage extends UserOwnedEntityFormPage<Profile> {
 
     @Resource
-    private MyProfileForm myProfileForm;
+    private MyProfileForm<Profile> myProfileForm;
 
     @Override
-    public MyProfileForm getEntityForm() {
+    public MyProfileForm<Profile> getEntityForm() {
         return myProfileForm;
     }
 

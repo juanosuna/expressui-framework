@@ -206,9 +206,8 @@ public class ReflectionUtil {
     /**
      * Find all properties in the bean that are complex, i.e. not BeanUtils.isSimpleValueType
      *
-     * @param bean
-     * @return
-     * @see BeanUtils.isSimpleValueType()
+     * @param bean bean to reflectively analyze
+     * @return collection of properties on the bean
      */
     public static Collection<String> findComplexProperties(Object bean) {
         Collection<String> complexProperties = new ArrayList<String>();
@@ -233,7 +232,7 @@ public class ReflectionUtil {
      * @param value value to convert
      * @param type  type to convert to
      * @param <T>   type
-     * @return
+     * @return converted value
      * @throws InvocationTargetException
      * @throws IllegalAccessException
      * @throws InstantiationException
@@ -253,7 +252,7 @@ public class ReflectionUtil {
 
         Constructor<T> constructor = clazz.getConstructor(new Class[]{String.class});
 
-        return constructor.newInstance(new Object[]{value.toString()});
+        return constructor.newInstance(value.toString());
     }
 
     /**

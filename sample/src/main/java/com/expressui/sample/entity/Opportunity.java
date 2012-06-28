@@ -41,7 +41,6 @@ package com.expressui.sample.entity;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.validation.AssertTrueForProperties;
-import com.expressui.core.view.field.format.DefaultFormats;
 import com.expressui.domain.ecbfx.EcbfxService;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
@@ -62,10 +61,6 @@ import static com.expressui.core.util.StringUtil.isEmpty;
 @Entity
 @Table
 public class Opportunity extends WritableEntity {
-
-    @Resource
-    @Transient
-    private DefaultFormats defaultFormat;
 
     @Resource
     @Transient

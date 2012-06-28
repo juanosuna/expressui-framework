@@ -60,7 +60,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings({"rawtypes", "serial"})
+@SuppressWarnings({"serial"})
 public class ContactForm extends EntityForm<Contact> {
 
     @Resource

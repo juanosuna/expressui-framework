@@ -415,11 +415,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
         } else {
             Integer position = tabPositions.get(tabName);
             Assert.PROGRAMMING.notNull(position);
-            try {
-                return formTabSheet.getTab(position);
-            } catch (IndexOutOfBoundsException e) {
-                throw e;
-            }
+            return formTabSheet.getTab(position);
         }
     }
 

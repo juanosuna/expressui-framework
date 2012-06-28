@@ -58,7 +58,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings({"rawtypes", "serial"})
+@SuppressWarnings("serial")
 public class RegistrationForm extends MyProfileForm<Profile> {
 
     @Resource

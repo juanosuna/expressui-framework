@@ -53,6 +53,7 @@ import com.expressui.sample.view.opportunity.OpportunityPage;
 import com.expressui.sample.view.profile.ProfilePage;
 import com.expressui.sample.view.registration.RegistrationPage;
 
+@SuppressWarnings({"serial"})
 public class SampleApplication extends MainApplication {
 
     @Override

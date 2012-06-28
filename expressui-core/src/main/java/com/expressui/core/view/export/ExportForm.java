@@ -62,7 +62,6 @@ public class ExportForm extends TypedForm<ExportParameters> {
     private Window popupWindow;
 
     private Button exportButton;
-    private Button closeButton;
 
     @Resource
     private ExportParameters exportParameters;
@@ -122,7 +121,7 @@ public class ExportForm extends TypedForm<ExportParameters> {
         footerLayout.setSpacing(true);
         footerLayout.setMargin(true);
 
-        closeButton = new Button(uiMessageSource.getMessage("exportForm.close"), this, "close");
+        Button closeButton = new Button(uiMessageSource.getMessage("exportForm.close"), this, "close");
         closeButton.setDescription(uiMessageSource.getToolTip("exportForm.close.toolTip"));
         closeButton.setIcon(new ThemeResource("../expressui/icons/16/delete.png"));
         closeButton.addStyleName("small default");

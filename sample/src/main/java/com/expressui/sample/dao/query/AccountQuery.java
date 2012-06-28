@@ -46,6 +46,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -86,7 +87,7 @@ public class AccountQuery extends StructuredEntityQuery<Account> {
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<Account> account) {
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery<Account> query, Root<Account> account) {
         List<Predicate> predicates = new ArrayList<Predicate>();
 
         if (hasValue(name)) {
@@ -106,7 +107,7 @@ public class AccountQuery extends StructuredEntityQuery<Account> {
     }
 
     @Override
-    public void setParameters(TypedQuery typedQuery) {
+    public void setParameters(TypedQuery<Serializable> typedQuery) {
         if (hasValue(name)) {
             typedQuery.setParameter("name", "%" + name.toUpperCase() + "%");
         }

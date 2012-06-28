@@ -827,8 +827,8 @@ public class FormFieldSet extends FieldSet {
      * Add change listener to field
      *
      * @param propertyId property id to identify field to set
-     * @param target
-     * @param methodName
+     * @param target target of the listener
+     * @param methodName listener method to invoke
      */
     public void addValueChangeListener(String propertyId, Object target, String methodName) {
         FormField formField = (FormField) getField(propertyId);

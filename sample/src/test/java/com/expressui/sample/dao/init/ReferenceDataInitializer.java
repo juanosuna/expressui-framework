@@ -148,7 +148,8 @@ public class ReferenceDataInitializer {
         return dao.countAll() > 0;
     }
 
-    public static boolean hasExistingEntities(Class clazz, @SuppressWarnings("rawtypes") GenericDao genericDao) {
+    @SuppressWarnings("unchecked")
+    public static boolean hasExistingEntities(Class clazz, GenericDao genericDao) {
         return genericDao.countAll(clazz) > 0;
     }
 

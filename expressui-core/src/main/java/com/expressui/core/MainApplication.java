@@ -416,7 +416,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     /**
      * Show big error box to user.
      *
-     * @param errorMessage
+     * @param errorMessage message to display
      */
     public void showError(String errorMessage) {
         getMainWindow().showNotification(errorMessage, Window.Notification.TYPE_ERROR_MESSAGE);
@@ -425,7 +425,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     /**
      * Show big warning box to user.
      *
-     * @param warningMessage
+     * @param warningMessage message to display
      */
     public void showWarning(String warningMessage) {
         getMainWindow().showNotification(warningMessage, Window.Notification.TYPE_WARNING_MESSAGE);
@@ -434,7 +434,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     /**
      * Should message box to user.
      *
-     * @param humanizedMessage
+     * @param humanizedMessage message to display
      */
     public void showMessage(String humanizedMessage) {
         getMainWindow().showNotification(humanizedMessage, Window.Notification.TYPE_HUMANIZED_MESSAGE);

@@ -38,8 +38,6 @@
 package com.expressui.sample.validator;
 
 import com.expressui.core.dao.security.UserDao;
-import com.expressui.core.entity.security.User;
-import com.expressui.core.security.exception.LoginNameNotFoundException;
 import com.expressui.core.util.StringUtil;
 import com.vaadin.data.Validator;
 import org.springframework.stereotype.Component;
@@ -51,6 +49,7 @@ import javax.persistence.NoResultException;
  * Validates that user's login name is not already taken.
  */
 @Component
+@SuppressWarnings({"serial"})
 public class UniqueLoginNameValidator implements Validator {
 
     @Resource

@@ -48,6 +48,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +79,7 @@ public class RoleQuery extends StructuredEntityQuery<Role> {
     /**
      * Set name to query.
      *
-     * @param name
+     * @param name name of the query
      */
     public void setName(String name) {
         this.name = name;
@@ -108,7 +109,7 @@ public class RoleQuery extends StructuredEntityQuery<Role> {
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<Role> role) {
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery<Role> query, Root<Role> role) {
         List<Predicate> predicates = new ArrayList<Predicate>();
 
         if (hasValue(name)) {
@@ -118,9 +119,9 @@ public class RoleQuery extends StructuredEntityQuery<Role> {
 
         if (hasValue(doesNotBelongToUser)) {
             Subquery<Role> subquery = query.subquery(Role.class);
-            Root userRole = subquery.from(UserRole.class);
+            Root<UserRole> userRole = subquery.from(UserRole.class);
             ParameterExpression<User> userExp = builder.parameter(User.class, "doesNotBelongToUser");
-            subquery.select(userRole.get("role")).where(builder.equal(userRole.get("user"), userExp));
+            subquery.select(userRole.<Role>get("role")).where(builder.equal(userRole.get("user"), userExp));
             predicates.add(builder.not(role.in(subquery)));
         }
 
@@ -128,7 +129,7 @@ public class RoleQuery extends StructuredEntityQuery<Role> {
     }
 
     @Override
-    public void setParameters(TypedQuery typedQuery) {
+    public void setParameters(TypedQuery<Serializable> typedQuery) {
         if (hasValue(name)) {
             typedQuery.setParameter("name", "%" + name.toUpperCase() + "%");
         }

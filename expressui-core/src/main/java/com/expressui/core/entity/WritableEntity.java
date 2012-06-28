@@ -81,8 +81,13 @@ public abstract class WritableEntity extends AuditableEntity {
      *
      * @return id or primary key for this entity
      */
+    @Override
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**
@@ -104,9 +109,7 @@ public abstract class WritableEntity extends AuditableEntity {
 
         WritableEntity that = (WritableEntity) o;
 
-        if (!getUuid().equals(that.getUuid())) return false;
-
-        return true;
+        return getUuid().equals(that.getUuid());
     }
 
     /**

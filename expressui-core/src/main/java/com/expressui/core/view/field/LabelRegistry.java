@@ -85,10 +85,10 @@ public class LabelRegistry {
     }
 
     /**
-     * Get all property ids that have been registered
+     * Get all property ids that have been registered for a given type.
      *
-     * @param type
-     * @return
+     * @param type type to find property ids on
+     * @return Map where key and value are the same
      */
     public Map<Object, String> getPropertyIds(String type) {
         Map<Object, String> fieldItems = new LinkedHashMap<Object, String>();
@@ -224,11 +224,10 @@ public class LabelRegistry {
 
             DisplayLabel that = (DisplayLabel) o;
 
-            if (!label.equals(that.label)) return false;
-            if (!propertyId.equals(that.propertyId)) return false;
-            if (!section.equals(that.section)) return false;
+            return label.equals(that.label)
+                    && propertyId.equals(that.propertyId)
+                    && section.equals(that.section);
 
-            return true;
         }
 
         @Override

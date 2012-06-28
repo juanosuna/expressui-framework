@@ -55,6 +55,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -64,7 +65,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings({"serial"})
+@SuppressWarnings("serial")
 public class ContactSelect extends EntitySelect<Contact> {
 
     @Resource
@@ -119,7 +120,6 @@ public class ContactSelect extends EntitySelect<Contact> {
 
     @Component
     @Scope(SCOPE_PROTOTYPE)
-    @SuppressWarnings({"serial", "rawtypes"})
     public static class ContactSelectSearchForm extends SearchForm<ContactSelectQuery> {
 
         @Resource
@@ -187,7 +187,7 @@ public class ContactSelect extends EntitySelect<Contact> {
         }
 
         @Override
-        public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<Contact> contact) {
+        public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery<Contact> query, Root<Contact> contact) {
             List<Predicate> predicates = new ArrayList<Predicate>();
 
             if (hasValue(lastName)) {
@@ -207,7 +207,7 @@ public class ContactSelect extends EntitySelect<Contact> {
         }
 
         @Override
-        public void setParameters(TypedQuery typedQuery) {
+        public void setParameters(TypedQuery<Serializable> typedQuery) {
             if (hasValue(lastName)) {
                 typedQuery.setParameter("lastName", "%" + lastName.toUpperCase() + "%");
             }

@@ -41,7 +41,6 @@ package com.expressui.sample.entity;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.validation.ValidUrl;
-import com.expressui.core.view.field.format.DefaultFormats;
 import com.expressui.domain.ecbfx.EcbfxService;
 import com.expressui.sample.validator.ValidPhone;
 import org.hibernate.annotations.ForeignKey;
@@ -65,10 +64,6 @@ import static com.expressui.core.util.ObjectUtil.isEqual;
 @Entity
 @Table
 public class Account extends WritableEntity {
-
-    @Resource
-    @Transient
-    private DefaultFormats defaultFormat;
 
     @Resource
     @Transient

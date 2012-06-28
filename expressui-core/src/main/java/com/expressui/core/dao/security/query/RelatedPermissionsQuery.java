@@ -47,6 +47,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +81,7 @@ public class RelatedPermissionsQuery extends ToManyRelationshipQuery<Permission,
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<Permission> permission) {
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery<Permission> query, Root<Permission> permission) {
         List<Predicate> predicates = new ArrayList<Predicate>();
 
         if (hasValue(role)) {
@@ -92,7 +93,7 @@ public class RelatedPermissionsQuery extends ToManyRelationshipQuery<Permission,
     }
 
     @Override
-    public void setParameters(TypedQuery typedQuery) {
+    public void setParameters(TypedQuery<Serializable> typedQuery) {
         if (hasValue(role)) {
             typedQuery.setParameter("role", role);
         }

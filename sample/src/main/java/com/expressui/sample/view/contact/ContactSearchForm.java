@@ -40,23 +40,18 @@ package com.expressui.sample.view.contact;
 import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.form.SearchForm;
-import com.expressui.sample.dao.StateDao;
 import com.expressui.sample.dao.query.ContactQuery;
-import com.expressui.sample.entity.Country;
-import com.expressui.sample.entity.State;
 import com.expressui.sample.view.select.AccountSelect;
-import com.vaadin.data.Property;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings({"serial", "rawtypes"})
+@SuppressWarnings({"serial"})
 public class ContactSearchForm extends SearchForm<ContactQuery> {
 
     @Resource

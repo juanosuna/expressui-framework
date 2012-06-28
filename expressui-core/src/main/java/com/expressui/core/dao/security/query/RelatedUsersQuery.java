@@ -48,6 +48,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -102,7 +103,7 @@ public class RelatedUsersQuery extends ToManyRelationshipQuery<User, Role> {
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<User> user) {
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery<User> query, Root<User> user) {
         List<Predicate> predicates = new ArrayList<Predicate>();
 
         if (hasValue(role)) {
@@ -122,7 +123,7 @@ public class RelatedUsersQuery extends ToManyRelationshipQuery<User, Role> {
     }
 
     @Override
-    public void setParameters(TypedQuery typedQuery) {
+    public void setParameters(TypedQuery<Serializable> typedQuery) {
         if (hasValue(role)) {
             typedQuery.setParameter("role", role);
         }

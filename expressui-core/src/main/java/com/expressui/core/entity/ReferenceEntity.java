@@ -37,14 +37,9 @@
 
 package com.expressui.core.entity;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-
 import javax.persistence.Cacheable;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-
-import static com.expressui.core.entity.ReferenceEntity.READ_ONLY_CACHE;
 
 /**
  * Base class for entities that are read-only by end users.  and that represent
@@ -143,9 +138,7 @@ public abstract class ReferenceEntity implements IdentifiableEntity, Comparable 
 
         ReferenceEntity that = (ReferenceEntity) o;
 
-        if (!getId().equals(that.getId())) return false;
-
-        return true;
+        return getId().equals(that.getId());
     }
 
     @Override

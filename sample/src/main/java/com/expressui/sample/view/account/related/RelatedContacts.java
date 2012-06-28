@@ -54,6 +54,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 
 @Component
 @Scope(SCOPE_PROTOTYPE)
+@SuppressWarnings("serial")
 public class RelatedContacts extends ToManyRelationship<Contact> {
 
     @Resource

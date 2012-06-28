@@ -278,9 +278,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     protected Class[] autoAddCodeClasses(Class... classes) {
         Class[] allClasses = new Class[classes.length + 1];
         allClasses[0] = getClass();
-        for (int i = 0; i < classes.length; i++) {
-            allClasses[i + 1] = classes[i];
-        }
+        System.arraycopy(classes, 0, allClasses, 1, classes.length);
 
         return allClasses;
     }

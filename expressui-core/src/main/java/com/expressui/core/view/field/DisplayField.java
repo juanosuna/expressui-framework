@@ -281,9 +281,8 @@ public abstract class DisplayField {
 
         DisplayField that = (DisplayField) o;
 
-        if (!getPropertyId().equals(that.getPropertyId())) return false;
+        return getPropertyId().equals(that.getPropertyId());
 
-        return true;
     }
 
     @Override

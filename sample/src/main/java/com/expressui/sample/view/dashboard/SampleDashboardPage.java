@@ -62,6 +62,7 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSIO
 
 @Component
 @Scope(SCOPE_SESSION)
+@SuppressWarnings({"serial"})
 public class SampleDashboardPage extends DashboardPage {
 
     @Resource
@@ -91,7 +92,7 @@ public class SampleDashboardPage extends DashboardPage {
         addComponent(createOpportunitySalesStageChart(), "Sales Stage Breakdown", 2, 2);
 
         // Used to track usage statistics only for sample application
-        UrlUtil.addTrackingUrl((AbstractComponentContainer) getCompositionRoot(), "sample");
+        UrlUtil.addTrackingUrl((AbstractComponentContainer) getCompositionRoot(), "demo");
     }
 
     private ColumnChart createOpportunityChartByYear() {
@@ -160,6 +161,7 @@ public class SampleDashboardPage extends DashboardPage {
         );
     }
 
+    @SuppressWarnings("unchecked")
     public void contactSelectionChanged() {
         Collection<Contact> contacts = (Collection<Contact>) recentContactResults.getSelectedValue();
 

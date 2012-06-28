@@ -115,7 +115,7 @@ public class StringUtil {
      * letter capitalized
      *
      * @param camelCase string in camel case
-     * @return
+     * @return humanized value
      */
     public static String humanizeCamelCase(String camelCase) {
         String[] camelCaseParts = StringUtils.splitByCharacterTypeCamelCase(camelCase);
@@ -127,7 +127,7 @@ public class StringUtil {
      * Hyphenate and lower-case camel-case string.
      *
      * @param camelCase string in camel case
-     * @return
+     * @return hyphenated value
      */
     public static String hyphenateCamelCase(String camelCase) {
         String[] camelCaseParts = StringUtils.splitByCharacterTypeCamelCase(camelCase);
@@ -176,7 +176,7 @@ public class StringUtil {
      * @param topLevelClass style names are only generated up to this top level class in the class hierarchical. Higher
      *                      level classes are ignored
      * @param object        object to reflectively get class from
-     * @return
+     * @return List of style names
      */
     public static List<String> generateStyleNamesFromClassHierarchy(String prefix, Class topLevelClass, Object object) {
         List<String> styles = new ArrayList<String>();

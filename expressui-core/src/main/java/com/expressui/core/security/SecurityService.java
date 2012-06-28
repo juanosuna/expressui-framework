@@ -117,7 +117,7 @@ public class SecurityService {
     }
 
     public User refreshCurrentUser() {
-        User user = null;
+        User user;
         try {
             user = findUser(getCurrentLoginName());
         } catch (LoginNameNotFoundException e) {

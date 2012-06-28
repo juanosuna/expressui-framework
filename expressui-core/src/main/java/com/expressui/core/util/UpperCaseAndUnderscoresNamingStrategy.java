@@ -53,7 +53,7 @@ public class UpperCaseAndUnderscoresNamingStrategy extends DefaultComponentSafeN
     }
 
     protected String insertUnderscores(String name) {
-        StringBuffer buf = new StringBuffer(name.replace('.', '_'));
+        StringBuilder buf = new StringBuilder(name.replace('.', '_'));
         for (int i = 1; i < buf.length() - 1; i++) {
             if (
                     Character.isLowerCase(buf.charAt(i - 1)) &&
@@ -89,12 +89,9 @@ public class UpperCaseAndUnderscoresNamingStrategy extends DefaultComponentSafeN
     @Override
     public String collectionTableName(String ownerEntity, String ownerEntityTable, String associatedEntity, String associatedEntityTable, String propertyName) {
         return tableName(
-                new StringBuilder(ownerEntityTable).append("_")
-                        .append(
-                                associatedEntityTable != null ?
-                                        associatedEntityTable :
-                                        insertUnderscores(propertyName)
-                        ).toString()
+                ownerEntityTable + "_" + (associatedEntityTable != null ?
+                        associatedEntityTable :
+                        insertUnderscores(propertyName))
         ).toUpperCase();
     }
 

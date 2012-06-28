@@ -53,6 +53,7 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSIO
 
 @Component
 @Scope(SCOPE_SESSION)
+@SuppressWarnings({"serial"})
 public class HomePage extends RootComponent implements Page {
 
     @Override
