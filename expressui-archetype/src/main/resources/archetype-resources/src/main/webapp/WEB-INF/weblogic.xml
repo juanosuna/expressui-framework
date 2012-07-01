@@ -1,0 +1,11 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
+<?xml version='1.0' encoding='UTF-8'?>
+
+<weblogic-web-app xmlns="http://xmlns.oracle.com/weblogic/weblogic-web-app">
+    <container-descriptor>
+        <prefer-web-inf-classes>true</prefer-web-inf-classes>
+    </container-descriptor>
+    <context-root>${artifactId}</context-root>
+</weblogic-web-app>

@@ -39,4 +39,33 @@
         <TEST_DATA_INITIALIZER_TEST>TestDataInitializerTest.java</TEST_DATA_INITIALIZER_TEST>
     </properties>
 
+    <!--
+
+    This is an example of how you would add a JDBC driver for another database like Oracle
+
+    <dependencies>
+        <dependency>
+            <groupId>com.oracle</groupId>
+            <artifactId>ojdbc6</artifactId>
+            <version>11.2.0.3.0</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sql-maven-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.oracle</groupId>
+                        <artifactId>ojdbc6</artifactId>
+                        <version>11.2.0.3.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+        </plugins>
+    </build>
+    -->
+
 </project>

@@ -52,16 +52,14 @@
 
     <!-- Workaround to hibernate3-maven-plugin issue, where the same persistence.xml is found in multiple places in classpath -->
     <bean id="persistenceUnitManager" class="org.springframework.data.jpa.support.MergingPersistenceUnitManager">
-        <property name="persistenceXmlLocations">
-            <list>
-                <value>classpath*:META-INF/persistence.xml</value>
-            </list>
-        </property>
-
         <!-- Required by JBoss, which doesn't scan automatically without Spring's help -->
         <property name="packagesToScan" value="#{T(java.util.Arrays).asList('${expressui.packagesToScan}')}"/>
 
         <property name="defaultDataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="entityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
     </bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -93,6 +91,7 @@
                 </prop>
                 <prop key="hibernate.jdbc.batch_size">${hibernate.jdbc.batch_size}</prop>
                 <prop key="hibernate.archive.autodetection">class</prop>
+                <prop key="javax.persistence.validation.mode">auto</prop>
             </props>
         </property>
     </bean>

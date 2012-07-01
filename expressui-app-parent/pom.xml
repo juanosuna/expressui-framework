@@ -84,7 +84,6 @@
                             <hibernatetool destdir="src/main/sql">
                                 <classpath>
                                     <path location="${project.build.directory}/classes" />
-                                    <path location="${project.basedir}/src/main/resources/META-INF/" />
                                 </classpath>
                                 <jpaconfiguration persistenceunit="persistence-unit"
                                                   propertyfile="${project.basedir}/src/main/resources/database.${DB}.properties" />
@@ -140,8 +139,8 @@
                         <configuration>
                             <driver>${hibernate.connection.driver_class}</driver>
                             <url>${hibernate.connection.url.maven}</url>
-                            <username>${hibernate.connection.username}</username>
-                            <password>${hibernate.connection.password}</password>
+                            <username>${hibernate.connection.username.maven}</username>
+                            <password>${hibernate.connection.password.maven}</password>
                             <delimiter>;</delimiter>
                             <delimiterType>normal</delimiterType>
                             <autocommit>true</autocommit>
@@ -338,6 +337,14 @@
                     <excludes>
                         <exclude>**/${TEST_DATA_INITIALIZER_TEST}</exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <packagingExcludes>WEB-INF/classes/META-INF/persistence.xml</packagingExcludes>
                 </configuration>
             </plugin>
 

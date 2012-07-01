@@ -52,6 +52,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import javax.persistence.*;
 import javax.persistence.criteria.*;
 import java.io.Serializable;
@@ -70,7 +71,9 @@ import java.util.List;
 @Repository
 public class GenericDao {
 
-    @PersistenceContext
+    // use @Resource rather than @PersistenceContext because we want to let Spring manage JPA and avoid interference
+    // from JEE app servers.
+    @Resource
     private EntityManager entityManager;
 
     /**

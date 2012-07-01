@@ -55,7 +55,7 @@ import java.util.Set;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-@Table
+@Table(name = "UZER") // avoid table named user, as this is a reserved word in Oracle
 public class User extends WritableEntity {
 
     @NaturalId

@@ -3,10 +3,16 @@
 #set( $symbol_escape = '\' )
 <?xml version="1.0" encoding="UTF-8"?>
 
+<!-- This file is not needed when running the app. In fact, it can cause problems for some app servers like Weblogic,
+which tries to load the persistent unit before Spring is able to configure it.
+As a workaround, the Maven war plugin excludes this file from the generated the war. Spring can creates the
+persistent-unit without this file.
+However, this file must be kept in the compilation output for the benefit of hibernate3-maven-plugin,
+which generates DDL and also for IDEs so they can detect a JPA Facet. -->
 <persistence xmlns="http://java.sun.com/xml/ns/persistence"
              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
-             version="1.0">
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0">
 
     <persistence-unit name="persistence-unit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
@@ -27,7 +33,6 @@
             <property name="javax.persistence.validation.mode" value="auto"/>
             <property name="hibernate.archive.autodetection" value="class"/>
         </properties>
-
     </persistence-unit>
 
 </persistence>
