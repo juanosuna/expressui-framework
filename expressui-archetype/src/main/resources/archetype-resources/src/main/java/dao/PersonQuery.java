@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,7 @@ public class PersonQuery extends StructuredEntityQuery<Person> {
     }
 
     @Override
-    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery query, Root<Person> person) {
+    public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery<Person> query, Root<Person> person) {
         List<Predicate> predicates = new ArrayList<Predicate>();
 
         if (hasValue(lastName)) {
@@ -42,7 +43,7 @@ public class PersonQuery extends StructuredEntityQuery<Person> {
     }
 
     @Override
-    public void setParameters(TypedQuery typedQuery) {
+    public void setParameters(TypedQuery<Serializable> typedQuery) {
         if (hasValue(lastName)) {
             typedQuery.setParameter("lastName", "%" + lastName.toUpperCase() + "%");
         }

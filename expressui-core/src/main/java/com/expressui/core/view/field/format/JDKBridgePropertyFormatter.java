@@ -55,6 +55,18 @@ public class JDKBridgePropertyFormatter extends EnhancedPropertyFormatter {
      * @param format JDK format
      */
     public JDKBridgePropertyFormatter(Format format) {
+        super();
+        this.format = format;
+    }
+
+    /**
+     * Construct with the JDK format to wrap
+     *
+     * @param format      JDK format
+     * @param defaultValueWhenEmpty when parsing Strings, returns this value when String is empty
+     */
+    public JDKBridgePropertyFormatter(Format format, Object defaultValueWhenEmpty) {
+        super(defaultValueWhenEmpty);
         this.format = format;
     }
 
@@ -74,6 +86,10 @@ public class JDKBridgePropertyFormatter extends EnhancedPropertyFormatter {
 
     @Override
     public Object parse(String formattedValue) throws Exception {
-        return format.parseObject(formattedValue);
+        if (formattedValue != null && formattedValue.isEmpty()) {
+            return getDefaultValueWhenEmpty();
+        } else {
+            return format.parseObject(formattedValue);
+        }
     }
 }

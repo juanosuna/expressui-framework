@@ -42,7 +42,6 @@ import com.expressui.core.util.MethodDelegate;
 import com.expressui.core.validation.AssertTrueForProperties;
 import com.expressui.core.validation.Validation;
 import com.expressui.core.view.field.FormField;
-import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
@@ -580,8 +579,10 @@ public abstract class EntityForm<T> extends TypedForm<T> {
             }
         }
 
-        for (MethodDelegate cancelListener : cancelListeners) {
-            cancelListener.execute();
+        Set<MethodDelegate> listenersToExecute;
+        listenersToExecute = (Set<MethodDelegate>) ((LinkedHashSet) cancelListeners).clone();
+        for (MethodDelegate listener : listenersToExecute) {
+            listener.execute();
         }
     }
 
@@ -659,13 +660,15 @@ public abstract class EntityForm<T> extends TypedForm<T> {
 
             showSaveSuccessfulMessage();
 
-            for (MethodDelegate saveListener : saveListeners) {
-                saveListener.execute();
+            Set<MethodDelegate> listenersToExecute = (Set<MethodDelegate>) ((LinkedHashSet) saveListeners).clone();
+            for (MethodDelegate listener : listenersToExecute) {
+                listener.execute();
             }
 
             if (executeCloseListeners) {
-                for (MethodDelegate closeListener : closeListeners) {
-                    closeListener.execute();
+                listenersToExecute = (Set<MethodDelegate>) ((LinkedHashSet) closeListeners).clone();
+                for (MethodDelegate listener : listenersToExecute) {
+                    listener.execute();
                 }
             }
             return true;

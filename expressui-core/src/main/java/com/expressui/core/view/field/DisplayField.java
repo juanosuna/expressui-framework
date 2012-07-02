@@ -143,7 +143,11 @@ public abstract class DisplayField {
         } else if (getBeanPropertyType().getBusinessType() == BeanPropertyType.BusinessType.DATE_TIME) {
             return defaultFormats.getDateTimeFormat();
         } else if (getBeanPropertyType().getBusinessType() == BeanPropertyType.BusinessType.NUMBER) {
-            return defaultFormats.getNumberFormat();
+            if (getBeanPropertyType().getType().isPrimitive()) {
+                return defaultFormats.getNumberFormat(0);
+            } else {
+                return defaultFormats.getNumberFormat();
+            }
         } else if (getBeanPropertyType().getBusinessType() == BeanPropertyType.BusinessType.MONEY) {
             return defaultFormats.getNumberFormat();
         }

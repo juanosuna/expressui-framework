@@ -69,6 +69,16 @@ public class DefaultFormats {
     }
 
     /**
+     * Get default number format, NumberFormat.getNumberInstance()
+     * @param defaultValueWhenEmpty when parsing Strings, returns this value when String is empty
+     *
+     * @return default number format
+     */
+    public PropertyFormatter getNumberFormat(Object defaultValueWhenEmpty) {
+        return new JDKBridgePropertyFormatter(numberFormat, defaultValueWhenEmpty);
+    }
+
+    /**
      * Set default number format
      *
      * @param numberFormat default number format

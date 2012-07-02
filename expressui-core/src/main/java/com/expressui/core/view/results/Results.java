@@ -44,6 +44,7 @@ import com.expressui.core.view.export.ExportParameters;
 import com.vaadin.addon.tableexport.ExcelExport;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.MethodProperty;
+import com.vaadin.data.util.PropertyFormatter;
 import com.vaadin.data.validator.IntegerValidator;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.ThemeResource;
@@ -284,20 +285,22 @@ public abstract class Results<T> extends TypedComponent<T> {
         firstResultTextField.addValidator(new IntegerValidator(uiMessageSource.getMessage("results.firstResult.invalid")) {
             @Override
             protected boolean isValidString(String value) {
-                boolean isValid = super.isValidString(value);
-                if (!isValid) {
-                    return false;
-                } else {
-                    Integer intValue = Integer.parseInt(value);
+                try {
+                    Long longValue = (Long) defaultFormats.getNumberFormat().parse(value);
                     if (getEntityQuery().getResultCount() > 0) {
-                        return intValue >= 1 && intValue <= getEntityQuery().getResultCount();
+                        return longValue >= 1 && longValue <= getEntityQuery().getResultCount();
                     } else {
-                        return intValue == 0;
+                        return longValue == 0;
                     }
+                } catch (Exception e) {
+                    return false;
                 }
             }
         });
-        firstResultTextField.setPropertyDataSource(new MethodProperty(getResultsTable(), "firstResult"));
+
+        PropertyFormatter propertyFormatter = defaultFormats.getNumberFormat(1);
+        propertyFormatter.setPropertyDataSource(new MethodProperty(getResultsTable(), "firstResult"));
+        firstResultTextField.setPropertyDataSource(propertyFormatter);
         firstResultTextField.setWidth(3, Sizeable.UNITS_EM);
 
         return firstResultTextField;
@@ -401,6 +404,7 @@ public abstract class Results<T> extends TypedComponent<T> {
      * @param clearSelection true if row selection should be cleared
      */
     protected void searchImpl(boolean clearSelection) {
+        firstResultTextField.setValue(1);
         getEntityQuery().firstPage();
         getResultsTable().executeCurrentQuery();
 

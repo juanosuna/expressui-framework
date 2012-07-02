@@ -44,6 +44,7 @@ import com.expressui.core.util.ApplicationProperties;
 import com.expressui.core.util.StringUtil;
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.field.LabelRegistry;
+import com.expressui.core.view.field.format.DefaultFormats;
 import com.expressui.core.view.util.CodePopup;
 import com.expressui.core.view.util.MessageSource;
 import com.vaadin.terminal.Sizeable;
@@ -76,6 +77,12 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
      */
     @Resource
     public LabelRegistry labelRegistry;
+
+    /**
+     * Defines some default formats, e.g. for dates, times, numbers
+     */
+    @Resource
+    public DefaultFormats defaultFormats;
 
     /**
      * Generic DAO for non-type-safe database actions.

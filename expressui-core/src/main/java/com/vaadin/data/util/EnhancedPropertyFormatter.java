@@ -40,6 +40,34 @@ package com.vaadin.data.util;
 import com.vaadin.data.Property;
 
 public abstract class EnhancedPropertyFormatter extends PropertyFormatter {
+
+    private Object defaultValueWhenEmpty = null;
+
+    protected EnhancedPropertyFormatter() {
+        super();
+    }
+
+    protected EnhancedPropertyFormatter(Object defaultValueWhenEmpty) {
+        super();
+        this.defaultValueWhenEmpty = defaultValueWhenEmpty;
+    }
+
+    protected EnhancedPropertyFormatter(Property propertyDataSource, Object defaultValueWhenEmpty) {
+        super(propertyDataSource);
+        this.defaultValueWhenEmpty = defaultValueWhenEmpty;
+    }
+
+    /*
+     * When parsing Strings, returns this value when String is empty
+     */
+    public Object getDefaultValueWhenEmpty() {
+        return defaultValueWhenEmpty;
+    }
+
+    public void setDefaultValueWhenEmpty(Object defaultValueWhenEmpty) {
+        this.defaultValueWhenEmpty = defaultValueWhenEmpty;
+    }
+
     /**
      * Hack to fix bug introduced in Vaadin 6.7.3, prevents stack overflow
      */
