@@ -56,7 +56,7 @@
 
     <groupId>com.expressui</groupId>
     <artifactId>expressui-main</artifactId>
-    <version>1.0.0-RC4-SNAPSHOT</version>
+    <version>1.0.0-RC4</version>
     <packaging>pom</packaging>
 
     <modules>

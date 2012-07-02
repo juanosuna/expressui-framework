@@ -92,7 +92,7 @@ public class SampleDashboardPage extends DashboardPage {
         addComponent(createOpportunitySalesStageChart(), "Sales Stage Breakdown", 2, 2);
 
         // Used to track usage statistics only for sample application
-        UrlUtil.addTrackingUrl((AbstractComponentContainer) getCompositionRoot(), "demo");
+        UrlUtil.addTrackingUrl((AbstractComponentContainer) getCompositionRoot(), "sample");
     }
 
     private ColumnChart createOpportunityChartByYear() {
