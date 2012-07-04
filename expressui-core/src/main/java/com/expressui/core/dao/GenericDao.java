@@ -152,7 +152,6 @@ public class GenericDao {
      */
     @Transactional
     public <T> T merge(T entity) {
-        getReference(entity);
         return getEntityManager().merge(entity);
     }
 
@@ -268,6 +267,13 @@ public class GenericDao {
         return getEntityManager().find(entityType, id);
     }
 
+    /**
+     * Find the entity again from the database.
+     *
+     * @param entity persistent entity with an id
+     * @param <T> type of entity to refind
+     * @return attached entity found from database
+     */
     public <T> T reFind(T entity) {
         Serializable id = getId(entity);
         if (id == null) {

@@ -87,10 +87,16 @@ public class TestDataInitializer {
         initializeRoles();
         initializeUsers();
 
+        int accountCount = count / 10;
         Account currentAccount = null;
-        for (Integer i = 0; i < count; i++) {
+        for (Integer contactCount = count; contactCount > 0; contactCount--) {
             Contact contact;
-            contact = new Contact("first" + i, "last" + i);
+            if (contactCount % 20 == 1) {
+                contact = new Contact("Name" + contactCount,
+                        "Columns and fields resize automatically" + contactCount);
+            } else {
+                contact = new Contact("First Name" + contactCount, "Last Name" + contactCount);
+            }
             contact.setBirthDate(randomDate(1920, 2010));
             contact.setAssignedTo(ReferenceDataInitializer.random(userDao.findAll()));
             contact.setTitle("Vice President");
@@ -98,11 +104,11 @@ public class TestDataInitializer {
             contact.setEmail("info@expressui.com");
             contact.setDoNotEmail(randomBoolean());
             contact.setLeadSource(referenceDataInitializer.randomLeadSource());
-            Address address = randomAddress(i);
+            Address address = randomAddress(contactCount);
             contact.setMailingAddress(address);
 
             if (randomBoolean()) {
-                Address otherAddress = randomAddress(i);
+                Address otherAddress = randomAddress(contactCount);
                 contact.setOtherAddress(otherAddress);
             }
 
@@ -123,13 +129,13 @@ public class TestDataInitializer {
 
             contact.setDescription("Description of contact");
 
-            if (i % 10 == 0) {
-                currentAccount = initializeAccount(i);
+            if (contactCount % 10 == 0) {
+                currentAccount = initializeAccount(accountCount--);
             }
             contact.setAccount(currentAccount);
             genericDao.persist(contact);
 
-            if (i % 50 == 0) {
+            if (contactCount % 50 == 0) {
                 genericDao.flush();
                 genericDao.clear();
             }
@@ -236,7 +242,7 @@ public class TestDataInitializer {
 
     private Account initializeAccount(int i) {
         Account account = new Account();
-        account.setName("Brown Bag" + i);
+        account.setName("Account Name" + i);
         account.setWebsite("www.expressui.com");
         account.setTickerSymbol("EXPUI");
 
@@ -273,7 +279,11 @@ public class TestDataInitializer {
 
     private void initializeOpportunity(Account account, int i) {
         Opportunity opportunity = new Opportunity();
-        opportunity.setName("opportunityName" + i);
+        if (i % 20 == 1) {
+            opportunity.setName("Columns and fields resize automatically" + i);
+        } else {
+            opportunity.setName("Opportunity Name" + i);
+        }
         opportunity.setAccount(account);
 
         opportunity.setSalesStage(referenceDataInitializer.randomSalesStage());

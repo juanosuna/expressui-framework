@@ -73,14 +73,12 @@ public class RecentContactResults extends CrudResults<Contact> {
     @Override
     public void init(ResultsFieldSet resultsFields) {
         resultsFields.setPropertyIds(
-                "name",
+                "lastName",
                 "mailingAddress.street",
                 "mailingAddress.city",
                 "mailingAddress.country",
                 "lastModified"
         );
-
-        resultsFields.setSortable("name", false); // full name is a derived field
     }
 
     @Override

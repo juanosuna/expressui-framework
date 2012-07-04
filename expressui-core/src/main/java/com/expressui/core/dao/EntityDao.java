@@ -245,6 +245,17 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
+     * Find the entity again from the database.
+     *
+     * @param entity persistent entity with an id
+     * @param <T> type of entity to refind
+     * @return attached entity found from database
+     */
+    public <T> T reFind(T entity) {
+        return genericDao.reFind(entity);
+    }
+
+    /**
      * Find entity by natural id, or business key. This method only works for entities that have a single property
      * marked as @NaturalId. The benefit of calling this method is that Hibernate will try to look up the entity
      * in the secondary cache.
