@@ -37,7 +37,6 @@
 
 package com.expressui.core.view.results;
 
-import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.form.EntityFormWindow;
@@ -55,6 +54,7 @@ import org.vaadin.dialogs.ConfirmDialog;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.persistence.EntityNotFoundException;
 import java.util.Collection;
 
 /**
@@ -73,7 +73,6 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     private Button deleteButton;
 
     private Object currentItemId;
-    private int previousSelectionCount;
 
     protected CrudResults() {
         super();
@@ -218,24 +217,37 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         loadItem(itemId, true);
     }
 
-    private void loadItem(Object itemId, boolean selectFirstTab) {
-        getEntityForm().restoreIsReadOnly();
-        currentItemId = itemId;
-        BeanItem beanItem = getResultsTable().getContainerDataSource().getItem(itemId);
-        getEntityForm().load((T) beanItem.getBean(), selectFirstTab);
-
-        getEntityForm().applyViewMode();
+    private void loadItem(Object itemId, boolean selectFirstTab) throws EntityNotFoundException {
+        try {
+            getEntityForm().restoreIsReadOnly();
+            currentItemId = itemId;
+            getResultsTable().clearSelection();
+            getResultsTable().select(currentItemId);
+            BeanItem beanItem = getResultsTable().getContainerDataSource().getItem(itemId);
+            getEntityForm().load((T) beanItem.getBean(), selectFirstTab);
+        } finally {
+            // in case entity is not found and exception occurs, still need to apply view mode
+            getEntityForm().applyViewMode();
+        }
     }
 
     @Override
     public void editOrViewPreviousItem() {
         Object previousItemId = getResultsTable().getContainerDataSource().prevItemId(currentItemId);
-        if (previousItemId == null && getEntityQuery().hasPreviousPage()) {
-            getResultsTable().previousPage();
+        if (previousItemId == null) {
+            if (getEntityQuery().hasPreviousPage()) {
+                getResultsTable().previousPage();
+            } else {
+                getResultsTable().lastPage();
+            }
             previousItemId = getResultsTable().getContainerDataSource().lastItemId();
         }
         if (previousItemId != null) {
-            loadItem(previousItemId, false);
+            try {
+                loadItem(previousItemId, false);
+            } catch (EntityNotFoundException e) { // may occur if entity has been deleted by another user
+                editOrViewPreviousItem();
+            }
         }
     }
 
@@ -248,13 +260,21 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     @Override
     public void editOrViewNextItem() {
         Object nextItemId = getResultsTable().getContainerDataSource().nextItemId(currentItemId);
-        if (nextItemId == null && getEntityQuery().hasNextPage()) {
-            getResultsTable().nextPage();
+        if (nextItemId == null) {
+            if (getEntityQuery().hasNextPage()) {
+                getResultsTable().nextPage();
+            } else {
+                getResultsTable().firstPage();
+            }
             nextItemId = getResultsTable().getContainerDataSource().firstItemId();
         }
 
         if (nextItemId != null) {
-            loadItem(nextItemId, false);
+            try {
+                loadItem(nextItemId, false);
+            } catch (EntityNotFoundException e) { // may occur if entity has been deleted by another user
+                editOrViewNextItem();
+            }
         }
     }
 
@@ -327,12 +347,6 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
      */
     public void selectionChanged(Property.ValueChangeEvent event) {
         Collection itemIds = (Collection) getSelectedValue();
-
-        if (itemIds.size() == previousSelectionCount) {
-            return;
-        } else {
-            previousSelectionCount = itemIds.size();
-        }
 
         getResultsTable().turnOnContentRefreshing();
 

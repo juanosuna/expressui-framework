@@ -61,8 +61,6 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
 
     private Object currentItemId;
 
-    private int previousSelectionCount;
-
     /**
      * Get the EntityForm used for creating a new entity to add to relationship.
      *
@@ -203,12 +201,6 @@ public abstract class ToManyCompositionRelationshipResults<T> extends ToManyRela
     @Override
     public void selectionChanged() {
         Collection itemIds = (Collection) getSelectedValue();
-
-        if (itemIds.size() == previousSelectionCount && !itemIds.isEmpty()) {
-            return;
-        } else {
-            previousSelectionCount = itemIds.size();
-        }
 
         getResultsTable().turnOnContentRefreshing();
 

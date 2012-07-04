@@ -177,4 +177,9 @@ public class Profile extends WritableEntity implements UserOwnedEntity {
     public void setUser(User user) {
         this.user = user;
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

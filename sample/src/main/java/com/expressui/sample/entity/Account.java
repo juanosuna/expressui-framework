@@ -313,4 +313,9 @@ public class Account extends WritableEntity {
             opportunity.setAccount(null);
         }
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

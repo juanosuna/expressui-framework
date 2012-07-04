@@ -38,6 +38,7 @@
 package com.expressui.sample.view.contact;
 
 import com.expressui.core.MainApplication;
+import com.expressui.core.entity.security.User;
 import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.form.FormFieldSet;
@@ -128,11 +129,11 @@ public class ContactForm extends EntityForm<Contact> {
         formFields.clearSelectItems("otherAddress.state");
         formFields.addValueChangeListener("otherAddress.country", this, "otherCountryChanged");
 
-        SelectField selectField = new SelectField(this, "assignedTo", userSelect);
-        formFields.setField("assignedTo.loginName", selectField);
+        SelectField<Contact, User> assignedToField = new SelectField<Contact, User>(this, "assignedTo", userSelect);
+        formFields.setField("assignedTo.loginName", assignedToField);
 
-        selectField = new SelectField(this, "account", accountSelect);
-        formFields.setField("account.name", selectField);
+        SelectField<Contact, Account> accountField = new SelectField<Contact, Account>(this, "account", accountSelect);
+        formFields.setField("account.name", accountField);
     }
 
     public void addOtherAddress() {

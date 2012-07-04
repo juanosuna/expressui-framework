@@ -38,7 +38,7 @@
 package com.expressui.core.view.results;
 
 import com.expressui.core.dao.query.EntityQuery;
-import com.expressui.core.entity.WritableEntity;
+import com.expressui.core.util.MethodDelegate;
 import com.expressui.core.view.field.DisplayField;
 import com.expressui.core.view.field.format.EmptyPropertyFormatter;
 import com.expressui.core.view.form.EntityForm;
@@ -55,7 +55,9 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Table for displaying results.
@@ -63,6 +65,8 @@ import java.util.List;
 public class ResultsTable extends Table {
 
     private Results results;
+    private Set<MethodDelegate> executeQueryListeners = new LinkedHashSet<MethodDelegate>();
+
 
     protected ResultsTable(Results results) {
         this.results = results;
@@ -143,6 +147,17 @@ public class ResultsTable extends Table {
     }
 
     /**
+     * Add execute-query listener. Listener is invoked when query is executed or re-executed during
+     * paging, sorting, etc.
+     *
+     * @param target     target object
+     * @param methodName name of method to invoke
+     */
+    public void addExecuteQueryListener(Object target, String methodName) {
+        executeQueryListeners.add(new MethodDelegate(target, methodName));
+    }
+
+    /**
      * Get the offset of the first result displayed, starting with 1.
      *
      * @return offset of first result, or 0 if there are no results
@@ -161,6 +176,7 @@ public class ResultsTable extends Table {
         clearSelection();
         results.getEntityQuery().setFirstResult(firstResult - 1);
         executeCurrentQuery();
+        selectFirstItemInCurrentPage();
     }
 
     /**
@@ -169,6 +185,7 @@ public class ResultsTable extends Table {
     public void refresh() {
         clearSelection();
         executeCurrentQuery();
+        selectFirstItemInCurrentPage();
     }
 
     /**
@@ -178,6 +195,7 @@ public class ResultsTable extends Table {
         clearSelection();
         results.getEntityQuery().firstPage();
         executeCurrentQuery();
+        selectFirstItemInCurrentPage();
     }
 
     /**
@@ -187,6 +205,7 @@ public class ResultsTable extends Table {
         clearSelection();
         results.getEntityQuery().previousPage();
         executeCurrentQuery();
+        selectFirstItemInCurrentPage();
     }
 
     /**
@@ -196,6 +215,7 @@ public class ResultsTable extends Table {
         clearSelection();
         results.getEntityQuery().nextPage();
         executeCurrentQuery();
+        selectFirstItemInCurrentPage();
     }
 
     /**
@@ -205,6 +225,7 @@ public class ResultsTable extends Table {
         clearSelection();
         results.getEntityQuery().lastPage();
         executeCurrentQuery();
+        selectFirstItemInCurrentPage();
     }
 
     /**
@@ -215,9 +236,14 @@ public class ResultsTable extends Table {
         getContainerDataSource().removeAllItems();
         getContainerDataSource().addAll(entities);
 
-        results.refreshResultCountLabel();
+        results.refreshFirstResultAndCount();
         results.refreshNavigationButtonStates();
         setPageLength(Math.min(entities.size(), results.getPageSize()));
+
+        Set<MethodDelegate> listenersToExecute = (Set<MethodDelegate>) ((LinkedHashSet) executeQueryListeners).clone();
+        for (MethodDelegate listener : listenersToExecute) {
+            listener.execute();
+        }
     }
 
     /**
@@ -228,6 +254,12 @@ public class ResultsTable extends Table {
             setValue(new HashSet());
         } else {
             setValue(null);
+        }
+    }
+
+    public void selectFirstItemInCurrentPage() {
+        if (firstItemId() != null) {
+            select(firstItemId());
         }
     }
 

@@ -59,6 +59,7 @@ import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.ChameleonTheme;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.apache.log4j.Logger;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.context.annotation.Scope;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -67,6 +68,7 @@ import org.vaadin.dialogs.DefaultConfirmDialogFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.persistence.EntityNotFoundException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -82,6 +84,8 @@ import java.util.Set;
 public abstract class MainApplication extends Application implements ViewBean, HttpServletRequestListener {
 
     private static ThreadLocal<MainApplication> currentInstance = new ThreadLocal<MainApplication>();
+
+    private final Logger log = Logger.getLogger(getClass());
 
     /**
      * Service for logging in/out and getting the current user. The current user entity
@@ -107,8 +111,6 @@ public abstract class MainApplication extends Application implements ViewBean, H
      */
     @Resource
     public MainMenuBar mainMenuBar;
-
-    private boolean codePopupEnabled = false;
 
     private TabSheet pageLayoutTabSheet;
 
@@ -392,22 +394,31 @@ public abstract class MainApplication extends Application implements ViewBean, H
 
     @Override
     public void terminalError(com.vaadin.terminal.Terminal.ErrorEvent event) {
-        super.terminalError(event);
-        Throwable cause = event.getThrowable().getCause();
+        Throwable rootThrowable = event.getThrowable();
+        if (rootThrowable == null) return;
 
-        if (cause instanceof DataIntegrityViolationException) {
-            DataIntegrityViolationException violationException = (DataIntegrityViolationException) cause;
+        Exception cause;
+        if ((cause = ExceptionUtil.findThrowableInChain(rootThrowable, DataIntegrityViolationException.class)) != null) {
+            log.warn("Terminal error: ", rootThrowable);
             getMainWindow().showNotification(
                     uiMessageSource.getMessage("mainApplication.dataConstraintViolation"),
-                    violationException.getMessage(),
+                    cause.getMessage(),
                     Window.Notification.TYPE_ERROR_MESSAGE);
-        } else if (cause instanceof ConstraintViolationException) {
+        } else if ((cause = ExceptionUtil.findThrowableInChain(rootThrowable, ConstraintViolationException.class)) != null) {
+            log.warn("Terminal error: ", rootThrowable);
             ConstraintViolationException violationException = (ConstraintViolationException) cause;
             getMainWindow().showNotification(
                     uiMessageSource.getMessage("mainApplication.dataConstraintViolation"),
                     violationException.getMessage(),
                     Window.Notification.TYPE_ERROR_MESSAGE);
+        } else if ((cause = ExceptionUtil.findThrowableInChain(rootThrowable, EntityNotFoundException.class)) != null) {
+            log.warn("Terminal error: ", rootThrowable);
+            getMainWindow().showNotification(
+                    uiMessageSource.getMessage("mainApplication.entityNotFound", new Object[]{cause.getMessage()}),
+                    Window.Notification.TYPE_ERROR_MESSAGE);
         } else {
+            super.terminalError(event);
+            log.error("Terminal error: ", rootThrowable);
             String fullStackTrace = ExceptionUtils.getFullStackTrace(event.getThrowable());
             openErrorWindow(fullStackTrace);
         }

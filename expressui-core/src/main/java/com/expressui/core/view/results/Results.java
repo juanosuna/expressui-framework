@@ -260,8 +260,7 @@ public abstract class Results<T> extends TypedComponent<T> {
         HorizontalLayout navigationLine = new HorizontalLayout();
         setDebugId(navigationLine, "navigationLine");
         navigationLine.setSizeUndefined();
-//        navigationLine.setWidth("100%");
-        navigationLine.setMargin(true, true, true, true);
+        navigationLine.setMargin(true, false, true, false);
 
         navigationLine.addComponent(resultCountDisplay);
         navigationLine.setComponentAlignment(resultCountDisplay, Alignment.BOTTOM_LEFT);
@@ -404,24 +403,28 @@ public abstract class Results<T> extends TypedComponent<T> {
      * @param clearSelection true if row selection should be cleared
      */
     protected void searchImpl(boolean clearSelection) {
-        firstResultTextField.setValue(1);
         getEntityQuery().firstPage();
         getResultsTable().executeCurrentQuery();
 
         if (clearSelection) {
             getResultsTable().clearSelection();
+            getResultsTable().selectFirstItemInCurrentPage();
         }
     }
 
     /**
-     * Refresh the label displaying the result count
+     * Refresh the first result text field and label displaying the result count
      */
-    protected void refreshResultCountLabel() {
+    protected void refreshFirstResultAndCount() {
         EntityQuery query = getEntityQuery();
         String caption = uiMessageSource.getMessage("results.caption",
                 new Object[]{
                         query.getResultCount() == 0 ? 0 : query.getLastResult(),
                         query.getResultCount()});
+
+        PropertyFormatter propertyFormatter = defaultFormats.getNumberFormat(1);
+        propertyFormatter.setPropertyDataSource(new MethodProperty(getResultsTable(), "firstResult"));
+        firstResultTextField.setPropertyDataSource(propertyFormatter);
         firstResultTextField.setWidth(Math.max(3, query.getResultCount().toString().length() - 1), Sizeable.UNITS_EM);
         resultCountLabel.setValue(caption);
     }

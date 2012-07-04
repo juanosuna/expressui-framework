@@ -46,7 +46,12 @@ public class TotalYearSales {
 
     public TotalYearSales(int year, BigDecimal totalSales) {
         this.year = year;
-        this.totalSales = totalSales;
+        if (totalSales == null) {
+            this.totalSales = new BigDecimal(0);
+
+        } else {
+            this.totalSales = totalSales;
+        }
     }
 
     public int getYear() {

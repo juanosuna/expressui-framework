@@ -320,4 +320,9 @@ public class Contact extends WritableEntity {
     public void preRemove() {
         setAccount(null);
     }
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }

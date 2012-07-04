@@ -195,4 +195,9 @@ public class Address extends WritableEntity {
 
         return formattedAddress;
     }
+
+    @Override
+    public String toString() {
+        return getFormatted();
+    }
 }

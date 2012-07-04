@@ -41,6 +41,7 @@ import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.form.SearchForm;
 import com.expressui.sample.dao.query.ContactQuery;
+import com.expressui.sample.entity.Account;
 import com.expressui.sample.view.select.AccountSelect;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -64,8 +65,9 @@ public class ContactSearchForm extends SearchForm<ContactQuery> {
 
         formFields.setLabel("account.name", "Account Name");
 
-        SelectField selectField = new SelectField(this, "account", accountSelect);
-        formFields.setField("account.name", selectField);
+        SelectField<ContactQuery, Account> accountField =
+                new SelectField<ContactQuery, Account>(this, "account", accountSelect);
+        formFields.setField("account.name", accountField);
     }
 
     @Override

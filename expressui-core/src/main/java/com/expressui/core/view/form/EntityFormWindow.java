@@ -90,7 +90,6 @@ public class EntityFormWindow extends Window {
         resultsConnectedEntityForm.getEntityForm().addCloseListener(this, "close");
         resultsConnectedEntityForm.addWalkListener(this, "refreshCaption");
         entityForm.addSaveListener(this, "refreshCaption");
-        resultsConnectedEntityForm.refreshNavigationButtonStates();
         entityForm.onDisplay();
     }
 

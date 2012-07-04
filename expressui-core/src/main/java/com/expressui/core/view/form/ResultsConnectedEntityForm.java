@@ -155,24 +155,10 @@ public class ResultsConnectedEntityForm<T> extends CustomComponent {
     }
 
     /**
-     * Refresh navigation buttons so that they are enabled if entity is persistent and disabled if transient
-     */
-    public void refreshNavigationButtonStates() {
-        if (entityForm.isEntityPersistent()) {
-            previousButton.setEnabled(results.hasPreviousItem());
-            nextButton.setEnabled(results.hasNextItem());
-        } else {
-            previousButton.setEnabled(false);
-            nextButton.setEnabled(false);
-        }
-    }
-
-    /**
      * Go to previous item in the current results
      */
     public void previousItem() {
         results.editOrViewPreviousItem();
-        refreshNavigationButtonStates();
         onWalk();
     }
 
@@ -181,7 +167,6 @@ public class ResultsConnectedEntityForm<T> extends CustomComponent {
      */
     public void nextItem() {
         results.editOrViewNextItem();
-        refreshNavigationButtonStates();
         onWalk();
     }
 

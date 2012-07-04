@@ -209,6 +209,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
                     Field field = formField.getField();
                     form.attachField(propertyId, field);
                 }
+                gridLayout.requestRepaint();
             }
         });
     }
@@ -467,6 +468,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     }
 
     protected BeanItem createBeanItem(Object entity) {
+        Assert.PROGRAMMING.notNull(entity);
         List<String> propertyIds = getFormFieldSet().getPropertyIds();
         Map<String, VaadinPropertyDescriptor> descriptors = new HashMap<String, VaadinPropertyDescriptor>();
         for (String propertyId : propertyIds) {

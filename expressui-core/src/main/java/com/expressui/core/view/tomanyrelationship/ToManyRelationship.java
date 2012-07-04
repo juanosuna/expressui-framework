@@ -66,7 +66,7 @@ public abstract class ToManyRelationship<T> extends TypedComponent<T> {
         super.postConstruct();
 
         useVerticalLayout();
-        setWidthSizeFull();
+        setSizeUndefined();
 
         addComponent(getResults());
 

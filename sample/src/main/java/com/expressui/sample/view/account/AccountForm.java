@@ -38,6 +38,7 @@
 package com.expressui.sample.view.account;
 
 import com.expressui.core.MainApplication;
+import com.expressui.core.entity.security.User;
 import com.expressui.core.view.field.format.UrlPropertyFormatter;
 import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.EntityForm;
@@ -143,8 +144,8 @@ public class AccountForm extends EntityForm<Account> {
         formFields.clearSelectItems("mailingAddress.state");
         formFields.addValueChangeListener("mailingAddress.country", this, "mailingCountryChanged");
 
-        SelectField selectField = new SelectField(this, "assignedTo", userSelect);
-        formFields.setField("assignedTo.loginName", selectField);
+        SelectField<Account, User> assignedToField = new SelectField<Account, User>(this, "assignedTo", userSelect);
+        formFields.setField("assignedTo.loginName", assignedToField);
     }
 
     public void addMailingAddress() {

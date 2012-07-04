@@ -38,11 +38,13 @@
 package com.expressui.sample.view.opportunity;
 
 import com.expressui.core.MainApplication;
+import com.expressui.core.entity.security.User;
 import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.form.FormTab;
 import com.expressui.core.view.security.select.UserSelect;
+import com.expressui.sample.entity.Account;
 import com.expressui.sample.entity.Opportunity;
 import com.expressui.sample.view.select.AccountSelect;
 import org.springframework.context.annotation.Scope;
@@ -98,11 +100,13 @@ public class OpportunityForm extends EntityForm<Opportunity> {
         formFields.setToolTip("amount", "Change in amount changes value weighted in USD");
         formFields.setToolTip("currency", "Change in currency changes value weighted in USD");
 
-        SelectField selectField = new SelectField(this, "assignedTo", userSelect);
-        formFields.setField("assignedTo.loginName", selectField);
+        SelectField<Opportunity, User> assignedToField =
+                new SelectField<Opportunity, User>(this, "assignedTo", userSelect);
+        formFields.setField("assignedTo.loginName", assignedToField);
 
-        selectField = new SelectField(this, "account", accountSelect);
-        formFields.setField("account.name", selectField);
+        SelectField<Opportunity, Account> accountField =
+                new SelectField<Opportunity, Account>(this, "account", accountSelect);
+        formFields.setField("account.name", accountField);
     }
 
     @Override

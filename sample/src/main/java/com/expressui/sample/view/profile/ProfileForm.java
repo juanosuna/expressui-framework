@@ -86,8 +86,8 @@ public class ProfileForm extends EntityForm<Profile> {
 
         myProfileForm.init(formFields);
 
-        SelectField selectField = new SelectField(this, "user", userSelect);
-        formFields.setField("user.loginName", selectField);
+        SelectField<Profile, User> userField = new SelectField<Profile, User>(this, "user", userSelect);
+        formFields.setField("user.loginName", userField);
         formFields.addValueChangeListener("user.loginName", this, "userChanged");
 
         getFormFieldSet().setEnabled("user.loginPassword", false);

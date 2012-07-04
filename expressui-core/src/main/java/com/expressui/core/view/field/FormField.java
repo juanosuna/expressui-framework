@@ -924,7 +924,7 @@ public class FormField extends DisplayField {
     public static void initTextFieldDefaults(AbstractTextField field) {
         field.setWidth(DEFAULT_TEXT_FIELD_WIDTH, Sizeable.UNITS_EM);
         field.setNullRepresentation("");
-        field.setNullSettingAllowed(false);
+        field.setNullSettingAllowed(true);
     }
 
     /**

@@ -53,7 +53,10 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -149,6 +152,7 @@ public class GenericDao {
      */
     @Transactional
     public <T> T merge(T entity) {
+        getReference(entity);
         return getEntityManager().merge(entity);
     }
 
@@ -262,6 +266,15 @@ public class GenericDao {
      */
     public <T> T find(Class<? extends T> entityType, Serializable id) {
         return getEntityManager().find(entityType, id);
+    }
+
+    public <T> T reFind(T entity) {
+        Serializable id = getId(entity);
+        if (id == null) {
+            return null;
+        } else {
+            return find(getEntityType(entity), id);
+        }
     }
 
     /**

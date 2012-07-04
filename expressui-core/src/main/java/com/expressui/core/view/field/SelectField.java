@@ -37,6 +37,7 @@
 
 package com.expressui.core.view.field;
 
+import com.expressui.core.dao.GenericDao;
 import com.expressui.core.util.StringUtil;
 import com.expressui.core.view.entityselect.EntitySelect;
 import com.expressui.core.view.form.TypedForm;
@@ -50,6 +51,7 @@ import com.vaadin.ui.TextField;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.vaadin.addon.customfield.CustomField;
 
+import javax.persistence.EntityNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -61,18 +63,20 @@ import java.util.Collection;
  *
  * @see EntitySelect
  */
-public class SelectField extends CustomField {
+public class SelectField<T, V> extends CustomField {
 
     private MessageSource uiMessageSource;
 
     private TextField field;
-    private EntitySelect entitySelect;
+    private EntitySelect<V> entitySelect;
 
     private Button clearButton;
     private Button searchButton;
 
-    private TypedForm typedForm;
+    private TypedForm<T> typedForm;
     private String propertyId;
+
+    private GenericDao genericDao;
 
     /**
      * Construct in the given typed form for given property id
@@ -81,11 +85,12 @@ public class SelectField extends CustomField {
      * @param propertyId   property id bound to this field
      * @param entitySelect popup component for selecting entity
      */
-    public SelectField(TypedForm typedForm, String propertyId, EntitySelect entitySelect) {
+    public SelectField(TypedForm<T> typedForm, String propertyId, EntitySelect<V> entitySelect) {
         this.typedForm = typedForm;
         this.propertyId = propertyId;
         this.entitySelect = entitySelect;
         this.uiMessageSource = typedForm.uiMessageSource;
+        this.genericDao = typedForm.genericDao;
         initialize();
     }
 
@@ -94,7 +99,7 @@ public class SelectField extends CustomField {
      *
      * @return component for selecting entity
      */
-    public EntitySelect getEntitySelect() {
+    public EntitySelect<V> getEntitySelect() {
         return entitySelect;
     }
 
@@ -149,8 +154,13 @@ public class SelectField extends CustomField {
      * Listener method invoked when user selects item.
      */
     public void itemSelected() {
-        Object selectedValue = getSelectedValue();
-        Object bean = typedForm.getBean();
+        V selectedValue = getSelectedValue();
+        V reFoundEntity = genericDao.reFind(selectedValue);
+        if (reFoundEntity == null) {
+            throw new EntityNotFoundException(selectedValue.toString());
+        }
+
+        T bean = typedForm.getBean();
         try {
             PropertyUtils.setProperty(bean, propertyId, selectedValue);
         } catch (IllegalAccessException e) {
@@ -170,7 +180,7 @@ public class SelectField extends CustomField {
      * Listener method invoked when user clicks clear button.
      */
     public void itemCleared() {
-        Object bean = typedForm.getBean();
+        T bean = typedForm.getBean();
         try {
             PropertyUtils.setProperty(bean, propertyId, null);
         } catch (NoSuchMethodException e) {
@@ -185,13 +195,34 @@ public class SelectField extends CustomField {
         field.setPropertyDataSource(property);
     }
 
+    private V getSelectedValue() {
+        return (V) entitySelect.getResults().getSelectedValue();
+    }
+
     /**
-     * Get selected value.
+     * Get the property id of the containing bean that this field is bound to
      *
-     * @return selected value
+     * @return property id
      */
-    public Object getSelectedValue() {
-        return entitySelect.getResults().getSelectedValue();
+    public String getPropertyId() {
+        return propertyId;
+    }
+
+    /**
+     * Get selected bean.
+     *
+     * @return selected bean
+     */
+    public V getBean() {
+        try {
+            return (V) PropertyUtils.getProperty(typedForm.getBean(), getPropertyId());
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

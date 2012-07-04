@@ -42,6 +42,7 @@ import com.expressui.core.util.MethodDelegate;
 import com.expressui.core.validation.AssertTrueForProperties;
 import com.expressui.core.validation.Validation;
 import com.expressui.core.view.field.FormField;
+import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
 import com.vaadin.data.Item;
 import com.vaadin.data.Validator;
@@ -53,6 +54,7 @@ import com.vaadin.ui.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.OptimisticLockException;
 import javax.validation.ConstraintViolation;
 import javax.validation.metadata.ConstraintDescriptor;
@@ -129,6 +131,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
             toManyRelationshipTabs.setSizeUndefined();
             for (ToManyRelationship toManyRelationship : toManyRelationships) {
                 toManyRelationshipTabs.addTab(toManyRelationship);
+                toManyRelationship.getResults().getResultsTable().addExecuteQueryListener(this, "requestRepaintAll");
                 labelRegistry.putFieldLabel(getType().getName(), toManyRelationship.getResults().getChildPropertyId(),
                         "Relationship", toManyRelationship.getTypeCaption());
             }
@@ -344,9 +347,13 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      *
      * @param entity         entity to load
      * @param selectFirstTab true to select the first tab, once the entity is loaded
+     * @throws EntityNotFoundException
      */
-    public void load(T entity, boolean selectFirstTab) {
+    public void load(T entity, boolean selectFirstTab) throws EntityNotFoundException {
         T loadedEntity = genericDao.find(getType(), genericDao.getId(entity));
+        if (loadedEntity == null) {
+            throw new EntityNotFoundException(entity.toString());
+        }
         postLoad(loadedEntity);
         BeanItem beanItem = createBeanItem(loadedEntity);
         setItemDataSource(beanItem, getFormFieldSet().getPropertyIds());
@@ -358,6 +365,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         resetTabs(selectFirstTab);
 
         refreshButton.setCaption(uiMessageSource.getMessage("entityForm.refresh"));
+        requestRepaintAll();
     }
 
     @Override
@@ -575,7 +583,11 @@ public abstract class EntityForm<T> extends TypedForm<T> {
             if (genericDao.getId(entity) == null) {
                 create();
             } else {
-                load(entity);
+                try {
+                    load(entity);
+                } catch (EntityNotFoundException e) {
+                    // ignore if use cancels when viewing/editing entity that another user deleted
+                }
             }
         }
 
@@ -634,6 +646,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
             preSave(getBean());
 
             T entity = getBean();
+            checkThatToOneSelectionsExist();
             if (genericDao.getId(entity) != null) {
                 T mergedEntity;
                 if (getEntityDao() == null) {
@@ -675,6 +688,20 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         } else {
             showSaveValidationErrorMessage();
             return false;
+        }
+    }
+
+    private void checkThatToOneSelectionsExist() {
+        Set<FormField> formFields = getFormFieldSet().getFormFields();
+        for (FormField formField : formFields) {
+            if (formField.getField() instanceof SelectField) {
+                SelectField selectField = (SelectField) formField.getField();
+                Object selectedValue = selectField.getBean();
+                Object reFoundValue = genericDao.reFind(selectedValue);
+                if (reFoundValue == null) {
+                    throw new EntityNotFoundException(selectedValue.toString());
+                }
+            }
         }
     }
 
