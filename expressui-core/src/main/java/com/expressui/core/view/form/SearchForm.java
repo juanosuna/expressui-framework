@@ -138,9 +138,4 @@ public abstract class SearchForm<T extends EntityQuery> extends TypedForm<T> {
         getForm().commit();
         getResults().search();
     }
-
-    @Override
-    protected Component animate(Component component) {
-        return super.animate(component, true);
-    }
 }

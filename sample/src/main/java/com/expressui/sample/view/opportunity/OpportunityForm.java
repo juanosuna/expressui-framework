@@ -123,6 +123,11 @@ public class OpportunityForm extends EntityForm<Opportunity> {
 
     @Override
     public String getTypeCaption() {
+        return "Opportunity Form";
+    }
+
+    @Override
+    public String getEntityCaption() {
         if (getBean().getName() == null) {
             return "Opportunity Form - New";
         } else {

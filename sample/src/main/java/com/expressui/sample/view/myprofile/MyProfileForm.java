@@ -92,4 +92,13 @@ public class MyProfileForm<T extends Profile> extends UserOwnedEntityForm<Profil
     public String getTypeCaption() {
         return "My Profile";
     }
+
+    @Override
+    public String getEntityCaption() {
+        if (getBean().getName() == null) {
+            return "My Profile - New";
+        } else {
+            return "My Profile - " + getBean().getName();
+        }
+    }
 }

@@ -70,9 +70,9 @@ public abstract class TypedComponent<T> extends RootComponent {
     }
 
     /**
-     * Get the caption used to represent the type of this component, e.g. to be displayed in menu bar.
+     * Get the caption that describes the type of this component.
      *
-     * @return display caption
+     * @return caption that describes type of this component
      */
     public abstract String getTypeCaption();
 

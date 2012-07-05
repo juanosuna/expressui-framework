@@ -62,7 +62,7 @@ public class EntityFormWindow extends Window {
      * @param entityForm form to display inside window
      */
     protected EntityFormWindow(EntityForm entityForm) {
-        super(entityForm.getTypeCaption());
+        super(entityForm.getEntityCaption());
 
         initialize();
         this.entityForm = entityForm;
@@ -80,7 +80,7 @@ public class EntityFormWindow extends Window {
      * @param resultsConnectedEntityForm results-connected form
      */
     protected EntityFormWindow(ResultsConnectedEntityForm resultsConnectedEntityForm) {
-        super(resultsConnectedEntityForm.getEntityForm().getTypeCaption());
+        super(resultsConnectedEntityForm.getEntityForm().getEntityCaption());
 
         initialize();
         this.resultsConnectedEntityForm = resultsConnectedEntityForm;
@@ -97,7 +97,7 @@ public class EntityFormWindow extends Window {
      * Refreshes caption, as user steps through results.
      */
     void refreshCaption() {
-        setCaption(entityForm.getTypeCaption());
+        setCaption(entityForm.getEntityCaption());
     }
 
     private void initialize() {

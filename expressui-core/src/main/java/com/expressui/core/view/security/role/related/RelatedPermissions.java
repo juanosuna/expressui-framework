@@ -299,6 +299,11 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
 
         @Override
         public String getTypeCaption() {
+            return "Permission Form";
+        }
+
+        @Override
+        public String getEntityCaption() {
             if (getBean().getTargetType() == null) {
                 return "Permission Form - New";
             } else {

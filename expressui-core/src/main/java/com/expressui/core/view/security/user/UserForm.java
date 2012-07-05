@@ -111,4 +111,13 @@ public class UserForm extends EntityForm<User> {
     public String getTypeCaption() {
         return "User Form";
     }
+
+    @Override
+    public String getEntityCaption() {
+        if (getBean().getLoginName() == null) {
+            return "User Form - New";
+        } else {
+            return "User Form - " + getBean().getLoginName();
+        }
+    }
 }

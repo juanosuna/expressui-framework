@@ -89,36 +89,6 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     private Set<MethodDelegate> cancelListeners = new LinkedHashSet<MethodDelegate>();
     private Set<MethodDelegate> saveListeners = new LinkedHashSet<MethodDelegate>();
 
-    /**
-     * Get all to-many relationships, displayed as tabs below the form.
-     *
-     * @return list of to-many relationships
-     */
-    public List<ToManyRelationship> getToManyRelationships() {
-        return new ArrayList<ToManyRelationship>();
-    }
-
-    /**
-     * Get all viewable to-many relationships, based on security permissions.
-     *
-     * @return all viewable to-many relationships
-     */
-    public List<ToManyRelationship> getViewableToManyRelationships() {
-        List<ToManyRelationship> viewableToManyRelationships = new ArrayList<ToManyRelationship>();
-        List<ToManyRelationship> toManyRelationships = getToManyRelationships();
-
-        for (ToManyRelationship toManyRelationship : toManyRelationships) {
-            User user = securityService.getCurrentUser();
-
-            if (user.isViewAllowed(toManyRelationship.getResults().getType().getName())
-                    && !toManyRelationship.getResults().getResultsFieldSet().getViewablePropertyIds().isEmpty()) {
-                viewableToManyRelationships.add(toManyRelationship);
-            }
-        }
-
-        return viewableToManyRelationships;
-    }
-
     @PostConstruct
     @Override
     public void postConstruct() {
@@ -164,21 +134,58 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         for (ToManyRelationship toManyRelationship : toManyRelationships) {
             toManyRelationship.onDisplay();
         }
-
-        setFormVisible(true);
     }
 
     /**
-     * Animate the component if and only if there are viewable to-many tabs, i.e. allow component's
+     * Get a caption that describes the entity bean bound to this form.
+     *
+     * @return caption that describes entity
+     */
+    public String getEntityCaption() {
+        return getTypeCaption();
+    }
+
+    /**
+     * Get all to-many relationships, displayed as tabs below the form.
+     *
+     * @return list of to-many relationships
+     */
+    public List<ToManyRelationship> getToManyRelationships() {
+        return new ArrayList<ToManyRelationship>();
+    }
+
+    /**
+     * Get all viewable to-many relationships, based on security permissions.
+     *
+     * @return all viewable to-many relationships
+     */
+    public List<ToManyRelationship> getViewableToManyRelationships() {
+        List<ToManyRelationship> viewableToManyRelationships = new ArrayList<ToManyRelationship>();
+        List<ToManyRelationship> toManyRelationships = getToManyRelationships();
+
+        for (ToManyRelationship toManyRelationship : toManyRelationships) {
+            User user = securityService.getCurrentUser();
+
+            if (user.isViewAllowed(toManyRelationship.getResults().getType().getName())
+                    && !toManyRelationship.getResults().getResultsFieldSet().getViewablePropertyIds().isEmpty()) {
+                viewableToManyRelationships.add(toManyRelationship);
+            }
+        }
+
+        return viewableToManyRelationships;
+    }
+
+    /**
+     * Make the component collapsible if and only if there are viewable to-many tabs, i.e. allow component's
      * visibility to be toggled
      *
      * @param component component to show/hide
-     * @return the newly created layout that contains the toggle button and animated component
+     * @return the newly created wrapper layout that contains the toggle button and collapsible component
      */
     @Override
-    protected Component animate(Component component) {
+    protected Component makeCollapsible(String caption, Component component) {
         if (getViewableToManyRelationships().size() > 0) {
-            return super.animate(component);
+            return super.makeCollapsible(caption, component, false);
         } else {
             return component;
         }
@@ -389,7 +396,6 @@ public abstract class EntityForm<T> extends TypedForm<T> {
 
             }
             toManyRelationshipTabs.setVisible(true);
-            setFormAnimatorToggleButtonVisible(true);
         }
     }
 
@@ -410,7 +416,6 @@ public abstract class EntityForm<T> extends TypedForm<T> {
 
         if (toManyRelationshipTabs != null) {
             toManyRelationshipTabs.setVisible(false);
-            setFormAnimatorToggleButtonVisible(false);
         }
     }
 
@@ -709,7 +714,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      * Show notification message that save was successful.
      */
     public void showSaveSuccessfulMessage() {
-        Window.Notification notification = new Window.Notification("\"" + getTypeCaption()
+        Window.Notification notification = new Window.Notification("\"" + getEntityCaption()
                 + "\" " + uiMessageSource.getMessage("entityForm.saveSuccessful"),
                 Window.Notification.TYPE_HUMANIZED_MESSAGE);
         notification.setDelayMsec(Window.Notification.DELAY_NONE);
@@ -733,7 +738,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      * Show notification message that save was unsuccessful.
      */
     public void showSaveValidationErrorMessage() {
-        Window.Notification notification = new Window.Notification("\"" + getTypeCaption()
+        Window.Notification notification = new Window.Notification("\"" + getEntityCaption()
                 + "\" " + uiMessageSource.getMessage("entityForm.saveValidationError"),
                 Window.Notification.TYPE_ERROR_MESSAGE);
         notification.setDelayMsec(Window.Notification.DELAY_NONE);

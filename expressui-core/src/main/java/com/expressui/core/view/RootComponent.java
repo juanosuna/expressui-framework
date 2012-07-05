@@ -272,8 +272,8 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
         if (isCodePopupEnabled()) {
             Component firstComponent = getCompositionRoot();
             HorizontalLayout codePopupButtonLayout = new HorizontalLayout();
+            codePopupButtonLayout.setMargin(false, true, false, true);
             setDebugId(codePopupButtonLayout, "codePopupButtonLayout");
-            codePopupButtonLayout.setMargin(true);
             setCompositionRoot(codePopupButtonLayout);
             codePopupButtonLayout.addComponent(firstComponent);
             Button codePopupButton = codePopup.createPopupCodeButton(autoAddCodeClasses(classes));

@@ -179,6 +179,11 @@ public class ContactForm extends EntityForm<Contact> {
 
     @Override
     public String getTypeCaption() {
+        return "Contact Form";
+    }
+
+    @Override
+    public String getEntityCaption() {
         if (getBean().getName() == null) {
             return "Contact Form - New";
         } else {

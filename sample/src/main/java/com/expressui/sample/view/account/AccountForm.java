@@ -191,6 +191,11 @@ public class AccountForm extends EntityForm<Account> {
 
     @Override
     public String getTypeCaption() {
+        return "Account Form";
+    }
+
+    @Override
+    public String getEntityCaption() {
         if (getBean().getName() == null) {
             return "Account Form - New";
         } else {

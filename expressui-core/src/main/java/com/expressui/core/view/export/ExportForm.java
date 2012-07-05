@@ -85,7 +85,7 @@ public class ExportForm extends TypedForm<ExportParameters> {
     }
 
     @Override
-    protected com.vaadin.ui.Component animate(com.vaadin.ui.Component component, boolean useVerticalLayout) {
+    protected com.vaadin.ui.Component makeCollapsible(String caption, com.vaadin.ui.Component component) {
         return component;
     }
 

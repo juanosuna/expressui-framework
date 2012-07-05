@@ -77,7 +77,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     private TabSheet formTabSheet;
     private Map<String, Integer> tabPositions = new HashMap<String, Integer>();
     protected LayoutContextMenu menu;
-    private Button toggleFormVisibilityButton;
+    private Button toggleFormCollapseButton;
     private Animator formAnimator;
 
     /**
@@ -160,7 +160,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
         spaceLabel.setSizeUndefined();
         tabsAndForm.addComponent(spaceLabel);
 
-        addComponent(animate(tabsAndForm));
+        addComponent(makeCollapsible(getTypeCaption(), tabsAndForm));
         labelRegistry.registerLabels(getFormFieldSet());
     }
 
@@ -242,17 +242,18 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     }
 
     /**
-     * Animate the component by wrapping it with a layout and button for toggling
+     * Make the component collapsible by wrapping it with a layout and button for toggling
      * the component's visibility. This allows the user to expand/collapse the given component in order
      * to free space for viewing other components.
      * <p/>
      * Uses horizontal layout for placing toggle button and animated component.
      *
+     * @param caption to display as a header above collapsible component
      * @param component component to show/hide
      * @return the newly created layout that contains the toggle button and animated component
      */
-    protected Component animate(Component component) {
-        return animate(component, false);
+    protected Component makeCollapsible(String caption, Component component) {
+        return makeCollapsible(caption, component, true);
     }
 
     /**
@@ -264,7 +265,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
      * @param useVerticalLayout true if toggle button should be laid out vertically next to animated component
      * @return the newly created layout that contains the toggle button and animated component
      */
-    protected Component animate(Component component, boolean useVerticalLayout) {
+    protected Component makeCollapsible(String caption, Component component, boolean useVerticalLayout) {
         formAnimator = new Animator(component);
         formAnimator.setSizeUndefined();
 
@@ -279,28 +280,28 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
         animatorLayout.setMargin(false, false, false, false);
         animatorLayout.setSpacing(false);
 
-        toggleFormVisibilityButton = new Button(null, new Button.ClickListener() {
+        toggleFormCollapseButton = new Button(null, new Button.ClickListener() {
             @Override
             public void buttonClick(Button.ClickEvent event) {
                 setFormVisible(!isFormVisible());
             }
         });
-        toggleFormVisibilityButton.setDescription(uiMessageSource.getToolTip("typedForm.toggleSearchForm.toolTip"));
-        toggleFormVisibilityButton.setIcon(new ThemeResource("../expressui/icons/collapse-icon.png"));
-        toggleFormVisibilityButton.addStyleName("borderless");
+        toggleFormCollapseButton.setDescription(uiMessageSource.getToolTip("typedForm.toggleSearchForm.toolTip"));
+        toggleFormCollapseButton.setIcon(new ThemeResource("../expressui/icons/collapse-icon.png"));
+        toggleFormCollapseButton.addStyleName("borderless");
 
         if (useVerticalLayout) {
             HorizontalLayout toggleFormButtonAndCaption = new HorizontalLayout();
             setDebugId(toggleFormButtonAndCaption, "toggleFormButtonAndCaption");
             toggleFormButtonAndCaption.setSizeUndefined();
-            toggleFormButtonAndCaption.addComponent(toggleFormVisibilityButton);
-            Label label = new Label(getTypeCaption());
+            toggleFormButtonAndCaption.addComponent(toggleFormCollapseButton);
+            Label label = new Label(caption);
             label.setSizeUndefined();
             toggleFormButtonAndCaption.addComponent(label);
             animatorLayout.addComponent(toggleFormButtonAndCaption);
             animatorLayout.addComponent(formAnimator);
         } else {
-            animatorLayout.addComponent(toggleFormVisibilityButton);
+            animatorLayout.addComponent(toggleFormCollapseButton);
             animatorLayout.addComponent(formAnimator);
         }
 
@@ -308,33 +309,29 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     }
 
     public boolean isFormVisible() {
-        if (formAnimator != null) {
-            return !formAnimator.isRolledUp();
-        } else {
-            return true;
-        }
+        return formAnimator == null || !formAnimator.isRolledUp();
     }
 
     public void setFormVisible(boolean isVisible) {
         if (formAnimator != null) {
             formAnimator.setRolledUp(!isVisible);
             if (formAnimator.isRolledUp()) {
-                toggleFormVisibilityButton.setIcon(new ThemeResource("../expressui/icons/expand-icon.png"));
+                toggleFormCollapseButton.setIcon(new ThemeResource("../expressui/icons/expand-icon.png"));
             } else {
-                toggleFormVisibilityButton.setIcon(new ThemeResource("../expressui/icons/collapse-icon.png"));
+                toggleFormCollapseButton.setIcon(new ThemeResource("../expressui/icons/collapse-icon.png"));
             }
         }
     }
 
     /**
-     * Set visibility of the animator toggle button. Sometimes it is useful to hide the toggle button
-     * when hiding the animated component provides no benefit in terms of free space, e.g. when editing new entity,
+     * Set visibility of the collapse toggle button. Sometimes it is useful to hide the toggle button
+     * when hiding the collapsible component provides no benefit in terms of free space, e.g. when editing new entity,
      * there are no to-many tabs and no point in hiding the form.
      *
      * @param isVisible true to hide visibility of toggle button
      */
     public void setFormAnimatorToggleButtonVisible(boolean isVisible) {
-        toggleFormVisibilityButton.setVisible(isVisible);
+        toggleFormCollapseButton.setVisible(isVisible);
     }
 
     void executeContextAction(ContextMenu.ContextMenuItem item) {
