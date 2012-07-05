@@ -85,7 +85,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     public DefaultFormats defaultFormats;
 
     /**
-     * Generic DAO for non-type-safe database actions.
+     * Generic DAO for database actions.
      */
     @Resource
     public GenericDao genericDao;
@@ -115,6 +115,10 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     @Override
     public void postConstruct() {
         autoAddStyleNames();
+
+        AbstractOrderedLayout rootLayout = createOrderedLayout();
+        setCompositionRoot(rootLayout);
+        setWidthSizeFull();
     }
 
     @Override
@@ -175,26 +179,32 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
         ((AbstractComponentContainer) getCompositionRoot()).removeAllComponents();
     }
 
+    public AbstractOrderedLayout createOrderedLayout() {
+        return createVerticalLayout();
+    }
+
     /**
      * Set composition root of this component to a VerticalLayout with margins and spacing.
      */
-    public void useVerticalLayout() {
+    public VerticalLayout createVerticalLayout() {
         VerticalLayout rootLayout = new VerticalLayout();
         setDebugId(rootLayout, "rootLayout");
         rootLayout.setMargin(true);
-        rootLayout.setSpacing(true);
-        setCompositionRoot(rootLayout);
+        rootLayout.setSpacing(false);
+
+        return rootLayout;
     }
 
     /**
      * Set composition root of this component to a HorizontalLayout with margins and spacing.
      */
-    public void useHorizontalLayout() {
+    public HorizontalLayout createHorizontalLayout() {
         HorizontalLayout rootLayout = new HorizontalLayout();
         setDebugId(rootLayout, "rootLayout");
         rootLayout.setMargin(true);
-        rootLayout.setSpacing(true);
-        setCompositionRoot(rootLayout);
+        rootLayout.setSpacing(false);
+
+        return rootLayout;
     }
 
     /**
@@ -271,8 +281,8 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     protected void addCodePopupButtonIfEnabled(Alignment alignment, Class... classes) {
         if (isCodePopupEnabled()) {
             Component firstComponent = getCompositionRoot();
-            HorizontalLayout codePopupButtonLayout = new HorizontalLayout();
-            codePopupButtonLayout.setMargin(false, true, false, true);
+            AbstractOrderedLayout codePopupButtonLayout = new HorizontalLayout();
+            codePopupButtonLayout.setMargin(false);
             setDebugId(codePopupButtonLayout, "codePopupButtonLayout");
             setCompositionRoot(codePopupButtonLayout);
             codePopupButtonLayout.addComponent(firstComponent);

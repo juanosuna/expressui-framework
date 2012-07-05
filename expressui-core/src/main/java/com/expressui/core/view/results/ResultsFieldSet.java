@@ -147,4 +147,25 @@ public class ResultsFieldSet extends FieldSet {
     public void setSortable(String propertyId, boolean isSortable) {
         getResultsField(propertyId).setSortable(isSortable);
     }
+
+    /**
+     * Set column width.
+     *
+     * @param propertyId id for identify column
+     * @param width column width, null if adjusted automatically
+     */
+    public void setWidth(String propertyId, Integer width) {
+        getResultsField(propertyId).setWidth(width);
+    }
+
+    /**
+     * Set alignment.
+     *
+     * @see com.vaadin.ui.Table constants
+     *
+     * @param alignment alignment
+     */
+    public void setAlignment(String propertyId, String alignment) {
+        getResultsField(propertyId).setAlignment(alignment);
+    }
 }

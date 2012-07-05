@@ -43,6 +43,8 @@ package com.expressui.core.view.field;
 public class ResultsField extends DisplayField {
 
     private boolean isSortable = true;
+    private Integer width;
+    private String alignment;
 
     /**
      * Construct with reference to fieldSet this field belongs to and the property name this field is bound to, e.g.
@@ -72,6 +74,46 @@ public class ResultsField extends DisplayField {
      */
     public void setSortable(boolean sortable) {
         isSortable = sortable;
+    }
+
+    /**
+     * Get column width.
+     *
+     * @return column width, null if adjusted automatically
+     */
+    public Integer getWidth() {
+        return width;
+    }
+
+    /**
+     * Set column width.
+     *
+     * @param width column width, null if adjusted automatically
+     */
+    public void setWidth(Integer width) {
+        this.width = width;
+    }
+
+    /**
+     * Get alignment.
+     *
+     * @see com.vaadin.ui.Table constants
+     *
+     * @return alignment
+     */
+    public String getAlignment() {
+        return alignment;
+    }
+
+    /**
+     * Set alignment.
+     *
+     * @see com.vaadin.ui.Table constants
+     *
+     * @param alignment alignment
+     */
+    public void setAlignment(String alignment) {
+        this.alignment = alignment;
     }
 
     @Override

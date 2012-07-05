@@ -80,7 +80,7 @@ public class SampleDashboardPage extends DashboardPage {
         super.postConstruct();
 
         setCellPixelWidth(670);
-        setCellPixelHeight(375);
+        setCellPixelHeight(380);
 
         configureRecentContactResults();
         addComponent(recentContactResults, "Recent Contacts", 1, 1);

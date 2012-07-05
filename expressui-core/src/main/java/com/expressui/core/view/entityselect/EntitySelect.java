@@ -104,7 +104,6 @@ public abstract class EntitySelect<T> extends TypedComponent<T> {
     public void postConstruct() {
         super.postConstruct();
 
-        useVerticalLayout();
         setWidthSizeFull();
 
         getResults().selectPageSize(5);

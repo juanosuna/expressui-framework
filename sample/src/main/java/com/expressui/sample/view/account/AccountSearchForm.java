@@ -39,6 +39,7 @@ package com.expressui.sample.view.account;
 
 import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.form.SearchForm;
+import com.expressui.sample.dao.CountryDao;
 import com.expressui.sample.dao.StateDao;
 import com.expressui.sample.dao.query.AccountQuery;
 import com.expressui.sample.entity.Country;
@@ -58,6 +59,9 @@ import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROT
 public class AccountSearchForm extends SearchForm<AccountQuery> {
 
     @Resource
+    private CountryDao countryDao;
+
+    @Resource
     private StateDao stateDao;
 
     @Override
@@ -67,6 +71,7 @@ public class AccountSearchForm extends SearchForm<AccountQuery> {
         formFields.setCoordinates("country", 1, 2);
         formFields.setCoordinates("states", 1, 3);
 
+        formFields.setSelectItems("country", countryDao.findCountriesWithStates());
         formFields.setToolTip("country", "Select US, Canada, Mexico, or Australia to see states");
 
         formFields.clearSelectItems("states");

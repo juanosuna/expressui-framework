@@ -42,6 +42,7 @@ import com.expressui.core.view.results.CrudResults;
 import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.OpportunityQuery;
 import com.expressui.sample.entity.Opportunity;
+import com.vaadin.ui.Table;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -89,5 +90,8 @@ public class OpportunityResults extends CrudResults<Opportunity> {
         numberFormat.setMaximumFractionDigits(0);
         JDKBridgePropertyFormatter formatter = new JDKBridgePropertyFormatter(numberFormat);
         resultsFields.setPropertyFormatter("valueWeightedInUSD", formatter);
+
+        resultsFields.setAlignment("valueWeightedInUSD", Table.ALIGN_RIGHT);
+        resultsFields.setAlignment("expectedCloseDate", Table.ALIGN_CENTER);
     }
 }

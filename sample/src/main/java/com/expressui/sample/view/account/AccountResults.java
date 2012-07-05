@@ -42,6 +42,7 @@ import com.expressui.core.view.results.CrudResults;
 import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.AccountQuery;
 import com.expressui.sample.entity.Account;
+import com.vaadin.ui.Table;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -95,5 +96,10 @@ public class AccountResults extends CrudResults<Account> {
         numberFormat.setMaximumFractionDigits(0);
         JDKBridgePropertyFormatter formatter = new JDKBridgePropertyFormatter(numberFormat);
         resultsFields.setPropertyFormatter("annualRevenueInUSD", formatter);
+
+        resultsFields.setAlignment("billingAddress.state.code", Table.ALIGN_CENTER);
+        resultsFields.setAlignment("billingAddress.country", Table.ALIGN_CENTER);
+        resultsFields.setAlignment("numberOfEmployees", Table.ALIGN_CENTER);
+        resultsFields.setAlignment("annualRevenueInUSD", Table.ALIGN_RIGHT);
     }
 }

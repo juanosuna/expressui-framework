@@ -57,8 +57,7 @@ public abstract class UserOwnedEntityFormPage<T extends UserOwnedEntity> extends
     public void postConstruct() {
         super.postConstruct();
 
-        useVerticalLayout();
-        setWidthSizeFull();
+        setWidthUndefined();
 
         addStyleName("opaque");
         labelRegistry.putTypeLabel(getType().getName(), getTypeCaption());

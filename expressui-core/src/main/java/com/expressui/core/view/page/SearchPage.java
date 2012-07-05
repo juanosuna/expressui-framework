@@ -70,9 +70,6 @@ public abstract class SearchPage<T> extends TypedComponent<T> implements Page {
     public void postConstruct() {
         super.postConstruct();
 
-        useVerticalLayout();
-        setWidthSizeFull();
-
         labelRegistry.putTypeLabel(getType().getName(), getTypeCaption());
 
         if (isViewAllowed()) {

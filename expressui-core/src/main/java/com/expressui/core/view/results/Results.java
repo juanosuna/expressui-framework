@@ -147,7 +147,7 @@ public abstract class Results<T> extends TypedComponent<T> {
 
         addComponent(resultsTable);
 
-        rootLayout.setMargin(false, false, false, true);
+        rootLayout.setMargin(true);
 
         setSizeUndefined();
 

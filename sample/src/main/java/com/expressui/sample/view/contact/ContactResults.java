@@ -42,6 +42,7 @@ import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.ContactQuery;
 import com.expressui.sample.entity.Contact;
 import com.expressui.sample.view.account.AccountForm;
+import com.vaadin.ui.Table;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -79,14 +80,19 @@ public class ContactResults extends CrudResults<Contact> {
                 "firstName",
                 "lastName",
                 "account.name",
-                "mailingAddress.state.code",
+                "mailingAddress.city",
+                "mailingAddress.state.displayName",
                 "mailingAddress.country",
                 "lastModified",
                 "modifiedBy"
         );
 
-        resultsFields.setLabel("mailingAddress.state.code", "State");
+        resultsFields.setLabel("mailingAddress.state.displayName", "State");
         resultsFields.setLabel("account.name", "Account");
         resultsFields.setFormLink("account.name", "account", accountForm);
+
+        resultsFields.setAlignment("mailingAddress.country", Table.ALIGN_CENTER);
+
+        setPageSize(25);
     }
 }

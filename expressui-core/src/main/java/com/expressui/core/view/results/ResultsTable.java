@@ -40,6 +40,7 @@ package com.expressui.core.view.results;
 import com.expressui.core.dao.query.EntityQuery;
 import com.expressui.core.util.MethodDelegate;
 import com.expressui.core.view.field.DisplayField;
+import com.expressui.core.view.field.ResultsField;
 import com.expressui.core.view.field.format.EmptyPropertyFormatter;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.form.EntityFormWindow;
@@ -97,6 +98,16 @@ public class ResultsTable extends Table {
 
         setVisibleColumns(results.getResultsFieldSet().getViewablePropertyIdsAsArray());
         setColumnHeaders(results.getResultsFieldSet().getViewableLabelsAsArray());
+
+        for (String propertyId : propertyIds) {
+            ResultsField resultsField = results.getResultsFieldSet().getResultsField(propertyId);
+            if (resultsField.getWidth() != null) {
+                setColumnWidth(propertyId, resultsField.getWidth());
+            }
+            if (resultsField.getAlignment() != null) {
+                setColumnAlignment(propertyId, resultsField.getAlignment());
+            }
+        }
     }
 
     /**

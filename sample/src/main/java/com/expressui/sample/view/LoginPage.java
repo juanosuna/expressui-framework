@@ -65,7 +65,6 @@ public class LoginPage extends RootComponent implements Page {
     public void postConstruct() {
         super.postConstruct();
 
-        useHorizontalLayout();
         setSizeFull();
 
         LoginForm loginForm = new LoginForm();
@@ -86,6 +85,11 @@ public class LoginPage extends RootComponent implements Page {
 
         addComponent(panel);
         setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
+    }
+
+    @Override
+    public AbstractOrderedLayout createOrderedLayout() {
+        return createHorizontalLayout();
     }
 
     @Override

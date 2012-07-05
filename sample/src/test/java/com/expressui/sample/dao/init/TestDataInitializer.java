@@ -91,9 +91,9 @@ public class TestDataInitializer {
         Account currentAccount = null;
         for (Integer contactCount = count; contactCount > 0; contactCount--) {
             Contact contact;
-            if (contactCount % 20 == 1) {
+            if (contactCount % 50 == 1) {
                 contact = new Contact("Name" + contactCount,
-                        "Columns and fields resize automatically" + contactCount);
+                        "Columns and fields resize automatically");
             } else {
                 contact = new Contact("First Name" + contactCount, "Last Name" + contactCount);
             }
@@ -280,7 +280,7 @@ public class TestDataInitializer {
     private void initializeOpportunity(Account account, int i) {
         Opportunity opportunity = new Opportunity();
         if (i % 20 == 1) {
-            opportunity.setName("Columns and fields resize automatically" + i);
+            opportunity.setName("Columns and fields resize automatically");
         } else {
             opportunity.setName("Opportunity Name" + i);
         }

@@ -123,9 +123,6 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     public void postConstruct() {
         super.postConstruct();
 
-        useVerticalLayout();
-        setWidthSizeFull();
-
         form = new ConfigurableForm();
         form.setSizeUndefined();
 

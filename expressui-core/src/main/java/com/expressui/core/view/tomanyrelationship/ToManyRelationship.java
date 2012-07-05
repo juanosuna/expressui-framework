@@ -65,9 +65,6 @@ public abstract class ToManyRelationship<T> extends TypedComponent<T> {
     public void postConstruct() {
         super.postConstruct();
 
-        useVerticalLayout();
-        setSizeUndefined();
-
         addComponent(getResults());
 
         addCodePopupButtonIfEnabled(Alignment.TOP_LEFT, ToManyRelationship.class);

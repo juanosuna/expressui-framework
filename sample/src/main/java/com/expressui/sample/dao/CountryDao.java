@@ -35,43 +35,24 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.sample.view.contact;
+package com.expressui.sample.dao;
 
-import com.expressui.core.view.field.SelectField;
-import com.expressui.core.view.form.FormFieldSet;
-import com.expressui.core.view.form.SearchForm;
-import com.expressui.sample.dao.query.ContactQuery;
-import com.expressui.sample.entity.Account;
-import com.expressui.sample.view.select.AccountSelect;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import com.expressui.core.dao.EntityDao;
+import com.expressui.sample.entity.Country;
+import org.springframework.stereotype.Repository;
 
-import javax.annotation.Resource;
+import javax.persistence.Query;
+import java.util.List;
 
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+@Repository
+@SuppressWarnings("unchecked")
+public class CountryDao extends EntityDao<Country, String> {
 
-@Component
-@Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings({"serial"})
-public class ContactSearchForm extends SearchForm<ContactQuery> {
+    public List<Country> findCountriesWithStates() {
+        Query query = getEntityManager().createQuery(
+                "SELECT DISTINCT c FROM Country c, State s WHERE s.country = c ORDER BY c.displayName");
+        setReadOnly(query);
 
-    @Resource
-    private AccountSelect accountSelect;
-
-    @Override
-    public void init(FormFieldSet formFields) {
-        formFields.setCoordinates("lastName", 1, 1);
-        formFields.setCoordinates("account.name", 2, 1);
-
-        formFields.setLabel("account.name", "Account Name");
-
-        SelectField<ContactQuery, Account> accountField =
-                new SelectField<ContactQuery, Account>(this, "account", accountSelect);
-        formFields.setField("account.name", accountField);
-    }
-
-    @Override
-    public String getTypeCaption() {
-        return "Contact Search Form";
+        return query.getResultList();
     }
 }

@@ -42,6 +42,7 @@ import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.RecentContactsQuery;
 import com.expressui.sample.entity.Contact;
 import com.expressui.sample.view.contact.ContactForm;
+import com.vaadin.ui.Table;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -79,6 +80,9 @@ public class RecentContactResults extends CrudResults<Contact> {
                 "mailingAddress.country",
                 "lastModified"
         );
+
+        resultsFields.setWidth("lastName", 100);
+        resultsFields.setAlignment("mailingAddress.country", Table.ALIGN_CENTER);
     }
 
     @Override

@@ -40,9 +40,12 @@ package com.expressui.sample.view.contact;
 import com.expressui.core.MainApplication;
 import com.expressui.core.view.page.SearchPage;
 import com.expressui.sample.entity.Contact;
+import com.vaadin.ui.AbstractOrderedLayout;
+import com.vaadin.ui.Alignment;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
@@ -66,6 +69,11 @@ public class ContactPage extends SearchPage<Contact> {
     @Override
     public ContactResults getResults() {
         return contactResults;
+    }
+
+    @Override
+    public AbstractOrderedLayout createOrderedLayout() {
+        return createHorizontalLayout();
     }
 
     @Override
