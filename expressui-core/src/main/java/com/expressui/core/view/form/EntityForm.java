@@ -82,6 +82,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     private Button saveAndStayOpenButton;
     private boolean isValidationEnabled = true;
 
+    private Boolean isPopupWindowHeightFull;
+
     private com.vaadin.terminal.Resource saveAndCloseButtonIconBackup;
     private com.vaadin.terminal.Resource saveAndStayOpenButtonIconBackup;
 
@@ -93,6 +95,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     @Override
     public void postConstruct() {
         super.postConstruct();
+
+        labelRegistry.putTypeLabel(getType().getName(), getTypeCaption());
 
         List<ToManyRelationship> toManyRelationships = getViewableToManyRelationships();
         if (toManyRelationships.size() > 0) {
@@ -167,7 +171,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
             User user = securityService.getCurrentUser();
 
             if (user.isViewAllowed(toManyRelationship.getResults().getType().getName())
-                    && !toManyRelationship.getResults().getResultsFieldSet().getViewablePropertyIds().isEmpty()) {
+                    && !toManyRelationship.getResults().getResultsFieldSet().getViewablePropertyIds().isEmpty()
+                    && user.isViewAllowed(getType().getName(), toManyRelationship.getResults().getChildPropertyId())) {
                 viewableToManyRelationships.add(toManyRelationship);
             }
         }
@@ -314,13 +319,12 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         }
     }
 
-    /**
-     * Ask if the current entity bound to this form is persistent, i.e. has a primary key assigned
-     *
-     * @return true if entity has primary key
-     */
-    public boolean isEntityPersistent() {
-        return genericDao.isPersistent(getBean());
+    public Boolean isPopupWindowHeightFull() {
+        return isPopupWindowHeightFull;
+    }
+
+    public void setPopupWindowHeightFull(Boolean popupWindowHeightFull) {
+        isPopupWindowHeightFull = popupWindowHeightFull;
     }
 
     /**

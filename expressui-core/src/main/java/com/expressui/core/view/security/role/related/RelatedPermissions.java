@@ -177,8 +177,19 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
             getFormFieldSet().setEnabled("field", hasProperties);
 
             getFormFieldSet().setEnabled("createAllowed", hasProperties && isViewChecked && !isFieldSelected);
+            if (!(hasProperties && isViewChecked && !isFieldSelected)) {
+                getFormFieldSet().setValue("createAllowed", false);
+            }
+
             getFormFieldSet().setEnabled("editAllowed", hasProperties && isViewChecked);
+            if (!(hasProperties && isViewChecked)) {
+                getFormFieldSet().setValue("editAllowed", false);
+            }
+
             getFormFieldSet().setEnabled("deleteAllowed", hasProperties && isViewChecked && !isFieldSelected);
+            if (!(hasProperties && isViewChecked && !isFieldSelected)) {
+                getFormFieldSet().setValue("deleteAllowed", false);
+            }
         }
 
         @Override

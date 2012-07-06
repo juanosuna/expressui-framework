@@ -208,8 +208,14 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         ResultsConnectedEntityForm resultsConnectedEntityForm = new ResultsConnectedEntityForm(getEntityForm(), this);
         EntityFormWindow entityFormWindow = EntityFormWindow.open(resultsConnectedEntityForm);
         entityFormWindow.addCloseListener(this, "search");
-        if (!getEntityForm().getViewableToManyRelationships().isEmpty()) {
-            entityFormWindow.setHeight("100%");
+        if (getEntityForm().isPopupWindowHeightFull() == null) {
+            if (!getEntityForm().getViewableToManyRelationships().isEmpty()) {
+                entityFormWindow.setHeight("100%");
+            }
+        } else {
+            if (getEntityForm().isPopupWindowHeightFull()) {
+                entityFormWindow.setHeight("100%");
+            }
         }
     }
 

@@ -54,7 +54,7 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSIO
 
 /**
  * This aspect intercepts calls to execute UserQuery and prevents guest users from seeing other guest users.
- * This protects the privacy of guests registering for the demo application.
+ * This protects the privacy of guests registering for the online demo application.
  * </p>
  * Developers running the demo application locally should login as admin/admin to see all features.
  */

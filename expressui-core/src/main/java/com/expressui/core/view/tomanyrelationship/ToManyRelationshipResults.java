@@ -193,7 +193,7 @@ public abstract class ToManyRelationshipResults<T> extends Results<T> {
      */
     public Class getParentEntityType() {
         BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getType(), getParentPropertyId());
-        return beanPropertyType.getContainerType();
+        return beanPropertyType.getType();
     }
 
     /**
