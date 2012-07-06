@@ -702,9 +702,11 @@ public abstract class EntityForm<T> extends TypedForm<T> {
             if (formField.getField() instanceof SelectField) {
                 SelectField selectField = (SelectField) formField.getField();
                 Object selectedValue = selectField.getBean();
-                Object reFoundValue = genericDao.reFind(selectedValue);
-                if (reFoundValue == null) {
-                    throw new EntityNotFoundException(selectedValue.toString());
+                if (selectedValue != null) {
+                    Object reFoundValue = genericDao.reFind(selectedValue);
+                    if (reFoundValue == null) {
+                        throw new EntityNotFoundException(selectedValue.toString());
+                    }
                 }
             }
         }

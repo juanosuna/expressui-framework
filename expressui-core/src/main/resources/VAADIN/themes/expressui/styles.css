@@ -51,6 +51,24 @@
     text-shadow: none !important;
 }
 
+/* Window close box */
+.v-window-closebox {
+    height: 16px;
+    width: 16px;
+
+    background: transparent url(img/small-close.png) no-repeat;
+    vertical-align: top;
+    margin: 0;
+}
+
+.v-window-closebox:hover {
+    background-position: 0 0;
+}
+
+.v-window-closebox:active {
+    background-position: 0 0;
+}
+
 /* General table style */
 .v-table-cell-content, .v-table-header-cell {
     border-right: none;
@@ -68,6 +86,10 @@
 .v-filterselect-error {
     border: 1px red solid !important; /* red border around form fields with invalid values */
     /*background: none !important; *//* prevents background from obscuring red border */
+}
+
+.v-errormessage {
+    font-size: large;
 }
 
 .v-form-errormessage {
@@ -268,7 +290,6 @@
 
 .expressui-tool-tip {
     font-size: large;
-
 }
 
 /* Style for code popup window used by sample app */

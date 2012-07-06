@@ -72,7 +72,7 @@ public class Address extends WritableEntity {
     @Index(name = "IDX_ADDRESS_COUNTRY")
     @ForeignKey(name = "FK_ADDRESS_COUNTRY")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Country country = new Country("US");
+    private Country country;
 
     public Address() {
     }

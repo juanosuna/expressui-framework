@@ -82,7 +82,7 @@ public class StringUtil {
      * @return width in EM units
      */
     public static int approximateColumnWidth(String s) {
-        return (int) Math.ceil(FONT_METRICS.stringWidth(s) * 0.1) + 1;
+        return (int) Math.ceil(FONT_METRICS.stringWidth(s) * 0.08) + 1;
     }
 
     /**
@@ -191,6 +191,14 @@ public class StringUtil {
         return styles;
     }
 
+    /**
+     * Generates a debug ID that is inserted into the HTML, which can be useful finding elements in a tool like FireBug
+     * @param prefix prefix to prepend to debug ID
+     * @param mainComponent component to add debug ID to, debug ID contains this component's class name
+     * @param subComponent includes object hashcode from subcomponent to ensure uniqueness
+     * @param suffix suffix to append to debug ID
+     * @return debug ID
+     */
     public static String generateDebugId(String prefix, Object mainComponent, AbstractComponent subComponent, String suffix) {
         Class currentClass = mainComponent.getClass();
         String simpleName = currentClass.getSimpleName();

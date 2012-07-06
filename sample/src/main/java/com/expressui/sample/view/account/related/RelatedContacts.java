@@ -45,6 +45,7 @@ import com.expressui.sample.dao.query.RelatedContactsQuery;
 import com.expressui.sample.entity.Contact;
 import com.expressui.sample.formatter.PhonePropertyFormatter;
 import com.expressui.sample.view.select.ContactSelect;
+import com.vaadin.ui.Table;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -106,6 +107,9 @@ public class RelatedContacts extends ToManyRelationship<Contact> {
             resultsFields.setSortable("name", false);
             resultsFields.setSortable("mainPhone", false);
             resultsFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
+
+            resultsFields.setAlignment("mailingAddress.state.code", Table.ALIGN_CENTER);
+            resultsFields.setAlignment("mailingAddress.country", Table.ALIGN_CENTER);
         }
 
         @Override

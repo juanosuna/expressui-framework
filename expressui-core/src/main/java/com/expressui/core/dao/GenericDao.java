@@ -213,6 +213,7 @@ public class GenericDao {
      * @return id or primary key
      */
     public <T> Serializable getId(T entity) {
+        Assert.PROGRAMMING.notNull(entity);
         Serializable id = (Serializable) getEntityManager().getEntityManagerFactory().getPersistenceUnitUtil().getIdentifier(entity);
         if (id == null && entity instanceof IdentifiableEntity) {
             id = ((IdentifiableEntity) entity).getId();
@@ -275,6 +276,7 @@ public class GenericDao {
      * @return attached entity found from database
      */
     public <T> T reFind(T entity) {
+        Assert.PROGRAMMING.notNull(entity);
         Serializable id = getId(entity);
         if (id == null) {
             return null;
