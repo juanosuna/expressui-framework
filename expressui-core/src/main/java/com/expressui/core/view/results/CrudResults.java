@@ -37,6 +37,7 @@
 
 package com.expressui.core.view.results;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.form.EntityFormWindow;
@@ -45,11 +46,11 @@ import com.expressui.core.view.menu.ActionContextMenu;
 import com.vaadin.data.Property;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.event.ItemClickEvent;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.Window;
 import org.vaadin.dialogs.ConfirmDialog;
 
 import javax.annotation.PostConstruct;
@@ -65,7 +66,9 @@ import java.util.Collection;
 public abstract class CrudResults<T> extends Results<T> implements WalkableResults {
 
     @Resource
-    private ActionContextMenu actionContextMenu;
+    protected ActionContextMenu actionContextMenu;
+
+    private EntityForm<T> entityForm;
 
     private Button newButton;
     private Button editButton;
@@ -79,11 +82,32 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     }
 
     /**
-     * Get the entity form used for viewing/editing items in the results.
+     * Create the entity form used for viewing or editing items in the results. Only called once lazily
+     * when user views or edits a selected result.
+     * <p/>
+     * Unlike other view components, EntityForm is created lazily for better performance and to avoid infinite
+     * circular dependency injection.
      *
      * @return entity form
      */
-    public abstract EntityForm<T> getEntityForm();
+    public abstract EntityForm<T> createEntityForm();
+
+    /**
+     * Get the entity form used for viewing or editing items in the results. Lazily initializes
+     * entityForm by calling createEntityForm().
+     *
+     * @return entity form
+     */
+    protected EntityForm<T> getEntityForm() {
+        if (entityForm == null) {
+            entityForm = createEntityForm();
+            entityForm.addCancelListener(this, "search");
+            entityForm.addCloseListener(this, "search");
+            entityForm.postWire();
+        }
+
+        return entityForm;
+    }
 
     @PostConstruct
     @Override
@@ -91,6 +115,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         super.postConstruct();
 
         getResultsTable().setMultiSelect(true);
+
         HorizontalLayout crudButtons = new HorizontalLayout();
         setDebugId(crudButtons, "crudButtons");
         crudButtons.setMargin(false);
@@ -123,18 +148,15 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         deleteButton.addStyleName("small default");
         crudButtons.addComponent(deleteButton);
 
-        getResultsTable().addListener(Property.ValueChangeEvent.class, this, "selectionChanged");
         actionContextMenu.addAction("crudResults.view", this, "view");
         actionContextMenu.addAction("crudResults.edit", this, "edit");
         actionContextMenu.addAction("crudResults.delete", this, "delete");
 
-        applySecurityToCRUDButtons();
+        addSelectionChangedListener(this, "selectionChanged");
         getCrudButtons().addComponent(crudButtons, 0);
         getCrudButtons().setComponentAlignment(crudButtons, Alignment.MIDDLE_LEFT);
 
         getResultsTable().addListener(new DoubleClickListener());
-        getEntityForm().addCancelListener(this, "search");
-        getEntityForm().addCloseListener(this, "search");
 
         addCodePopupButtonIfEnabled(CrudResults.class);
     }
@@ -142,27 +164,21 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     @Override
     public void postWire() {
         super.postWire();
-        getEntityForm().postWire();
-
     }
 
     @Override
     public void onDisplay() {
+        applySecurity();
     }
 
     /**
      * Apply current security permissions to CRUD buttons so that they are enabled if and only if allowed.
      */
-    public void applySecurityToCRUDButtons() {
-        boolean hasViewableFields = !getEntityForm().getFormFieldSet().getViewableFormFields().isEmpty();
-
-        boolean isViewAllowed = securityService.getCurrentUser().isViewAllowed(getType().getName())
-                && hasViewableFields;
+    public void applySecurity() {
+        boolean isViewAllowed = securityService.getCurrentUser().isViewAllowed(getType().getName());
         viewButton.setVisible(isViewAllowed);
 
-        boolean hasEditableFields = !getEntityForm().getFormFieldSet().getEditableFormFields().isEmpty();
-        boolean isEditAllowed = securityService.getCurrentUser().isEditAllowed(getType().getName())
-                && isViewAllowed && hasEditableFields;
+        boolean isEditAllowed = securityService.getCurrentUser().isEditAllowed(getType().getName()) && isViewAllowed;
         editButton.setVisible(isEditAllowed);
 
         newButton.setVisible(securityService.getCurrentUser().isCreateAllowed(getType().getName()));
@@ -210,11 +226,11 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         entityFormWindow.addCloseListener(this, "search");
         if (getEntityForm().isPopupWindowHeightFull() == null) {
             if (!getEntityForm().getViewableToManyRelationships().isEmpty()) {
-                entityFormWindow.setHeight("100%");
+                entityFormWindow.setHeight(100, Sizeable.UNITS_PERCENTAGE);
             }
         } else {
             if (getEntityForm().isPopupWindowHeightFull()) {
-                entityFormWindow.setHeight("100%");
+                entityFormWindow.setHeight(100, Sizeable.UNITS_PERCENTAGE);
             }
         }
     }
@@ -290,7 +306,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         return nextItemId != null || getEntityQuery().hasNextPage();
     }
 
-    private void deleteImpl() {
+    private void deleteConfirmed() {
         Collection itemIds = (Collection) getResultsTable().getValue();
         for (Object itemId : itemIds) {
             BeanItem<T> beanItem = getResultsTable().getContainerDataSource().getItem(itemId);
@@ -308,20 +324,15 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         // solves tricky ConcurrentModification bug where ContextMenu handler calls delete
         // but then search removes handler
         searchImpl(false);
-        deleteButton.setEnabled(false);
-        editButton.setEnabled(false);
-        viewButton.setEnabled(false);
+        clearSelection();
+        selectionChanged(null);
     }
 
     /**
      * Show notification message that delete was successful.
      */
     public void showDeleteSuccessfulMessage() {
-        Window.Notification notification = new Window.Notification(uiMessageSource.getMessage("crudResults.deleted"),
-                Window.Notification.TYPE_HUMANIZED_MESSAGE);
-        notification.setDelayMsec(Window.Notification.DELAY_NONE);
-        notification.setPosition(Window.Notification.POSITION_CENTERED);
-        getMainApplication().showNotification(notification);
+        MainApplication.getInstance().showMessage(uiMessageSource.getMessage("crudResults.deleted"));
     }
 
     /**
@@ -332,7 +343,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
                 new ConfirmDialog.Listener() {
                     public void onClose(ConfirmDialog dialog) {
                         if (dialog.isConfirmed()) {
-                            deleteImpl();
+                            deleteConfirmed();
                         }
                     }
                 });
@@ -356,9 +367,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
 
         getResultsTable().turnOnContentRefreshing();
 
-        boolean hasViewableFields = !getEntityForm().getFormFieldSet().getViewableFormFields().isEmpty();
-        boolean isViewAllowed = securityService.getCurrentUser().isViewAllowed(getType().getName())
-                && hasViewableFields;
+        boolean isViewAllowed = securityService.getCurrentUser().isViewAllowed(getType().getName());
         boolean isEditAllowed = securityService.getCurrentUser().isEditAllowed(getType().getName())
                 && isViewAllowed;
         boolean isDeleteAllowed = securityService.getCurrentUser().isDeleteAllowed(getType().getName());
@@ -393,9 +402,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     class DoubleClickListener implements ItemClickEvent.ItemClickListener {
         public void itemClick(ItemClickEvent event) {
             if (event.isDoubleClick()) {
-                boolean hasViewableFields = !getEntityForm().getFormFieldSet().getViewableFormFields().isEmpty();
-                boolean isViewAllowed = securityService.getCurrentUser().isViewAllowed(getType().getName())
-                        && hasViewableFields;
+                boolean isViewAllowed = securityService.getCurrentUser().isViewAllowed(getType().getName());
                 if (isViewAllowed) {
                     boolean isEditAllowed = securityService.getCurrentUser().isEditAllowed(getType().getName())
                             && isViewAllowed;

@@ -37,48 +37,113 @@
 
 package com.expressui.core.view.tomanyrelationship;
 
-import com.expressui.core.view.TypedComponent;
-import com.vaadin.ui.Alignment;
+import com.expressui.core.dao.query.ToManyRelationshipQuery;
+import com.expressui.core.util.BeanPropertyType;
+import com.expressui.core.util.assertion.Assert;
+import com.expressui.core.view.results.CrudResults;
+import org.apache.commons.beanutils.PropertyUtils;
 
-import javax.annotation.PostConstruct;
+import java.lang.reflect.InvocationTargetException;
 
 /**
- * A to-many relationship component.
+ * Results containing entities in a to-many relationship.
  *
- * @param <T> Type of entity in the many part of the relationship
+ * @param <T> type of the entities in the results
  */
-public abstract class ToManyRelationship<T> extends TypedComponent<T> {
+public abstract class ToManyRelationship<T> extends CrudResults<T> {
+
+    private boolean isViewMode;
 
     protected ToManyRelationship() {
         super();
     }
 
     /**
-     * Get the results UI component for the displaying the many of the relationship
+     * Get the property id in the parent entity for referencing the child in this to-many relationship
      *
-     * @return results UI component
+     * @return child property id
      */
-    public abstract ToManyRelationshipResults getResults();
+    public abstract String getChildPropertyId();
 
-    @PostConstruct
+    /**
+     * Get the property id in the child entity for referencing the parent entity in this to-many relationship
+     *
+     * @return parent property id
+     */
+    public abstract String getParentPropertyId();
+
+    /**
+     * Get the entity query that generates these results.
+     *
+     * @return entity query
+     */
     @Override
-    public void postConstruct() {
-        super.postConstruct();
+    public abstract ToManyRelationshipQuery getEntityQuery();
 
-        addComponent(getResults());
-
-        addCodePopupButtonIfEnabled(Alignment.TOP_LEFT, ToManyRelationship.class);
+    /**
+     * Set references in given values to the parent and then persists all values.
+     *
+     * @param values values in which to set reference
+     */
+    public void setReferencesToParentAndPersist(T... values) {
+        for (T value : values) {
+            T referenceValue = genericDao.getReference(value);
+            setReferenceToParent(referenceValue);
+            if (getEntityDao() == null) {
+                genericDao.persist(referenceValue);
+            } else {
+                getEntityDao().persist(referenceValue);
+            }
+        }
+        searchImpl(false);
     }
 
-    @Override
-    public void postWire() {
-        super.postWire();
-
-        getResults().postWire();
+    /**
+     * Set reference in given value to the parent.
+     *
+     * @param value value in which to set reference
+     */
+    public void setReferenceToParent(T value) {
+        try {
+            BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getType(), getParentPropertyId());
+            Assert.PROGRAMMING.isTrue(!beanPropertyType.isCollectionType(),
+                    "Parent property id (" + getType() + "." + getParentPropertyId() + ") must not be a collection type");
+            PropertyUtils.setProperty(value, getParentPropertyId(), getEntityQuery().getParent());
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    @Override
-    public void onDisplay() {
-        getResults().onDisplay();
+    /**
+     * Get the type of the parent entity in this relationship
+     *
+     * @return type of parent entity
+     */
+    public Class getParentEntityType() {
+        BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getType(), getParentPropertyId());
+        return beanPropertyType.getType();
+    }
+
+
+    /**
+     * Ask if this component is in view-only mode.
+     *
+     * @return true if in view-only mode
+     */
+    public boolean isViewMode() {
+        return isViewMode;
+    }
+
+    /**
+     * Set whether or not this component is in view-only mode.
+     *
+     * @param viewMode true to set in view-only mode
+     */
+    public void setViewMode(boolean viewMode) {
+        isViewMode = viewMode;
     }
 }

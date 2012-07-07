@@ -38,6 +38,7 @@
 package com.expressui.core.view.security.user;
 
 import com.expressui.core.dao.security.RoleDao;
+import com.expressui.core.dao.security.UserDao;
 import com.expressui.core.dao.security.UserRoleDao;
 import com.expressui.core.entity.security.Role;
 import com.expressui.core.entity.security.User;
@@ -48,9 +49,11 @@ import com.expressui.core.view.security.user.related.RelatedRoles;
 import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
 import com.vaadin.ui.PasswordField;
 import org.springframework.context.annotation.Scope;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import javax.persistence.NoResultException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +76,9 @@ public class UserForm extends EntityForm<User> {
     @Resource
     private UserRoleDao userRoleDao;
 
+    @Resource
+    private UserDao userDao;
+
     @Override
     public List<ToManyRelationship> getToManyRelationships() {
         List<ToManyRelationship> toManyRelationships = new ArrayList<ToManyRelationship>();
@@ -94,6 +100,22 @@ public class UserForm extends EntityForm<User> {
 
         formFields.setCoordinates("credentialsExpired", 4, 1);
         formFields.setCoordinates("enabled", 4, 2);
+    }
+
+    @Override
+    public void preSave(User entity) {
+        super.preSave(entity);
+
+        User existingUser = null;
+        try {
+            existingUser = userDao.findByLoginName(entity.getLoginName());
+            if (!existingUser.equals(entity)) {
+                throw new DataIntegrityViolationException(
+                        uiMessageSource.getMessage("uniqueLoginNameValidator.errorMessage"));
+            }
+        } catch (NoResultException e) {
+            // login name doesn't already exist
+        }
     }
 
     @Override

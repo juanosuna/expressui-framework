@@ -69,7 +69,7 @@ public class OpportunityResults extends CrudResults<Opportunity> {
     }
 
     @Override
-    public OpportunityForm getEntityForm() {
+    public OpportunityForm createEntityForm() {
         return opportunityForm;
     }
 

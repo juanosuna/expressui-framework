@@ -88,6 +88,10 @@ public class SpringApplicationContext implements ApplicationContextAware {
         return applicationContext.getBean(requiredType);
     }
 
+    public static <T> T getBean(String beanName, Class<T> requiredType) {
+        return applicationContext.getBean(beanName, requiredType);
+    }
+
     /**
      * If the application context has been set, autowire the given target.
      * This is a helpful utility method for injecting Spring beans into a non-Spring-bean.

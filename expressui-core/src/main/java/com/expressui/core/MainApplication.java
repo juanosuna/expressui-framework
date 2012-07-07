@@ -315,7 +315,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
             SearchPage searchPage = (SearchPage) page;
             searchPage.getResults().search();
             if (searchPage.getResults() instanceof CrudResults) {
-                ((CrudResults) searchPage.getResults()).applySecurityToCRUDButtons();
+                ((CrudResults) searchPage.getResults()).applySecurity();
             }
         }
 

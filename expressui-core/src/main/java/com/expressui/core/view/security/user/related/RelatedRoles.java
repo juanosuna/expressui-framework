@@ -43,10 +43,11 @@ import com.expressui.core.dao.security.query.RelatedRolesQuery;
 import com.expressui.core.entity.security.Role;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.entity.security.UserRole;
+import com.expressui.core.util.SpringApplicationContext;
 import com.expressui.core.view.results.ResultsFieldSet;
+import com.expressui.core.view.security.role.RoleForm;
 import com.expressui.core.view.security.select.RoleSelect;
-import com.expressui.core.view.tomanyrelationship.ManyToManyRelationshipResults;
-import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
+import com.expressui.core.view.tomanyrelationship.ManyToManyRelationship;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -55,85 +56,74 @@ import javax.annotation.Resource;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 /**
- * Component for viewing/editing roles related to a user.
- */
+* User: Juan
+* Date: 7/7/12
+*/
 @Component
 @Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings({"rawtypes", "serial", "unchecked"})
-public class RelatedRoles extends ToManyRelationship<Role> {
+public class RelatedRoles extends ManyToManyRelationship<Role, UserRole> {
 
     @Resource
-    private RelatedRolesResults relatedRolesResults;
+    private UserRoleDao userRoleDao;
+
+    @Resource
+    private RoleSelect roleSelect;
+
+    @Resource
+    private RelatedRolesQuery relatedRolesQuery;
+
+    @Override
+    public void preAdd() {
+        User parentUser = relatedRolesQuery.getParent();
+        roleSelect.getResults().getEntityQuery().setDoesNotBelongToUser(parentUser);
+    }
+
+    @Override
+    public UserRoleDao getAssociationDao() {
+        return userRoleDao;
+    }
+
+    @Override
+    public RoleSelect getEntitySelect() {
+        return roleSelect;
+    }
+
+    @Override
+    public RoleForm createEntityForm() {
+        return SpringApplicationContext.getBean(RoleForm.class);
+    }
+
+    @Override
+    public ToManyRelationshipQuery getEntityQuery() {
+        return relatedRolesQuery;
+    }
+
+    @Override
+    public void init(ResultsFieldSet resultsFields) {
+        resultsFields.setPropertyIds(
+                "name",
+                "lastModified",
+                "modifiedBy"
+        );
+    }
+
+    @Override
+    public String getChildPropertyId() {
+        return "userRoles";
+    }
+
+    @Override
+    public String getParentPropertyId() {
+        return "userRoles";
+    }
+
+    @Override
+    public UserRole createAssociationEntity(Role role) {
+        return new UserRole(relatedRolesQuery.getParent(), role);
+    }
 
     @Override
     public String getTypeCaption() {
         return "Roles";
     }
-
-    @Override
-    public RelatedRolesResults getResults() {
-        return relatedRolesResults;
-    }
-
-    @Component
-    @Scope(SCOPE_PROTOTYPE)
-    public static class RelatedRolesResults extends ManyToManyRelationshipResults<Role, UserRole> {
-
-        @Resource
-        private UserRoleDao userRoleDao;
-
-        @Resource
-        private RoleSelect roleSelect;
-
-        @Resource
-        private RelatedRolesQuery relatedRolesQuery;
-
-        @Override
-        public void add() {
-            User parentUser = relatedRolesQuery.getParent();
-            roleSelect.getResults().getEntityQuery().setDoesNotBelongToUser(parentUser);
-            super.add();
-        }
-
-        @Override
-        public UserRoleDao getAssociationDao() {
-            return userRoleDao;
-        }
-
-        @Override
-        public RoleSelect getEntitySelect() {
-            return roleSelect;
-        }
-
-        @Override
-        public ToManyRelationshipQuery getEntityQuery() {
-            return relatedRolesQuery;
-        }
-
-        @Override
-        public void init(ResultsFieldSet resultsFields) {
-            resultsFields.setPropertyIds(
-                    "name",
-                    "lastModified",
-                    "modifiedBy"
-            );
-        }
-
-        @Override
-        public String getChildPropertyId() {
-            return "userRoles";
-        }
-
-        @Override
-        public String getParentPropertyId() {
-            return "userRoles";
-        }
-
-        @Override
-        public UserRole createAssociationEntity(Role role) {
-            return new UserRole(relatedRolesQuery.getParent(), role);
-        }
-    }
-
 }
-

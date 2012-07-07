@@ -52,12 +52,13 @@ import com.vaadin.ui.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 /**
  * Results component that is bound the results of a query.
- * Also provides paging, sorting and adding/removing columns and re-ordering columns.
+ * Also supports paging, sorting and adding, removing and re-ordering columns.
  *
  * @param <T> type of entity displayed in the results
  */
@@ -93,7 +94,7 @@ public abstract class Results<T> extends TypedComponent<T> {
     public abstract void init(ResultsFieldSet resultsFields);
 
     /**
-     * Get the query used to create these results
+     * Get the query used to create these results.
      *
      * @return query used to create these results
      */
@@ -387,7 +388,13 @@ public abstract class Results<T> extends TypedComponent<T> {
      * @return collection of entities
      */
     public Collection getSelectedValues() {
-        return (Collection) getResultsTable().getValue();
+        if (getResultsTable().getValue() != null && !(getResultsTable().getValue() instanceof Collection)) {
+            List collection = new ArrayList();
+            collection.add(getResultsTable().getValue());
+            return collection;
+        } else {
+            return (Collection) getResultsTable().getValue();
+        }
     }
 
     /**
@@ -407,9 +414,17 @@ public abstract class Results<T> extends TypedComponent<T> {
         getResultsTable().executeCurrentQuery();
 
         if (clearSelection) {
-            getResultsTable().clearSelection();
-            getResultsTable().selectFirstItemInCurrentPage();
+            clearSelection();
         }
+    }
+
+    public void clearSelection() {
+        getResultsTable().clearSelection();
+        getResultsTable().selectFirstItemInCurrentPage();
+    }
+
+    public void setMultiSelect(boolean isMultiSelect) {
+        getResultsTable().setMultiSelect(isMultiSelect);
     }
 
     /**

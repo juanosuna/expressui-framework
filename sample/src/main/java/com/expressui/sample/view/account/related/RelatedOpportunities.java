@@ -39,10 +39,10 @@ package com.expressui.sample.view.account.related;
 
 import com.expressui.core.view.field.format.JDKBridgePropertyFormatter;
 import com.expressui.core.view.results.ResultsFieldSet;
-import com.expressui.core.view.tomanyrelationship.ToManyAggregationRelationshipResults;
-import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
+import com.expressui.core.view.tomanyrelationship.AggregationRelationship;
 import com.expressui.sample.dao.query.RelatedOpportunitiesQuery;
 import com.expressui.sample.entity.Opportunity;
+import com.expressui.sample.view.opportunity.OpportunityForm;
 import com.expressui.sample.view.select.OpportunitySelect;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -53,69 +53,66 @@ import java.util.Locale;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
+/**
+* User: Juan
+* Date: 7/7/12
+*/
 @Component
 @Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings("serial")
-public class RelatedOpportunities extends ToManyRelationship<Opportunity> {
+public class RelatedOpportunities extends AggregationRelationship<Opportunity> {
 
     @Resource
-    private RelatedOpportunitiesResults relatedOpportunitiesResults;
+    private RelatedOpportunitiesQuery relatedOpportunitiesQuery;
+
+    @Resource
+    private OpportunitySelect opportunitySelect;
+
+    @Resource
+    private OpportunityForm opportunityForm;
+
+    @Override
+    public RelatedOpportunitiesQuery getEntityQuery() {
+        return relatedOpportunitiesQuery;
+    }
+
+    @Override
+    public OpportunitySelect getEntitySelect() {
+        return opportunitySelect;
+    }
+
+    @Override
+    public OpportunityForm createEntityForm() {
+        return opportunityForm;
+    }
+
+    @Override
+    public void init(ResultsFieldSet resultsFields) {
+        resultsFields.setPropertyIds(
+                "name",
+                "salesStage",
+                "valueWeightedInUSD",
+                "expectedCloseDate"
+        );
+
+        resultsFields.setLabel("valueWeightedInUSD", "Weighted Amount");
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
+        numberFormat.setMaximumFractionDigits(0);
+        JDKBridgePropertyFormatter formatter = new JDKBridgePropertyFormatter(numberFormat);
+        resultsFields.setPropertyFormatter("valueWeightedInUSD", formatter);
+    }
+
+    @Override
+    public String getChildPropertyId() {
+        return "opportunities";
+    }
+
+    @Override
+    public String getParentPropertyId() {
+        return "account";
+    }
 
     @Override
     public String getTypeCaption() {
         return "Company Sales Opportunities";
     }
-
-    @Override
-    public RelatedOpportunitiesResults getResults() {
-        return relatedOpportunitiesResults;
-    }
-
-    @Component
-    @Scope(SCOPE_PROTOTYPE)
-    public static class RelatedOpportunitiesResults extends ToManyAggregationRelationshipResults<Opportunity> {
-
-        @Resource
-        private RelatedOpportunitiesQuery relatedOpportunitiesQuery;
-
-        @Resource
-        private OpportunitySelect opportunitySelect;
-
-        @Override
-        public RelatedOpportunitiesQuery getEntityQuery() {
-            return relatedOpportunitiesQuery;
-        }
-
-        @Override
-        public OpportunitySelect getEntitySelect() {
-            return opportunitySelect;
-        }
-
-        @Override
-        public void init(ResultsFieldSet resultsFields) {
-            resultsFields.setPropertyIds(
-                    "name",
-                    "salesStage",
-                    "valueWeightedInUSD",
-                    "expectedCloseDate"
-            );
-
-            resultsFields.setLabel("valueWeightedInUSD", "Weighted Amount");
-            NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
-            numberFormat.setMaximumFractionDigits(0);
-            JDKBridgePropertyFormatter formatter = new JDKBridgePropertyFormatter(numberFormat);
-            resultsFields.setPropertyFormatter("valueWeightedInUSD", formatter);
-        }
-
-        @Override
-        public String getChildPropertyId() {
-            return "opportunities";
-        }
-
-        @Override
-        public String getParentPropertyId() {
-            return "account";
-        }
-    }
 }
-

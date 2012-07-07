@@ -65,7 +65,7 @@ public class ProfileResults extends CrudResults<Profile> {
     }
 
     @Override
-    public ProfileForm getEntityForm() {
+    public ProfileForm createEntityForm() {
         return profileForm;
     }
 

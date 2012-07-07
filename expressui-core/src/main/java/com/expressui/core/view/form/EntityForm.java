@@ -37,6 +37,7 @@
 
 package com.expressui.core.view.form;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.util.MethodDelegate;
 import com.expressui.core.validation.AssertTrueForProperties;
@@ -105,8 +106,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
             toManyRelationshipTabs.setSizeUndefined();
             for (ToManyRelationship toManyRelationship : toManyRelationships) {
                 toManyRelationshipTabs.addTab(toManyRelationship);
-                toManyRelationship.getResults().getResultsTable().addExecuteQueryListener(this, "requestRepaintAll");
-                labelRegistry.putFieldLabel(getType().getName(), toManyRelationship.getResults().getChildPropertyId(),
+                toManyRelationship.getResultsTable().addExecuteQueryListener(this, "requestRepaintAll");
+                labelRegistry.putFieldLabel(getType().getName(), toManyRelationship.getChildPropertyId(),
                         "Relationship", toManyRelationship.getTypeCaption());
             }
 
@@ -170,9 +171,9 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         for (ToManyRelationship toManyRelationship : toManyRelationships) {
             User user = securityService.getCurrentUser();
 
-            if (user.isViewAllowed(toManyRelationship.getResults().getType().getName())
-                    && !toManyRelationship.getResults().getResultsFieldSet().getViewablePropertyIds().isEmpty()
-                    && user.isViewAllowed(getType().getName(), toManyRelationship.getResults().getChildPropertyId())) {
+            if (user.isViewAllowed(toManyRelationship.getType().getName())
+                    && !toManyRelationship.getResultsFieldSet().getViewablePropertyIds().isEmpty()
+                    && user.isViewAllowed(getType().getName(), toManyRelationship.getChildPropertyId())) {
                 viewableToManyRelationships.add(toManyRelationship);
             }
         }
@@ -253,7 +254,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         isViewMode = viewMode;
         List<ToManyRelationship> toManyRelationships = getToManyRelationships();
         for (ToManyRelationship toManyRelationship : toManyRelationships) {
-            toManyRelationship.getResults().setViewMode(viewMode);
+            toManyRelationship.setViewMode(viewMode);
         }
     }
 
@@ -284,7 +285,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
 
         List<ToManyRelationship> toManyRelationships = getToManyRelationships();
         for (ToManyRelationship toManyRelationship : toManyRelationships) {
-            toManyRelationship.getResults().setReadOnly(isReadOnly);
+            toManyRelationship.setReadOnly(isReadOnly);
         }
     }
 
@@ -300,7 +301,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
 
         List<ToManyRelationship> toManyRelationships = getToManyRelationships();
         for (ToManyRelationship toManyRelationship : toManyRelationships) {
-            toManyRelationship.getResults().setReadOnly(false);
+            toManyRelationship.setReadOnly(false);
         }
     }
 
@@ -315,14 +316,30 @@ public abstract class EntityForm<T> extends TypedForm<T> {
 
         List<ToManyRelationship> toManyRelationships = getToManyRelationships();
         for (ToManyRelationship toManyRelationship : toManyRelationships) {
-            toManyRelationship.getResults().applySecurityIsEditable();
+            toManyRelationship.applySecurity();
         }
     }
 
+    /**
+     * If this entity form is displayed in popup window, asks if the window's height is full.
+     * If this is not set, i.e. is null, default behavior is used where
+     * entity form's with to-many relationships use full height and those without are undefined
+     * and automatically adjust their size according to contents.
+     *
+     * @return true if popup window's height is full or null for default behavior
+     */
     public Boolean isPopupWindowHeightFull() {
         return isPopupWindowHeightFull;
     }
 
+    /**
+     * If this entity form is displayed in popup window, set if the window's height is full.
+     * If this is not set, i.e. is null, default behavior is used where
+     * entity form's with to-many relationships use full height and those without are undefined
+     * and automatically adjust their size according to contents.
+     *
+     * @param popupWindowHeightFull true if popup window's height is full or null for default behavior
+     */
     public void setPopupWindowHeightFull(Boolean popupWindowHeightFull) {
         isPopupWindowHeightFull = popupWindowHeightFull;
     }
@@ -393,10 +410,10 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         if (toManyRelationships.size() > 0) {
             for (ToManyRelationship toManyRelationship : toManyRelationships) {
                 Object parent = getBean();
-                toManyRelationship.getResults().getEntityQuery().clear();
-                toManyRelationship.getResults().getEntityQuery().setParent(parent);
-                toManyRelationship.getResults().search();
-                toManyRelationship.getResults().selectionChanged();
+                toManyRelationship.getEntityQuery().clear();
+                toManyRelationship.getEntityQuery().setParent(parent);
+                toManyRelationship.search();
+                toManyRelationship.selectionChanged(null);
 
             }
             toManyRelationshipTabs.setVisible(true);
@@ -584,6 +601,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     public void cancel() {
         clearAllErrors(true);
         getForm().discard();
+        setViewMode(false);
+        applyViewMode();
         BeanItem beanItem = (BeanItem) getForm().getItemDataSource();
         if (beanItem == null) {
             clear();
@@ -595,7 +614,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
                 try {
                     load(entity);
                 } catch (EntityNotFoundException e) {
-                    // ignore if use cancels when viewing/editing entity that another user deleted
+                    // ignore if user cancels when viewing/editing entity that another user deleted
                 }
             }
         }
@@ -720,12 +739,10 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      * Show notification message that save was successful.
      */
     public void showSaveSuccessfulMessage() {
-        Window.Notification notification = new Window.Notification("\"" + getEntityCaption()
-                + "\" " + uiMessageSource.getMessage("entityForm.saveSuccessful"),
-                Window.Notification.TYPE_HUMANIZED_MESSAGE);
-        notification.setDelayMsec(Window.Notification.DELAY_NONE);
-        notification.setPosition(Window.Notification.POSITION_CENTERED);
-        getMainApplication().showNotification(notification);
+        MainApplication.getInstance().showMessage(
+                "\"" + getEntityCaption()
+                        + "\" " + uiMessageSource.getMessage("entityForm.saved")
+        );
     }
 
     /**
@@ -910,7 +927,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      *
      * @param entity newly created entity
      */
-    public void postCreate(T entity) {
+    protected void postCreate(T entity) {
     }
 
     /**
@@ -918,7 +935,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      *
      * @param entity loaded entity
      */
-    public void postLoad(T entity) {
+    protected void postLoad(T entity) {
     }
 
     /**
@@ -926,7 +943,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      *
      * @param entity entity to be saved
      */
-    public void preSave(T entity) {
+    protected void preSave(T entity) {
     }
 
     /**
@@ -934,7 +951,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      *
      * @param entity saved entity
      */
-    public void postSave(T entity) {
+    protected void postSave(T entity) {
     }
 
     /**

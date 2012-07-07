@@ -240,8 +240,7 @@
         ENABLED boolean not null,
         LOGIN_NAME varchar(16) not null,
         LOGIN_PASSWORD_ENCRYPTED varchar(255),
-        primary key (ID),
-        unique (LOGIN_NAME)
+        primary key (ID)
     );
 
     create index IDX_ACCOUNT_ASSIGNED_TO on SAMPLE.ACCOUNT (ASSIGNED_TO_ID);

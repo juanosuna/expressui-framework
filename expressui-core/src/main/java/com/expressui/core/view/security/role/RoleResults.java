@@ -70,7 +70,7 @@ public class RoleResults extends CrudResults<Role> {
     }
 
     @Override
-    public RoleForm getEntityForm() {
+    public RoleForm createEntityForm() {
         return roleForm;
     }
 

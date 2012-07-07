@@ -160,4 +160,8 @@ public abstract class EntitySelect<T> extends TypedComponent<T> {
     public void close() {
         getMainApplication().getMainWindow().removeWindow(popupWindow);
     }
+
+    public void setMultiSelect(boolean isMultiSelect) {
+        getResults().setMultiSelect(isMultiSelect);
+    }
 }

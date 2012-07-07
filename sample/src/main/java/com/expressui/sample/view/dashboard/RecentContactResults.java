@@ -67,7 +67,7 @@ public class RecentContactResults extends CrudResults<Contact> {
     }
 
     @Override
-    public ContactForm getEntityForm() {
+    public ContactForm createEntityForm() {
         return contactForm;
     }
 

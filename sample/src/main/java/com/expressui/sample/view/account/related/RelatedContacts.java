@@ -39,11 +39,11 @@ package com.expressui.sample.view.account.related;
 
 import com.expressui.core.dao.query.ToManyRelationshipQuery;
 import com.expressui.core.view.results.ResultsFieldSet;
-import com.expressui.core.view.tomanyrelationship.ToManyAggregationRelationshipResults;
-import com.expressui.core.view.tomanyrelationship.ToManyRelationship;
+import com.expressui.core.view.tomanyrelationship.AggregationRelationship;
 import com.expressui.sample.dao.query.RelatedContactsQuery;
 import com.expressui.sample.entity.Contact;
 import com.expressui.sample.formatter.PhonePropertyFormatter;
+import com.expressui.sample.view.contact.ContactForm;
 import com.expressui.sample.view.select.ContactSelect;
 import com.vaadin.ui.Table;
 import org.springframework.context.annotation.Scope;
@@ -53,74 +53,71 @@ import javax.annotation.Resource;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
+/**
+* User: Juan
+* Date: 7/7/12
+*/
 @Component
 @Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings("serial")
-public class RelatedContacts extends ToManyRelationship<Contact> {
+@SuppressWarnings("rawtypes")
+public class RelatedContacts extends AggregationRelationship<Contact> {
 
     @Resource
-    private RelatedContactsResults relatedContactsResults;
+    private ContactSelect contactSelect;
+
+    @Resource
+    private ContactForm contactForm;
+
+    @Resource
+    private RelatedContactsQuery relatedContactsQuery;
+
+    @Override
+    public ContactSelect getEntitySelect() {
+        return contactSelect;
+    }
+
+    @Override
+    public ContactForm createEntityForm() {
+        return contactForm;
+    }
+
+    @Override
+    public ToManyRelationshipQuery getEntityQuery() {
+        return relatedContactsQuery;
+    }
+
+    @Override
+    public void init(ResultsFieldSet resultsFields) {
+        resultsFields.setPropertyIds(
+                "name",
+                "title",
+                "mailingAddress.state.code",
+                "mailingAddress.country",
+                "mainPhone"
+        );
+
+        resultsFields.setLabel("mailingAddress.state.code", "State");
+        resultsFields.setLabel("mainPhone", "Phone");
+        resultsFields.setSortable("name", false);
+        resultsFields.setSortable("mainPhone", false);
+        resultsFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
+
+        resultsFields.setAlignment("mailingAddress.state.code", Table.ALIGN_CENTER);
+        resultsFields.setAlignment("mailingAddress.country", Table.ALIGN_CENTER);
+    }
+
+    @Override
+    public String getChildPropertyId() {
+        return "contacts";
+    }
+
+    @Override
+    public String getParentPropertyId() {
+        return "account";
+    }
 
     @Override
     public String getTypeCaption() {
         return "Company Contacts";
     }
-
-    @Override
-    public RelatedContactsResults getResults() {
-        return relatedContactsResults;
-    }
-
-    @Component
-    @Scope(SCOPE_PROTOTYPE)
-    @SuppressWarnings("rawtypes")
-    public static class RelatedContactsResults extends ToManyAggregationRelationshipResults<Contact> {
-
-        @Resource
-        private ContactSelect contactSelect;
-
-        @Resource
-        private RelatedContactsQuery relatedContactsQuery;
-
-        @Override
-        public ContactSelect getEntitySelect() {
-            return contactSelect;
-        }
-
-        @Override
-        public ToManyRelationshipQuery getEntityQuery() {
-            return relatedContactsQuery;
-        }
-
-        @Override
-        public void init(ResultsFieldSet resultsFields) {
-            resultsFields.setPropertyIds(
-                    "name",
-                    "title",
-                    "mailingAddress.state.code",
-                    "mailingAddress.country",
-                    "mainPhone"
-            );
-
-            resultsFields.setLabel("mailingAddress.state.code", "State");
-            resultsFields.setLabel("mainPhone", "Phone");
-            resultsFields.setSortable("name", false);
-            resultsFields.setSortable("mainPhone", false);
-            resultsFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
-
-            resultsFields.setAlignment("mailingAddress.state.code", Table.ALIGN_CENTER);
-            resultsFields.setAlignment("mailingAddress.country", Table.ALIGN_CENTER);
-        }
-
-        @Override
-        public String getChildPropertyId() {
-            return "contacts";
-        }
-
-        @Override
-        public String getParentPropertyId() {
-            return "account";
-        }
-    }
 }
-

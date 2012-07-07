@@ -38,7 +38,6 @@
 package com.expressui.core.view.tomanyrelationship;
 
 import com.expressui.core.dao.EntityDao;
-import com.expressui.core.entity.IdentifiableEntity;
 import com.expressui.core.util.BeanPropertyType;
 import com.expressui.core.util.assertion.Assert;
 
@@ -50,7 +49,7 @@ import java.io.Serializable;
  * @param <T> type of related entity
  * @param <A> type of association entity that links the two sides of the relationship
  */
-public abstract class ManyToManyRelationshipResults<T, A> extends ToManyAggregationRelationshipResults<T> {
+public abstract class ManyToManyRelationship<T, A> extends AggregationRelationship<T> {
 
     /**
      * Get the DAO for accessing entities of the association type.
@@ -58,6 +57,18 @@ public abstract class ManyToManyRelationshipResults<T, A> extends ToManyAggregat
      * @return association DAO
      */
     public abstract EntityDao<A, ? extends Serializable> getAssociationDao();
+
+    @Override
+    public void create() {
+        super.create();
+        getEntityForm().addSaveListener(this, "postPersist");
+    }
+
+    protected void postPersist() {
+        T value = getEntityForm().getBean();
+        setReferencesToParentAndPersist(value);
+        getEntityForm().removeListeners(this);
+    }
 
     @Override
     public void setReferencesToParentAndPersist(T... values) {
@@ -74,6 +85,10 @@ public abstract class ManyToManyRelationshipResults<T, A> extends ToManyAggregat
     }
 
     @Override
+    public void setReferenceToParent(T value) {
+    }
+
+    @Override
     public void removeConfirmed(T... values) {
         for (T value : values) {
             BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getType(), getParentPropertyId());
@@ -84,7 +99,8 @@ public abstract class ManyToManyRelationshipResults<T, A> extends ToManyAggregat
             getAssociationDao().remove(associationEntity);
         }
         searchImpl(false);
-        removeButton.setEnabled(false);
+        clearSelection();
+        selectionChanged(null);
     }
 
     /**

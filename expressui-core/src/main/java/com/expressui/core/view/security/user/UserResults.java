@@ -70,7 +70,7 @@ public class UserResults extends CrudResults<User> {
     }
 
     @Override
-    public UserForm getEntityForm() {
+    public UserForm createEntityForm() {
         return userForm;
     }
 

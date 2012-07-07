@@ -69,7 +69,7 @@ public class AccountResults extends CrudResults<Account> {
     }
 
     @Override
-    public AccountForm getEntityForm() {
+    public AccountForm createEntityForm() {
         return accountForm;
     }
 

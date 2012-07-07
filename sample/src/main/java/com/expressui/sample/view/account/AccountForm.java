@@ -39,8 +39,8 @@ package com.expressui.sample.view.account;
 
 import com.expressui.core.MainApplication;
 import com.expressui.core.entity.security.User;
-import com.expressui.core.view.field.format.UrlPropertyFormatter;
 import com.expressui.core.view.field.SelectField;
+import com.expressui.core.view.field.format.UrlPropertyFormatter;
 import com.expressui.core.view.form.EntityForm;
 import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.form.FormTab;

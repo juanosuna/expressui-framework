@@ -40,7 +40,6 @@ package com.expressui.core.entity.security;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.util.ObjectUtil;
 import com.expressui.core.validation.AssertTrueForProperties;
-import org.hibernate.annotations.NaturalId;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 
@@ -58,7 +57,6 @@ import java.util.Set;
 @Table(name = "UZER") // avoid table named user, as this is a reserved word in Oracle
 public class User extends WritableEntity {
 
-    @NaturalId
     private String loginName;
 
     private String loginPasswordEncrypted;
