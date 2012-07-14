@@ -37,30 +37,32 @@
 
 package com.expressui.core.entity.security;
 
+import com.expressui.core.entity.NameableEntity;
+
 /**
- * Specifies whether a Role Permission has Deny or Allow default logic.
+ * Specifies whether a Role {@link Permission} has Deny or Allow default logic.
  */
-public enum AllowOrDeny {
+public enum AllowOrDeny implements NameableEntity {
     ALLOW("Allow"),
     DENY("Deny");
 
-    private String displayName;
+    private String name;
 
-    AllowOrDeny(String displayName) {
-        this.displayName = displayName;
+    AllowOrDeny(String name) {
+        this.name = name;
     }
 
     /**
-     * Get name for displaying to end user
+     * Gets name for displaying to end user.
      *
      * @return name for displaying to end user
      */
-    public String getDisplayName() {
-        return displayName;
+    public String getName() {
+        return name;
     }
 
     @Override
     public String toString() {
-        return displayName;
+        return name;
     }
 }

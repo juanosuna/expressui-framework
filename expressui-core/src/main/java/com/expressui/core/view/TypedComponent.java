@@ -74,7 +74,9 @@ public abstract class TypedComponent<T> extends RootComponent {
      *
      * @return caption that describes type of this component
      */
-    public abstract String getTypeCaption();
+    public String getTypeCaption() {
+        return null;
+    }
 
     /**
      * Get the caption from the domainMessageSource bean by using getTypeCaption() as key.
@@ -84,7 +86,7 @@ public abstract class TypedComponent<T> extends RootComponent {
      */
     @Override
     public String getCaption() {
-        return domainMessageSource.getMessageWithDefault(getTypeCaption());
+        return getTypeCaption();
     }
 
     /**

@@ -35,36 +35,23 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.sample.view.contact;
+package com.expressui.core.view.field;
 
-import com.expressui.core.view.field.SelectField;
-import com.expressui.core.view.form.FormFieldSet;
-import com.expressui.core.view.form.SearchForm;
-import com.expressui.sample.dao.query.ContactQuery;
-import com.expressui.sample.entity.Account;
-import com.expressui.sample.view.select.AccountSelect;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-import javax.annotation.Resource;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-
-@Component
-@Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings({"serial"})
-public class ContactSearchForm extends SearchForm<ContactQuery> {
-
-    @Resource
-    private AccountSelect accountSelect;
-
-    @Override
-    public void init(FormFieldSet formFields) {
-        formFields.setCoordinates("lastName", 1, 1);
-        formFields.setCoordinates("account.name", 2, 1);
-
-        SelectField<ContactQuery, Account> accountField =
-                new SelectField<ContactQuery, Account>(this, "account", accountSelect);
-        formFields.setField("account.name", accountField);
-    }
+/**
+ * A tooltip for display to end user. Can be used to annotate
+ * a property to define UI display tooltip in an entity.
+ * Embedding UI tooltip in entities is a questionable practice. However,
+ * it avoids having to define redundant labels throughout the UI at the
+ * expense of flexibility.
+ */
+@Target(ElementType.FIELD)
+@Retention(RUNTIME)
+public @interface ToolTip {
+    String value() default "";
 }

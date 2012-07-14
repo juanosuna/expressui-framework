@@ -45,14 +45,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
 /**
- * Base class for entity DAOs with parameter type.
+ * Base class for entity DAOs with a parameter type.
  * <p/>
  * Methods that write to the database are marked @Transactional.
  *
@@ -64,9 +63,6 @@ public abstract class EntityDao<T, ID extends Serializable> {
     @Resource
     private GenericDao genericDao;
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     private Class<T> entityType;
     private Class<ID> idType;
 
@@ -76,7 +72,7 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
-     * Get the entity type declared as the subclass's generic first argument.
+     * Gets the entity type declared as the subclass's generic first argument.
      *
      * @return the entity type declared as the subclass's generic first argument
      */
@@ -89,7 +85,7 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
-     * Get the entity's primary key type declared as the subclass's generic second argument.
+     * Gets the entity's primary key type declared as the subclass's generic second argument.
      *
      * @return the entity's primary key type declared as the subclass's generic second argument
      */
@@ -102,39 +98,16 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
-     * Get the EntityManager.
+     * Gets the JPA EntityManager.
      *
      * @return the EntityManager
      */
     public EntityManager getEntityManager() {
-        return entityManager;
+        return genericDao.getEntityManager();
     }
 
     /**
-     * Get the id or primary key of the given entity.
-     *
-     * @param entity persistent entity
-     * @return id or primary key
-     */
-    public <T> Serializable getId(T entity) {
-        return genericDao.getId(entity);
-    }
-
-    /**
-     * Get a managed reference to the given entity, which may have been detached. The managed reference is retrieved
-     * using given entity's primary key. This is useful when you need an managed reference to an entity and don't
-     * care about merging it's state.
-     *
-     * @param entity for getting the primary key
-     * @return attached but hollow entity
-     * @see javax.persistence.EntityManager#getReference(Class, Object)
-     */
-    public T getReference(T entity) {
-        return genericDao.getReference(entity);
-    }
-
-    /**
-     * Create new entity
+     * Creates an entity.
      *
      * @return newly created entity
      */
@@ -142,10 +115,12 @@ public abstract class EntityDao<T, ID extends Serializable> {
         return genericDao.create(getEntityType());
     }
 
+
     /**
-     * Remove a managed or detached entity.
+     * Removes a managed or detached entity.
      *
      * @param entity either attached or detached
+     * @see javax.persistence.EntityManager#remove(Object)
      */
     @Transactional
     public void remove(T entity) {
@@ -153,11 +128,11 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
-     * Merge given entity.
+     * Merges an entity.
      *
-     * @param entity to merge
+     * @param entity the entity to merge
      * @return managed entity
-     * @see EntityManager#merge(Object)
+     * @see javax.persistence.EntityManager#merge(Object)
      */
     @Transactional
     public T merge(T entity) {
@@ -165,10 +140,10 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
-     * Persist given entity.
+     * Persists an entity.
      *
-     * @param entity to persist
-     * @see EntityManager#persist(Object)
+     * @param entity the entity to persist
+     * @see javax.persistence.EntityManager#persist(Object)
      */
     @Transactional
     public void persist(T entity) {
@@ -176,9 +151,9 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
-     * Persist a collection of entities
+     * Persists a collection of entities
      *
-     * @param entities to persist
+     * @param entities the entities to persist
      */
     @Transactional
     public void persist(Collection<T> entities) {
@@ -186,90 +161,123 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
-     * Save a given entity, i.e. persist if new and merge if already persistent
+     * Saves an entity, persisting it if new and merging it if already persistent.
      *
-     * @param entity to save
-     * @return merged entity if entity was merged, else same as argument
+     * @param entity the entity to save
+     * @return merged entity if entity was merged, else same as argument if persisted
      */
-    public <T> T save(T entity) {
+    @Transactional
+    public T save(T entity) {
         return genericDao.save(entity);
     }
 
     /**
-     * Refresh given entity.
+     * Refreshes an entity.
      *
-     * @param entity to refresh
-     * @see EntityManager#refresh(Object)
+     * @param entity the entity to refresh
+     * @see javax.persistence.EntityManager#refresh(Object)
      */
     public void refresh(T entity) {
         genericDao.refresh(entity);
     }
 
     /**
-     * Ask if given entity is persistent, i.e. if it has a primary key
+     * Gets a managed reference to the given entity, which may have become detached. The managed reference is retrieved
+     * using given entity's primary key. This is useful when you need an managed reference to an entity and don't
+     * care about merging it's state.
      *
-     * @param entity to check
-     * @return true if entity has primary key
+     * @param entity a possibly detached but persistent entity that contains primary key
+     * @return managed but hollow entity
+     * @see javax.persistence.EntityManager#getReference(Class, Object)
+     */
+    public T getReference(T entity) {
+        return genericDao.getReference(entity);
+    }
+
+    /**
+     * Gets the id or primary key of a persistent entity.
+     *
+     * @param entity the persistent entity
+     * @return id or primary key
+     */
+    public Serializable getId(T entity) {
+        return genericDao.getId(entity);
+    }
+
+    /**
+     * Asks if an entity is persistent, that is if it has a primary key.
+     *
+     * @param entity the entity to check
+     * @return true if entity has a primary key
      */
     public boolean isPersistent(T entity) {
         return genericDao.isPersistent(entity);
     }
 
     /**
-     * Flush the entityManager.
+     * Flushes the EntityManager.
      *
-     * @see EntityManager#flush()
+     * @see javax.persistence.EntityManager#flush()
      */
     public void flush() {
         genericDao.flush();
     }
 
     /**
-     * Clear the entityManager.
+     * Clears the EntityManager.
      *
-     * @see EntityManager#clear()
+     * @see javax.persistence.EntityManager#clear()
      */
     public void clear() {
         genericDao.clear();
     }
 
     /**
-     * Find entity by primary key.
+     * Finds an entity by primary key.
      *
-     * @param id primary key
-     * @return initialized entity
-     * @see EntityManager#find(Class, Object)
+     * @param id the primary key
+     * @return found entity
+     * @see javax.persistence.EntityManager#find(Class, Object)
      */
     public T find(ID id) {
         return genericDao.find(getEntityType(), id);
     }
 
     /**
-     * Find the entity again from the database.
+     * Finds an entity again from the database.
      *
-     * @param entity persistent entity with an id
-     * @param <T> type of entity to refind
-     * @return attached entity found from database
+     * @param entity the persistent entity with an id
+     * @return attached entity found from database, null if none found
      */
-    public <T> T reFind(T entity) {
+    public T reFind(T entity) {
         return genericDao.reFind(entity);
     }
 
     /**
-     * Find entity by natural id, or business key. This method only works for entities that have a single property
+     * Finds an entity by natural id, or business key. This method only works for entities that have a single property
      * marked as @NaturalId. The benefit of calling this method is that Hibernate will try to look up the entity
      * in the secondary cache.
      *
-     * @param propertyName  name of the property in the entity that is marked @NaturalId
-     * @param propertyValue value to search for
-     * @return entity
+     * @param propertyName  the name of the property in the entity that is marked @NaturalId
+     * @param propertyValue the value to search for
+     * @return found entity
      */
     public T findByNaturalId(String propertyName, Object propertyValue) {
         return genericDao.findByNaturalId(getEntityType(), propertyName, propertyValue);
     }
 
     /**
-     * Find all entities of this DAO's type.
+     * Finds a single entity that is "owned" by a given user, for example a user profile or preferences.
+     *
+     * @param user the user to query
+     * @return found entity, null if none found
+     */
+    public T findUserOwnedEntity(User user) {
+        return genericDao.findUserOwnedEntity(getEntityType(), user);
+    }
+
+    /**
+     * Finds all entities of given type.
      *
      * @return list of all entities
      */
@@ -278,7 +286,7 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
-     * Get a count of all entities of this DAO's type.
+     * Gets a count of all entities of given type.
      *
      * @return count of all records in the database
      */
@@ -287,17 +295,7 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
-     * Find single entity owned by a given user, e.g Profile
-     *
-     * @param user user to query
-     * @return found entity
-     */
-    public T findUserOwnedEntity(User user) {
-        return genericDao.findUserOwnedEntity(getEntityType(), user);
-    }
-
-    /**
-     * Utility method for setting hints on given query to read-only, thus enabling caching
+     * Utility method for setting Hibernate hints on a query to read-only, thus enabling caching.
      *
      * @param query query to set hints on
      */
@@ -306,9 +304,10 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
-     * Execute the given structured entity query.
+     * Executes a structured entity query.
      *
-     * @param structuredEntityQuery query that can be re-executed as paging, sort and other criteria change
+     * @param structuredEntityQuery the structured entity query that can be re-executed
+     *                              as paging, sort and other criteria vary
      * @return list of found entities
      * @see com.expressui.core.dao.query.StructuredEntityQuery
      */
@@ -317,10 +316,10 @@ public abstract class EntityDao<T, ID extends Serializable> {
     }
 
     /**
-     * Execute the given structured entity query that finds child entities that reference a parent entity in a
+     * Executes a structured entity query that finds child entities that reference a parent entity in a
      * to-many relationship.
      *
-     * @param toManyRelationshipQuery query that can be re-executed as paging, sort and other criteria change
+     * @param toManyRelationshipQuery the query that can be re-executed as paging, sort and other criteria vary
      * @return list of found entities
      * @see com.expressui.core.dao.query.ToManyRelationshipQuery
      */

@@ -45,12 +45,14 @@ import java.util.UUID;
 /**
  * Base class for entities that are writable by end users.
  * <p/>
- * This class requires that these entities use a generated Long id as the primary key. This is a surrogate key
- * that should have no business meaning.
+ * This class requires that entities use a generated Long id as the primary key. This is a surrogate key
+ * that should have no business meaning. The primary-key generation strategy is GenerationType.AUTO,
+ * meaning that Hibernate chooses the best strategy depending on the specific database and dialect being used.
+ * This allows the application to be more portable across different databases.
  * <p/>
  * It also generates a unique UUID that is used in the default equals and hashcode logic. Developers are free
  * to override this logic and use their own logic based on business keys, which is the "ideal" best practice.
- * However, the UUID approach also correctly solves the equality problem where transient and non-transient entities
+ * However, the UUID approach also correctly solves the equality problem where transient and persistent entities
  * can be compared and/or added to collections.
  * <p/>
  * Even though UUIDs seem like clutter in the database, they pragmatically relieve developers
@@ -77,7 +79,7 @@ public abstract class WritableEntity extends AuditableEntity {
     }
 
     /**
-     * Get the Id or primary key for this entity.
+     * Gets the Id or primary key for this entity.
      *
      * @return id or primary key for this entity
      */
@@ -91,7 +93,7 @@ public abstract class WritableEntity extends AuditableEntity {
     }
 
     /**
-     * Get the randomly generated UUID that was created when this entity was constructed in memory
+     * Gets the randomly generated UUID that was created when this entity was constructed in memory.
      *
      * @return UUID that was generated from UUID.randomUUID()
      */
@@ -100,7 +102,7 @@ public abstract class WritableEntity extends AuditableEntity {
     }
 
     /**
-     * Implements equals based on randomly generated UUID
+     * Implements equals based on randomly generated UUID.
      */
     @Override
     public boolean equals(Object o) {
@@ -113,7 +115,7 @@ public abstract class WritableEntity extends AuditableEntity {
     }
 
     /**
-     * Implements hashCode based on randomly generated UUID
+     * Implements hashCode based on randomly generated UUID.
      */
     @Override
     public int hashCode() {

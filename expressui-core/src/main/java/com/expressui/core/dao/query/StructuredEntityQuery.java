@@ -66,7 +66,7 @@ import java.util.List;
  * each nested entity referenced in the results. If you see 10 extra queries being generated in the log when displaying
  * a page of 10 results, then you know you have the N+1 select problem!
  * <p/>
- * Unfortunately subclassing StructuredEntityQuery requires knowledge of the JPA criteria API, which is not
+ * Subclassing StructuredEntityQuery requires knowledge of the JPA criteria API, which is not
  * terribly friendly. However, this approach not only brings significant performance benefits but also reduces query
  * code to a minimum by allowing query logic to be reused in the different scenarios, i.e. with different query
  * parameters and sort criteria. Simple string-based JPQL or HQL queries initially look easier to read but become
@@ -79,10 +79,10 @@ import java.util.List;
 public abstract class StructuredEntityQuery<T> extends EntityQuery<T> {
 
     /**
-     * Build query criteria.
+     * Builds query criteria.
      *
-     * @param builder    used by implementation to build criteria
-     * @param rootEntity root type in the from clause
+     * @param builder    should be used by implementation to build criteria
+     * @param rootEntity root entity in the from clause
      * @return a list of predicates, one for every part of the criteria
      */
     public List<Predicate> buildCriteria(CriteriaBuilder builder, CriteriaQuery<T> query, Root<T> rootEntity) {
@@ -90,8 +90,8 @@ public abstract class StructuredEntityQuery<T> extends EntityQuery<T> {
     }
 
     /**
-     * Set the parameter values for the query. The parameter names should match those defined by the buildCriteria
-     * implementation.
+     * Sets the parameter values for the query. The parameter names should match those defined by the buildCriteria
+     * implementation. The values can be stored in bean properties defined on this object.
      *
      * @param typedQuery interface for setting parameters
      */
@@ -99,9 +99,9 @@ public abstract class StructuredEntityQuery<T> extends EntityQuery<T> {
     }
 
     /**
-     * Build the Path used for sorting.
+     * Builds the Path used for sorting.
      *
-     * @param rootEntity root type in the from clause
+     * @param rootEntity root entity in the from clause
      * @return path used for sorting
      */
     public Path buildOrderBy(Root<T> rootEntity) {
@@ -109,13 +109,18 @@ public abstract class StructuredEntityQuery<T> extends EntityQuery<T> {
     }
 
     /**
-     * Add any fetch joins required to improve performance, i.e. to avoid N+1 select problem
+     * Adds any fetch joins required to improve performance, i.e. to avoid N+1 select problem
      *
-     * @param rootEntity root type in the from clause
+     * @param rootEntity root entity in the from clause
      */
     public void addFetchJoins(Root<T> rootEntity) {
     }
 
+    /**
+     * Executes this query.
+     *
+     * @return list of results
+     */
     @Override
     public List<T> execute() {
         return genericDao.execute(this);

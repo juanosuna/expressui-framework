@@ -122,8 +122,9 @@ public class RegistrationForm extends MyProfileForm<Profile> {
 
     @Override
     public void showSaveSuccessfulMessage() {
-        Window.Notification notification = new Window.Notification("Your registration was successful.</p>" +
-                "You may now login.", null, Window.Notification.TYPE_HUMANIZED_MESSAGE, true);
+        String message = uiMessageSource.getMessage("registrationForm.registrationSuccessful");
+        Window.Notification notification = new Window.Notification(message, null,
+                Window.Notification.TYPE_HUMANIZED_MESSAGE, true);
         notification.setDelayMsec(2000);
         notification.setPosition(Window.Notification.POSITION_CENTERED_BOTTOM);
         getMainApplication().showNotification(notification);
@@ -131,7 +132,7 @@ public class RegistrationForm extends MyProfileForm<Profile> {
 
     @Override
     public String getTypeCaption() {
-        return "Registration";
+        return getDomainMessage();
     }
 
 }

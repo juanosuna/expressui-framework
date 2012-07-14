@@ -21,9 +21,4 @@ public class PersonSearchForm extends SearchForm<PersonQuery> {
 
         formFields.setCoordinates("lastName", 1, 1);
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "Person Search Form";
-    }
 }

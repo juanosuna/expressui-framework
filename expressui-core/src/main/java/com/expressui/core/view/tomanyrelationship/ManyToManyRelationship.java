@@ -39,6 +39,7 @@ package com.expressui.core.view.tomanyrelationship;
 
 import com.expressui.core.dao.EntityDao;
 import com.expressui.core.util.BeanPropertyType;
+import com.expressui.core.util.ReflectionUtil;
 import com.expressui.core.util.assertion.Assert;
 
 import java.io.Serializable;
@@ -110,4 +111,9 @@ public abstract class ManyToManyRelationship<T, A> extends AggregationRelationsh
      * @return the newly created association entity
      */
     public abstract A createAssociationEntity(T value);
+
+    @Override
+    public Class getParentEntityType() {
+        return ReflectionUtil.getGenericArgumentType(getEntityQuery().getClass(), 1);
+    }
 }

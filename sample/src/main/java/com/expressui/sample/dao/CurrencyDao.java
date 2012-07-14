@@ -68,7 +68,7 @@ public class CurrencyDao extends EntityDao<Currency, String> {
     }
 
     private List<Currency> findAllWithoutFxRates() {
-        Query query = getEntityManager().createQuery("SELECT c FROM Currency c ORDER BY c.displayName");
+        Query query = getEntityManager().createQuery("SELECT c FROM Currency c ORDER BY c.name");
 
         setReadOnly(query);
 
@@ -77,7 +77,7 @@ public class CurrencyDao extends EntityDao<Currency, String> {
 
     private List<Currency> findAllWithFxRates() {
         Query query = getEntityManager().createQuery("SELECT c FROM Currency c " +
-                " WHERE c.id in :currenciesWithFxRates ORDER BY c.displayName");
+                " WHERE c.id in :currenciesWithFxRates ORDER BY c.name");
 
         query.setParameter("currenciesWithFxRates", ecbfxService.getFXRates().keySet());
         setReadOnly(query);

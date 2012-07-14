@@ -59,7 +59,7 @@ public class Currency extends ReferenceEntity {
         super(id, id);
     }
 
-    public Currency(String id, String displayName) {
-        super(id, displayName);
+    public Currency(String id, String name) {
+        super(id, name);
     }
 }

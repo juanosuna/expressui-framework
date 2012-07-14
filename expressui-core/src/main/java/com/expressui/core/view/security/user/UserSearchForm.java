@@ -57,9 +57,4 @@ public class UserSearchForm extends SearchForm<UserQuery> {
     public void init(FormFieldSet formFields) {
         formFields.setCoordinates("loginName", 1, 1);
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "User Search Form";
-    }
 }

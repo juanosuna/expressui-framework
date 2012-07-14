@@ -51,4 +51,16 @@
         <property name="defaultEncoding" value="UTF-8"/>
     </bean>
 
+    <bean id="domainMessageSourceNoFallback" class="com.expressui.core.view.util.MessageSource">
+        <property name="basename" value="classpath:domainMessages/messages"/>
+        <property name="useCodeAsDefaultMessage" value="false"/>
+        <property name="fallbackToSystemLocale" value="false"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
+    <bean id="validationMessageSource" class="com.expressui.core.view.util.MessageSource">
+        <property name="basename" value="classpath:ValidationMessages"/>
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
 </beans>

@@ -91,7 +91,7 @@ public class AccountForm extends EntityForm<Account> {
     @Override
     public void init(FormFieldSet formFields) {
 
-        FormTab overview = formFields.createTab("Overview");
+        FormTab overview = formFields.createTab(getDomainMessage("overview"));
         overview.setCoordinates("name", 1, 1);
         overview.setCoordinates("assignedTo.loginName", 1, 2);
 
@@ -100,7 +100,7 @@ public class AccountForm extends EntityForm<Account> {
 
         overview.setCoordinates("email", 3, 1);
 
-        FormTab details = formFields.createTab("Details");
+        FormTab details = formFields.createTab(getDomainMessage("details"));
         details.setCoordinates("tickerSymbol", 1, 1);
         details.setCoordinates("industry", 1, 2);
 
@@ -109,7 +109,7 @@ public class AccountForm extends EntityForm<Account> {
         details.setCoordinates("annualRevenueInUSD", 3, 1);
         details.setCoordinates("currency", 3, 2);
 
-        FormTab billingAddress = formFields.createTab("Billing Address");
+        FormTab billingAddress = formFields.createTab(getDomainMessage("billingAddress"));
         billingAddress.setCoordinates("billingAddress.street", 1, 1);
         billingAddress.setCoordinates("billingAddress.city", 1, 2);
         billingAddress.setCoordinates("billingAddress.country", 2, 1);
@@ -117,7 +117,7 @@ public class AccountForm extends EntityForm<Account> {
         billingAddress.setCoordinates("billingAddress.state", 3, 1);
         billingAddress.setCoordinates("mainPhone", 3, 2);
 
-        FormTab mailingAddress = formFields.createTab("Mailing Address");
+        FormTab mailingAddress = formFields.createTab(getDomainMessage("mailingAddress"));
         mailingAddress.setCoordinates("mailingAddress.street", 1, 1);
         mailingAddress.setCoordinates("mailingAddress.city", 1, 2);
         mailingAddress.setCoordinates("mailingAddress.country", 2, 1);
@@ -128,12 +128,6 @@ public class AccountForm extends EntityForm<Account> {
         formFields.setMultiSelectDimensions("accountTypes", 3, 10);
 
         formFields.setPropertyFormatter("website", new UrlPropertyFormatter());
-
-        formFields.setLabel("accountTypes", "Types");
-        formFields.setLabel("assignedTo.loginName", "Assigned to");
-        formFields.setLabel("mainPhone", "Phone");
-
-        formFields.setToolTip("currency", "Change to currency changes amount in USD");
 
         formFields.addConversionValidator("mainPhone", new PhoneConversionValidator());
         formFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
@@ -171,7 +165,8 @@ public class AccountForm extends EntityForm<Account> {
         getFormFieldSet().setVisible(addressPropertyId + ".state", !states.isEmpty());
         getFormFieldSet().setSelectItems(addressPropertyId + ".state", states);
         if (newCountry != null) {
-            getFormFieldSet().setToolTip(addressPropertyId + ".zipCode", newCountry.getZipCodeToolTip());
+            getFormFieldSet().setToolTipArgs(addressPropertyId + ".zipCode",
+                    newCountry.getMinPostalCode(), newCountry.getMaxPostalCode());
         }
     }
 
@@ -187,19 +182,5 @@ public class AccountForm extends EntityForm<Account> {
                         "<li>Input invalid data and then mouse-over input to see error message" +
                         "</ul>"
         );
-    }
-
-    @Override
-    public String getTypeCaption() {
-        return "Account Form";
-    }
-
-    @Override
-    public String getEntityCaption() {
-        if (getBean().getName() == null) {
-            return "Account Form - New";
-        } else {
-            return "Account Form - " + getBean().getName();
-        }
     }
 }

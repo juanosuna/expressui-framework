@@ -76,7 +76,7 @@ public class ContactForm extends EntityForm<Contact> {
     @Override
     public void init(FormFieldSet formFields) {
 
-        FormTab overview = formFields.createTab("Overview");
+        FormTab overview = formFields.createTab(getDomainMessage("overview"));
         overview.setCoordinates("firstName", 1, 1);
         overview.setCoordinates("lastName", 1, 2);
 
@@ -95,14 +95,14 @@ public class ContactForm extends EntityForm<Contact> {
 
         overview.setCoordinates("assignedTo.loginName", 6, 1);
 
-        FormTab mailingAddress = formFields.createTab("Mailing Address");
+        FormTab mailingAddress = formFields.createTab(getDomainMessage("mailingAddress"));
         mailingAddress.setCoordinates("mailingAddress.street", 1, 1);
         mailingAddress.setCoordinates("mailingAddress.city", 1, 2);
         mailingAddress.setCoordinates("mailingAddress.country", 2, 1);
         mailingAddress.setCoordinates("mailingAddress.zipCode", 2, 2);
         mailingAddress.setCoordinates("mailingAddress.state", 3, 1);
 
-        FormTab otherAddress = formFields.createTab("Other Address");
+        FormTab otherAddress = formFields.createTab(getDomainMessage("otherAddress"));
         otherAddress.setCoordinates("otherAddress.street", 1, 1);
         otherAddress.setCoordinates("otherAddress.city", 1, 2);
         otherAddress.setCoordinates("otherAddress.country", 2, 1);
@@ -110,15 +110,13 @@ public class ContactForm extends EntityForm<Contact> {
         otherAddress.setCoordinates("otherAddress.state", 3, 1);
         otherAddress.setOptional(this, "addOtherAddress", this, "removeOtherAddress");
 
-        FormTab description = formFields.createTab("Description");
+        FormTab description = formFields.createTab(getDomainMessage("description"));
         description.setCoordinates("description", 1, 1);
 
-        formFields.setLabel("description", null);
-        formFields.setLabel("account.name", "Account");
-        formFields.setLabel("assignedTo.loginName", "Assigned to");
-        formFields.setLabel("mainPhoneType", null);
         formFields.setWidth("mainPhoneType", 7, Sizeable.UNITS_EM);
-        formFields.setToolTip("mainPhone", Phone.TOOL_TIP);
+
+        getFormFieldSet().setToolTipArgs("mainPhone", Phone.getExampleNumber(
+                MainApplication.getInstance().getLocale().getCountry()));
 
         formFields.addConversionValidator("mainPhone", new PhoneConversionValidator());
         formFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
@@ -159,7 +157,8 @@ public class ContactForm extends EntityForm<Contact> {
         getFormFieldSet().setVisible(addressPropertyId + ".state", !states.isEmpty());
         getFormFieldSet().setSelectItems(addressPropertyId + ".state", states);
         if (newCountry != null) {
-            getFormFieldSet().setToolTip(addressPropertyId + ".zipCode", newCountry.getZipCodeToolTip());
+            getFormFieldSet().setToolTipArgs(addressPropertyId + ".zipCode",
+                    newCountry.getMinPostalCode(), newCountry.getMaxPostalCode());
         }
     }
 
@@ -175,19 +174,5 @@ public class ContactForm extends EntityForm<Contact> {
                         "<li>Go to an address tab and see how zip codes are validated against selected country" +
                         "</ul>"
         );
-    }
-
-    @Override
-    public String getTypeCaption() {
-        return "Contact Form";
-    }
-
-    @Override
-    public String getEntityCaption() {
-        if (getBean().getName() == null) {
-            return "Contact Form - New";
-        } else {
-            return "Contact Form - " + getBean().getName();
-        }
     }
 }

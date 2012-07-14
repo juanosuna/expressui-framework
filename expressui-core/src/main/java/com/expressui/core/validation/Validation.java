@@ -37,8 +37,13 @@
 
 package com.expressui.core.validation;
 
+import org.hibernate.validator.messageinterpolation.ValueFormatterMessageInterpolator;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
+import javax.validation.Configuration;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -50,21 +55,24 @@ import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
+
 /**
  * Service for validating beans against JSR-303 validator implementation.
  */
-@Service
+@Component
 public class Validation {
     private Validator validator;
     private ValidatorFactory factory;
 
-    public Validation() {
-        factory = javax.validation.Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
+    @PostConstruct
+    public void postConstruct() {
+        Configuration<?> configuration = javax.validation.Validation.byDefaultProvider().configure();
+        factory = configuration
+                .messageInterpolator(new ClientLocaleMessageInterpolator(configuration.getDefaultMessageInterpolator()))
+                .buildValidatorFactory();
 
-    public ValidatorFactory getFactory() {
-        return factory;
+        validator = factory.getValidator();
     }
 
     /**

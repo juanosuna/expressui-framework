@@ -74,11 +74,6 @@ public class UserSelect extends EntitySelect<User> {
         return userSelectResults;
     }
 
-    @Override
-    public String getTypeCaption() {
-        return "Select User";
-    }
-
     @Component
     @Scope(SCOPE_PROTOTYPE)
     public static class UserSelectResults extends EntitySelectResults<User> {

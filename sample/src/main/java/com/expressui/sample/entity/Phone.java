@@ -49,13 +49,6 @@ import java.io.Serializable;
 @Embeddable
 public class Phone implements Serializable {
 
-    public static final String TOOL_TIP =
-            "Phone input automatically transformed to standard formats, e.g.:" +
-                    "<ul>" +
-                    "  <li>US: (919) 975-5331</li>" +
-                    "  <li>Germany: +49 30/70248804</li>" +
-                    "</ul>";
-
     private Integer countryCode;
     private Long phoneNumber;
 
@@ -106,6 +99,17 @@ public class Phone implements Serializable {
 
     public void setPhoneNumber(Long phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public static String getExampleNumber(String regionCode) {
+
+        Phonenumber.PhoneNumber phoneNumber = PhoneNumberUtil.getInstance().getExampleNumber(regionCode);
+
+        PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
+        PhoneNumberUtil.PhoneNumberFormat format;
+        format = PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL;
+
+        return phoneUtil.format(phoneNumber, format);
     }
 
     @Override

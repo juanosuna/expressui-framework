@@ -82,7 +82,5 @@ public class RoleResults extends CrudResults<Role> {
                 "lastModified",
                 "modifiedBy"
         );
-
-        resultsFields.setLabel("allowOrDenyByDefault", "Default Allow/Deny");
     }
 }

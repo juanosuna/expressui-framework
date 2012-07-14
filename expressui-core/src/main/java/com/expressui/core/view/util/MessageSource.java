@@ -38,20 +38,26 @@
 package com.expressui.core.view.util;
 
 import com.expressui.core.MainApplication;
+import org.apache.log4j.Logger;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 import java.util.Locale;
 
 /**
- * Provides access to internationalized messages in messages_* files.
+ * Provides access to internationalized messages in messages_* files. Automatically uses
+ * the locale set in the user's session.
  * <p/>
  * Subclasses Spring's ReloadableResourceBundleMessageSource and adds a few convenient
  * overloaded methods.
  */
 public class MessageSource extends ReloadableResourceBundleMessageSource {
 
+    private final Logger log = Logger.getLogger(getClass());
+
     /**
-     * Get message, use code itself if message not found
+     * Gets message, use code itself if message not found.
+     *
      * @param code property key to look up message
      * @return message value from messages_* file or code itself, if not found
      */
@@ -60,27 +66,76 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
     }
 
     /**
-     * Get message
+     * Gets message.
+     *
      * @param code property key to look up message
      * @return message value from messages_* file
      */
     public String getMessage(String code) {
-        return getMessage(code, null, null, getLocale());
+        try {
+            return super.getMessage(code, null, getLocale());
+        } catch (NoSuchMessageException e) {
+            log.warn(e);
+            return null;
+        }
+    }
+
+    public String getOptionalMessage(String code) {
+        try {
+            return super.getMessage(code, null, getLocale());
+        } catch (NoSuchMessageException e) {
+            return null;
+        }
     }
 
     /**
-     * Get message
+     * Gets message, use code itself if message not found.
+     *
      * @param code property key to look up message
      * @param args passed for substitution in the message, {0}, {1}, {2}, etc.
      * @return message value from messages_* file
      */
-    public String getMessage(String code, Object[] args) {
+    public String getMessageWithDefault(String code, Object[] args) {
         return getMessage(code, args, code);
     }
 
+
     /**
-     * Get message
-     * @param code property key to look up message
+     * Gets message.
+     *
+     * @param code           property key to look up message
+     * @param args           passed for substitution in the message, {0}, {1}, {2}, etc.
+     * @return message value from messages_* file
+     */
+    public String getMessage(String code, Object[] args) {
+        try {
+            return super.getMessage(code, args, getLocale());
+        } catch (NoSuchMessageException e) {
+            log.warn(e);
+            return null;
+        }
+    }
+
+    public String getOptionalMessage(String code, Object[] args) {
+        try {
+            return super.getMessage(code, args, getLocale());
+        } catch (NoSuchMessageException e) {
+            return null;
+        }
+    }
+
+    public String getOptionalMessageFromDefaultLocale(String code, Object[] args) {
+        try {
+            return super.getMessage(code, args, Locale.getDefault());
+        } catch (NoSuchMessageException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Gets message
+     *
+     * @param code           property key to look up message
      * @param defaultMessage message if property key not found in messages file
      * @return message value from messages_* file
      */
@@ -89,47 +144,54 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
     }
 
     /**
-     * Get message
-     * @param code property key to look up message
-     * @param args passed for substitution in the message, {0}, {1}, {2}, etc.
+     * Get message.
+     *
+     * @param code           property key to look up message
+     * @param args           passed for substitution in the message, {0}, {1}, {2}, etc.
      * @param defaultMessage message if property key not found in messages file
      * @return message value from messages_* file
      */
     public String getMessage(String code, Object[] args, String defaultMessage) {
-        return getMessage(code, args, defaultMessage, getLocale());
-    }
-
-    /**
-     * Get message, use code itself if message not found. Tool tip is wrapped with span with expressui-tool-tip style.
-     * @param code property key to look up message
-     * @return message value from messages_* file or code itself, if not found
-     */
-    public String getToolTipWithDefault(String code) {
-        return wrapWithToolTipStyle(getMessage(code, null, code));
+        return super.getMessage(code, args, defaultMessage, getLocale());
     }
 
     /**
      * Gets message wrapped with span with express-ui-toolTip style
+     *
      * @param code key
      * @return message value from messages_* file
      */
     public String getToolTip(String code) {
-        return wrapWithToolTipStyle(getMessage(code, null, null, getLocale()));
+        return wrapWithToolTipStyle(getMessage(code));
+    }
+
+    public String getOptionalToolTip(String code) {
+        return wrapWithToolTipStyle(getOptionalMessage(code));
     }
 
     /**
      * Gets message wrapped with span with express-ui-toolTip style
+     *
      * @param args passed for substitution in the message, {0}, {1}, {2}, etc.
      * @param code key
      * @return message value from messages_* file
      */
     public String getToolTip(String code, Object[] args) {
-        return wrapWithToolTipStyle(getMessage(code, args, code));
+        return wrapWithToolTipStyle(getMessage(code, args));
+    }
+
+    public String getOptionalToolTip(String code, Object[] args) {
+        return wrapWithToolTipStyle(getOptionalMessage(code, args));
+    }
+
+    public String getOptionalToolTipFromDefaultLocale(String code, Object[] args) {
+        return wrapWithToolTipStyle(getOptionalMessageFromDefaultLocale(code, args));
     }
 
     /**
      * Gets message wrapped with span with express-ui-toolTip style
-     * @param code key
+     *
+     * @param code           key
      * @param defaultMessage message if property key not found in messages file
      * @return message value from messages_* file
      */
@@ -139,6 +201,7 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
 
     /**
      * Gets message wrapped with span with express-ui-toolTip style
+     *
      * @param code key
      * @return message value from messages_* file
      */
@@ -147,7 +210,7 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
     }
 
     private static String wrapWithToolTipStyle(String message) {
-        return "<span class=\"expressui-tool-tip\">" + message + "</span>";
+        return message == null ? null : "<span class=\"expressui-tool-tip\">" + message + "</span>";
     }
 
     /**

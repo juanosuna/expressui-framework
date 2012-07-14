@@ -44,7 +44,7 @@ import java.io.Serializable;
  */
 public interface IdentifiableEntity {
     /**
-     * Get the primary key.
+     * Gets the primary key.
      *
      * @return primary key
      */

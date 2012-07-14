@@ -121,9 +121,4 @@ public class RelatedRoles extends ManyToManyRelationship<Role, UserRole> {
     public UserRole createAssociationEntity(Role role) {
         return new UserRole(relatedRolesQuery.getParent(), role);
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "Roles";
-    }
 }

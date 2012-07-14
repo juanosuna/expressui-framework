@@ -37,6 +37,7 @@
 
 package com.expressui.core.view.field;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.dao.EntityDao;
 import com.expressui.core.dao.ReferenceEntityDao;
 import com.expressui.core.entity.ReferenceEntity;
@@ -57,10 +58,13 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.beans.BeanUtils;
 
 import javax.annotation.Resource;
 import javax.persistence.Lob;
 import javax.validation.constraints.NotNull;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
 import java.util.*;
 
 /**
@@ -126,6 +130,8 @@ public class FormField extends DisplayField {
             }
             label = new com.vaadin.ui.Label(labelText, com.vaadin.ui.Label.CONTENT_XHTML);
             label.setSizeUndefined();
+
+            setToolTip(generateTooltip());
         }
 
         return label;
@@ -134,7 +140,7 @@ public class FormField extends DisplayField {
     @Override
     protected String getLabelSectionDisplayName() {
         if (tabName.isEmpty()) {
-            return "Form";
+            return getFieldSet().uiMessageSource.getMessage("formField.defaultLabelSectionDisplayName");
         } else {
             return tabName;
         }
@@ -447,7 +453,8 @@ public class FormField extends DisplayField {
      * @param items map of items where key is bound to entity and value is the display caption
      */
     public void setSelectItems(Map<Object, String> items) {
-        setSelectItems(items, null);
+        String nullCaption = getFieldSet().uiMessageSource.getMessage("formFieldSet.select.nullCaption");
+        setSelectItems(items, nullCaption);
     }
 
     /**
@@ -597,6 +604,87 @@ public class FormField extends DisplayField {
         getField().setRequired(isRequired);
     }
 
+    private String generateTooltip(Object... args) {
+        String toolTipText = getToolTipTextFromMessageSource(false, args);
+        if (toolTipText == null) {
+            toolTipText = getToolTipTextFromAnnotation();
+        }
+
+        return toolTipText;
+    }
+
+    private String getToolTipTextFromMessageSource(boolean useDefaultLocale, Object... args) {
+        List<BeanPropertyType> ancestors = getBeanPropertyType().getAncestors();
+        String label = null;
+        for (int i = 0; i < ancestors.size(); i++) {
+            BeanPropertyType ancestor = ancestors.get(i);
+            Class currentType = ancestor.getContainerType();
+
+            String currentPropertyId = ancestor.getId();
+            for (int y = i + 1; y < ancestors.size(); y++) {
+                BeanPropertyType bpt = ancestors.get(y);
+                currentPropertyId += "." + bpt.getId();
+            }
+
+            while (label == null && currentType != null) {
+                label = getToolTipTextFromMessageSource(useDefaultLocale, currentType, currentPropertyId, args);
+                currentType = currentType.getSuperclass();
+            }
+
+            if (label != null) break;
+
+            Class[] interfaces = ancestor.getContainerType().getInterfaces();
+            for (Class anInterface : interfaces) {
+                Class currentInterface = anInterface;
+                while (label == null && currentInterface != null) {
+                    label = getToolTipTextFromMessageSource(useDefaultLocale, currentInterface, currentPropertyId, args);
+                    currentInterface = currentInterface.getSuperclass();
+                }
+                if (label != null) break;
+            }
+
+            if (label != null) break;
+        }
+
+        if (label == null) {
+            label = getToolTipTextFromMessageSource(useDefaultLocale, getBeanPropertyType().getType(), null, args);
+        }
+
+        if (label != null && label.contains("{0}") && args.length == 0) {
+            return null;
+        } else {
+            if (label == null && !useDefaultLocale) {
+                return getToolTipTextFromMessageSource(true, args);
+            } else {
+                return label;
+            }
+        }
+    }
+
+    private String getToolTipTextFromMessageSource(boolean useDefaultLocale, Class type, String propertyId,
+                                                   Object... args) {
+        String fullPropertyPath = type.getName() + (propertyId == null ? "" : "." + propertyId) + ".toolTip";
+        if (useDefaultLocale) {
+            return getFieldSet().domainMessageSourceNoFallback.getOptionalToolTipFromDefaultLocale(fullPropertyPath, args);
+        } else {
+            return getFieldSet().domainMessageSourceNoFallback.getOptionalToolTip(fullPropertyPath, args);
+        }
+    }
+
+    private String getToolTipTextFromAnnotation() {
+        Class propertyContainerType = getBeanPropertyType().getContainerType();
+        String propertyIdRelativeToContainerType = getBeanPropertyType().getId();
+        PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(propertyContainerType,
+                propertyIdRelativeToContainerType);
+        Method method = descriptor.getReadMethod();
+        ToolTip toolTipAnnotation = method.getAnnotation(ToolTip.class);
+        if (toolTipAnnotation == null) {
+            return null;
+        } else {
+            return toolTipAnnotation.value();
+        }
+    }
+
     /**
      * Get the description displayed during mouse-over/hovering
      *
@@ -612,7 +700,13 @@ public class FormField extends DisplayField {
      * @param toolTip description displayed to user
      */
     public void setToolTip(String toolTip) {
-        getField().setDescription(toolTip);
+        if (toolTip != null) {
+            getField().setDescription(toolTip);
+        }
+    }
+
+    public void setToolTipArgs(Object... args) {
+        setToolTip(generateTooltip(args));
     }
 
     /**
@@ -879,7 +973,7 @@ public class FormField extends DisplayField {
         if (field instanceof AbstractTextField) {
             if (getBeanPropertyType().getBusinessType() != null &&
                     getBeanPropertyType().getBusinessType().equals(BeanPropertyType.BusinessType.NUMBER)) {
-                addValidator(new NumberConversionValidator(this, "Invalid number"));
+                addValidator(new NumberConversionValidator(this));
             }
         }
     }
@@ -898,7 +992,10 @@ public class FormField extends DisplayField {
                 getBeanPropertyType().getId());
         if (validator.isRequired()) {
             field.setRequired(true);
-            field.setRequiredError(validator.getRequiredMessage());
+            field.setRequiredError(
+                    MainApplication.getInstance().validationMessageSource.getMessage(
+                            "com.expressui.core.view.field.FormField.required.message")
+            );
         }
 
         isRequired = field.isRequired();
@@ -910,7 +1007,10 @@ public class FormField extends DisplayField {
      * @param field Vaadin field to initialize
      */
     public static void initAbstractFieldDefaults(AbstractField field) {
-        field.setRequiredError("Required value is missing");
+        field.setRequiredError(
+                MainApplication.getInstance().validationMessageSource.getMessage(
+                        "com.expressui.core.view.field.FormField.required.message")
+        );
         field.setImmediate(true);
         field.setInvalidCommitted(false);
         field.setWriteThrough(true);

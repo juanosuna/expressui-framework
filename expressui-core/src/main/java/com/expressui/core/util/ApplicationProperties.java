@@ -43,6 +43,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.PostConstruct;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,6 +82,12 @@ public class ApplicationProperties {
 
     @Value("${expressui.sessionTimeoutWarning:5}")
     private Integer sessionTimeoutWarning = 5;
+
+    @Value("${expressui.defaultDateStyle:3}")
+    private Integer defaultDateStyle = DateFormat.SHORT;
+
+    @Value("${expressui.defaultTimeStyle:3}")
+    private Integer defaultTimeStyle = DateFormat.SHORT;
 
     @Value("${expressui.pageSizeOptions:5,10,25,50,100}")
     private String pageSizeOptions = "5,10,25,50,100";
@@ -202,6 +209,14 @@ public class ApplicationProperties {
 
     public Integer getSessionTimeoutWarning() {
         return sessionTimeoutWarning;
+    }
+
+    public Integer getDefaultDateStyle() {
+        return defaultDateStyle;
+    }
+
+    public Integer getDefaultTimeStyle() {
+        return defaultTimeStyle;
     }
 
     public List<Integer> getPageSizeOptions() {

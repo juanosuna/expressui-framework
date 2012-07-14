@@ -72,10 +72,5 @@ public class RegistrationPage extends UserOwnedEntityFormPage<Profile> {
                         "</ul>"
         );
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "Register";
-    }
 }
 

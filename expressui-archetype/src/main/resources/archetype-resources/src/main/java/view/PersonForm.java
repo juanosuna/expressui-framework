@@ -21,13 +21,4 @@ public class PersonForm extends EntityForm<Person> {
         formFields.setCoordinates("firstName", 1, 1);
         formFields.setCoordinates("lastName", 1, 2);
     }
-
-    @Override
-    public String getTypeCaption() {
-        if (getBean().getLastName() == null) {
-            return "Person Form - New";
-        } else {
-            return "Person Form - " + getBean().getLastName();
-        }
-    }
 }

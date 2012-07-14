@@ -168,7 +168,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
 
     @Override
     public void onDisplay() {
-        applySecurity();
+//        applySecurity();
     }
 
     /**
@@ -184,6 +184,28 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
         newButton.setVisible(securityService.getCurrentUser().isCreateAllowed(getType().getName()));
 
         deleteButton.setVisible(securityService.getCurrentUser().isDeleteAllowed(getType().getName()));
+    }
+
+
+    @Override
+    public void setReadOnly(boolean isReadOnly) {
+        super.setReadOnly(isReadOnly);
+
+        newButton.setVisible(!isReadOnly);
+        viewButton.setVisible(!isReadOnly);
+        editButton.setVisible(!isReadOnly);
+        deleteButton.setVisible(!isReadOnly);
+        if (isReadOnly) {
+            actionContextMenu.setActionEnabled("crudResults.view", false);
+            actionContextMenu.setActionEnabled("crudResults.edit", false);
+            actionContextMenu.setActionEnabled("crudResults.delete", false);
+            getResultsTable().removeActionHandler(actionContextMenu);
+        } else {
+            actionContextMenu.setActionEnabled("crudResults.view", true);
+            actionContextMenu.setActionEnabled("crudResults.edit", true);
+            actionContextMenu.setActionEnabled("crudResults.delete", true);
+            getResultsTable().addActionHandler(actionContextMenu);
+        }
     }
 
     /**

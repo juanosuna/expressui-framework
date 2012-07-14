@@ -38,6 +38,7 @@
 package com.expressui.sample.entity;
 
 
+import com.expressui.core.entity.NameableEntity;
 import com.expressui.core.entity.UserOwnedEntity;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
@@ -55,7 +56,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table
-public class Profile extends WritableEntity implements UserOwnedEntity {
+public class Profile extends WritableEntity implements UserOwnedEntity, NameableEntity {
 
     private String firstName;
 
@@ -108,6 +109,7 @@ public class Profile extends WritableEntity implements UserOwnedEntity {
         this.lastName = lastName;
     }
 
+    @Override
     public String getName() {
         if (getFirstName() == null && getLastName() != null) {
             return getFirstName();

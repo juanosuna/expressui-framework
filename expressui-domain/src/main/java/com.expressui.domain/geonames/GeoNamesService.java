@@ -37,6 +37,7 @@
 
 package com.expressui.domain.geonames;
 
+import com.expressui.core.util.ApplicationProperties;
 import com.expressui.domain.RestClientService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -67,11 +68,14 @@ public class GeoNamesService extends RestClientService {
     @Resource
     private GeoNamesClient geoNamesClient;
 
+    @Value("${geoNamesService.username:}")
+    private String username;
+
     public Map<String, CountryInfo> getCountries() {
 
         Map<String, CountryInfo> countries = new HashMap<String, CountryInfo>();
 
-        GeoNamesResponse geoNamesResponse = geoNamesClient.getPostalCodeCountryInfo("josuna");
+        GeoNamesResponse geoNamesResponse = geoNamesClient.getPostalCodeCountryInfo(username);
         for (CountryInfo country : geoNamesResponse.countries) {
             countries.put(country.countryCode, country);
         }
@@ -83,7 +87,7 @@ public class GeoNamesService extends RestClientService {
 
         Map<String, String> currencyCodes = new HashMap<String, String>();
 
-        GeoNamesResponse geoNamesResponse = geoNamesClient.getCountryInfo("josuna");
+        GeoNamesResponse geoNamesResponse = geoNamesClient.getCountryInfo(username);
         for (CountryInfo info : geoNamesResponse.countries) {
             currencyCodes.put(info.countryCode, info.currencyCode);
         }

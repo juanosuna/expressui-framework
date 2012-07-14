@@ -160,12 +160,14 @@ public class SecurityService {
      * Login as default system user, useful for testing or scenarios where no authentication is required. System user
      * has full rights without restrictions.
      */
-    public void loginAsDefaultSystemUser() {
+    public User loginAsDefaultSystemUser() {
         User user = new User(DEFAULT_USER, DEFAULT_USER);
         Role role = new Role(DEFAULT_ROLE);
         UserRole userRole = new UserRole(user, role);
         user.getUserRoles().add(userRole);
         setCurrentUser(user);
+
+        return user;
     }
 
     /**
@@ -174,7 +176,7 @@ public class SecurityService {
      * @param loginName     user name
      * @param loginPassword password in plaintext
      */
-    public void login(String loginName, String loginPassword) throws AuthenticationException {
+    public User login(String loginName, String loginPassword) throws AuthenticationException {
         logout();
 
         if (loginName == null) loginName = "";
@@ -192,6 +194,8 @@ public class SecurityService {
 
         setCurrentUser(user);
         setCurrentLoginName(loginName);
+
+        return user;
     }
 
     /**

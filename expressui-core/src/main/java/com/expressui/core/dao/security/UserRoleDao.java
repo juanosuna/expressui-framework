@@ -42,7 +42,7 @@ import com.expressui.core.entity.security.UserRole;
 import org.springframework.stereotype.Repository;
 
 /**
- * UserRole DAO
+ * UserRole DAO.
  */
 @Repository
 public class UserRoleDao extends EntityDao<UserRole, UserRole.Id> {

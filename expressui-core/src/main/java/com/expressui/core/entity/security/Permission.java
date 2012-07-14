@@ -37,8 +37,10 @@
 
 package com.expressui.core.entity.security;
 
+import com.expressui.core.entity.NameableEntity;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.view.field.LabelRegistry;
+import com.expressui.core.view.util.MessageSource;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 import org.hibernate.validator.constraints.NotBlank;
@@ -49,18 +51,24 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 /**
- * A permission for controlling view, create, edit or delete actions against an
- * type or a field/property within an type.
+ * A permission for controlling view, create, edit or delete actions against a
+ * type or a field/property within an type. View and edit permissions are valid for
+ * both types and fields within a type. However, create and delete permissions only
+ * apply to types themselves (where field is null).
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @ValidPermission
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"TARGET_TYPE", "FIELD"}))
-public class Permission extends WritableEntity {
+public class Permission extends WritableEntity implements NameableEntity {
 
     @Transient
     @Resource
     private LabelRegistry labelRegistry;
+
+    @Transient
+    @Resource
+    private MessageSource uiMessageSource;
 
     private String targetType;
     private String field;
@@ -83,9 +91,9 @@ public class Permission extends WritableEntity {
     }
 
     /**
-     * Get type for entity this permission applies to.
+     * Gets type of entity this permission applies to.
      *
-     * @return name of the entity class type
+     * @return name of the target entity's type
      */
     @NotBlank
     @NotNull
@@ -95,16 +103,16 @@ public class Permission extends WritableEntity {
     }
 
     /**
-     * Set the type of entity this permission applies to.
+     * Sets the type of entity this permission applies to.
      *
-     * @param targetType name of the entity class type
+     * @return name of the target entity's type
      */
     public void setTargetType(String targetType) {
         this.targetType = targetType;
     }
 
     /**
-     * Get the field name this permission applies to.
+     * Gets the field name this permission applies to.
      *
      * @return name of the field (bean property), null if this permission applies to type only
      */
@@ -113,7 +121,7 @@ public class Permission extends WritableEntity {
     }
 
     /**
-     * Set the field name this permission applies to.
+     * Sets the field name this permission applies to.
      *
      * @param field name of the field (bean property), null if this permission applies to type only
      */
@@ -121,8 +129,17 @@ public class Permission extends WritableEntity {
         this.field = field;
     }
 
+    @Override
+    public String getName() {
+        if (getField() == null) {
+            return getTargetType();
+        } else {
+            return getTargetTypeLabel() + "." + getFieldLabel();
+        }
+    }
+
     /**
-     * Ask if this permission grants view access
+     * Asks if this permission grants view access.
      *
      * @return true to grant view access
      */
@@ -131,7 +148,7 @@ public class Permission extends WritableEntity {
     }
 
     /**
-     * Set if this permission grants view access
+     * Sets if this permission grants view access.
      *
      * @param view true to grant view access
      */
@@ -140,7 +157,7 @@ public class Permission extends WritableEntity {
     }
 
     /**
-     * Ask if this permission grants create access
+     * Asks if this permission grants create access.
      *
      * @return true to grant create access
      */
@@ -149,7 +166,7 @@ public class Permission extends WritableEntity {
     }
 
     /**
-     * Set if this permission grants create access
+     * Sets if this permission grants create access.
      *
      * @param create true to grant create access
      */
@@ -158,7 +175,7 @@ public class Permission extends WritableEntity {
     }
 
     /**
-     * Ask if this permission grants edit access
+     * Asks if this permission grants edit access.
      *
      * @return true to grant edit access
      */
@@ -167,7 +184,7 @@ public class Permission extends WritableEntity {
     }
 
     /**
-     * Set if this permission grants edit access
+     * Sets if this permission grants edit access.
      *
      * @param edit true to grant edit access
      */
@@ -176,7 +193,7 @@ public class Permission extends WritableEntity {
     }
 
     /**
-     * Ask if this permission grants delete access
+     * Asks if this permission grants delete access.
      *
      * @return true to grant delete access
      */
@@ -185,7 +202,7 @@ public class Permission extends WritableEntity {
     }
 
     /**
-     * Set if this permission grants delete access
+     * Sets if this permission grants delete access.
      *
      * @param delete true to grant delete access
      */
@@ -194,32 +211,32 @@ public class Permission extends WritableEntity {
     }
 
     /**
-     * Get display-friend list of create, view, edit, delete permissions
+     * Gets a display-friendly list of create, view, edit, delete permissions.
      *
      * @return comma-delimited list for display to end user
      */
     public String getPermissions() {
         StringBuilder permissions = new StringBuilder();
         if (isCreateAllowed()) {
-            permissions.append("Create");
+            permissions.append(uiMessageSource.getMessage("crudResults.new"));
         }
         if (isViewAllowed()) {
             if (permissions.length() > 0) {
                 permissions.append(", ");
             }
-            permissions.append("View");
+            permissions.append(uiMessageSource.getMessage("crudResults.view"));
         }
         if (isEditAllowed()) {
             if (permissions.length() > 0) {
                 permissions.append(", ");
             }
-            permissions.append("Edit");
+            permissions.append(uiMessageSource.getMessage("crudResults.edit"));
         }
         if (isDeleteAllowed()) {
             if (permissions.length() > 0) {
                 permissions.append(", ");
             }
-            permissions.append("Delete");
+            permissions.append(uiMessageSource.getMessage("crudResults.delete"));
         }
 
         return permissions.toString();
@@ -256,6 +273,7 @@ public class Permission extends WritableEntity {
      *
      * @return parent Role
      */
+    @NotNull
     public Role getRole() {
         return role;
     }

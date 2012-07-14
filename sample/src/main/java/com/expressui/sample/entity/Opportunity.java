@@ -38,6 +38,7 @@
 package com.expressui.sample.entity;
 
 
+import com.expressui.core.entity.NameableEntity;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.validation.AssertTrueForProperties;
@@ -60,7 +61,7 @@ import static com.expressui.core.util.StringUtil.isEmpty;
 
 @Entity
 @Table
-public class Opportunity extends WritableEntity {
+public class Opportunity extends WritableEntity implements NameableEntity {
 
     @Resource
     @Transient
@@ -123,6 +124,7 @@ public class Opportunity extends WritableEntity {
     @NotBlank
     @NotNull
     @Size(min = 1, max = 64)
+    @Override
     public String getName() {
         return name;
     }

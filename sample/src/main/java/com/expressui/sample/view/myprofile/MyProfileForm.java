@@ -37,9 +37,11 @@
 
 package com.expressui.sample.view.myprofile;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.view.field.format.UrlPropertyFormatter;
 import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.form.UserOwnedEntityForm;
+import com.expressui.sample.entity.Contact;
 import com.expressui.sample.entity.Phone;
 import com.expressui.sample.entity.Profile;
 import com.expressui.sample.formatter.PhonePropertyFormatter;
@@ -77,28 +79,14 @@ public class MyProfileForm<T extends Profile> extends UserOwnedEntityForm<Profil
 
         formFields.setReadOnly("user.loginName", true);
 
-        formFields.setLabel("phoneType", null);
         formFields.setWidth("phoneType", 7, Sizeable.UNITS_EM);
-        formFields.setToolTip("phone", Phone.TOOL_TIP);
+        getFormFieldSet().setToolTipArgs("phone", Phone.getExampleNumber(
+                MainApplication.getInstance().getLocale().getCountry()));
 
         formFields.addConversionValidator("phone", new PhoneConversionValidator());
         formFields.setPropertyFormatter("phone", new PhonePropertyFormatter());
 
         formFields.setField("user.loginPassword", new PasswordField());
         formFields.setField("user.repeatLoginPassword", new PasswordField());
-    }
-
-    @Override
-    public String getTypeCaption() {
-        return "My Profile";
-    }
-
-    @Override
-    public String getEntityCaption() {
-        if (getBean().getName() == null) {
-            return "My Profile - New";
-        } else {
-            return "My Profile - " + getBean().getName();
-        }
     }
 }

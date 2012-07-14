@@ -38,11 +38,14 @@
 package com.expressui.sample.view;
 
 import com.expressui.core.MainApplication;
-import com.expressui.core.security.exception.*;
+import com.expressui.core.entity.security.User;
+import com.expressui.core.security.exception.AuthenticationException;
 import com.expressui.core.view.RootComponent;
 import com.expressui.core.view.menu.MainMenuBar;
 import com.expressui.core.view.page.Page;
 import com.expressui.sample.view.dashboard.SampleDashboardPage;
+import com.expressui.sample.view.myprofile.MyProfilePage;
+import com.expressui.sample.view.registration.RegistrationPage;
 import com.vaadin.ui.*;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -70,18 +73,18 @@ public class LoginPage extends RootComponent implements Page {
         LoginForm loginForm = new LoginForm();
         loginForm.addStyleName("border");
         loginForm.setSizeUndefined();
-        loginForm.setLoginButtonCaption("Login");
-        loginForm.setUsernameCaption("Username");
-        loginForm.setPasswordCaption("Password");
+        loginForm.setLoginButtonCaption(uiMessageSource.getMessage("loginPage.button"));
+        loginForm.setUsernameCaption(uiMessageSource.getMessage("loginPage.username"));
+        loginForm.setPasswordCaption(uiMessageSource.getMessage("loginPage.password"));
         loginForm.addListener(new LoginHandler());
 
         Panel panel = new Panel();
         panel.addStyleName("loginPage");
         panel.addStyleName("border");
         panel.setSizeUndefined();
-        panel.setCaption("Login");
+        panel.setCaption(uiMessageSource.getMessage("loginPage.caption"));
         panel.addComponent(loginForm);
-        panel.addComponent(new Label("Tip: login as guest/guest"));
+        panel.addComponent(new Label(uiMessageSource.getMessage("loginPage.tip")));
 
         addComponent(panel);
         setComponentAlignment(panel, Alignment.MIDDLE_CENTER);
@@ -113,12 +116,14 @@ public class LoginPage extends RootComponent implements Page {
                 securityService.login(userName, password);
 
                 // Once logged in, hide Login and Registration pages
-                mainMenuBar.getRightMenuBarRoot().getChild("Login").setVisible(false);
-                mainMenuBar.getRightMenuBarRoot().getChild("Register").setVisible(false);
+                mainMenuBar.getRightMenuBarRoot().getChild(LoginPage.class.getName()).setVisible(false);
+
+                mainMenuBar.getRightMenuBarRoot().getChild(RegistrationPage.class.getName()).setVisible(false);
 
                 // Embed login name next to My Account caption
-                mainMenuBar.getRightMenuBarRoot().getChild("My Account").setCaption("My Account ("
-                        + securityService.getCurrentUser().getLoginName() + ")");
+                mainMenuBar.getRightMenuBarRoot().getChild(MyProfilePage.class.getName()).setCaption(
+                        domainMessageSource.getMessage(MyProfilePage.class.getName(),
+                                new Object[]{"(" + securityService.getCurrentUser().getLoginName() + ")"}));
 
                 // Refresh menu bar so that user can now see everything they have access to
                 getMainApplication().mainMenuBar.refresh();
@@ -126,8 +131,9 @@ public class LoginPage extends RootComponent implements Page {
                 getMainApplication().displayPage(SampleDashboardPage.class);
 
             } catch (AuthenticationException e) {
+                String message = uiMessageSource.getMessage("loginPage." + e.getClass().getSimpleName());
                 // Show error notification when user enters bad credentials or account is locked, etc.
-                getMainApplication().showNotification(e.getMessage(), Window.Notification.TYPE_ERROR_MESSAGE,
+                getMainApplication().showNotification(message, Window.Notification.TYPE_ERROR_MESSAGE,
                         Window.Notification.POSITION_CENTERED_BOTTOM, 2000);
             }
         }

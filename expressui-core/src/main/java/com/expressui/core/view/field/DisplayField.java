@@ -47,6 +47,7 @@ import org.springframework.beans.BeanUtils;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * A field for display in the UI, e.g. as a column in results table or input field in a form.
@@ -144,7 +145,7 @@ public abstract class DisplayField {
             return defaultFormats.getDateTimeFormat();
         } else if (getBeanPropertyType().getBusinessType() == BeanPropertyType.BusinessType.NUMBER) {
             if (getBeanPropertyType().getType().isPrimitive()) {
-                return defaultFormats.getNumberFormat(0);
+                return defaultFormats.getNumberFormat(0, 0);
             } else {
                 return defaultFormats.getNumberFormat();
             }
@@ -180,8 +181,12 @@ public abstract class DisplayField {
         this.label = label;
     }
 
-    String generateLabelText() {
-        String labelText = getLabelTextFromMessageSource();
+    public void setLabelArgs(Object... args) {
+        setLabel(generateLabelText(args));
+    }
+
+    protected String generateLabelText(Object... args) {
+        String labelText = getLabelTextFromMessageSource(false, args);
         if (labelText == null) {
             labelText = getLabelTextFromAnnotation();
         }
@@ -201,9 +206,62 @@ public abstract class DisplayField {
      */
     abstract protected String getLabelSectionDisplayName();
 
-    private String getLabelTextFromMessageSource() {
-        String fullPropertyPath = fieldSet.getType().getName() + "." + getPropertyId();
-        return fieldSet.domainMessageSource.getMessage(fullPropertyPath);
+    private String getLabelTextFromMessageSource(boolean useDefaultLocale, Object... args) {
+        List<BeanPropertyType> ancestors = beanPropertyType.getAncestors();
+        String label = null;
+        for (int i = 0; i < ancestors.size(); i++) {
+            BeanPropertyType ancestor = ancestors.get(i);
+            Class currentType = ancestor.getContainerType();
+
+            String currentPropertyId = ancestor.getId();
+            for (int y = i + 1; y < ancestors.size(); y++) {
+                BeanPropertyType bpt = ancestors.get(y);
+                currentPropertyId += "." + bpt.getId();
+            }
+
+            while (label == null && currentType != null) {
+                label = getLabelTextFromMessageSource(useDefaultLocale, currentType, currentPropertyId, args);
+                currentType = currentType.getSuperclass();
+            }
+
+            if (label != null) break;
+
+            Class[] interfaces = ancestor.getContainerType().getInterfaces();
+            for (Class anInterface : interfaces) {
+                Class currentInterface = anInterface;
+                while (label == null && currentInterface != null) {
+                    label = getLabelTextFromMessageSource(useDefaultLocale, currentInterface, currentPropertyId, args);
+                    currentInterface = currentInterface.getSuperclass();
+                }
+                if (label != null) break;
+            }
+
+            if (label != null) break;
+        }
+
+        if (label == null) {
+            label = getLabelTextFromMessageSource(useDefaultLocale, beanPropertyType.getType(), null, args);
+        }
+
+        if (label != null && label.contains("{0}") && args.length == 0) {
+            return null;
+        } else {
+            if (label == null && !useDefaultLocale) {
+                return getLabelTextFromMessageSource(true, args);
+            } else {
+                return label;
+            }
+        }
+    }
+
+    private String getLabelTextFromMessageSource(boolean useDefaultLocale, Class type, String propertyId,
+                                                 Object... args) {
+        String fullPropertyPath = type.getName() + (propertyId == null ? "" : "." + propertyId);
+        if (useDefaultLocale) {
+            return getFieldSet().domainMessageSourceNoFallback.getOptionalMessageFromDefaultLocale(fullPropertyPath, args);
+        } else {
+            return getFieldSet().domainMessageSourceNoFallback.getOptionalMessage(fullPropertyPath, args);
+        }
     }
 
     private String getLabelTextFromAnnotation() {

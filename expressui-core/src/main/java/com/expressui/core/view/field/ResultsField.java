@@ -118,7 +118,7 @@ public class ResultsField extends DisplayField {
 
     @Override
     protected String getLabelSectionDisplayName() {
-        return "Column";
+        return getFieldSet().uiMessageSource.getMessage("resultsField.defaultLabelSectionDisplayName");
     }
 
     @Override

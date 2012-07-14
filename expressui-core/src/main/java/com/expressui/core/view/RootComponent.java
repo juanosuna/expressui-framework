@@ -108,6 +108,12 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     @Resource
     public MessageSource uiMessageSource;
 
+    /**
+     * Provides validation error messages
+     */
+    @Resource
+    public MessageSource validationMessageSource;
+
     protected RootComponent() {
     }
 
@@ -123,6 +129,22 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
 
     @Override
     public void postWire() {
+    }
+
+    public String getDomainMessage() {
+        return domainMessageSource.getMessage(getClass().getName());
+    }
+
+    public String getDomainMessage(String code) {
+        return domainMessageSource.getMessage(getClass().getName() + "." + code);
+    }
+
+    public String getDomainMessage(Object... args) {
+        return domainMessageSource.getMessage(getClass().getName(), args);
+    }
+
+    public String getDomainMessage(String code, Object... args) {
+        return domainMessageSource.getMessage(getClass().getName() + "." + code, args);
     }
 
     /**

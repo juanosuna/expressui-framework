@@ -39,6 +39,7 @@ package com.expressui.core.entity.security;
 
 import com.expressui.core.dao.security.PermissionDao;
 import com.expressui.core.util.SpringApplicationContext;
+import com.expressui.core.view.util.MessageSource;
 
 import javax.annotation.Resource;
 import javax.validation.ConstraintValidator;
@@ -53,6 +54,9 @@ public class PermissionValidator implements ConstraintValidator<ValidPermission,
 
     @Resource
     private PermissionDao permissionDao;
+
+    @Resource
+    private MessageSource validationMessageSource;
 
     public PermissionValidator() {
         SpringApplicationContext.autowire(this);
@@ -75,7 +79,8 @@ public class PermissionValidator implements ConstraintValidator<ValidPermission,
                 if (!existingPermission.equals(permission)) {
                     context.disableDefaultConstraintViolation();
                     context.buildConstraintViolationWithTemplate(
-                            "Existing permission entity already found for selection").addConstraintViolation();
+                            validationMessageSource.getMessage("com.expressui.core.entity.security.ValidPermission.message"))
+                            .addConstraintViolation();
                     return false;
                 } else {
                     return true;

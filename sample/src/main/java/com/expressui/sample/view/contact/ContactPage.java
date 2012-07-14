@@ -87,10 +87,5 @@ public class ContactPage extends SearchPage<Contact> {
                         "</ul>"
         );
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "Contacts";
-    }
 }
 

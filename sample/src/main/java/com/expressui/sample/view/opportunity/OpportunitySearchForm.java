@@ -57,9 +57,4 @@ public class OpportunitySearchForm extends SearchForm<OpportunityQuery> {
 
         formFields.setMultiSelectDimensions("salesStages", 3, 10);
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "Opportunity Search Form";
-    }
 }

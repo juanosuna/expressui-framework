@@ -35,36 +35,11 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.sample.view.contact;
+package com.expressui.core.entity;
 
-import com.expressui.core.view.field.SelectField;
-import com.expressui.core.view.form.FormFieldSet;
-import com.expressui.core.view.form.SearchForm;
-import com.expressui.sample.dao.query.ContactQuery;
-import com.expressui.sample.entity.Account;
-import com.expressui.sample.view.select.AccountSelect;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
-
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-
-@Component
-@Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings({"serial"})
-public class ContactSearchForm extends SearchForm<ContactQuery> {
-
-    @Resource
-    private AccountSelect accountSelect;
-
-    @Override
-    public void init(FormFieldSet formFields) {
-        formFields.setCoordinates("lastName", 1, 1);
-        formFields.setCoordinates("account.name", 2, 1);
-
-        SelectField<ContactQuery, Account> accountField =
-                new SelectField<ContactQuery, Account>(this, "account", accountSelect);
-        formFields.setField("account.name", accountField);
-    }
+/**
+ * Any entity that has a name.
+ */
+public interface NameableEntity {
+    String getName();
 }

@@ -107,14 +107,6 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
         getEntitySelect().getResults().setSelectButtonListener(this, "itemsSelected");
     }
 
-    @Override
-    public void create() {
-        super.create();
-
-        T value = getEntityForm().getBean();
-        setReferenceToParent(value);
-    }
-
     /**
      * Invoked when user clicks to add an entity to the to-many relationship. Implementation should
      * take appropriate action, depending on type of relationships, aggregation, composition.
@@ -192,8 +184,10 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
      *
      * @param isReadOnly true if read only
      */
+    @Override
     public void setReadOnly(boolean isReadOnly) {
         super.setReadOnly(isReadOnly);
+
         addButton.setVisible(!isReadOnly);
         removeButton.setVisible(!isReadOnly);
         if (isReadOnly) {

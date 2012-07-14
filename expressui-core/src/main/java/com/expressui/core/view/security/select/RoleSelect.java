@@ -74,11 +74,6 @@ public class RoleSelect extends EntitySelect<Role> {
         return roleSelectResults;
     }
 
-    @Override
-    public String getTypeCaption() {
-        return "Select Role";
-    }
-
     @Component
     @Scope(SCOPE_PROTOTYPE)
     public static class RoleSelectResults extends EntitySelectResults<Role> {

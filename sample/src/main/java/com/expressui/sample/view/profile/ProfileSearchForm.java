@@ -54,9 +54,4 @@ public class ProfileSearchForm extends SearchForm<ProfileQuery> {
     public void init(FormFieldSet formFields) {
         formFields.setCoordinates("loginName", 1, 1);
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "Profile Search Form";
-    }
 }

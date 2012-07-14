@@ -186,7 +186,7 @@ public class PermissionForm extends EntityForm<Permission> {
 
         if (newTargetType != null) {
             Map<Object, String> fieldItems = getFieldItems(newTargetType);
-            getFormFieldSet().setSelectItems("field", fieldItems, "None");
+            getFormFieldSet().setSelectItems("field", fieldItems);
 
             syncCRUDCheckboxes(null);
 
@@ -237,23 +237,5 @@ public class PermissionForm extends EntityForm<Permission> {
         Role role = relatedPermissionsQuery.getParent();
 
         return permissionDao.findByRole(role);
-    }
-
-    @Override
-    public String getTypeCaption() {
-        return "Permission Form";
-    }
-
-    @Override
-    public String getEntityCaption() {
-        if (getBean().getTargetType() == null) {
-            return "Permission Form - New";
-        } else {
-            if (getBean().getField() == null) {
-                return "Permission Form - " + getBean().getTargetTypeLabel();
-            } else {
-                return "Permission Form - " + getBean().getTargetTypeLabel() + "." + getBean().getFieldLabel();
-            }
-        }
     }
 }

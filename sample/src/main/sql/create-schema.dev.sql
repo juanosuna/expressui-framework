@@ -33,7 +33,7 @@
 
     create table SAMPLE.ACCOUNT_TYPE (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         primary key (ID)
     );
@@ -89,7 +89,7 @@
 
     create table SAMPLE.COUNTRY (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         COUNTRY_TYPE varchar(255),
         MAX_POSTAL_CODE varchar(255),
@@ -100,21 +100,21 @@
 
     create table SAMPLE.CURRENCY (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         primary key (ID)
     );
 
     create table SAMPLE.INDUSTRY (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         primary key (ID)
     );
 
     create table SAMPLE.LEAD_SOURCE (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         primary key (ID)
     );
@@ -158,7 +158,7 @@
         FIELD varchar(255),
         TARGET_TYPE varchar(64) not null,
         VIEW_ALLOWED boolean not null,
-        ROLE_ID bigint,
+        ROLE_ID bigint not null,
         primary key (ID),
         unique (TARGET_TYPE, FIELD)
     );
@@ -199,7 +199,7 @@
 
     create table SAMPLE.SALES_STAGE (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         PROBABILITY double not null,
         primary key (ID)
@@ -207,7 +207,7 @@
 
     create table SAMPLE.STATE (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         CODE varchar(255),
         STATE_TYPE varchar(255),

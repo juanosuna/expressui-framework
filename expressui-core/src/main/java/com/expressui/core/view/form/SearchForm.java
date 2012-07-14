@@ -39,11 +39,12 @@ package com.expressui.core.view.form;
 
 import com.expressui.core.dao.query.EntityQuery;
 import com.expressui.core.dao.query.StructuredEntityQuery;
+import com.expressui.core.util.ReflectionUtil;
+import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.results.Results;
 import com.vaadin.data.util.BeanItem;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.HorizontalLayout;
 
 import javax.annotation.PostConstruct;
@@ -56,7 +57,7 @@ import javax.annotation.PostConstruct;
  */
 public abstract class SearchForm<T extends EntityQuery> extends TypedForm<T> {
 
-    private Results<T> results;
+    private Results results;
 
     @PostConstruct
     @Override
@@ -86,7 +87,7 @@ public abstract class SearchForm<T extends EntityQuery> extends TypedForm<T> {
      *
      * @return results UI component
      */
-    public Results<T> getResults() {
+    public Results getResults() {
         return results;
     }
 
@@ -137,5 +138,14 @@ public abstract class SearchForm<T extends EntityQuery> extends TypedForm<T> {
     public void search() {
         getForm().commit();
         getResults().search();
+    }
+
+    @Override
+    public String getTypeCaption() {
+        Class type = ReflectionUtil.getGenericArgumentType(getType());
+        Assert.PROGRAMMING.notNull(type, "This component must specify a generic type");
+
+        String typeName = domainMessageSource.getMessage(type.getName(), type.getSimpleName());
+        return uiMessageSource.getMessage("searchForm.typeCaption", new Object[] {typeName});
     }
 }

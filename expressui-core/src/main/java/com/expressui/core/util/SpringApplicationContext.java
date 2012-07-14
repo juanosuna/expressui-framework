@@ -108,7 +108,7 @@ public class SpringApplicationContext implements ApplicationContextAware {
      * Find all beans of a given type in the application context.
      *
      * @param type type to search for
-     * @param <T> type to query
+     * @param <T>  type to query
      * @return set of all beans of a given type
      */
     public static <T> Set<T> getBeansByType(Class<T> type) {
@@ -121,7 +121,7 @@ public class SpringApplicationContext implements ApplicationContextAware {
      *
      * @param type                type to search for
      * @param genericArgumentType generic argument type declared on the bean
-     * @param <T> type to query
+     * @param <T>                 type to query
      * @return found bean
      */
     public static <T> T mustGetBeanByTypeAndGenericArgumentType(Class<T> type, Class genericArgumentType) {
@@ -158,7 +158,7 @@ public class SpringApplicationContext implements ApplicationContextAware {
      *
      * @param type                type to search for
      * @param genericArgumentType generic argument type declared on the bean
-     * @param <T> type to query
+     * @param <T>                 type to query
      * @return found beans
      */
     public static <T> Set<T> getBeansByTypeAndGenericArgumentType(Class<T> type, Class genericArgumentType) {

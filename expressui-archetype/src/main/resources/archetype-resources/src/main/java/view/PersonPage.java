@@ -44,10 +44,5 @@ public class PersonPage extends SearchPage<Person> {
         // Used to track usage statistics only for sample application, you may remove for real application
         UrlUtil.addTrackingUrl((AbstractComponentContainer) getCompositionRoot(), "archetype");
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "People";
-    }
 }
 

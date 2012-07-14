@@ -91,7 +91,7 @@ public class ExportForm extends TypedForm<ExportParameters> {
 
     @Override
     public String getTypeCaption() {
-        return uiMessageSource.getMessage("exportForm.export");
+        return uiMessageSource.getMessage("exportForm.typeCaption");
     }
 
     /**
@@ -114,6 +114,14 @@ public class ExportForm extends TypedForm<ExportParameters> {
 
         formFields.setCoordinates("displayRowHeaders", 3, 1);
         formFields.setCoordinates("displayTotals", 3, 2);
+
+        formFields.setLabel("exportFilename", uiMessageSource.getMessage("exportForm.exportFilename"));
+        formFields.setLabel("workbookName", uiMessageSource.getMessage("exportForm.workbookName"));
+        formFields.setLabel("sheetName", uiMessageSource.getMessage("exportForm.sheetName"));
+        formFields.setLabel("dateFormat", uiMessageSource.getMessage("exportForm.dateFormat"));
+        formFields.setLabel("doubleFormat", uiMessageSource.getMessage("exportForm.doubleFormat"));
+        formFields.setLabel("displayRowHeaders", uiMessageSource.getMessage("exportForm.displayRowHeaders"));
+        formFields.setLabel("displayTotals", uiMessageSource.getMessage("exportForm.displayTotals"));
     }
 
     @Override

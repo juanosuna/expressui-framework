@@ -37,22 +37,25 @@
 
 package com.expressui.sample.entity;
 
-public enum OpportunityType {
+import com.expressui.core.entity.NameableEntity;
+
+public enum OpportunityType implements NameableEntity {
     NEW("New Business"),
     EXISTING("Existing Business");
 
-    private String displayName;
+    private String name;
 
-    OpportunityType(String displayName) {
-        this.displayName = displayName;
+    OpportunityType(String name) {
+        this.name = name;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
     public String toString() {
-        return displayName;
+        return name;
     }
 }

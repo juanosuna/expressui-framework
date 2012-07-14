@@ -46,7 +46,7 @@ import javax.persistence.Query;
 import java.util.List;
 
 /**
- * User DAO with RelatedRolesQuery.
+ * User DAO.
  */
 @Repository
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -56,7 +56,7 @@ public class UserDao extends EntityDao<User, Long> {
     private UserRoleDao userRoleDao;
 
     /**
-     * Find all Users ordered by loginName.
+     * Finds all Users ordered by login name.
      *
      * @return all roles
      */
@@ -68,6 +68,12 @@ public class UserDao extends EntityDao<User, Long> {
         return query.getResultList();
     }
 
+    /**
+     * Finds User by login name.
+     *
+     * @param loginName login name to query
+     * @return found user
+     */
     public User findByLoginName(String loginName) {
         Query query = getEntityManager().createQuery("SELECT u FROM User u " +
                 " LEFT JOIN FETCH u.userRoles ur LEFT JOIN FETCH ur.role r LEFT JOIN FETCH r.permissions" +

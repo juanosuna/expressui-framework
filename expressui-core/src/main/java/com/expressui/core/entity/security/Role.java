@@ -37,6 +37,7 @@
 
 package com.expressui.core.entity.security;
 
+import com.expressui.core.entity.NameableEntity;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.util.assertion.Assert;
 import org.hibernate.validator.constraints.NotBlank;
@@ -53,7 +54,7 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table
-public class Role extends WritableEntity {
+public class Role extends WritableEntity implements NameableEntity {
 
     private String name;
 

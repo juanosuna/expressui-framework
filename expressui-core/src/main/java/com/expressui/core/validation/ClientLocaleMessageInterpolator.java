@@ -35,36 +35,27 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.sample.view.contact;
+package com.expressui.core.validation;
 
-import com.expressui.core.view.field.SelectField;
-import com.expressui.core.view.form.FormFieldSet;
-import com.expressui.core.view.form.SearchForm;
-import com.expressui.sample.dao.query.ContactQuery;
-import com.expressui.sample.entity.Account;
-import com.expressui.sample.view.select.AccountSelect;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import com.expressui.core.MainApplication;
 
-import javax.annotation.Resource;
+import javax.validation.MessageInterpolator;
+import java.util.Locale;
 
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+public class ClientLocaleMessageInterpolator implements MessageInterpolator {
+    private final MessageInterpolator delegate;
 
-@Component
-@Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings({"serial"})
-public class ContactSearchForm extends SearchForm<ContactQuery> {
-
-    @Resource
-    private AccountSelect accountSelect;
+    public ClientLocaleMessageInterpolator(MessageInterpolator delegate) {
+        this.delegate = delegate;
+    }
 
     @Override
-    public void init(FormFieldSet formFields) {
-        formFields.setCoordinates("lastName", 1, 1);
-        formFields.setCoordinates("account.name", 2, 1);
+    public String interpolate(String message, Context context) {
+        return this.interpolate(message, context, MainApplication.getInstance().getLocale());
+    }
 
-        SelectField<ContactQuery, Account> accountField =
-                new SelectField<ContactQuery, Account>(this, "account", accountSelect);
-        formFields.setField("account.name", accountField);
+    @Override
+    public String interpolate(String message, Context context, Locale locale) {
+        return delegate.interpolate(message, context, locale);
     }
 }

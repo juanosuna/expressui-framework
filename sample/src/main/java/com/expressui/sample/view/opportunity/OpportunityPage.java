@@ -78,10 +78,5 @@ public class OpportunityPage extends SearchPage<Opportunity> {
                         "</ul>"
         );
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "Opportunities";
-    }
 }
 

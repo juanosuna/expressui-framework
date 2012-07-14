@@ -53,30 +53,47 @@ import com.expressui.sample.view.opportunity.OpportunityPage;
 import com.expressui.sample.view.profile.ProfilePage;
 import com.expressui.sample.view.registration.RegistrationPage;
 
+import javax.servlet.http.Cookie;
+import java.util.Locale;
+
 @SuppressWarnings({"serial"})
 public class SampleApplication extends MainApplication {
 
     @Override
     public void configureLeftMenuBar(MenuBarNode rootNode) {
-        rootNode.addPage("Home", HomePage.class);
-        rootNode.addPage("Dashboard", SampleDashboardPage.class);
-        rootNode.addPage("Accounts", AccountPage.class);
-        rootNode.addPage("Opportunities", OpportunityPage.class);
-        rootNode.addPage("Contacts", ContactPage.class);
+        rootNode.addPage(HomePage.class);
+        rootNode.addPage(SampleDashboardPage.class);
+        rootNode.addPage(AccountPage.class);
+        rootNode.addPage(OpportunityPage.class);
+        rootNode.addPage(ContactPage.class);
 
-        MenuBarNode securityNode = rootNode.addCaption("Security");
-        securityNode.addPage("Users", UserPage.class);
-        securityNode.addPage("Roles", RolePage.class);
-        securityNode.addPage("Profiles", ProfilePage.class);
+        MenuBarNode securityNode = rootNode.addCaption(getClass().getName() + "." + "security");
+        securityNode.addPage(UserPage.class);
+        securityNode.addPage(RolePage.class);
+        securityNode.addPage(ProfilePage.class);
     }
 
     @Override
     public void configureRightMenuBar(MenuBarNode rootNode) {
-        MenuBarNode myAccountNode = rootNode.addPage("My Account", MyProfilePage.class);
-        myAccountNode.addCommand("Logout", this, "logout");
+        MenuBarNode languageNode = rootNode.addCaption(getClass().getName() + "." + "language");
+        languageNode.addCommand(this, "setEnglish");
+        languageNode.addCommand(this, "setGerman");
 
-        rootNode.addPage("Login", LoginPage.class);
-        rootNode.addPage("Register", RegistrationPage.class);
+        MenuBarNode myAccountNode = rootNode.addPage(MyProfilePage.class);
+        myAccountNode.addCommand(this, "logout");
+
+        rootNode.addPage(LoginPage.class);
+        rootNode.addPage(RegistrationPage.class);
+    }
+
+    public void setEnglish() {
+        MainApplication.getInstance().addCookie("language", Locale.US.toLanguageTag(), 60 * 60 * 24 * 365 * 5);
+        MainApplication.getInstance().logout();
+    }
+
+    public void setGerman() {
+        MainApplication.getInstance().addCookie("language", Locale.GERMANY.toLanguageTag(), 60 * 60 * 24 * 365 * 5);
+        MainApplication.getInstance().logout();
     }
 
     @Override
@@ -86,6 +103,11 @@ public class SampleApplication extends MainApplication {
 
     @Override
     public void init() {
+        Cookie languageCookie = getCookie("language");
+        if (languageCookie != null) {
+            MainApplication.getInstance().setLocale(Locale.forLanguageTag(languageCookie.getValue()));
+        }
+
         super.init();
 
         try {
@@ -96,8 +118,6 @@ public class SampleApplication extends MainApplication {
         displayPage(LoginPage.class);
         mainMenuBar.refresh();
 
-        checkInternetConnectivity(UrlUtil.EXPRESSUI_TEST_PAGE,
-                "The sample application requires an Internet connection.</br>If it is running behind a proxy," +
-                        " please configure http.proxyHost and http.proxyPort in application.properties.");
+        checkInternetConnectivity(UrlUtil.EXPRESSUI_TEST_PAGE, getDomainMessage("internetConnectivityError"));
     }
 }

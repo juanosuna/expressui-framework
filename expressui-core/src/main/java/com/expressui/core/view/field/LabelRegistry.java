@@ -37,15 +37,19 @@
 
 package com.expressui.core.view.field;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+
+import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
 
 /**
  * A registry for managing UI display labels, used internally by security permissions to provide
  * admin user with meaningful names to link permissions with entities or UI components.
  */
 @Component
+@Scope(SCOPE_SESSION)
 public class LabelRegistry {
 
     private Map<String, String> typeLabels = new TreeMap<String, String>();

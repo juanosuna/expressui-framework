@@ -37,7 +37,6 @@
 
 package com.expressui.sample.view.account.related;
 
-import com.expressui.core.view.field.format.JDKBridgePropertyFormatter;
 import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.core.view.tomanyrelationship.AggregationRelationship;
 import com.expressui.sample.dao.query.RelatedOpportunitiesQuery;
@@ -48,15 +47,15 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.text.NumberFormat;
+
 import java.util.Locale;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 /**
-* User: Juan
-* Date: 7/7/12
-*/
+ * User: Juan
+ * Date: 7/7/12
+ */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class RelatedOpportunities extends AggregationRelationship<Opportunity> {
@@ -94,11 +93,7 @@ public class RelatedOpportunities extends AggregationRelationship<Opportunity> {
                 "expectedCloseDate"
         );
 
-        resultsFields.setLabel("valueWeightedInUSD", "Weighted Amount");
-        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
-        numberFormat.setMaximumFractionDigits(0);
-        JDKBridgePropertyFormatter formatter = new JDKBridgePropertyFormatter(numberFormat);
-        resultsFields.setPropertyFormatter("valueWeightedInUSD", formatter);
+        resultsFields.setPropertyFormatter("valueWeightedInUSD", defaultFormats.getCurrencyFormat(Locale.US, 0));
     }
 
     @Override
@@ -109,10 +104,5 @@ public class RelatedOpportunities extends AggregationRelationship<Opportunity> {
     @Override
     public String getParentPropertyId() {
         return "account";
-    }
-
-    @Override
-    public String getTypeCaption() {
-        return "Company Sales Opportunities";
     }
 }

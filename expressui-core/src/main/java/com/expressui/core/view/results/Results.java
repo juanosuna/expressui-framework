@@ -37,6 +37,7 @@
 
 package com.expressui.core.view.results;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.dao.query.EntityQuery;
 import com.expressui.core.view.TypedComponent;
 import com.expressui.core.view.export.ExportForm;
@@ -52,9 +53,12 @@ import com.vaadin.ui.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Results component that is bound the results of a query.
@@ -298,7 +302,7 @@ public abstract class Results<T> extends TypedComponent<T> {
             }
         });
 
-        PropertyFormatter propertyFormatter = defaultFormats.getNumberFormat(1);
+        PropertyFormatter propertyFormatter = defaultFormats.getNumberFormat(0, 1);
         propertyFormatter.setPropertyDataSource(new MethodProperty(getResultsTable(), "firstResult"));
         firstResultTextField.setPropertyDataSource(propertyFormatter);
         firstResultTextField.setWidth(3, Sizeable.UNITS_EM);
@@ -437,7 +441,7 @@ public abstract class Results<T> extends TypedComponent<T> {
                         query.getResultCount() == 0 ? 0 : query.getLastResult(),
                         query.getResultCount()});
 
-        PropertyFormatter propertyFormatter = defaultFormats.getNumberFormat(1);
+        PropertyFormatter propertyFormatter = defaultFormats.getNumberFormat(0, 1);
         propertyFormatter.setPropertyDataSource(new MethodProperty(getResultsTable(), "firstResult"));
         firstResultTextField.setPropertyDataSource(propertyFormatter);
         firstResultTextField.setWidth(Math.max(3, query.getResultCount().toString().length() - 1), Sizeable.UNITS_EM);
@@ -454,9 +458,16 @@ public abstract class Results<T> extends TypedComponent<T> {
         }
 
         entityLabel += " ";
-        exportForm.getExportParameters().setWorkbookName(entityLabel + "Export");
-        exportForm.getExportParameters().setSheetName(entityLabel + "Export");
-        exportForm.getExportParameters().setExportFilename("\"" + entityLabel + "Export.xls\"");
+        exportForm.getExportParameters().setWorkbookName(entityLabel
+                + uiMessageSource.getMessage("exportForm.defaultWorkbookName"));
+        exportForm.getExportParameters().setSheetName(entityLabel
+                + uiMessageSource.getMessage("exportForm.defaultSheetName"));
+        exportForm.getExportParameters().setExportFilename("\"" + entityLabel
+                + uiMessageSource.getMessage("exportForm.defaultFileName") + "\"");
+        exportForm.getExportParameters().setDateFormat(
+                uiMessageSource.getMessage("exportForm.defaultDateFormat"));
+        exportForm.getExportParameters().setDoubleFormat(
+                uiMessageSource.getMessage("exportForm.defaultDoubleFormat"));
 
         exportForm.open();
     }

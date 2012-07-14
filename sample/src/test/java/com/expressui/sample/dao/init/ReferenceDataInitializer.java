@@ -219,11 +219,11 @@ public class ReferenceDataInitializer {
                 Currency currency = new Currency(currencyCode);
                 if (!currencyDao.isPersistent(currency)) {
                     if (currency.getId().equals("EUR")) {
-                        currency.setDisplayName(currency.getId() + "-Europe");
+                        currency.setName(currency.getId() + "-Europe");
                     } else if (currency.getId().equals("USD")) {
-                        currency.setDisplayName(currency.getId() + "-United States");
+                        currency.setName(currency.getId() + "-United States");
                     } else {
-                        currency.setDisplayName(currency.getId() + "-" + country.getDisplayName());
+                        currency.setName(currency.getId() + "-" + country.getName());
                     }
                     currencyDao.persist(currency);
                 }

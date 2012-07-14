@@ -69,7 +69,7 @@ import java.util.List;
  * This is useful for performing standard database operations where no type-specific
  * implementation is needed, thus avoiding empty type-specific DAOs.
  * <p/>
- * Methods that write to the database are marked @Transactional.
+ * All methods that write to the database are marked @Transactional.
  */
 @Repository
 public class GenericDao {
@@ -80,7 +80,18 @@ public class GenericDao {
     private EntityManager entityManager;
 
     /**
-     * Get the JPA EntityManager.
+     * Gets the class type of an entity, which can be a proxy.
+     *
+     * @param entity the entity to check
+     * @param <T>        type of entity
+     * @return type of the given entity
+     */
+    private <T> Class<? extends T> getEntityType(T entity) {
+        return Hibernate.getClass(entity);
+    }
+
+    /**
+     * Gets the JPA EntityManager.
      *
      * @return the EntityManager
      */
@@ -89,36 +100,9 @@ public class GenericDao {
     }
 
     /**
-     * Get a managed reference to the given entity, which may have been detached. The managed reference is retrieved
-     * using given entity's primary key. This is useful when you need an managed reference to an entity and don't
-     * care about merging it's state.
+     * Creates an entity of given type.
      *
-     * @param entity for getting the primary key
-     * @return attached but hollow entity
-     * @see javax.persistence.EntityManager#getReference(Class, Object)
-     */
-    public <T> T getReference(T entity) {
-        Object primaryKey = getId(entity);
-        Assert.PROGRAMMING.notNull(primaryKey, "entity argument must be persistent and have a primary key");
-        return getEntityManager().getReference(getEntityType(entity), primaryKey);
-    }
-
-    /**
-     * Get the type of the given entity.
-     *
-     * @param entity entity to check
-     * @param <T>    entity
-     * @return type of the given entity
-     */
-    private <T> Class<? extends T> getEntityType(T entity) {
-        return Hibernate.getClass(entity);
-    }
-
-
-    /**
-     * Create entity of given type
-     *
-     * @param entityType type of entity to create
+     * @param entityType the type of entity to create
      * @param <T>        type of entity
      * @return newly created entity
      */
@@ -133,9 +117,11 @@ public class GenericDao {
     }
 
     /**
-     * Remove a managed or detached entity.
+     * Removes a managed or detached entity.
      *
      * @param entity either attached or detached
+     * @param <T>        type of entity
+     * @see javax.persistence.EntityManager#remove(Object)
      */
     @Transactional
     public <T> void remove(T entity) {
@@ -144,9 +130,10 @@ public class GenericDao {
     }
 
     /**
-     * Merge given entity.
+     * Merges an entity.
      *
-     * @param entity to merge
+     * @param entity the entity to merge
+     * @param <T>        type of entity
      * @return managed entity
      * @see javax.persistence.EntityManager#merge(Object)
      */
@@ -156,9 +143,10 @@ public class GenericDao {
     }
 
     /**
-     * Persist given entity.
+     * Persists an entity.
      *
-     * @param entity to persist
+     * @param entity the entity to persist
+     * @param <T>        type of entity
      * @see javax.persistence.EntityManager#persist(Object)
      */
     @Transactional
@@ -167,9 +155,10 @@ public class GenericDao {
     }
 
     /**
-     * Persist a collection of entities
+     * Persists a collection of entities
      *
-     * @param entities to persist
+     * @param entities the entities to persist
+     * @param <T>        type of entity
      */
     @Transactional
     public <T> void persist(Collection<T> entities) {
@@ -179,11 +168,11 @@ public class GenericDao {
     }
 
     /**
-     * Save a given entity, i.e. persist if new and merge if already persistent
+     * Saves an entity, persisting it if new and merging it if already persistent.
      *
-     * @param entity to save
-     * @param <T>    managed instance
-     * @return merged entity if entity was merged, else same as argument
+     * @param entity the entity to save
+     * @param <T>        type of entity
+     * @return merged entity if entity was merged, else same as argument if persisted
      */
     @Transactional
     public <T> T save(T entity) {
@@ -196,9 +185,10 @@ public class GenericDao {
     }
 
     /**
-     * Refresh given entity.
+     * Refreshes an entity.
      *
-     * @param entity to refresh
+     * @param entity the entity to refresh
+     * @param <T>        type of entity
      * @see javax.persistence.EntityManager#refresh(Object)
      */
     public <T> void refresh(T entity) {
@@ -206,9 +196,25 @@ public class GenericDao {
     }
 
     /**
-     * Get the id or primary key of the given entity.
+     * Gets a managed reference to the given entity, which may have become detached. The managed reference is retrieved
+     * using given entity's primary key. This is useful when you need an managed reference to an entity and don't
+     * care about merging it's state.
      *
-     * @param entity persistent entity
+     * @param entity a possibly detached but persistent entity that contains primary key
+     * @param <T>        type of entity
+     * @return managed but hollow entity
+     * @see javax.persistence.EntityManager#getReference(Class, Object)
+     */
+    public <T> T getReference(T entity) {
+        Object primaryKey = getId(entity);
+        Assert.PROGRAMMING.notNull(primaryKey, "entity argument must be persistent and have a primary key");
+        return getEntityManager().getReference(getEntityType(entity), primaryKey);
+    }
+
+    /**
+     * Gets the id or primary key of a persistent entity.
+     *
+     * @param entity the persistent entity
      * @param <T>    type of given entity
      * @return id or primary key
      */
@@ -223,10 +229,11 @@ public class GenericDao {
     }
 
     /**
-     * Ask if given entity is persistent, i.e. if it has a primary key
+     * Asks if an entity is persistent, that is if it has a primary key.
      *
-     * @param entity to check
-     * @return true if entity has primary key
+     * @param entity the entity to check
+     * @param <T>        type of entity
+     * @return true if entity has a primary key
      */
     public <T> boolean isPersistent(T entity) {
         Serializable id = getId(entity);
@@ -239,7 +246,7 @@ public class GenericDao {
     }
 
     /**
-     * Flush the entityManager.
+     * Flushes the EntityManager.
      *
      * @see javax.persistence.EntityManager#flush()
      */
@@ -248,7 +255,7 @@ public class GenericDao {
     }
 
     /**
-     * Clear the entityManager.
+     * Clears the EntityManager.
      *
      * @see javax.persistence.EntityManager#clear()
      */
@@ -257,10 +264,11 @@ public class GenericDao {
     }
 
     /**
-     * Find entity by primary key.
+     * Finds an entity by primary key.
      *
-     * @param entityType type of entity
-     * @param id         primary key
+     * @param entityType the type of entity
+     * @param id         the primary key
+     * @param <T>        type of entity
      * @return found entity
      * @see javax.persistence.EntityManager#find(Class, Object)
      */
@@ -269,11 +277,11 @@ public class GenericDao {
     }
 
     /**
-     * Find the entity again from the database.
+     * Finds an entity again from the database.
      *
-     * @param entity persistent entity with an id
-     * @param <T> type of entity to refind
-     * @return attached entity found from database
+     * @param entity the persistent entity with an id
+     * @param <T>    type of entity to refind
+     * @return attached entity found from database, null if none found
      */
     public <T> T reFind(T entity) {
         Assert.PROGRAMMING.notNull(entity);
@@ -286,13 +294,14 @@ public class GenericDao {
     }
 
     /**
-     * Find entity by natural id, or business key. This method only works for entities that have a single property
+     * Finds an entity by natural id, or business key. This method only works for entities that have a single property
      * marked as @NaturalId. The benefit of calling this method is that Hibernate will try to look up the entity
      * in the secondary cache.
      *
-     * @param entityType    type of entity
-     * @param propertyName  name of the property in the entity that is marked @NaturalId
-     * @param propertyValue value to search for
+     * @param entityType    the type of entity
+     * @param propertyName  the name of the property in the entity that is marked @NaturalId
+     * @param propertyValue the value to search for
+     * @param <T>        type of entity
      * @return found entity
      */
     public <T> T findByNaturalId(Class<? extends T> entityType, String propertyName, Object propertyValue) {
@@ -306,12 +315,12 @@ public class GenericDao {
     }
 
     /**
-     * Find single entity owned by a given user, e.g Profile
+     * Finds a single entity that is "owned" by a given user, for example a user profile or preferences.
      *
-     * @param entityType type of entity
-     * @param user       user to query
+     * @param entityType the type of entity
+     * @param user       the user to query
      * @param <T>        type of entity
-     * @return found entity
+     * @return found entity, null if none found
      */
     public <T> T findUserOwnedEntity(Class<? extends T> entityType, User user) {
         Assert.PROGRAMMING.isTrue(UserOwnedEntity.class.isAssignableFrom(entityType),
@@ -330,9 +339,10 @@ public class GenericDao {
     }
 
     /**
-     * Find all entities of given type.
+     * Finds all entities of given type.
      *
-     * @param entityType type of entity
+     * @param entityType the type of entity
+     * @param <T>        type of entity
      * @return list of all entities
      */
     public <T> List<T> findAll(Class<? extends T> entityType) {
@@ -342,9 +352,10 @@ public class GenericDao {
     }
 
     /**
-     * Get a count of all entities of given type.
+     * Gets a count of all entities of given type.
      *
-     * @param entityType type of entity
+     * @param entityType the type of entity
+     * @param <T>        type of entity
      * @return count of all records in the database
      */
     public <T> Long countAll(Class<? extends T> entityType) {
@@ -354,7 +365,7 @@ public class GenericDao {
     }
 
     /**
-     * Utility method for setting hints on given query to read-only, thus enabling caching
+     * Utility method for setting Hibernate hints on a query to read-only, thus enabling caching.
      *
      * @param query query to set hints on
      */
@@ -365,9 +376,11 @@ public class GenericDao {
     }
 
     /**
-     * Execute the given structured entity query.
+     * Executes a structured entity query.
      *
-     * @param structuredEntityQuery query that can be re-executed as paging, sort and other criteria change
+     * @param structuredEntityQuery the structured entity query that can be re-executed
+     *                              as paging, sort and other criteria vary
+     * @param <T>        type of entity
      * @return list of found entities
      * @see com.expressui.core.dao.query.StructuredEntityQuery
      */
@@ -378,10 +391,12 @@ public class GenericDao {
     }
 
     /**
-     * Execute the given structured entity query that finds child entities that reference a parent entity in a
+     * Executes a structured entity query that finds child entities that reference a parent entity in a
      * to-many relationship.
      *
-     * @param toManyRelationshipQuery query that can be re-executed as paging, sort and other criteria change
+     * @param toManyRelationshipQuery the query that can be re-executed as paging, sort and other criteria vary
+     * @param <T>        type of entity
+     * @param <P>        type of parent entity
      * @return list of found entities
      * @see com.expressui.core.dao.query.ToManyRelationshipQuery
      */
@@ -391,7 +406,7 @@ public class GenericDao {
                 toManyRelationshipQuery).execute();
     }
 
-    class StructuredQueryExecutor {
+    private class StructuredQueryExecutor {
 
         private Class entityType;
 
@@ -492,7 +507,7 @@ public class GenericDao {
         }
     }
 
-    class ToManyRelationshipQueryExecutor extends StructuredQueryExecutor {
+    private class ToManyRelationshipQueryExecutor extends StructuredQueryExecutor {
         public ToManyRelationshipQueryExecutor(Class entityType, ToManyRelationshipQuery toManyRelationshipQuery) {
             super(entityType, toManyRelationshipQuery);
         }

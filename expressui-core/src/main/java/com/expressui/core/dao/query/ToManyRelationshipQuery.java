@@ -40,28 +40,23 @@ package com.expressui.core.dao.query;
 import java.util.List;
 
 /**
- * A structured query for finding entities that are related to a parent through a "to-many" relationship.
+ * A structured query for finding entities that are related to a parent or another entity through a "to-many"
+ * relationship.
  *
  * @param <T> type of entity being queried
- * @param <P> type of the parent in the to-many relationship
+ * @param <P> type of the parent or other side in the to-many relationship
  */
 public abstract class ToManyRelationshipQuery<T, P> extends StructuredEntityQuery<T> {
 
-    @Override
-    public void postConstruct() {
-        super.postConstruct();
-        setPageSize(5);
-    }
-
     /**
-     * Get the parent entity for the query.
+     * Gets the parent entity for this query.
      *
      * @return parent entity
      */
     public abstract P getParent();
 
     /**
-     * Set the parent entity for the query.
+     * Sets the parent entity for this query.
      *
      * @param parent parent entity
      */

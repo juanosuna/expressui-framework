@@ -37,7 +37,6 @@
 
 package com.expressui.sample.view.account;
 
-import com.expressui.core.view.field.format.JDKBridgePropertyFormatter;
 import com.expressui.core.view.results.CrudResults;
 import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.AccountQuery;
@@ -47,7 +46,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.text.NumberFormat;
+
 import java.util.Locale;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
@@ -86,16 +85,9 @@ public class AccountResults extends CrudResults<Account> {
                 "modifiedBy"
         );
 
-        resultsFields.setLabel("billingAddress.state.code", "State");
-        resultsFields.setLabel("mainPhone", "Phone");
-        resultsFields.setLabel("numberOfEmployees", "# of Employees");
-        resultsFields.setLabel("annualRevenueInUSD", "Annual Revenue");
         resultsFields.setSortable("mainPhone", false);
 
-        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
-        numberFormat.setMaximumFractionDigits(0);
-        JDKBridgePropertyFormatter formatter = new JDKBridgePropertyFormatter(numberFormat);
-        resultsFields.setPropertyFormatter("annualRevenueInUSD", formatter);
+        resultsFields.setPropertyFormatter("annualRevenueInUSD", defaultFormats.getCurrencyFormat(Locale.US, 0));
 
         resultsFields.setAlignment("billingAddress.state.code", Table.ALIGN_CENTER);
         resultsFields.setAlignment("billingAddress.country", Table.ALIGN_CENTER);

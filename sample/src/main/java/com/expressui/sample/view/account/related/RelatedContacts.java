@@ -96,8 +96,6 @@ public class RelatedContacts extends AggregationRelationship<Contact> {
                 "mainPhone"
         );
 
-        resultsFields.setLabel("mailingAddress.state.code", "State");
-        resultsFields.setLabel("mainPhone", "Phone");
         resultsFields.setSortable("name", false);
         resultsFields.setSortable("mainPhone", false);
         resultsFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
@@ -114,10 +112,5 @@ public class RelatedContacts extends AggregationRelationship<Contact> {
     @Override
     public String getParentPropertyId() {
         return "account";
-    }
-
-    @Override
-    public String getTypeCaption() {
-        return "Company Contacts";
     }
 }

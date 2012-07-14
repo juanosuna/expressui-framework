@@ -39,7 +39,6 @@ package com.expressui.sample.view.select;
 
 import com.expressui.core.view.entityselect.EntitySelect;
 import com.expressui.core.view.entityselect.EntitySelectResults;
-import com.expressui.core.view.field.format.JDKBridgePropertyFormatter;
 import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.OpportunityQuery;
 import com.expressui.sample.entity.Opportunity;
@@ -48,7 +47,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.text.NumberFormat;
+
 import java.util.Locale;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
@@ -74,11 +73,6 @@ public class OpportunitySelect extends EntitySelect<Opportunity> {
         return opportunitySelectResults;
     }
 
-    @Override
-    public String getTypeCaption() {
-        return "Select Opportunity";
-    }
-
     @Component
     @Scope(SCOPE_PROTOTYPE)
     public static class OpportunitySelectResults extends EntitySelectResults<Opportunity> {
@@ -100,12 +94,7 @@ public class OpportunitySelect extends EntitySelect<Opportunity> {
                     "expectedCloseDate"
             );
 
-            resultsFields.setLabel("valueWeightedInUSD", "Weighted Amount");
-
-            NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
-            numberFormat.setMaximumFractionDigits(0);
-            JDKBridgePropertyFormatter formatter = new JDKBridgePropertyFormatter(numberFormat);
-            resultsFields.setPropertyFormatter("valueWeightedInUSD", formatter);
+            resultsFields.setPropertyFormatter("valueWeightedInUSD", defaultFormats.getCurrencyFormat(Locale.US, 0));
         }
     }
 }

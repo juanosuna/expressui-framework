@@ -37,7 +37,6 @@
 
 package com.expressui.sample.view.opportunity;
 
-import com.expressui.core.view.field.format.JDKBridgePropertyFormatter;
 import com.expressui.core.view.results.CrudResults;
 import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.sample.dao.query.OpportunityQuery;
@@ -47,7 +46,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.text.NumberFormat;
+
 import java.util.Locale;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
@@ -84,12 +83,7 @@ public class OpportunityResults extends CrudResults<Opportunity> {
                 "modifiedBy"
         );
 
-        resultsFields.setLabel("valueWeightedInUSD", "Weighted Amount");
-
-        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(Locale.US);
-        numberFormat.setMaximumFractionDigits(0);
-        JDKBridgePropertyFormatter formatter = new JDKBridgePropertyFormatter(numberFormat);
-        resultsFields.setPropertyFormatter("valueWeightedInUSD", formatter);
+        resultsFields.setPropertyFormatter("valueWeightedInUSD", defaultFormats.getCurrencyFormat(Locale.US, 0));
 
         resultsFields.setAlignment("valueWeightedInUSD", Table.ALIGN_RIGHT);
         resultsFields.setAlignment("expectedCloseDate", Table.ALIGN_CENTER);

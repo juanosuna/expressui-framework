@@ -108,20 +108,6 @@ public class ProfileForm extends EntityForm<Profile> {
         profile.setUser(user);
     }
 
-    @Override
-    public String getTypeCaption() {
-        return "Profile Form";
-    }
-
-    @Override
-    public String getEntityCaption() {
-        if (getBean().getName() == null) {
-            return "Profile Form - New";
-        } else {
-            return "Profile Form - " + getBean().getName();
-        }
-    }
-
     @Component
     @Scope(SCOPE_PROTOTYPE)
     public static class ProfileUserQuery extends UserQuery {

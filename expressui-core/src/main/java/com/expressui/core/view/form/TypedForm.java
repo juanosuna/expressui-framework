@@ -337,7 +337,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
 
     void executeContextAction(String name) {
         if (name.startsWith(uiMessageSource.getMessage("typedForm.add") + " ")) {
-            String tabName = name.substring(4);
+            String tabName = name.substring(uiMessageSource.getMessage("typedForm.add").length() + 1);
             FormFieldSet.AddRemoveTabMethodDelegate addRemoveTabMethodDelegate = getFormFieldSet().getTabAddRemoveDelegate(tabName);
             addRemoveTabMethodDelegate.getAddTabMethodDelegate().execute();
             TabSheet.Tab tab = getTabByName(tabName);
@@ -345,7 +345,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
             tab.setVisible(true);
             formTabSheet.setSelectedTab(tab.getComponent());
         } else if (name.startsWith(uiMessageSource.getMessage("typedForm.remove") + " ")) {
-            String tabName = name.substring(7);
+            String tabName = name.substring(uiMessageSource.getMessage("typedForm.remove").length() + 1);
             FormFieldSet.AddRemoveTabMethodDelegate addRemoveTabMethodDelegate = getFormFieldSet().getTabAddRemoveDelegate(tabName);
             addRemoveTabMethodDelegate.getRemoveTabMethodDelegate().execute();
             TabSheet.Tab tab = getTabByName(tabName);

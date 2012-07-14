@@ -124,20 +124,40 @@ public class BeanPropertyType {
     }
 
     private void initAnnotations() {
+        initPropertyAnnotations();
+        Class currentType = containerType;
+        while (currentType != null) {
+            boolean foundProperty = initFieldAnnotations(currentType);
+            if (foundProperty) break;
+            currentType = currentType.getSuperclass();
+        }
+    }
+
+    private void initPropertyAnnotations() {
         PropertyDescriptor descriptor = BeanUtils.getPropertyDescriptor(containerType, id);
-        Method method = descriptor.getReadMethod();
-        Assert.PROGRAMMING.notNull(method);
-        Annotation[] readMethodAnnotations = method.getAnnotations();
-        Collections.addAll(annotations, readMethodAnnotations);
+        if (descriptor != null) {
+            Method method = descriptor.getReadMethod();
+            if (method != null) {
+                Annotation[] readMethodAnnotations = method.getAnnotations();
+                Collections.addAll(annotations, readMethodAnnotations);
+            }
+        }
+    }
+
+    private boolean initFieldAnnotations(Class containerType) {
+        boolean foundProperty = false;
 
         Field field;
         try {
             field = containerType.getDeclaredField(id);
+            foundProperty = true;
             Annotation[] fieldAnnotations = field.getAnnotations();
             Collections.addAll(annotations, fieldAnnotations);
         } catch (NoSuchFieldException e) {
             // no need to get annotations if field doesn't exist
         }
+
+        return foundProperty;
     }
 
     /**
@@ -248,6 +268,19 @@ public class BeanPropertyType {
      */
     public BeanPropertyType getParent() {
         return parent;
+    }
+
+    public List<BeanPropertyType> getAncestors() {
+        List<BeanPropertyType> ancestors = new ArrayList<BeanPropertyType>();
+        BeanPropertyType currentBeanPropertyType = this;
+        while (currentBeanPropertyType != null) {
+            ancestors.add(currentBeanPropertyType);
+            currentBeanPropertyType = currentBeanPropertyType.getParent();
+        }
+
+        Collections.reverse(ancestors);
+
+        return ancestors;
     }
 
     /**

@@ -71,11 +71,6 @@ public class AccountSelect extends EntitySelect<Account> {
         return accountSelectResults;
     }
 
-    @Override
-    public String getTypeCaption() {
-        return "Select Account";
-    }
-
     @Component
     @Scope(SCOPE_PROTOTYPE)
     public static class AccountSelectResults extends EntitySelectResults<Account> {
@@ -97,8 +92,6 @@ public class AccountSelect extends EntitySelect<Account> {
                     "billingAddress.state.code",
                     "billingAddress.country"
             );
-
-            resultsFields.setLabel("billingAddress.state.code", "State");
         }
     }
 }

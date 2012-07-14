@@ -45,10 +45,10 @@ import java.util.Date;
 
 /**
  * Base class for entities wishing to be audited. This means that creation and modification timestamps
- * are logged as well as the login name of the user responsible for the creation or modification.
+ * are saved to the database as well as the login name of the user responsible for the creation or modification.
  * This class also versions entities in order to handle concurrent optimistic writes gracefully.
  * Any instances of this class are automatically autowired by Spring, allowing injection
- * of resources into entities.
+ * of bean resources into entities.
  */
 @MappedSuperclass
 @EntityListeners({AuditableEntity.WritableEntityListener.class})
@@ -76,7 +76,7 @@ public abstract class AuditableEntity implements IdentifiableEntity {
     }
 
     /**
-     * Gets the version number, which is incremented every time this entity's changes are updated
+     * Gets the version number, which is incremented every time this entity' is updated.
      *
      * @return version number starting at 0
      */
@@ -85,7 +85,7 @@ public abstract class AuditableEntity implements IdentifiableEntity {
     }
 
     /**
-     * Gets the last time changes were saved to the database
+     * Gets the last time changes were saved to the database.
      *
      * @return timestamp
      */
@@ -94,7 +94,7 @@ public abstract class AuditableEntity implements IdentifiableEntity {
     }
 
     /**
-     * Gets the login name of the user who made the last modifications
+     * Gets the login name of the user who made the last modifications.
      *
      * @return login name of the user entity
      */
@@ -103,7 +103,7 @@ public abstract class AuditableEntity implements IdentifiableEntity {
     }
 
     /**
-     * Gets the time this entity was created in the database
+     * Gets the timestamp this entity was created in the database.
      *
      * @return timestamp
      */
@@ -112,7 +112,7 @@ public abstract class AuditableEntity implements IdentifiableEntity {
     }
 
     /**
-     * Gets the login name of the user who created this entity
+     * Gets the login name of the user who created this entity.
      *
      * @return login name of the user entity
      */

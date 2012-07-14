@@ -51,8 +51,8 @@ import java.text.ParsePosition;
  */
 public class NumberConversionValidator extends AbstractConversionValidator {
 
-    public NumberConversionValidator() {
-        super();
+    public NumberConversionValidator(FormField formField) {
+        super(formField);
     }
 
     public NumberConversionValidator(FormField formField, String errorMessage) {
@@ -89,5 +89,10 @@ public class NumberConversionValidator extends AbstractConversionValidator {
 
         }
         return parsedValue;
+    }
+
+    @Override
+    public String getErrorMessage() {
+        return validationMessageSource.getMessage("com.expressui.core.validation.NumberConversionValidator.message");
     }
 }

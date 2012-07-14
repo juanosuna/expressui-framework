@@ -81,14 +81,12 @@ public class ContactResults extends CrudResults<Contact> {
                 "lastName",
                 "account.name",
                 "mailingAddress.city",
-                "mailingAddress.state.displayName",
+                "mailingAddress.state.name",
                 "mailingAddress.country",
                 "lastModified",
                 "modifiedBy"
         );
 
-        resultsFields.setLabel("mailingAddress.state.displayName", "State");
-        resultsFields.setLabel("account.name", "Account");
         resultsFields.setFormLink("account.name", "account", accountForm);
 
         resultsFields.setAlignment("mailingAddress.country", Table.ALIGN_CENTER);

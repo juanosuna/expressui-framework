@@ -83,13 +83,18 @@ public class SampleDashboardPage extends DashboardPage {
         setCellPixelHeight(380);
 
         configureRecentContactResults();
-        addComponent(recentContactResults, "Recent Contacts", 1, 1);
+        addComponent(recentContactResults, uiMessageSource.getMessage("sampleDashBoard.recentContacts"),
+                1, 1);
 
         // Map is shown at coordinates 1, 2 when user selects a contact, see contactSelectionChanged
 
-        addComponent(createOpportunityChartByYear(), "Sales - Won & Lost", 2, 1);
+        addComponent(createOpportunityChartByYear(),
+                uiMessageSource.getMessage("sampleDashBoard.opportunityChartByYear"),
+                2, 1);
 
-        addComponent(createOpportunitySalesStageChart(), "Sales Stage Breakdown", 2, 2);
+        addComponent(createOpportunitySalesStageChart(),
+                uiMessageSource.getMessage("sampleDashBoard.opportunityChartBySalesStage"),
+                2, 2);
 
         // Used to track usage statistics only for sample application
         UrlUtil.addTrackingUrl((AbstractComponentContainer) getCompositionRoot(), "sample");
@@ -100,9 +105,9 @@ public class SampleDashboardPage extends DashboardPage {
 
         columnChart.setOption("is3D", true);
         columnChart.setOption("isStacked", false);
-        columnChart.addXAxisLabel("Year");
-        columnChart.addColumn("Closed Won");
-        columnChart.addColumn("Closed Lost");
+        columnChart.addXAxisLabel(uiMessageSource.getMessage("sampleDashBoard.opportunityChartByYear.axisLabel"));
+        columnChart.addColumn(uiMessageSource.getMessage("sampleDashBoard.opportunityChartByYear.closedWon"));
+        columnChart.addColumn(uiMessageSource.getMessage("sampleDashBoard.opportunityChartByYear.closedLost"));
 
         List<TotalYearSales> totalYearSalesList = opportunityDao.getSalesByYear();
         List<TotalYearSales> totalYearSalesLostList = opportunityDao.getSalesLostByYear();
@@ -124,12 +129,12 @@ public class SampleDashboardPage extends DashboardPage {
     public PieChart createOpportunitySalesStageChart() {
         PieChart pieChart = new PieChart();
 
-        pieChart.setOption("title", "Opportunity Sales Stages");
+        pieChart.setOption("title", uiMessageSource.getMessage("sampleDashBoard.opportunitySalesStages"));
         pieChart.setOption("is3D", true);
 
         List<TotalSalesStage> totalSalesStages = opportunityDao.getSalesStageCounts();
         for (TotalSalesStage totalSalesStage : totalSalesStages) {
-            pieChart.add(totalSalesStage.getSalesStage().getDisplayName(), totalSalesStage.getCount());
+            pieChart.add(totalSalesStage.getSalesStage().getName(), totalSalesStage.getCount());
         }
 
         return pieChart;
@@ -177,7 +182,7 @@ public class SampleDashboardPage extends DashboardPage {
     private void addContactLocationMap(String contactName, String formattedAddress) {
         OpenLayersMap map = mapService.createMap(formattedAddress, contactName, 16);
         if (map != null) {
-            addComponent(map, "Contact Location", 1, 2);
+            addComponent(map, uiMessageSource.getMessage("sampleDashBoard.contactLocation"), 1, 2);
         }
     }
 

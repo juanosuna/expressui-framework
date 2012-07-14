@@ -37,6 +37,7 @@
 
 package com.expressui.sample.formatter;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.util.StringUtil;
 import com.expressui.sample.entity.Phone;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -50,8 +51,6 @@ import com.vaadin.data.util.EnhancedPropertyFormatter;
 @SuppressWarnings({"serial", "unchecked"})
 public class PhonePropertyFormatter extends EnhancedPropertyFormatter {
 
-    public static final String DEFAULT_PHONE_COUNTRY = "US";
-
     @Override
     public String format(Object value) {
         Phone phone = (Phone) value;
@@ -63,7 +62,9 @@ public class PhonePropertyFormatter extends EnhancedPropertyFormatter {
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
         PhoneNumberUtil.PhoneNumberFormat format;
         String regionCodeForNumber = phoneUtil.getRegionCodeForNumber(phoneNumber);
-        if (regionCodeForNumber == null || regionCodeForNumber.equals(DEFAULT_PHONE_COUNTRY)) {
+        if (regionCodeForNumber == null || regionCodeForNumber.equals(
+                MainApplication.getInstance().getLocale().getISO3Country()
+        )) {
             format = PhoneNumberUtil.PhoneNumberFormat.NATIONAL;
         } else {
             format = PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL;
@@ -75,7 +76,7 @@ public class PhonePropertyFormatter extends EnhancedPropertyFormatter {
     @Override
     public Object parse(String formattedValue) throws Exception {
         if (!StringUtil.isEmpty(formattedValue)) {
-            return new Phone(formattedValue, DEFAULT_PHONE_COUNTRY);
+            return new Phone(formattedValue, MainApplication.getInstance().getLocale().getISO3Country());
         } else {
             return null;
         }

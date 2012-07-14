@@ -39,15 +39,14 @@ package com.expressui.sample.entity;
 
 
 import com.expressui.core.entity.ReferenceEntity;
+import com.expressui.core.view.util.MessageSource;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.annotation.Resource;
+import javax.persistence.*;
 
 import static com.expressui.core.entity.ReferenceEntity.READ_ONLY_CACHE;
 
@@ -55,6 +54,11 @@ import static com.expressui.core.entity.ReferenceEntity.READ_ONLY_CACHE;
 @Table
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = READ_ONLY_CACHE)
 public class Country extends ReferenceEntity {
+
+
+    @Resource
+    @Transient
+    private MessageSource domainMessageSource;
 
     private String countryType;
     private String minPostalCode;
@@ -72,8 +76,8 @@ public class Country extends ReferenceEntity {
         super(id);
     }
 
-    public Country(String id, String displayName) {
-        super(id, displayName);
+    public Country(String id, String name) {
+        super(id, name);
     }
 
     public String getCountryType() {
@@ -156,7 +160,7 @@ public class Country extends ReferenceEntity {
 
     public String getZipCodeToolTip() {
         if (getMinPostalCode() != null && getMaxPostalCode() != null) {
-            return "Postal code range:" +
+            return domainMessageSource.getMessage("zipCode") +
                     "<ul>" +
                     "  <li>" + getMinPostalCode() + " - " + getMaxPostalCode() + "</li>" +
                     "</ul>";

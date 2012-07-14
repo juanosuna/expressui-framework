@@ -80,16 +80,6 @@ public abstract class EntitySelect<T> extends TypedComponent<T> {
     }
 
     /**
-     * Type caption is null to avoid redundant captions.
-     *
-     * @return null
-     */
-    @Override
-    public String getTypeCaption() {
-        return null;
-    }
-
-    /**
      * Caption is null to avoid redundant captions.
      *
      * @return null
@@ -163,5 +153,11 @@ public abstract class EntitySelect<T> extends TypedComponent<T> {
 
     public void setMultiSelect(boolean isMultiSelect) {
         getResults().setMultiSelect(isMultiSelect);
+    }
+
+    @Override
+    public String getTypeCaption() {
+        String typeName = domainMessageSource.getMessage(getType().getName(), getType().getSimpleName());
+        return uiMessageSource.getMessage("entitySelect.typeCaption", new Object[] {typeName});
     }
 }

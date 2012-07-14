@@ -42,12 +42,12 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
 /**
- * Base class for entities that are read-only by end users.  and that represent
- * things like menu selects states or countries.
+ * Base class for entities that are read-only by end users and that often represent
+ * menu select items like states or countries.
  */
 @MappedSuperclass
 @Cacheable
-public abstract class ReferenceEntity implements IdentifiableEntity, Comparable {
+public abstract class ReferenceEntity implements IdentifiableEntity, NameableEntity, Comparable {
 
     /**
      * Name of read-only cache, which should be defined in the application's ehcache.xml.
@@ -55,9 +55,9 @@ public abstract class ReferenceEntity implements IdentifiableEntity, Comparable 
     public static final String READ_ONLY_CACHE = "ReadOnly";
 
     /**
-     * Property of reference entities that is displayed to users in select boxes.
+     * Property of reference entities that is displayed to users in select menus.
      */
-    public static final String DISPLAY_PROPERTY = "displayName";
+    public static final String DISPLAY_PROPERTY = "name";
 
     /**
      * Property of reference entities used for sorting reference entities, allowing full control over
@@ -68,20 +68,31 @@ public abstract class ReferenceEntity implements IdentifiableEntity, Comparable 
     @Id
     private String id;
 
-    private String displayName;
+    private String name;
 
     private Integer sortOrder;
 
     protected ReferenceEntity() {
     }
 
+    /**
+     * Constructor.
+     *
+     * @param id the primary key for this entity
+     */
     protected ReferenceEntity(String id) {
         this.id = id;
     }
 
-    protected ReferenceEntity(String id, String displayName) {
+    /**
+     * Constructor.
+     *
+     * @param id the primary key for this entity
+     * @param name the friendly name intended to displayed to end user
+     */
+    protected ReferenceEntity(String id, String name) {
         this.id = id;
-        this.displayName = displayName;
+        this.name = name;
     }
 
     @Override
@@ -94,27 +105,28 @@ public abstract class ReferenceEntity implements IdentifiableEntity, Comparable 
     }
 
     /**
-     * Get caption text for displaying to the user in menus. The display name
+     * Gets caption text for displaying to the user in menus. The display name
      * can be different than the id but doesn't have to be.
      *
      * @return friendly name that identifies this entity to an end-user
      */
-    public String getDisplayName() {
-        return displayName;
+    @Override
+    public String getName() {
+        return name;
     }
 
     /**
-     * Set caption text for displaying to the user in menus. The display name
+     * Sets caption text for displaying to the user in menus. The display name
      * can be different than the id but doesn't have to be.
      *
-     * @param displayName friendly name that identifies this entity to an end-user
+     * @param name friendly name that identifies this entity to an end-user
      */
-    public void setDisplayName(String displayName) {
-        this.displayName = displayName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
-     * Get number for controlling sort order.
+     * Gets number for controlling sort order.
      *
      * @return number for controlling sort order
      */
@@ -123,7 +135,7 @@ public abstract class ReferenceEntity implements IdentifiableEntity, Comparable 
     }
 
     /**
-     * Set number for controlling sort order.
+     * Sets number for controlling sort order.
      *
      * @param order number for controlling sort order
      */

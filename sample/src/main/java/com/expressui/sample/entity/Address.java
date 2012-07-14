@@ -191,7 +191,7 @@ public class Address extends WritableEntity {
             formattedAddress += getState().getCode() + ", ";
         }
         formattedAddress += getZipCode() + ", ";
-        formattedAddress += getCountry().getDisplayName();
+        formattedAddress += getCountry().getName();
 
         return formattedAddress;
     }

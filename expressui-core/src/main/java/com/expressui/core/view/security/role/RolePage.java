@@ -70,11 +70,6 @@ public class RolePage extends SearchPage<Role> {
     }
 
     @Override
-    public String getTypeCaption() {
-        return "Roles";
-    }
-
-    @Override
     public void postWire() {
         super.postWire();
 

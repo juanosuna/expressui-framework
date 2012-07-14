@@ -72,8 +72,8 @@ public class State extends ReferenceEntity {
         super(id);
     }
 
-    public State(String id, String displayName, Country country) {
-        super(id, displayName);
+    public State(String id, String name, Country country) {
+        super(id, name);
         this.country = country;
         this.code = extractStateCode();
     }

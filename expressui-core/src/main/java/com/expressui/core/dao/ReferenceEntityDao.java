@@ -51,8 +51,8 @@ import java.util.List;
 public class ReferenceEntityDao extends GenericDao {
 
     /**
-     * Finds all reference entities of given type ordered by ReferenceEntity.ORDER_BY_PROPERTY,
-     * ReferenceEntity.DISPLAY_PROPERTY.
+     * Finds all reference entities of given type ordered by com.expressui.core.entity.ReferenceEntity.ORDER_BY_PROPERTY
+     * and com.expressui.core.entity.ReferenceEntity.DISPLAY_PROPERTY.
      *
      * @param entityType type of entity
      * @param <T>        type of entity

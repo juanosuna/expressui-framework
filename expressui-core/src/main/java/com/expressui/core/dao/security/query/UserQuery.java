@@ -55,7 +55,8 @@ import java.util.List;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 /**
- * Structured query for finding users by login name and that do not belong to a role.
+ * Structured entity query for finding users by name and that do not belong to a role, which is useful
+ * to add users to a role that don't already belong to the role.
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -68,7 +69,7 @@ public class UserQuery extends StructuredEntityQuery<User> {
     private Role doesNotBelongToRole;
 
     /**
-     * Get login name to query
+     * Gets login name to query
      *
      * @return login name
      */
@@ -77,7 +78,7 @@ public class UserQuery extends StructuredEntityQuery<User> {
     }
 
     /**
-     * Set login name to query
+     * Sets login name to query
      *
      * @param loginName login name
      */
@@ -86,7 +87,7 @@ public class UserQuery extends StructuredEntityQuery<User> {
     }
 
     /**
-     * Get Role that matching users must not belong to.
+     * Gets {@link Role} that matching users must not belong to.
      *
      * @return role
      */
@@ -95,7 +96,7 @@ public class UserQuery extends StructuredEntityQuery<User> {
     }
 
     /**
-     * Set Role that matching users must not belong to.
+     * Sets {@link Role} that matching users must not belong to.
      *
      * @param doesNotBelongToRole role
      */

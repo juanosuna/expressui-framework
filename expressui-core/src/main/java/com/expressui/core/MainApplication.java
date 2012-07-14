@@ -69,6 +69,7 @@ import org.vaadin.dialogs.DefaultConfirmDialogFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -82,6 +83,10 @@ import java.util.Set;
  * is also tied to the current thread and can be looked up by calling getInstance().
  */
 public abstract class MainApplication extends Application implements ViewBean, HttpServletRequestListener {
+
+    private static ThreadLocal<HttpServletRequest> currentRequest = new ThreadLocal<HttpServletRequest>();
+
+    private static ThreadLocal<HttpServletResponse> currentResponse = new ThreadLocal<HttpServletResponse>();
 
     private static ThreadLocal<MainApplication> currentInstance = new ThreadLocal<MainApplication>();
 
@@ -99,6 +104,15 @@ public abstract class MainApplication extends Application implements ViewBean, H
      */
     @Resource
     public MessageSource uiMessageSource;
+
+    /**
+     * Provides messages (display labels) associated with domain-level entities
+     */
+    @Resource
+    public MessageSource domainMessageSource;
+
+    @Resource
+    public MessageSource validationMessageSource;
 
     /**
      * A registry for managing UI display labels.
@@ -125,6 +139,14 @@ public abstract class MainApplication extends Application implements ViewBean, H
 
     public String getCustomTheme() {
         return "expressui";
+    }
+
+    public String getDomainMessage(String code) {
+        return domainMessageSource.getMessage(getClass().getName() + "." + code);
+    }
+
+    public String getDomainMessage(String code, Object... args) {
+        return domainMessageSource.getMessage(getClass().getName() + "." + code, args);
     }
 
     /**
@@ -158,7 +180,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     @PostConstruct
     @Override
     public void postConstruct() {
-        MainApplication.setInstance(this);
+        currentInstance.set(this);
     }
 
     @Override
@@ -180,13 +202,19 @@ public abstract class MainApplication extends Application implements ViewBean, H
         return currentInstance.get();
     }
 
-    private static void setInstance(MainApplication application) {
-        currentInstance.set(application);
+    public static HttpServletRequest getRequest() {
+        return currentRequest.get();
+    }
+
+    public static HttpServletResponse getResponse() {
+        return currentResponse.get();
     }
 
     @Override
     public void onRequestStart(HttpServletRequest request, HttpServletResponse response) {
-        MainApplication.setInstance(this);
+        currentInstance.set(this);
+        currentRequest.set(request);
+        currentResponse.set(response);
         if (securityService.getCurrentUser() != null) {
             SecurityService.setCurrentLoginName(securityService.getCurrentUser().getLoginName());
         }
@@ -194,18 +222,46 @@ public abstract class MainApplication extends Application implements ViewBean, H
 
     @Override
     public void onRequestEnd(HttpServletRequest request, HttpServletResponse response) {
+        currentResponse.remove();
+        currentRequest.remove();
         currentInstance.remove();
         SecurityService.removeCurrentLoginName();
     }
 
+    public Cookie getCookie(String name) {
+        Cookie[] cookies = getRequest().getCookies();
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(name)) {
+                return cookie;
+            }
+        }
+
+        return null;
+    }
+
+    public void addCookie(String name, String value) {
+        Cookie cookie = new Cookie(name, value);
+        getResponse().addCookie(cookie);
+    }
+
+    public void addCookie(String name, String value, int expiry) {
+        Cookie cookie = new Cookie(name, value);
+        cookie.setMaxAge(expiry);
+        getResponse().addCookie(cookie);
+    }
+
+    public void addCookie(Cookie cookie) {
+        getResponse().addCookie(cookie);
+    }
+
     @Override
     public void init() {
-        setInstance(this);
+        currentInstance.set(this);
 
         setTheme(getCustomTheme());
         customizeConfirmDialogStyle();
 
-        Window mainWindow = new Window(uiMessageSource.getMessage("mainApplication.caption"));
+        Window mainWindow = new Window(getTypeCaption());
         mainWindow.addStyleName("e-main-window");
         setMainWindow(mainWindow);
 
@@ -243,6 +299,15 @@ public abstract class MainApplication extends Application implements ViewBean, H
         configureSessionTimeout(mainWindow);
         postWire();
         onDisplay();
+    }
+
+    /**
+     * Get the caption that describes the type of this component.
+     *
+     * @return caption that describes type of this component
+     */
+    public String getTypeCaption() {
+        return domainMessageSource.getMessage(getClass().getName());
     }
 
     private void configureSessionTimeout(Window mainWindow) {

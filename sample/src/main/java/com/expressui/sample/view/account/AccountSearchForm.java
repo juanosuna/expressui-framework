@@ -72,7 +72,6 @@ public class AccountSearchForm extends SearchForm<AccountQuery> {
         formFields.setCoordinates("states", 1, 3);
 
         formFields.setSelectItems("country", countryDao.findCountriesWithStates());
-        formFields.setToolTip("country", "Select US, Canada, Mexico, or Australia to see states");
 
         formFields.clearSelectItems("states");
         formFields.setVisible("states", false);
@@ -87,10 +86,5 @@ public class AccountSearchForm extends SearchForm<AccountQuery> {
 
         getFormFieldSet().setSelectItems("states", states);
         getFormFieldSet().setVisible("states", !states.isEmpty());
-    }
-
-    @Override
-    public String getTypeCaption() {
-        return "Account Search Form";
     }
 }

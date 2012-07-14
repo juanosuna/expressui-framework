@@ -84,11 +84,6 @@ public class ContactSelect extends EntitySelect<Contact> {
         return contactSelectResults;
     }
 
-    @Override
-    public String getTypeCaption() {
-        return "Select Contact";
-    }
-
     @Component
     @Scope(SCOPE_PROTOTYPE)
     public static class ContactSelectResults extends EntitySelectResults<Contact> {
@@ -111,8 +106,6 @@ public class ContactSelect extends EntitySelect<Contact> {
                     "mainPhone"
             );
 
-            resultsFields.setLabel("mailingAddress.state.code", "State");
-            resultsFields.setLabel("mainPhone", "Phone");
             resultsFields.setSortable("name", false);
             resultsFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
         }
@@ -130,7 +123,6 @@ public class ContactSelect extends EntitySelect<Contact> {
 
             formFields.setCoordinates("lastName", 1, 1);
             formFields.setCoordinates("country", 1, 2);
-            formFields.getFormField("country").getField().setDescription("<strong>Select US,CA,MX,AU to see states</strong>");
             formFields.setCoordinates("states", 1, 3);
 
             formFields.clearSelectItems("states");
@@ -146,11 +138,6 @@ public class ContactSelect extends EntitySelect<Contact> {
 
             getFormFieldSet().setSelectItems("states", states);
             getFormFieldSet().setVisible("states", !states.isEmpty());
-        }
-
-        @Override
-        public String getTypeCaption() {
-            return "Contact Search Form";
         }
     }
 

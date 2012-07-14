@@ -38,15 +38,23 @@
 package com.expressui.core.validation;
 
 
+import com.expressui.core.util.SpringApplicationContext;
 import com.expressui.core.view.field.FormField;
 import com.expressui.core.view.form.EntityForm;
+import com.expressui.core.view.util.MessageSource;
 import com.vaadin.data.Validator;
+
+import javax.annotation.Resource;
 
 /**
  * Abstract superclass for implementing conversion validators, which validate whether a user-entered value
  * is convertible to specific data type.
  */
 public abstract class AbstractConversionValidator implements Validator {
+
+    @Resource
+    protected MessageSource validationMessageSource;
+
     private String errorMessage;
     private FormField formField;
 
@@ -58,6 +66,8 @@ public abstract class AbstractConversionValidator implements Validator {
      * @param errorMessage error message to display to user if validation fails
      */
     protected AbstractConversionValidator(FormField formField, String errorMessage) {
+        SpringApplicationContext.autowire(this);
+
         this.formField = formField;
         this.errorMessage = errorMessage;
     }
@@ -68,10 +78,13 @@ public abstract class AbstractConversionValidator implements Validator {
      * @param formField form field that this conversion validator is bound to
      */
     protected AbstractConversionValidator(FormField formField) {
+        SpringApplicationContext.autowire(this);
+
         this.formField = formField;
     }
 
     protected AbstractConversionValidator() {
+        SpringApplicationContext.autowire(this);
     }
 
     /**
@@ -82,15 +95,6 @@ public abstract class AbstractConversionValidator implements Validator {
      */
     public String getErrorMessage() {
         return errorMessage;
-    }
-
-    /**
-     * Set error message that is displayed to user if validation were to fail. If error message is null, then this
-     * class uses the message contained in any validation exception.
-     * @param errorMessage error message
-     */
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
     }
 
     /**

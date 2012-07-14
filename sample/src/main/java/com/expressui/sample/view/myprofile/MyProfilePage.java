@@ -71,10 +71,5 @@ public class MyProfilePage extends UserOwnedEntityFormPage<Profile> {
                         "</ul>"
         );
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "My Profile";
-    }
 }
 

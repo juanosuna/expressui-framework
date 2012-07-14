@@ -101,9 +101,4 @@ public class RelatedPermissions extends ToManyRelationship<Permission> {
     public String getParentPropertyId() {
         return "role";
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "Permissions";
-    }
 }

@@ -37,10 +37,13 @@
 
 package com.expressui.sample.validator;
 
+import com.expressui.core.util.SpringApplicationContext;
+import com.expressui.core.view.util.MessageSource;
 import com.expressui.sample.entity.Phone;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 
+import javax.annotation.Resource;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
@@ -51,6 +54,13 @@ import javax.validation.ConstraintValidatorContext;
 public class PhoneValidator implements ConstraintValidator<ValidPhone, Phone> {
 
     private ValidPhone validPhone;
+
+    @Resource
+    private MessageSource validationMessageSource;
+
+    public PhoneValidator() {
+        SpringApplicationContext.autowire(this);
+    }
 
     @Override
     public void initialize(ValidPhone constraintAnnotation) {
@@ -77,8 +87,9 @@ public class PhoneValidator implements ConstraintValidator<ValidPhone, Phone> {
                 }
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate(
-                        "Invalid phone number for region: " + regionCode
-                                + ". Use format: " + getExampleNumber(regionCode)).addConstraintViolation();
+                        validationMessageSource.getMessage("com.expressui.sample.validator.ValidPhone.message",
+                                new Object[]{regionCode, getExampleNumber(regionCode)})
+                ).addConstraintViolation();
                 return false;
             }
         } else {
@@ -90,15 +101,10 @@ public class PhoneValidator implements ConstraintValidator<ValidPhone, Phone> {
 
             switch (result) {
                 case INVALID_COUNTRY_CODE:
-                    message = "Invalid region code: " + regionCode;
-                    break;
                 case TOO_SHORT:
-                    message = "Phone number invalid for region: " + regionCode
-                            + ". Use format: " + getExampleNumber(regionCode);
-                    break;
                 case TOO_LONG:
-                    message = "Phone number invalid for region: " + regionCode
-                            + ". Use format: " + getExampleNumber(regionCode);
+                    message = validationMessageSource.getMessage("com.expressui.sample.validator.ValidPhone.message",
+                            new Object[]{regionCode, getExampleNumber(regionCode)});
                     break;
             }
             if (message != null) {

@@ -128,18 +128,4 @@ public class UserForm extends EntityForm<User> {
             userRoleDao.persist(userRole);
         }
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "User Form";
-    }
-
-    @Override
-    public String getEntityCaption() {
-        if (getBean().getLoginName() == null) {
-            return "User Form - New";
-        } else {
-            return "User Form - " + getBean().getLoginName();
-        }
-    }
 }

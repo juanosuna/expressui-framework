@@ -40,19 +40,19 @@ package com.expressui.core.entity;
 import com.expressui.core.entity.security.User;
 
 /**
- * Any entity that is "owned" by a user, e.g. a user profile.
+ * Any entity that is "owned" by a user, for example a user profile.
  */
 public interface UserOwnedEntity {
 
     /**
-     * Get the owning user.
+     * Gets the owning user.
      *
      * @return owning user
      */
     User getUser();
 
     /**
-     * Set the owning user.
+     * Sets the owning user.
      *
      * @param user owning user
      */

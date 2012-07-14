@@ -79,10 +79,5 @@ public class AccountPage extends SearchPage<Account> {
                         "</ul>"
         );
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "Accounts";
-    }
 }
 

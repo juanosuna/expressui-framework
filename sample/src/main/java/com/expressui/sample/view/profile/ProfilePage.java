@@ -69,10 +69,5 @@ public class ProfilePage extends SearchPage<Profile> {
     public ProfileResults getResults() {
         return profileResults;
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "Profiles";
-    }
 }
 

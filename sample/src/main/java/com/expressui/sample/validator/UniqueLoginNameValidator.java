@@ -38,7 +38,9 @@
 package com.expressui.sample.validator;
 
 import com.expressui.core.dao.security.UserDao;
+import com.expressui.core.util.SpringApplicationContext;
 import com.expressui.core.util.StringUtil;
+import com.expressui.core.view.util.MessageSource;
 import com.vaadin.data.Validator;
 import org.springframework.stereotype.Component;
 
@@ -55,10 +57,19 @@ public class UniqueLoginNameValidator implements Validator {
     @Resource
     private UserDao userDao;
 
+    @Resource
+    protected MessageSource validationMessageSource;
+
+    public UniqueLoginNameValidator() {
+        SpringApplicationContext.autowire(this);
+    }
+
     @Override
     public void validate(Object value) throws InvalidValueException {
         if (!isValid(value)) {
-            throw new InvalidValueException("Login name is already taken.");
+            throw new InvalidValueException(
+                    validationMessageSource.getMessage("com.expressui.sample.validator.UniqueLoginNameValidator.message")
+            );
         }
     }
 

@@ -44,6 +44,7 @@ import com.expressui.core.util.SpringApplicationContext;
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.field.LabelRegistry;
 import com.expressui.core.view.page.Page;
+import com.expressui.core.view.util.MessageSource;
 import com.vaadin.ui.MenuBar;
 
 import javax.annotation.Resource;
@@ -63,6 +64,10 @@ public class MenuBarNode {
     @Resource
     private SecurityService securityService;
 
+    @Resource
+    private MessageSource domainMessageSource;
+
+    private String key;
     private String caption;
     private MenuBar.Command command;
     private boolean visible = true;
@@ -81,11 +86,12 @@ public class MenuBarNode {
      *
      * @param caption caption to display to user as menu item
      */
-    public MenuBarNode(String caption) {
+    public MenuBarNode(String key, String caption) {
         this();
-        this.caption = caption;
+        this.key = key;
+        setCaption(caption);
         command = new NullCommand();
-        labelRegistry.putTypeLabel(caption, caption); // todo fixme
+        labelRegistry.putTypeLabel(this.key, caption);
     }
 
     /**
@@ -96,18 +102,10 @@ public class MenuBarNode {
      */
     public MenuBarNode(String caption, Class<? extends Page> pageClass) {
         this();
-        this.caption = caption;
+        setCaption(caption);
         command = new PageCommand(pageClass);
-        labelRegistry.putTypeLabel(pageClass.getName(), caption);
-    }
-
-    /**
-     * Get the command that is attached to this node.
-     *
-     * @return command
-     */
-    public MenuBar.Command getCommand() {
-        return command;
+        key = pageClass.getName();
+        labelRegistry.putTypeLabel(key, caption);
     }
 
     /**
@@ -119,8 +117,37 @@ public class MenuBarNode {
      */
     public MenuBarNode(String caption, Object target, String methodName) {
         this();
-        this.caption = caption;
+        setCaption(caption);
         command = new MethodCommand(target, methodName);
+        MethodDelegate methodDelegate = ((MethodCommand) command).getMethodDelegate();
+        key = methodDelegate.getTarget().getClass().getName() + "." + methodDelegate.getMethod().getName();
+        labelRegistry.putTypeLabel(key, caption);
+    }
+
+    /**
+     * Get the command that is attached to this node.
+     *
+     * @return command
+     */
+    public MenuBar.Command getCommand() {
+        return command;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    /**
+     * Gets caption to display to user as menu item.
+     * @return caption
+     */
+    public String getCaption() {
+        return caption;
+    }
+
+    public void setCaption(String caption) {
+        Assert.PROGRAMMING.notNull(caption, "caption argument must not be null");
+        this.caption = caption;
     }
 
     /**
@@ -144,11 +171,11 @@ public class MenuBarNode {
     /**
      * Get child node associated with given name
      *
-     * @param name key to look up child
+     * @param key key to look up child
      * @return child node
      */
-    public MenuBarNode getChild(String name) {
-        return children.get(name);
+    public MenuBarNode getChild(String key) {
+        return children.get(key);
     }
 
     /**
@@ -166,11 +193,22 @@ public class MenuBarNode {
      * @param caption caption to display in menu item
      * @return newly created node, to which nested nodes may be added
      */
-    public MenuBarNode addCaption(String caption) {
-        MenuBarNode menuBarNode = new MenuBarNode(caption);
-        children.put(caption, menuBarNode);
+    public MenuBarNode addCaption(String key, String caption) {
+        MenuBarNode menuBarNode = new MenuBarNode(key, caption);
+        children.put(key, menuBarNode);
 
         return menuBarNode;
+    }
+
+    /**
+     * Add a caption to this node without any page or action associated with caption
+     *
+     * @return newly created node, to which nested nodes may be added
+     */
+    public MenuBarNode addCaption(String key) {
+        String caption = domainMessageSource.getMessage(key);
+
+        return addCaption(key, caption);
     }
 
     /**
@@ -182,9 +220,20 @@ public class MenuBarNode {
      */
     public MenuBarNode addPage(String caption, Class<? extends Page> pageClass) {
         MenuBarNode menuBarNode = new MenuBarNode(caption, pageClass);
-        children.put(caption, menuBarNode);
+        children.put(menuBarNode.getKey(), menuBarNode);
 
         return menuBarNode;
+    }
+
+    /**
+     * Add a page to this node so that the page is loaded
+     *
+     * @param pageClass page to display when menu item is chosen
+     * @return newly created node, to which nested nodes may be added
+     */
+    public MenuBarNode addPage(Class<? extends Page> pageClass) {
+        String caption = domainMessageSource.getMessage(pageClass.getName());
+        return addPage(caption, pageClass);
     }
 
     /**
@@ -197,9 +246,21 @@ public class MenuBarNode {
      */
     public MenuBarNode addCommand(String caption, Object target, String methodName) {
         MenuBarNode menuBarNode = new MenuBarNode(caption, target, methodName);
-        children.put(caption, menuBarNode);
+        children.put(menuBarNode.getKey(), menuBarNode);
 
         return menuBarNode;
+    }
+
+    /**
+     * Add a page to this node so that the page is loaded
+     *
+     * @param target     target listener object to be invoked when user chooses menu item
+     * @param methodName listener method to be invoked when user chooses menu item
+     * @return newly created node, to which nested nodes may be added
+     */
+    public MenuBarNode addCommand(Object target, String methodName) {
+        String caption = domainMessageSource.getMessage(target.getClass().getName() + "." + methodName);
+        return addCommand(caption, target, methodName);
     }
 
     MenuBar createMenuBar() {
@@ -242,16 +303,12 @@ public class MenuBarNode {
             String name = methodDelegate.getTarget().getClass().getName() + "." + methodDelegate.getMethod().getName();
             return securityService.getCurrentUser().isViewAllowed(name);
         } else if (command instanceof NullCommand) {
-            return securityService.getCurrentUser().isViewAllowed(caption);
+            return securityService.getCurrentUser().isViewAllowed(key);
         } else {
             Assert.PROGRAMMING.fail("Command must be either of type PageCommand,  MethodCommand or NullCommand. " +
                     "Instead it is of type " + command.getClass());
         }
 
         return false;
-    }
-
-    public void setCaption(String caption) {
-        this.caption = caption;
     }
 }

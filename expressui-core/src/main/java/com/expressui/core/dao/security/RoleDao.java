@@ -45,14 +45,14 @@ import javax.persistence.Query;
 import java.util.List;
 
 /**
- * Role DAO with RelatedRolesQuery.
+ * Role DAO.
  */
 @Repository
 @SuppressWarnings("unchecked")
 public class RoleDao extends EntityDao<Role, Long> {
 
     /**
-     * Find all Roles ordered by name.
+     * Finds all Roles ordered by name.
      *
      * @return all roles
      */
@@ -65,9 +65,9 @@ public class RoleDao extends EntityDao<Role, Long> {
     }
 
     /**
-     * Find Role by given name
+     * Finds Role by a given name.
      *
-     * @param name to query
+     * @param name name to query
      * @return found Role
      */
     public Role findByName(String name) {

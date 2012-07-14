@@ -53,15 +53,35 @@ import java.util.List;
 /**
  * Query for finding entities, similar to a DAO but adds support for paging and sorting result sets.
  * <p/>
- * Generically typed subclasses should add entity-specific properties, to be passed as parameter values to the query.
- *
+ * Generically typed subclasses may add bean properties to be used as parameters for the query.
+ * Implementation of {@link #execute()} method should specify and execute the query itself, using these properties
+ * as query parameters. This implementation may contain query logic or delegate execution to a DAO.
+ * <p/>
+ * The {@link #clear()} method uses reflection to clear all bean property values. This is typically invoked when
+ * the user wants to clear all filters and see all results. To set a default filter or order-by property, override
+ * {@link #initializeDefaults}, which is called upon construction and {@link #clear()}.
  * @param <T> type of entity being queried
  */
 public abstract class EntityQuery<T> {
 
+    /**
+     * Default number of result items to be fetched for each page.
+     */
     public static final Integer DEFAULT_PAGE_SIZE = 10;
 
-    private Integer pageSize = DEFAULT_PAGE_SIZE;
+    /**
+     * Default ORDER BY property, uses lastModified descending so that the most recently modified entities
+     * are shown at the top of the results.
+     */
+    public static final String DEFAULT_ORDER_BY_PROPERTY = "lastModified";
+
+    /**
+     * Default order direction, uses lastModified descending so that the most recently modified entities
+     * are shown at the top of the results.
+     */
+    public static final OrderDirection DEFAULT_ORDER_DIRECTION = OrderDirection.DESC;
+
+    private Integer pageSize;
     private Integer firstResult = 0;
     private Long resultCount = 0L;
     private String orderByPropertyId;
@@ -70,20 +90,19 @@ public abstract class EntityQuery<T> {
     private PropertyDescriptor[] descriptors;
 
     /**
-     * Generic DAO for actually executing the query.
+     * Generic DAO that {@link #execute()} may use to execute the query. Otherwise use a type-specific DAO.
      */
     @Resource
     public GenericDao genericDao;
-
-    protected EntityQuery() {
-        descriptors = PropertyUtils.getPropertyDescriptors(this);
-    }
 
     /**
      * Lifecycle method called after this bean has been constructed.
      */
     @PostConstruct
     public void postConstruct() {
+        descriptors = PropertyUtils.getPropertyDescriptors(this);
+        pageSize = DEFAULT_PAGE_SIZE;
+        clear();
     }
 
     /**
@@ -93,7 +112,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Get the type of entity being queried
+     * Gets the type of entity being queried.
      *
      * @return type of entity
      */
@@ -102,7 +121,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Execute the query. Implementation should call the appropriate DAO method for
+     * Executes the query. Implementation should call the appropriate DAO method for
      * executing the query for this entity type.
      *
      * @return list of matching entities for the page range specified by this query
@@ -110,7 +129,7 @@ public abstract class EntityQuery<T> {
     public abstract List<T> execute();
 
     /**
-     * Get the number of records to display in a page.
+     * Gets the number of records to display in a page.
      *
      * @return number of records
      */
@@ -119,7 +138,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Set the number of records to display in a page.
+     * Sets the number of records to display in a page.
      *
      * @param pageSize number of records
      */
@@ -128,7 +147,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Get the zero-based index of the first record to display
+     * Gets the zero-based index of the first record to display.
      *
      * @return index of the first record
      */
@@ -137,7 +156,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Set the zero-based index of the first record to display
+     * Sets the zero-based index of the first record to display.
      *
      * @param firstResult index of the first record
      */
@@ -146,7 +165,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Get the index of the last record to display. This is derived from the first result and the page size.
+     * Gets the index of the last record to display. This is derived from the first result and the page size.
      *
      * @return index of the last record
      */
@@ -155,7 +174,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Get a count of the number of results found after executing the query.
+     * Gets a count of the number of results found after executing the query.
      *
      * @return number of results found
      */
@@ -164,7 +183,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Set a count of the number of results found after executing the query.
+     * Sets a count of the number of results found after executing the query.
      *
      * @param resultCount number of results found
      */
@@ -173,21 +192,21 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Set index to 0, first page in the result set
+     * Sets index to 0, first page in the result set.
      */
     public void firstPage() {
         firstResult = 0;
     }
 
     /**
-     * Increment index to next page in the result set
+     * Increments index to next page in the result set.
      */
     public void nextPage() {
         firstResult = Math.min(firstResult + pageSize, Math.max(resultCount.intValue() - pageSize, 0));
     }
 
     /**
-     * Ask if there is a next page.
+     * Asks if there is a next page.
      *
      * @return true if there are more results after the current page
      */
@@ -200,14 +219,14 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Decrement index to previous page.
+     * Decrements index to previous page.
      */
     public void previousPage() {
         firstResult = Math.max(firstResult - pageSize, 0);
     }
 
     /**
-     * Ask if there is previous page.
+     * Asks if there is a previous page.
      *
      * @return true if there are results before the current page, false if index is 0
      */
@@ -216,28 +235,23 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Set index to last page in result set.
+     * Sets index to last page in the result set.
      */
     public void lastPage() {
         firstResult = Math.max(resultCount.intValue() - pageSize, 0);
     }
 
     /**
-     * Get the property to be used in the ORDER BY clause of the query
+     * Gets the property to be used in the ORDER BY clause of the query.
      *
      * @return name of the bean property
      */
     public String getOrderByPropertyId() {
-        if (orderByPropertyId == null) {
-            orderByPropertyId = "lastModified";
-            setOrderDirection(OrderDirection.DESC);
-        }
-
         return orderByPropertyId;
     }
 
     /**
-     * Set the property to be used in the ORDER BY clause of the query.
+     * Sets the property to be used in the ORDER BY clause of the query.
      *
      * @param orderByPropertyId name of the bean property
      */
@@ -246,7 +260,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Get the ORDER BY direction, i.e. ascending or descending. Default is ascending.
+     * Gets the ORDER BY direction, that is ascending or descending. Default is ascending.
      *
      * @return ORDER BY direction
      */
@@ -255,7 +269,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Set ORDER BY direction, i.e. ascending or descending. Default is ascending.
+     * Sets the ORDER BY direction, that is ascending or descending. Default is ascending.
      *
      * @param orderDirection ORDER BY direction
      */
@@ -264,17 +278,13 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Clear this query so that all filters (query parameters) and sort-criteria are removed. The method uses
-     * reflection to clear any filters defined as bean properties by subclasses. Once cleared, re-execution of query
-     * results in all records being found.
-     * <p/>
-     * If a subclass wants to apply a default filter that is always applied,
-     * then subclass should override this method and re-apply this filter after calling super.clear().
+     * Clear this query so that all filters (query parameters) and sort-criteria are removed (except for defaults).
+     * The method uses reflection to clear any filters defined as bean properties by subclasses. Once cleared,
+     * re-execution of query results in all records being found or a default list of default filters are specified.
+     *
+     * @see #initializeDefaults
      */
     public void clear() {
-        setOrderByPropertyId(null);
-        setOrderDirection(OrderDirection.ASC);
-
         try {
             for (PropertyDescriptor descriptor : descriptors) {
                 Method writeMethod = descriptor.getWriteMethod();
@@ -299,20 +309,31 @@ public abstract class EntityQuery<T> {
         } catch (InvocationTargetException e) {
             Assert.PROGRAMMING.fail(e);
         }
+
+        initializeDefaults();
     }
 
     /**
-     * Ask if string is not empty.
+     * Initializes any default filters and order-by property and direction. These filters are always applied by default
+     * when no search criteria have been applied or after {@link #clear()} has been called.
+     */
+    protected void initializeDefaults() {
+        orderByPropertyId = DEFAULT_ORDER_BY_PROPERTY;
+        orderDirection = DEFAULT_ORDER_DIRECTION;
+    }
+
+    /**
+     * Asks if string is not empty.
      *
      * @param s string to check
-     * @return true if string has value
+     * @return true if string has a non-empty value
      */
     public static boolean hasValue(String s) {
         return !isEmpty(s);
     }
 
     /**
-     * Ask if object is not null
+     * Asks if object is not null.
      *
      * @param o object to check
      * @return true if object is not null
@@ -322,7 +343,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Ask if collection is not empty, is not null and has at least 1 member.
+     * Asks if collection is not empty, is not null and has at least 1 member.
      *
      * @param c collection to check
      * @return true if not empty
@@ -332,8 +353,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Ask if given string is empty or null. Subclasses may use this convenient, utility method to determine if
-     * parameter values are not empty and should be applied to the query.
+     * Asks if given string is empty or null.
      *
      * @param s string to check
      * @return true if empty or null
@@ -343,7 +363,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Ask if given object is null.
+     * Asks if given object is null.
      *
      * @param o object to check
      * @return true if null
@@ -353,7 +373,7 @@ public abstract class EntityQuery<T> {
     }
 
     /**
-     * Ask if given collection is empty or null.
+     * Asks if given collection is empty or null.
      *
      * @param c collection to check
      * @return true if empty or null

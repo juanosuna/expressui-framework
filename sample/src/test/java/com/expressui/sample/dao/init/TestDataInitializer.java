@@ -158,6 +158,21 @@ public class TestDataInitializer {
         permission.setViewAllowed(true);
         permissionDao.persist(permission);
 
+        permission = new Permission("com.expressui.sample.SampleApplication.language");
+        permission.setRole(role);
+        permission.setViewAllowed(true);
+        permissionDao.persist(permission);
+
+        permission = new Permission("com.expressui.sample.SampleApplication.setEnglish");
+        permission.setRole(role);
+        permission.setViewAllowed(true);
+        permissionDao.persist(permission);
+
+        permission = new Permission("com.expressui.sample.SampleApplication.setGerman");
+        permission.setRole(role);
+        permission.setViewAllowed(true);
+        permissionDao.persist(permission);
+
         permission = new Permission(Profile.class.getName());
         permission.setRole(role);
         permission.setViewAllowed(true);

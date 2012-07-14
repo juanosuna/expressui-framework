@@ -37,12 +37,16 @@
 
 package com.expressui.core.view.field.format;
 
+import com.expressui.core.MainApplication;
+import com.expressui.core.util.ApplicationProperties;
 import com.vaadin.data.util.PropertyFormatter;
 import org.springframework.stereotype.Component;
 
-import java.text.Format;
+import javax.annotation.Resource;
+import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 /**
  * Defines some default formats, e.g. for dates, times, numbers
@@ -50,13 +54,21 @@ import java.text.SimpleDateFormat;
 @Component
 public class DefaultFormats {
 
-    private PropertyFormatter emptyFormat = new EmptyPropertyFormatter();
-    private Format numberFormat = NumberFormat.getNumberInstance();
-    private Format dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private Format dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    @Resource
+    private ApplicationProperties applicationProperties;
 
     public PropertyFormatter getEmptyFormat() {
-        return emptyFormat;
+        return new EmptyPropertyFormatter();
+    }
+
+    public PropertyFormatter getCurrencyFormat(int maximumFractionDigits) {
+        return getCurrencyFormat(MainApplication.getInstance().getLocale(), maximumFractionDigits);
+    }
+
+    public PropertyFormatter getCurrencyFormat(Locale locale, int maximumFractionDigits) {
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
+        numberFormat.setMaximumFractionDigits(maximumFractionDigits);
+        return new JDKBridgePropertyFormatter(numberFormat);
     }
 
     /**
@@ -65,26 +77,21 @@ public class DefaultFormats {
      * @return default number format
      */
     public PropertyFormatter getNumberFormat() {
-        return new JDKBridgePropertyFormatter(numberFormat);
+        return new JDKBridgePropertyFormatter(
+                NumberFormat.getNumberInstance(MainApplication.getInstance().getLocale())
+        );
     }
 
     /**
      * Get default number format, NumberFormat.getNumberInstance()
-     * @param defaultValueWhenEmpty when parsing Strings, returns this value when String is empty
      *
+     * @param defaultValueWhenEmpty when parsing Strings, returns this value when String is empty
      * @return default number format
      */
-    public PropertyFormatter getNumberFormat(Object defaultValueWhenEmpty) {
+    public PropertyFormatter getNumberFormat(int maximumFractionDigits, Object defaultValueWhenEmpty) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(MainApplication.getInstance().getLocale());
+        numberFormat.setMaximumFractionDigits(maximumFractionDigits);
         return new JDKBridgePropertyFormatter(numberFormat, defaultValueWhenEmpty);
-    }
-
-    /**
-     * Set default number format
-     *
-     * @param numberFormat default number format
-     */
-    public void setNumberFormat(Format numberFormat) {
-        this.numberFormat = numberFormat;
     }
 
     /**
@@ -93,16 +100,10 @@ public class DefaultFormats {
      * @return default date format
      */
     public PropertyFormatter getDateFormat() {
-        return new JDKBridgePropertyFormatter(dateFormat);
-    }
-
-    /**
-     * Set default date format
-     *
-     * @param dateFormat default date format
-     */
-    public void setDateFormat(Format dateFormat) {
-        this.dateFormat = dateFormat;
+        return new JDKBridgePropertyFormatter(
+                DateFormat.getDateInstance(applicationProperties.getDefaultDateStyle(),
+                        MainApplication.getInstance().getLocale())
+        );
     }
 
     /**
@@ -111,15 +112,10 @@ public class DefaultFormats {
      * @return default date-time format
      */
     public PropertyFormatter getDateTimeFormat() {
-        return new JDKBridgePropertyFormatter(dateTimeFormat);
-    }
-
-    /**
-     * Set default date-time format.
-     *
-     * @param dateTimeFormat default date-time format
-     */
-    public void setDateTimeFormat(Format dateTimeFormat) {
-        this.dateTimeFormat = dateTimeFormat;
+        return new JDKBridgePropertyFormatter(
+                DateFormat.getDateTimeInstance(applicationProperties.getDefaultDateStyle(),
+                        applicationProperties.getDefaultTimeStyle(),
+                        MainApplication.getInstance().getLocale())
+        );
     }
 }

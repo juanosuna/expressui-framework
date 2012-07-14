@@ -47,14 +47,14 @@ import javax.persistence.Query;
 import java.util.List;
 
 /**
- * Permissions DAO with RelatedPermissionsQuery.
+ * Permissions DAO.
  */
 @Repository
 @SuppressWarnings("unchecked")
 public class PermissionDao extends EntityDao<Permission, Long> {
 
     /**
-     * Find all permissions ordered by targetType and field
+     * Finds all permissions ordered by targetType and field.
      *
      * @return all permissions
      */
@@ -67,9 +67,9 @@ public class PermissionDao extends EntityDao<Permission, Long> {
     }
 
     /**
-     * Find all permissions for a given role.
+     * Finds all permissions for a given role.
      *
-     * @param role to query
+     * @param role role to query
      * @return all permissions for role
      */
     public List<Permission> findByRole(Role role) {
@@ -80,11 +80,11 @@ public class PermissionDao extends EntityDao<Permission, Long> {
     }
 
     /**
-     * Find permissions for a given role, entity type and field.
+     * Finds permissions for a given role, entity type and field.
      *
-     * @param role       to query
-     * @param entityType to query
-     * @param field      to query
+     * @param role       the role to query
+     * @param entityType the entity type to query
+     * @param field      the field to query
      * @return found permissions
      */
     public List<Permission> findByRoleEntityTypeAndField(Role role, String entityType, String field) {

@@ -96,6 +96,7 @@ public class FormFieldSet extends FieldSet {
      * @return newly created form tab
      */
     public FormTab createTab(String tabName) {
+        Assert.PROGRAMMING.notNull(tabName);
         return new FormTab(this, tabName);
     }
 
@@ -257,6 +258,7 @@ public class FormFieldSet extends FieldSet {
      * @param columnEnd   column end coordinate, field width is stretched to column end coordinate
      */
     public void setCoordinates(String tabName, String propertyId, int rowStart, int columnStart, Integer rowEnd, Integer columnEnd) {
+        Assert.PROGRAMMING.notNull(tabName);
         Assert.PROGRAMMING.isTrue(rowStart > 0,
                 "rowStart arg must be greater than 0 for property " + propertyId + (tabName.isEmpty() ? "" : ", for tab " + tabName));
         Assert.PROGRAMMING.isTrue(columnStart > 0,
@@ -657,7 +659,11 @@ public class FormFieldSet extends FieldSet {
      * @param toolTip    description displayed to user
      */
     public void setToolTip(String propertyId, String toolTip) {
-        getFormField(propertyId).setToolTip("<span class=\"expressui-tool-tip\">" + toolTip + "</span>");
+        getFormField(propertyId).setToolTip(toolTip);
+    }
+
+    public void setToolTipArgs(String propertyId, Object... args) {
+        getFormField(propertyId).setToolTipArgs(args);
     }
 
     public void clearSelectItems(String propertyId) {

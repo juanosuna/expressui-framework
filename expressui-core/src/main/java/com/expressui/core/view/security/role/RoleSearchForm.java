@@ -57,9 +57,4 @@ public class RoleSearchForm extends SearchForm<RoleQuery> {
     public void init(FormFieldSet formFields) {
         formFields.setCoordinates("name", 1, 1);
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "Role Search Form";
-    }
 }

@@ -38,6 +38,7 @@
 package com.expressui.core.view.form;
 
 import com.expressui.core.MainApplication;
+import com.expressui.core.entity.NameableEntity;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.util.MethodDelegate;
 import com.expressui.core.validation.AssertTrueForProperties;
@@ -147,7 +148,26 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      * @return caption that describes entity
      */
     public String getEntityCaption() {
-        return getTypeCaption();
+        String typeName = domainMessageSource.getMessage(getType().getName(), getType().getSimpleName());
+        T bean = getBean();
+        if (genericDao.isPersistent(bean)) {
+            if (bean instanceof NameableEntity) {
+                return uiMessageSource.getMessage("entityForm.entityCaption.existing",
+                        new Object[] {typeName, ((NameableEntity) bean).getName()});
+            } else {
+                return uiMessageSource.getMessage("entityForm.entityCaption.existing",
+                        new Object[] {typeName, bean.toString()});
+            }
+        } else {
+            return uiMessageSource.getMessage("entityForm.entityCaption.new",
+                    new Object[] {typeName});
+        }
+    }
+
+    @Override
+    public String getTypeCaption() {
+        String typeName = domainMessageSource.getMessage(getType().getName(), getType().getSimpleName());
+        return uiMessageSource.getMessage("entityForm.typeCaption", new Object[] {typeName});
     }
 
     /**
@@ -277,6 +297,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     @Override
     public void setReadOnly(boolean isReadOnly) {
         super.setReadOnly(isReadOnly);
+
         getFormFieldSet().setReadOnly(isReadOnly);
 
         saveAndCloseButton.setVisible(!isReadOnly);
@@ -869,7 +890,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         boolean formHasErrors = false;
         for (String tabName : tabNames) {
             if (getFormFieldSet().hasError(tabName)) {
-                setTabError(tabName, new UserError("Tab contains invalid values"));
+                setTabError(tabName, new UserError(uiMessageSource.getMessage("entityForm.tabWithInvalidValues")));
                 formHasErrors = true;
             } else {
                 setTabError(tabName, null);
@@ -883,8 +904,9 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         if (formHasErrors) {
             saveAndCloseButton.setIcon(null);
             saveAndStayOpenButton.setIcon(null);
-            saveAndCloseButton.setComponentError(new UserError("Form contains invalid values"));
-            saveAndStayOpenButton.setComponentError(new UserError("Form contains invalid values"));
+            String errorMsg = uiMessageSource.getMessage("entityForm.formWithInvalidValues");
+            saveAndCloseButton.setComponentError(new UserError(errorMsg));
+            saveAndStayOpenButton.setComponentError(new UserError(errorMsg));
         } else {
             saveAndCloseButton.setComponentError(null);
             saveAndStayOpenButton.setComponentError(null);

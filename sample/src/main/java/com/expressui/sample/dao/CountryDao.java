@@ -50,7 +50,7 @@ public class CountryDao extends EntityDao<Country, String> {
 
     public List<Country> findCountriesWithStates() {
         Query query = getEntityManager().createQuery(
-                "SELECT DISTINCT c FROM Country c, State s WHERE s.country = c ORDER BY c.displayName");
+                "SELECT DISTINCT c FROM Country c, State s WHERE s.country = c ORDER BY c.name");
         setReadOnly(query);
 
         return query.getResultList();

@@ -82,20 +82,6 @@ public class RoleForm extends EntityForm<Role> {
     }
 
     @Override
-    public String getTypeCaption() {
-        return "Role Form";
-    }
-
-    @Override
-    public String getEntityCaption() {
-        if (getBean().getName() == null) {
-            return "Role Form - New";
-        } else {
-            return "Role Form - " + getBean().getName();
-        }
-    }
-
-    @Override
     public List<ToManyRelationship> getToManyRelationships() {
         List<ToManyRelationship> toManyRelationships = new ArrayList<ToManyRelationship>();
         toManyRelationships.add(relatedUsers);

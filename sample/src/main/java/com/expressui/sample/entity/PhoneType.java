@@ -37,23 +37,26 @@
 
 package com.expressui.sample.entity;
 
-public enum PhoneType {
+import com.expressui.core.entity.NameableEntity;
+
+public enum PhoneType implements NameableEntity {
     HOME("Home"),
     MOBILE("Mobile"),
     BUSINESS("Business");
 
-    private String displayName;
+    private String name;
 
-    PhoneType(String displayName) {
-        this.displayName = displayName;
+    PhoneType(String name) {
+        this.name = name;
     }
 
-    public String getDisplayName() {
-        return displayName;
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
     public String toString() {
-        return displayName;
+        return name;
     }
 }

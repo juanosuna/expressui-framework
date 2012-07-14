@@ -68,7 +68,7 @@ public class OpportunityForm extends EntityForm<Opportunity> {
     @Override
     public void init(FormFieldSet formFields) {
 
-        FormTab overview = formFields.createTab("Overview");
+        FormTab overview = formFields.createTab(getDomainMessage("overview"));
         overview.setCoordinates("name", 1, 1);
         overview.setCoordinates("opportunityType", 1, 2);
 
@@ -87,18 +87,8 @@ public class OpportunityForm extends EntityForm<Opportunity> {
         overview.setCoordinates("expectedCloseDate", 6, 1);
         overview.setCoordinates("actualCloseDate", 6, 2);
 
-        FormTab description = formFields.createTab("Description");
+        FormTab description = formFields.createTab(getDomainMessage("description"));
         description.setCoordinates("description", 1, 1);
-
-        formFields.setLabel("description", null);
-        formFields.setLabel("opportunityType", "Type");
-        formFields.setLabel("account.name", "Account");
-        formFields.setLabel("assignedTo.loginName", "Assigned to");
-
-        formFields.setToolTip("salesStage", "Change to sales stage changes probability");
-        formFields.setToolTip("probability", "Change in probability changes value weighted in USD");
-        formFields.setToolTip("amount", "Change in amount changes value weighted in USD");
-        formFields.setToolTip("currency", "Change in currency changes value weighted in USD");
 
         SelectField<Opportunity, User> assignedToField =
                 new SelectField<Opportunity, User>(this, "assignedTo", userSelect);
@@ -119,19 +109,5 @@ public class OpportunityForm extends EntityForm<Opportunity> {
                         "<li>Input invalid data and then mouse-over input to see error message" +
                         "</ul>"
         );
-    }
-
-    @Override
-    public String getTypeCaption() {
-        return "Opportunity Form";
-    }
-
-    @Override
-    public String getEntityCaption() {
-        if (getBean().getName() == null) {
-            return "Opportunity Form - New";
-        } else {
-            return "Opportunity Form - " + getBean().getName();
-        }
     }
 }

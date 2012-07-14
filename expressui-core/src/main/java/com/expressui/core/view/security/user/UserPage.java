@@ -68,10 +68,5 @@ public class UserPage extends SearchPage<User> {
     public UserResults getResults() {
         return userResults;
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "Users";
-    }
 }
 

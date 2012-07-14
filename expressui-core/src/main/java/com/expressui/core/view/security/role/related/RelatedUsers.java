@@ -84,9 +84,4 @@ public class RelatedUsers extends ManyToManyRelationship<User, UserRole> {
     public UserRole createAssociationEntity(User user) {
         return new UserRole(user, relatedUsersQuery.getParent());
     }
-
-    @Override
-    public String getTypeCaption() {
-        return "Users";
-    }
 }

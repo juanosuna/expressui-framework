@@ -50,7 +50,7 @@ import java.util.List;
 public class StateDao extends EntityDao<State, String> {
 
     public List<State> findByCountry(Country country) {
-        Query query = getEntityManager().createQuery("SELECT s FROM State s WHERE s.country = :country ORDER BY s.displayName");
+        Query query = getEntityManager().createQuery("SELECT s FROM State s WHERE s.country = :country ORDER BY s.name");
         query.setParameter("country", country);
         setReadOnly(query);
 

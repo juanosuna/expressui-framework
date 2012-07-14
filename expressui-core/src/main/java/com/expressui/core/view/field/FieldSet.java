@@ -65,6 +65,12 @@ public abstract class FieldSet {
     @Resource
     public MessageSource domainMessageSource;
 
+    @Resource
+    public MessageSource uiMessageSource;
+
+    @Resource
+    public MessageSource domainMessageSourceNoFallback;
+
     /**
      * Default property formats.
      */
@@ -220,6 +226,10 @@ public abstract class FieldSet {
      */
     public void setLabel(String propertyId, String label) {
         getField(propertyId).setLabel(label);
+    }
+
+    public void setLabelArgs(String propertyId, String label, Object... args) {
+        getField(propertyId).setLabelArgs(label, args);
     }
 
     /**

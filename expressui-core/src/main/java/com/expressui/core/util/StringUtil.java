@@ -82,7 +82,7 @@ public class StringUtil {
      * @return width in EM units
      */
     public static int approximateColumnWidth(String s) {
-        return (int) Math.ceil(FONT_METRICS.stringWidth(s) * 0.08) + 1;
+        return (int) Math.ceil(FONT_METRICS.stringWidth(s) * 0.08) + 2;
     }
 
     /**
