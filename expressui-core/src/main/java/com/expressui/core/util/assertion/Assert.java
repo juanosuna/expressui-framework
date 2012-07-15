@@ -82,7 +82,7 @@ public class Assert {
     }
 
     /**
-     * Asserts condition and throws exception if condition is not true
+     * Asserts condition and throws exception if condition is not true.
      *
      * @param condition boolean expression
      */
@@ -93,7 +93,7 @@ public class Assert {
     }
 
     /**
-     * Asserts condition and throws exception if condition is not true
+     * Asserts condition and throws exception if condition is not true.
      *
      * @param condition boolean expression
      * @param message   to be embedded in thrown exception
@@ -104,46 +104,110 @@ public class Assert {
         }
     }
 
+    /**
+     * Asserts object is null.
+     *
+     * @param object  object that must be null
+     * @param message to be embedded in thrown exception
+     */
     public void isNull(Object object, String message) {
         isTrue(object == null, message);
     }
 
+    /**
+     * Asserts object is  null.
+     *
+     * @param object object that must be null
+     */
     public void isNull(Object object) {
         isNull(object, "argument must be null");
     }
 
+    /**
+     * Asserts object is not null.
+     *
+     * @param object  object that must not be null
+     * @param message to be embedded in thrown exception
+     */
     public void notNull(Object object, String message) {
         isTrue(object != null, message);
     }
 
+    /**
+     * Asserts object is not null.
+     *
+     * @param object object that must not be null
+     */
     public void notNull(Object object) {
         notNull(object, "argument must not be null");
     }
 
+    /**
+     * Asserts collection must be of a certain size.
+     *
+     * @param collection collection that must be of a certain size
+     * @param size       size being asserted
+     * @param message    to be embedded in thrown exception
+     */
     public void size(Collection collection, int size, String message) {
         isTrue(collection.size() == size, message);
     }
 
+    /**
+     * Asserts collection must be of a certain size.
+     *
+     * @param collection collection that must be of a certain size
+     * @param size       size being asserted
+     */
     public void size(Collection collection, int size) {
         isTrue(collection.size() == size, "collection argument must be size " + size);
     }
 
+    /**
+     * Asserts collection must be empty.
+     *
+     * @param collection collection that must be empty
+     * @param message    to be embedded in thrown exception
+     */
     public void empty(Collection collection, String message) {
         size(collection, 0, message);
     }
 
+    /**
+     * Asserts collection must be empty.
+     *
+     * @param collection collection that must be empty
+     */
     public void empty(Collection collection) {
         size(collection, 0);
     }
 
+    /**
+     * Asserts collection must not be empty.
+     *
+     * @param collection collection that must not be empty
+     */
     public void notEmpty(Collection collection) {
         isTrue(collection.size() > 0, "collection must not be empty");
     }
 
+    /**
+     * Asserts object must of a given type.
+     *
+     * @param object  object to check
+     * @param type    type to check
+     * @param message to be embedded in thrown exception
+     */
     public void instanceOf(Object object, Class type, String message) {
         isTrue(type.isInstance(object), message);
     }
 
+    /**
+     * Asserts object must of a given type.
+     *
+     * @param object object to check
+     * @param type   type to check
+     */
     public void instanceOf(Object object, Class type) {
         instanceOf(object, type, "object " + (object != null ? object.getClass().getName() : "null") +
                 " must be an instance of " + type);
@@ -160,7 +224,7 @@ public class Assert {
     }
 
     /**
-     * Forces the throwing of an exception
+     * Forces the throwing of an exception.
      *
      * @param message to embed in the exception
      * @param cause   root cause for chaining to thrown exception
@@ -171,7 +235,7 @@ public class Assert {
     }
 
     /**
-     * Forces throw throwing of an exception
+     * Forces throw throwing of an exception.
      *
      * @param cause root cause for chaining to thrown exception
      * @throws RuntimeException Always thrown exception containing given description

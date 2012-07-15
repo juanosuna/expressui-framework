@@ -51,7 +51,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * End user account
+ * User, authorized to login into application.
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -78,7 +78,7 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Construct user with login name and password
+     * Constructs this user with login name and password.
      *
      * @param loginName     login name
      * @param loginPassword password
@@ -91,7 +91,7 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Get login name.
+     * Gets login name.
      *
      * @return login name
      */
@@ -103,7 +103,7 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Set login name.
+     * Sets login name.
      *
      * @param loginName login name, must be between 4 and 16 characters
      */
@@ -125,7 +125,7 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Get password.
+     * Gets password.
      *
      * @return password
      */
@@ -135,7 +135,7 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Set password.
+     * Sets password.
      *
      * @param loginPassword password, must be between 4 and 16 characters
      */
@@ -148,57 +148,70 @@ public class User extends WritableEntity implements NameableEntity {
         }
     }
 
+    /**
+     * Gets the password the user re-entered to ensure he/she doesn't make a mistake.
+     * @return re-entered password
+     */
     public String getRepeatLoginPassword() {
         return repeatLoginPassword;
     }
 
+    /**
+     * Sets the password the user re-entered to ensure he/she doesn't make a mistake.
+     * @param repeatLoginPassword re-entered password
+     */
     public void setRepeatLoginPassword(String repeatLoginPassword) {
         this.repeatLoginPassword = repeatLoginPassword;
     }
 
-    @AssertTrueForProperties(errorProperty = "repeatLoginPassword", message = "Entered passwords do not match")
+    /**
+     * Validation method to check if loginPassword and repeatLoginPassword match.
+     * @return true if passwords match
+     */
+    @AssertTrueForProperties(errorProperty = "repeatLoginPassword",
+            message = "{com.expressui.core.entity.security.User.passwordsDoNotMatch}")
     public boolean isPasswordMatch() {
         return ObjectUtil.isEqual(getLoginPassword(), getRepeatLoginPassword());
     }
 
     /**
-     * Ask if user account is expired.
+     * Asks if this user's account is expired.
      *
-     * @return true if user account is expired
+     * @return true if expired
      */
     public boolean isAccountExpired() {
         return accountExpired;
     }
 
     /**
-     * Set whether or not account is expired
+     * Sets whether or not this user's account is expired.
      *
-     * @param accountExpired true if account is expired
+     * @param accountExpired true if is expired
      */
     public void setAccountExpired(boolean accountExpired) {
         this.accountExpired = accountExpired;
     }
 
     /**
-     * Ask if user account is locked.
+     * Asks if this user's account is locked.
      *
-     * @return true if user account is locked
+     * @return true if is locked
      */
     public boolean isAccountLocked() {
         return accountLocked;
     }
 
     /**
-     * Set whether or not account is locked.
+     * Sets whether or not this user's account is locked.
      *
-     * @param accountLocked true if account is locked
+     * @param accountLocked true if locked
      */
     public void setAccountLocked(boolean accountLocked) {
         this.accountLocked = accountLocked;
     }
 
     /**
-     * Ask if credentials have expired.
+     * Asks if this user's credentials have expired.
      *
      * @return true if credentials have expired
      */
@@ -207,7 +220,7 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Set whether or not credentials have expired.
+     * Sets whether or not this user's credentials have expired.
      *
      * @param credentialsExpired true if credentials have expired
      */
@@ -216,16 +229,16 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Ask if user account is enabled
+     * Asks if this user's account is enabled.
      *
-     * @return true if user account is enabled
+     * @return true if is enabled
      */
     public boolean isEnabled() {
         return enabled;
     }
 
     /**
-     * Set whether or not user account is enabled
+     * Sets whether or not this user's account is enabled.
      *
      * @param enabled true if enabled
      */
@@ -234,7 +247,7 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Get user-role association entities.
+     * Gets user-role association entities.
      *
      * @return user-role association entities
      */
@@ -243,7 +256,7 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Set user-role association entities.
+     * Sets user-role association entities.
      *
      * @param userRoles user-role association entities
      */
@@ -252,7 +265,7 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Get all roles assigned to this user.
+     * Gets all roles assigned to this user.
      *
      * @return all roles assigned to this user
      */
@@ -267,6 +280,11 @@ public class User extends WritableEntity implements NameableEntity {
         return roles;
     }
 
+    /**
+     * Asks if this user has a given role.
+     * @param role to check if it belongs to this user
+     * @return true if user has the role
+     */
     public boolean hasRole(Role role) {
         Set<Role> roles = getRoles();
         for (Role r : roles) {
@@ -278,6 +296,11 @@ public class User extends WritableEntity implements NameableEntity {
         return false;
     }
 
+    /**
+     * Asks if this user has a given role.
+     * @param role to check if it belongs to this user
+     * @return true if user has the role
+     */
     public boolean hasRole(String role) {
         Set<Role> roles = getRoles();
         for (Role r : roles) {
@@ -290,9 +313,9 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Ask if view access is allowed for given type
+     * Asks if view access is allowed for given type.
      *
-     * @param type type
+     * @param type type to check
      * @return true if view access is allowed
      */
     public boolean isViewAllowed(String type) {
@@ -307,9 +330,9 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Ask if edit access is allowed for given type
+     * Asks if edit access is allowed for given type.
      *
-     * @param type type
+     * @param type type to check
      * @return true if edit access is allowed
      */
     public boolean isEditAllowed(String type) {
@@ -324,9 +347,9 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Ask if create access is allowed for given type
+     * Asks if create access is allowed for given type.
      *
-     * @param type type
+     * @param type type to check
      * @return true if create access is allowed
      */
     public boolean isCreateAllowed(String type) {
@@ -341,9 +364,9 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Ask if delete access is allowed for given type
+     * Asks if delete access is allowed for given type.
      *
-     * @param type type
+     * @param type type to check
      * @return true if delete access is allowed
      */
     public boolean isDeleteAllowed(String type) {
@@ -358,10 +381,10 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Ask if view access is allowed for given field (property) within given type
+     * Asks if view access is allowed for given field (property) within given type.
      *
-     * @param type  type
-     * @param field field
+     * @param type  type to check
+     * @param field field to check
      * @return true if view access is allowed
      */
     public boolean isViewAllowed(String type, String field) {
@@ -376,10 +399,10 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Ask if edit access is allowed for given field (property) within given type
+     * Asks if edit access is allowed for given field (property) within given type.
      *
-     * @param type  type
-     * @param field field
+     * @param type  type to check
+     * @param field field to check
      * @return true if edit access is allowed
      */
     public boolean isEditAllowed(String type, String field) {

@@ -38,8 +38,7 @@
 package com.expressui.core.security.exception;
 
 /**
- * User: Juan
- * Date: 5/28/12
+ * Indicates that authentication failed because the user's password is incorrect.
  */
 public class IncorrectCredentialsException extends AuthenticationException {
     public IncorrectCredentialsException() {

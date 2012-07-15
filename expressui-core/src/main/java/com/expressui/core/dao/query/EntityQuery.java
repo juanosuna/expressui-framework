@@ -55,7 +55,7 @@ import java.util.List;
  * <p/>
  * Generically typed subclasses may add bean properties to be used as parameters for the query.
  * Implementation of {@link #execute()} method should specify and execute the query itself, using these properties
- * as query parameters. This implementation may contain query logic or delegate execution to a DAO.
+ * as query parameters. This implementation may contain query logic or delegate execution to a conventional DAO.
  * <p/>
  * The {@link #clear()} method uses reflection to clear all bean property values. This is typically invoked when
  * the user wants to clear all filters and see all results. To set a default filter or order-by property, override
@@ -90,7 +90,8 @@ public abstract class EntityQuery<T> {
     private PropertyDescriptor[] descriptors;
 
     /**
-     * Generic DAO that {@link #execute()} may use to execute the query. Otherwise use a type-specific DAO.
+     * Generic DAO that the {@link #execute()} implementation may use to execute the query.
+     * Otherwise, it can use a type-specific DAO if needed.
      */
     @Resource
     public GenericDao genericDao;

@@ -202,6 +202,10 @@ public abstract class MainApplication extends Application implements ViewBean, H
         return currentInstance.get();
     }
 
+    public static void setInstance(MainApplication mainApplication) {
+        currentInstance.set(mainApplication);
+    }
+
     public static HttpServletRequest getRequest() {
         return currentRequest.get();
     }

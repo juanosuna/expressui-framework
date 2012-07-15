@@ -38,13 +38,24 @@
 package com.expressui.core.validation;
 
 import com.expressui.core.AbstractCoreTest;
+import com.expressui.core.MainApplication;
+import com.expressui.core.view.menu.MenuBarNode;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.springframework.test.context.ContextConfiguration;
 
 import javax.annotation.Resource;
 import javax.validation.ConstraintViolation;
+import java.util.Locale;
 import java.util.Set;
+
+import org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @ContextConfiguration(locations = {
         "classpath:/spring/applicationContext-test-validation.xml"
@@ -53,6 +64,13 @@ public class ValidationTest extends AbstractCoreTest {
 
     @Resource
     private Validation validation;
+
+    @BeforeClass
+    public static void beforeClass() {
+        MainApplication mainApplication = mock(MainApplication.class);
+        MainApplication.setInstance(mainApplication);
+        when(mainApplication.getLocale()).thenReturn(Locale.getDefault());
+    }
 
     @Test
     public void validateInvalidRoot() {

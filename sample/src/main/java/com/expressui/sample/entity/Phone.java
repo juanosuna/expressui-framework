@@ -37,11 +37,15 @@
 
 package com.expressui.sample.entity;
 
+import com.expressui.core.util.SpringApplicationContext;
+import com.expressui.core.view.util.MessageSource;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 
+import javax.annotation.Resource;
 import javax.persistence.Embeddable;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 
@@ -49,15 +53,22 @@ import java.io.Serializable;
 @Embeddable
 public class Phone implements Serializable {
 
+    @Resource
+    @Transient
+    private MessageSource validationMessageSource;
+
     private Integer countryCode;
     private Long phoneNumber;
 
     public Phone() {
+        SpringApplicationContext.autowire(this);
     }
 
     public Phone(String fullNumber, String defaultRegionCode) throws NumberParseException {
+        this();
         if (fullNumber.matches(".*[a-zA-Z]+.*")) {
-            throw new NumberParseException(NumberParseException.ErrorType.NOT_A_NUMBER, "Phone number may not contain letters");
+            String message = validationMessageSource.getMessage("com.expressui.sample.entity.Phone.phoneNumberWithLetters");
+            throw new NumberParseException(NumberParseException.ErrorType.NOT_A_NUMBER, message);
         }
 
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();

@@ -19,8 +19,7 @@
 .v-Notification,
 .v-menubar-submenu {
 	background-color: rgb(249,249,249);
-	background-color: rgba(249,249,249,.85);
-	}
+}
 
 body.v-ie6 .v-window,
 body.v-ie7 .v-window,

@@ -63,12 +63,11 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSIO
 @Component
 public class Validation {
     private Validator validator;
-    private ValidatorFactory factory;
 
     @PostConstruct
     public void postConstruct() {
         Configuration<?> configuration = javax.validation.Validation.byDefaultProvider().configure();
-        factory = configuration
+        ValidatorFactory factory = configuration
                 .messageInterpolator(new ClientLocaleMessageInterpolator(configuration.getDefaultMessageInterpolator()))
                 .buildValidatorFactory();
 

@@ -54,20 +54,21 @@ import javax.persistence.NoResultException;
 import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
 
 /**
- * Service for logging in/out and getting the current user. The current user entity
- * provides access to roles and permissions.
+ * Service for logging in/out and getting the current user. This service is bound to the user's session.
+ * The current user entity provides access to roles and permissions.
  */
 @Service
 @Scope(SCOPE_SESSION)
 public class SecurityService {
 
     /**
-     * Default user name when no user is logged in, e.g. in unit tests or system process that doesn't require log in
+     * Default user name when no user is logged in, for example in unit tests or system process that doesn't
+     * require log in.
      */
     public static final String DEFAULT_USER = "system";
 
     /**
-     * Default role for system user
+     * Default role for system user. Has full rights with no restrictions.
      */
     public static final String DEFAULT_ROLE = "system";
 
@@ -79,7 +80,7 @@ public class SecurityService {
     private User currentUser;
 
     /**
-     * Get the login name of the currently logged-in user. If no one is logged in, returns DEFAULT_USER.
+     * Gets the login name of the currently logged-in user. If no one is logged in, returns DEFAULT_USER.
      *
      * @return login name
      */
@@ -92,7 +93,7 @@ public class SecurityService {
     }
 
     /**
-     * Set the current login name
+     * Sets the current login name.
      *
      * @param loginName login name to set
      */
@@ -101,14 +102,14 @@ public class SecurityService {
     }
 
     /**
-     * Remove current login name
+     * Removes current login name.
      */
     public static void removeCurrentLoginName() {
         currentLoginName.remove();
     }
 
     /**
-     * Get the user entity for the currently logged in user. Caches user entity.
+     * Gets the user entity for the currently logged in user.
      *
      * @return user entity with roles and permissions
      */
@@ -116,6 +117,10 @@ public class SecurityService {
         return currentUser;
     }
 
+    /**
+     * Forces a re-loading of current user entity from the database.
+     * @return re-loaded current user entity
+     */
     public User refreshCurrentUser() {
         User user;
         try {
@@ -140,7 +145,7 @@ public class SecurityService {
     }
 
     /**
-     * Sets current user, useful in unit-test environment, where user can be set programmatically.
+     * Sets current user entity, useful in unit-test environment, where user can be set programmatically.
      *
      * @param user user to set
      */
@@ -149,7 +154,7 @@ public class SecurityService {
     }
 
     /**
-     * Logout by clearing user and current login name
+     * Logs out by clearing user and current login name.
      */
     public void logout() {
         currentUser = null;
@@ -157,7 +162,7 @@ public class SecurityService {
     }
 
     /**
-     * Login as default system user, useful for testing or scenarios where no authentication is required. System user
+     * Logs in as default system user, useful for testing or scenarios where no authentication is required. System user
      * has full rights without restrictions.
      */
     public User loginAsDefaultSystemUser() {
@@ -171,7 +176,8 @@ public class SecurityService {
     }
 
     /**
-     * Login and cache current user in the session.
+     * Logs in and caches current user in the session. Password match is done using MD5.
+     * See org.jasypt.util.password.BasicPasswordEncryptor.checkPassword.
      *
      * @param loginName     user name
      * @param loginPassword password in plaintext
@@ -199,7 +205,7 @@ public class SecurityService {
     }
 
     /**
-     * Assert that given user is allowed to log in.
+     * Asserts that given user is allowed to log in, that his/her account is not locked, expired, disabled, etc.
      *
      * @param user user to check
      * @throws AuthenticationException if user is not allowed

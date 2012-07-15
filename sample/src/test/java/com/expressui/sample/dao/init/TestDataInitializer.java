@@ -50,6 +50,7 @@ import com.expressui.sample.validator.PhoneValidator;
 import com.expressui.sample.view.LoginPage;
 import com.expressui.sample.view.profile.ProfilePage;
 import com.expressui.sample.view.registration.RegistrationPage;
+import net.sf.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +58,7 @@ import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 @Service
 @Transactional
@@ -113,12 +115,12 @@ public class TestDataInitializer {
             }
 
             try {
-                Phone phone = (Phone) new PhonePropertyFormatter().parse(PhoneValidator.getExampleNumber("US", address.getCountry().getId()));
+                Phone phone = (Phone) new PhonePropertyFormatter().parse(PhoneValidator.getExampleNumber(Locale.US.getCountry(), address.getCountry().getId()));
                 contact.setMainPhone(phone);
                 contact.setMainPhoneType(random(PhoneType.class));
 
                 if (randomBoolean()) {
-                    phone = (Phone) new PhonePropertyFormatter().parse(PhoneValidator.getExampleNumber("US", address.getCountry().getId()));
+                    phone = (Phone) new PhonePropertyFormatter().parse(PhoneValidator.getExampleNumber(Locale.US.getCountry(), address.getCountry().getId()));
                     contact.setOtherPhone(phone);
                     contact.setOtherPhoneType(random(PhoneType.class));
                 }
@@ -275,7 +277,7 @@ public class TestDataInitializer {
         account.setIndustry(referenceDataInitializer.randomIndustry());
 
         try {
-            Phone phone = (Phone) new PhonePropertyFormatter().parse(PhoneValidator.getExampleNumber("US", address.getCountry().getId()));
+            Phone phone = (Phone) new PhonePropertyFormatter().parse(PhoneValidator.getExampleNumber(Locale.US.getCountry(), address.getCountry().getId()));
             account.setMainPhone(phone);
         } catch (Exception e) {
             throw new RuntimeException(e);

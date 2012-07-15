@@ -57,7 +57,7 @@
     width: 16px;
 
     background: transparent url(img/small-close.png) no-repeat;
-    vertical-align: top;
+    vertical-align: middle;
     margin: 0;
 }
 
@@ -297,15 +297,6 @@
     background: #e8faee repeat scroll 0 0;
 }
 
-.code-popup .v-window-closebox {
-    background: url("img/close.png") repeat scroll 0 0;
-    height: 26px;
-    right: 8px;
-    top: 8px;
-    width: 26px;
-    z-index: 5;
-}
-
 .code-popup .v-tabsheet-tabsheetpanel > div {
     overflow: visible !important;
 }
@@ -316,7 +307,6 @@
 
 .code-popup .v-window-wrap {
     border: 3px solid #A09F91;
-    border-radius: 12px 12px 12px 12px;
     background: none no-repeat;
     overflow: hidden;
 }
@@ -330,7 +320,6 @@
 
 .code-popup .v-window-wrap2 {
     background: none repeat scroll 0 0 #FFFFFF;
-    border-radius: 9px 9px 9px 9px;
 }
 
 .code-popup .v-window-outerheader {

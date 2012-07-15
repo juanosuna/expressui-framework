@@ -38,8 +38,7 @@
 package com.expressui.core.security.exception;
 
 /**
- * User: Juan
- * Date: 5/28/12
+ * Indicates that authentication failed.
  */
 public class AuthenticationException extends Exception {
     public AuthenticationException() {

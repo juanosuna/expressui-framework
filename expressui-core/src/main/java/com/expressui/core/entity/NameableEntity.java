@@ -38,8 +38,13 @@
 package com.expressui.core.entity;
 
 /**
- * Any entity that has a name.
+ * Any entity that has a name, which is useful for displaying to the user as a
+ * caption that describes the entity.
  */
 public interface NameableEntity {
+    /**
+     * Gets the name of this entity.
+     * @return name of this entity
+     */
     String getName();
 }

@@ -59,9 +59,6 @@ public class ResultsConnectedEntityForm<T> extends CustomComponent {
     private EntityForm<T> entityForm;
     private WalkableResults results;
 
-    private Button nextButton;
-    private Button previousButton;
-
     private Set<MethodDelegate> walkListeners = new LinkedHashSet<MethodDelegate>();
 
     public ResultsConnectedEntityForm(EntityForm<T> entityForm, WalkableResults results) {
@@ -93,7 +90,7 @@ public class ResultsConnectedEntityForm<T> extends CustomComponent {
         spaceLabel.setSizeUndefined();
         previousButtonLayout.addComponent(spaceLabel);
 
-        previousButton = new Button(null, this, "previousItem");
+        Button previousButton = new Button(null, this, "previousItem");
         previousButton.setDescription(entityForm.uiMessageSource.getToolTip("entityForm.previous.toolTip"));
         previousButton.setSizeUndefined();
         previousButton.addStyleName("borderless");
@@ -129,7 +126,7 @@ public class ResultsConnectedEntityForm<T> extends CustomComponent {
         previousButtonLayout.addComponent(spaceLabel);
         nextButtonLayout.addComponent(spaceLabel);
 
-        nextButton = new Button(null, this, "nextItem");
+        Button nextButton = new Button(null, this, "nextItem");
         nextButton.setDescription(entityForm.uiMessageSource.getToolTip("entityForm.next.toolTip"));
         nextButton.setSizeUndefined();
         nextButton.addStyleName("borderless");

@@ -104,8 +104,6 @@ public class Permission extends WritableEntity implements NameableEntity {
 
     /**
      * Sets the type of entity this permission applies to.
-     *
-     * @return name of the target entity's type
      */
     public void setTargetType(String targetType) {
         this.targetType = targetType;
@@ -243,7 +241,7 @@ public class Permission extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Get the user-friendly display label for references the type
+     * Gets the user-friendly display label for references the type.
      *
      * @return user-friendly label, displayed in UI
      */
@@ -256,7 +254,7 @@ public class Permission extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Get the user-friendly display label for references the field
+     * Gets the user-friendly display label for references the field.
      *
      * @return user-friendly label, displayed in UI
      */
@@ -269,7 +267,7 @@ public class Permission extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Get the role that this permission compositionally belong to
+     * Gets the role that this permission compositionally belong to.
      *
      * @return parent Role
      */
@@ -279,7 +277,7 @@ public class Permission extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Set the role that this permission compositionally belong to
+     * Sets the role that this permission compositionally belong to.
      *
      * @param role parent Role
      */

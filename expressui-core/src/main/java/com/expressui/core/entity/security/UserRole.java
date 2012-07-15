@@ -45,7 +45,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 /**
- * Association entity that relates user and role
+ * Association entity that relates user and role.
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -68,7 +68,7 @@ public class UserRole extends AuditableEntity {
     private Role role;
 
     /**
-     * Construct relationship between user and role
+     * Constructs relationship between user and role.
      *
      * @param userId primary key of related user
      * @param roleId primary key of related role
@@ -82,7 +82,7 @@ public class UserRole extends AuditableEntity {
     }
 
     /**
-     * Construct relationship between user and role
+     * Constructs relationship between user and role.
      *
      * @param user related user
      * @param role related role
@@ -94,7 +94,7 @@ public class UserRole extends AuditableEntity {
     }
 
     /**
-     * Get primary composition key
+     * Gets primary composition key.
      *
      * @return composition key comprised of user id and role id
      */
@@ -103,7 +103,7 @@ public class UserRole extends AuditableEntity {
     }
 
     /**
-     * Get related user.
+     * Gets related user.
      *
      * @return related user
      */
@@ -112,7 +112,7 @@ public class UserRole extends AuditableEntity {
     }
 
     /**
-     * Get related role.
+     * Gets related role.
      *
      * @return related role
      */
@@ -134,7 +134,7 @@ public class UserRole extends AuditableEntity {
         }
 
         /**
-         * Construct composition key with related user id and role id
+         * Constructs composition key with related user id and role id.
          *
          * @param userId related user id
          * @param roleId related role id

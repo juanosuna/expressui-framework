@@ -157,7 +157,8 @@ public class Opportunity extends WritableEntity implements NameableEntity {
         this.actualCloseDate = actualCloseDate;
     }
 
-    @AssertTrueForProperties(errorProperty = "actualCloseDate", message = "Required if Sales Stage is closed")
+    @AssertTrueForProperties(errorProperty = "actualCloseDate",
+            message = "{com.expressui.sample.entity.Opportunity.actualCloseDateRequiredIfSalesStageClosed}")
     public boolean isActualCloseDateValidIfSalesStageClosed() {
         if (getSalesStage() != null && getSalesStage().getId().startsWith("Closed")) {
             return !isEmpty(getActualCloseDate());
@@ -166,7 +167,8 @@ public class Opportunity extends WritableEntity implements NameableEntity {
         }
     }
 
-    @AssertTrueForProperties(errorProperty = "actualCloseDate", message = "Must be empty if Sales Stage is open")
+    @AssertTrueForProperties(errorProperty = "actualCloseDate",
+            message = "{com.expressui.sample.entity.Opportunity.actualCloseDateEmptyIfSalesStageOpen}")
     public boolean isActualCloseDateValidIfSalesStageOpen() {
         if (getSalesStage() != null && !getSalesStage().getId().startsWith("Closed")) {
             return isEmpty(getActualCloseDate());
@@ -175,7 +177,8 @@ public class Opportunity extends WritableEntity implements NameableEntity {
         }
     }
 
-    @AssertTrueForProperties(errorProperty = "expectedCloseDate", message = "Must be empty if Sales Stage is closed")
+    @AssertTrueForProperties(errorProperty = "expectedCloseDate",
+            message = "{com.expressui.sample.entity.Opportunity.expectedCloseDateEmptyIfSalesStageClosed}")
     public boolean isExpectedCloseDateValidIfSalesStageClosed() {
         if (getSalesStage() != null && getSalesStage().getId().startsWith("Closed")) {
             return isEmpty(getExpectedCloseDate());

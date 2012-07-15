@@ -63,7 +63,7 @@ public class PhonePropertyFormatter extends EnhancedPropertyFormatter {
         PhoneNumberUtil.PhoneNumberFormat format;
         String regionCodeForNumber = phoneUtil.getRegionCodeForNumber(phoneNumber);
         if (regionCodeForNumber == null || regionCodeForNumber.equals(
-                MainApplication.getInstance().getLocale().getISO3Country()
+                MainApplication.getInstance().getLocale().getCountry()
         )) {
             format = PhoneNumberUtil.PhoneNumberFormat.NATIONAL;
         } else {
@@ -76,7 +76,7 @@ public class PhonePropertyFormatter extends EnhancedPropertyFormatter {
     @Override
     public Object parse(String formattedValue) throws Exception {
         if (!StringUtil.isEmpty(formattedValue)) {
-            return new Phone(formattedValue, MainApplication.getInstance().getLocale().getISO3Country());
+            return new Phone(formattedValue, MainApplication.getInstance().getLocale().getCountry());
         } else {
             return null;
         }

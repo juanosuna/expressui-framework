@@ -106,7 +106,7 @@ public class UserForm extends EntityForm<User> {
     public void preSave(User entity) {
         super.preSave(entity);
 
-        User existingUser = null;
+        User existingUser;
         try {
             existingUser = userDao.findByLoginName(entity.getLoginName());
             if (!existingUser.equals(entity)) {

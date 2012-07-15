@@ -47,7 +47,7 @@ import javax.validation.ConstraintValidatorContext;
 import java.util.List;
 
 /**
- * Validates that permission is not already redundant with existing permission with the
+ * Validates that a permission is not already redundant with existing permission with the
  * same role, entity type and field.
  */
 public class PermissionValidator implements ConstraintValidator<ValidPermission, Permission> {

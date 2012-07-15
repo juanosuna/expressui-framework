@@ -120,11 +120,19 @@ public abstract class AuditableEntity implements IdentifiableEntity {
         return createdBy;
     }
 
+    /**
+     * Listener that sets auditing-tracking timestamps and username info.
+     */
     public static class WritableEntityListener {
 
         public WritableEntityListener() {
         }
 
+        /**
+         * Called before persist and sets created, lastModified, createBy and modifiedBy
+         * properties.
+         * @param auditableEntity entity to set timestamps and username info on
+         */
         @PrePersist
         public void onPrePersist(AuditableEntity auditableEntity) {
             auditableEntity.created = new Date();
@@ -134,6 +142,11 @@ public abstract class AuditableEntity implements IdentifiableEntity {
             auditableEntity.modifiedBy = auditableEntity.createdBy;
         }
 
+        /**
+         * Called before update and sets lastModified and modifiedBy
+         * properties.
+         * @param auditableEntity entity to set timestamps and username info on
+         */
         @PreUpdate
         public void onPreUpdate(AuditableEntity auditableEntity) {
             auditableEntity.lastModified = new Date();

@@ -49,7 +49,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Security role that can be assigned to Users
+ * Security role that can be assigned to Users.
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
@@ -78,7 +78,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Get the name of this role
+     * Gets the name of this role.
      *
      * @return name of this role
      */
@@ -90,7 +90,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Set the name of this role
+     * Sets the name of this role.
      *
      * @param name name of this role, must be between 4 and 64 characters
      */
@@ -99,7 +99,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Get the default permission logic, i.e. allow or deny
+     * Gets the default permission logic, that is allow or deny.
      *
      * @return AllowOrDeny.ALLOW or AllowOrDeny.DENY
      */
@@ -108,7 +108,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Set the default permission logic, i.e. allow or deny
+     * Sets the default permission logic, that is allow or deny.
      *
      * @param allowOrDenyByDefault AllowOrDeny.ALLOW or AllowOrDeny.DENY
      */
@@ -117,7 +117,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Get description of this role.
+     * Gets description of this role.
      *
      * @return user-friendly description
      */
@@ -127,7 +127,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Set the description for this role.
+     * Sets the description for this role.
      *
      * @param description user-friendly description
      */
@@ -145,7 +145,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Set user-role association entities.
+     * Sets user-role association entities.
      *
      * @param userRoles user-role association entities
      */
@@ -154,7 +154,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Get access permissions assigned to this role.
+     * Gets access permissions assigned to this role.
      *
      * @return permissions assigned to this role
      */
@@ -163,7 +163,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Set access permissions assigned to this role.
+     * Sets access permissions assigned to this role.
      *
      * @param permissions permissions assigned to this role
      */
@@ -172,7 +172,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Get permission for accessing given type.
+     * Gets permission for accessing given type.
      *
      * @param type type for which permission is retrieved
      * @return permission for accessing given type
@@ -193,7 +193,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Get permission for accessing given type and field (property)
+     * Gets permission for accessing given type and field (property).
      *
      * @param type  type
      * @param field field (property) of the type
@@ -216,7 +216,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Ask if view access is allowed for given type
+     * Asks if view access is allowed for given type.
      *
      * @param type type
      * @return true if view access is allowed
@@ -227,7 +227,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Ask if edit access is allowed for given type
+     * Asks if edit access is allowed for given type.
      *
      * @param type type
      * @return true if edit access is allowed
@@ -238,7 +238,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Ask if create access is allowed for given type
+     * Asks if create access is allowed for given type.
      *
      * @param type type
      * @return true if create access is allowed
@@ -249,7 +249,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Ask if delete access is allowed for given type
+     * Asks if delete access is allowed for given type.
      *
      * @param type type
      * @return true if delete access is allowed
@@ -260,7 +260,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Ask if view access is allowed for given field (property) within given type
+     * Asks if view access is allowed for given field (property) within given type.
      *
      * @param type  type
      * @param field field
@@ -272,7 +272,7 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Ask if edit access is allowed for given field (property) within given type
+     * Asks if edit access is allowed for given field (property) within given type.
      *
      * @param type  type
      * @param field field

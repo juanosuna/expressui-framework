@@ -120,7 +120,8 @@ public class Address extends WritableEntity {
         this.zipCode = zipCode;
     }
 
-    @AssertTrueForProperties(errorProperty = "zipCode", message = "US zip code must be 5 or 9 digits")
+    @AssertTrueForProperties(errorProperty = "zipCode",
+            message = "{com.expressui.sample.entity.Address.zipCodeInvalidForUS}")
     public boolean isUsZipCodeValid() {
         if (!isEmpty(getZipCode()) && isCountryId("US")) {
             return getZipCode().matches("^\\d{5}$|^\\d{5}$");
@@ -129,7 +130,8 @@ public class Address extends WritableEntity {
         }
     }
 
-    @AssertTrueForProperties(errorProperty = "zipCode", message = "CA zip code must be have the format: A0A 0A0")
+    @AssertTrueForProperties(errorProperty = "zipCode",
+            message = "{com.expressui.sample.entity.Address.zipCodeInvalidForCA}")
     public boolean isCaZipCodeValid() {
         if (!isEmpty(getZipCode()) && isCountryId("CA")) {
             return getZipCode().matches("^[a-zA-Z]\\d[a-zA-Z] \\d[a-zA-Z]\\d$");
@@ -138,7 +140,8 @@ public class Address extends WritableEntity {
         }
     }
 
-    @AssertTrueForProperties(errorProperty = "zipCode", message = "Zip code invalid for selected country")
+    @AssertTrueForProperties(errorProperty = "zipCode",
+            message = "{com.expressui.sample.entity.Address.zipCodeInvalidForCountry}")
     public boolean isZipCodeValidForCountry() {
         if (!isEmpty(getZipCode()) && getCountry() != null && !isCountryId("US", "CA")) {
             return getCountry().isZipCodeValid(getZipCode());
@@ -155,7 +158,8 @@ public class Address extends WritableEntity {
         this.state = state;
     }
 
-    @AssertTrueForProperties(errorProperty = "state", message = "State is required for selected country")
+    @AssertTrueForProperties(errorProperty = "state",
+            message = "{com.expressui.sample.entity.Address.stateRequiredForCountry}")
     public boolean isStateValid() {
         if (getCountry() != null && isEqual(getCountry().getId(), "US", "CA", "MX", "AU")) {
             return getState() != null;

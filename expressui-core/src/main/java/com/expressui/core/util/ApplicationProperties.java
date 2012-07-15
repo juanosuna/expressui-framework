@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Access to core Spring-loaded properties.
+ * Access to application.properties.
  */
 @Configuration
 public class ApplicationProperties {
@@ -93,7 +93,7 @@ public class ApplicationProperties {
     private String pageSizeOptions = "5,10,25,50,100";
 
     /**
-     * Get the HTTP proxy hostname
+     * Gets the HTTP proxy hostname.
      *
      * @return HTTP proxy hostname
      */
