@@ -47,7 +47,7 @@ import com.vaadin.data.Validator;
 import javax.annotation.Resource;
 
 /**
- * Abstract superclass for implementing conversion validators, which validate whether a user-entered value
+ * Abstract superclass for implementing conversion validators, which validate that a user-entered value
  * is convertible to specific data type.
  */
 public abstract class AbstractConversionValidator implements Validator {
@@ -59,7 +59,7 @@ public abstract class AbstractConversionValidator implements Validator {
     private FormField formField;
 
     /**
-     * Construct validator based on the form field the validator is bound to and error message if validation were to
+     * Constructs validator based on the form field the validator is bound to and error message if validation were to
      * fail.
      *
      * @param formField    form field that this conversion validator is bound to
@@ -88,7 +88,7 @@ public abstract class AbstractConversionValidator implements Validator {
     }
 
     /**
-     * Get error message that is displayed to user if validation were to fail. If error message is null, then this
+     * Gets error message that is displayed to user if validation were to fail. If error message is null, then this
      * class uses the message contained in any validation exception.
      *
      * @return error message
@@ -98,7 +98,7 @@ public abstract class AbstractConversionValidator implements Validator {
     }
 
     /**
-     * Get form field that this validator is bound to
+     * Gets form field that this validator is bound to.
      *
      * @return form field
      */
@@ -107,7 +107,7 @@ public abstract class AbstractConversionValidator implements Validator {
     }
 
     /**
-     *  Set form field that this validator is bound to.
+     *  Sets form field that this validator is bound to.
      * @param formField form field
      */
     public void setFormField(FormField formField) {
@@ -115,13 +115,14 @@ public abstract class AbstractConversionValidator implements Validator {
     }
 
     /**
-     * Subclass implementation should throw exception if validation fails.
+     * Implementation must throw exception if validation fails.
      *
      * @param value value to be validated
      * @throws Exception signifies validation failed, should contain message that is displayed to end user
      */
     protected abstract void validateImpl(Object value) throws Exception;
 
+    @Override
     public void validate(Object value) throws InvalidValueException {
         try {
             validateImpl(value);

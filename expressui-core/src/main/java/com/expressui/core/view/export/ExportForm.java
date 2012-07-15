@@ -95,7 +95,7 @@ public class ExportForm extends TypedForm<ExportParameters> {
     }
 
     /**
-     * Get export parameters.
+     * Gets export parameters.
      *
      * @return export parameters
      */
@@ -143,7 +143,7 @@ public class ExportForm extends TypedForm<ExportParameters> {
     }
 
     /**
-     * Set listener invoked when user clicks export button.
+     * Sets listener invoked when user clicks export button.
      *
      * @param target     target object
      * @param methodName name of listener method
@@ -154,7 +154,7 @@ public class ExportForm extends TypedForm<ExportParameters> {
     }
 
     /**
-     * Popup this export form.
+     * Pops up this export form.
      */
     public void open() {
         popupWindow = new Window(getTypeCaption());
@@ -175,7 +175,7 @@ public class ExportForm extends TypedForm<ExportParameters> {
     }
 
     /**
-     * Close/cancel this export form.
+     * Closes/cancels this export form.
      */
     public void close() {
         getMainApplication().getMainWindow().removeWindow(popupWindow);

@@ -48,7 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Access to application.properties.
+ * API access to application.properties.
  */
 @Configuration
 public class ApplicationProperties {
@@ -102,7 +102,7 @@ public class ApplicationProperties {
     }
 
     /**
-     * Get the HTTP proxy port
+     * Gets the HTTP proxy port.
      *
      * @return HTTP proxy port
      */
@@ -111,7 +111,7 @@ public class ApplicationProperties {
     }
 
     /**
-     * Get the HTTP proxy username
+     * Gets the HTTP proxy username.
      *
      * @return HTTP username
      */
@@ -120,7 +120,7 @@ public class ApplicationProperties {
     }
 
     /**
-     * Get the HTTP proxy password
+     * Gets the HTTP proxy password.
      *
      * @return HTTP password
      */
@@ -129,7 +129,8 @@ public class ApplicationProperties {
     }
 
     /**
-     * Get URL for restarting the app and creating a new session, e.g. upon logout or when there is an error.
+     * Gets URL for restarting the app and creating a new session, e.g. upon logout or when there is fatal
+     * communication error.
      *
      * @return URL for restarting the app
      */
@@ -138,7 +139,8 @@ public class ApplicationProperties {
     }
 
     /**
-     * Ask if code popups should be displayed. Only useful for demo applications.
+     * Asks if code popups should be displayed. This should only be set true for demo applications.
+     * Default is false.
      *
      * @return true if code popups should be displayed
      */
@@ -147,7 +149,7 @@ public class ApplicationProperties {
     }
 
     /**
-     * Get base URL for fetching code to be displayed in popups. Only useful for demo applications.
+     * Gets base URL for fetching code to be displayed in popups. This should only be set true for demo applications.
      *
      * @return base URL
      */
@@ -156,7 +158,7 @@ public class ApplicationProperties {
     }
 
     /**
-     * Get the URL for fetching source code for the given class. Only useful for demo applications.
+     * Gets the URL for fetching source code for the given class. This should only be set true for demo applications.
      *
      * @param clazz class to fetch source code for
      * @return URL
@@ -180,7 +182,7 @@ public class ApplicationProperties {
     }
 
     /**
-     * Get base URL for fetching Javadoc to be displayed in popups. Only useful for demo applications.
+     * Gets base URL for fetching Javadoc to be displayed in popups. This should only be set true for demo applications.
      *
      * @return base URL
      */
@@ -189,7 +191,7 @@ public class ApplicationProperties {
     }
 
     /**
-     * Get the URL for fetching Javadoc for the given class. Only useful for demo applications.
+     * Gets the URL for fetching Javadoc for the given class. This should only be set true for demo applications.
      *
      * @param clazz class to fetch Javadoc for
      * @return URL
@@ -203,22 +205,50 @@ public class ApplicationProperties {
         return url + clazz.getName().replace(".", "/").replace("$", ".") + ".html";
     }
 
+    /**
+     * Gets the session timeout period in minutes. Default is 30 minutes.
+     *
+     * @return session timeout period in minutes
+     */
     public Integer getSessionTimeout() {
         return sessionTimeout;
     }
 
+    /**
+     * Gets the warning period in minutes before session expiration. Default is 5 minutes.
+     *
+     * @return session warning timeout period in minutes
+     */
     public Integer getSessionTimeoutWarning() {
         return sessionTimeoutWarning;
     }
 
+    /**
+     * Gets default style for displaying dates, as defined in java.text.DateFormat
+     # Options are: FULL=0, LONG=1, MEDIUM=2, SHORT=3. Default is 3 or SHORT.
+
+     * @return default date style
+     */
     public Integer getDefaultDateStyle() {
         return defaultDateStyle;
     }
 
+    /**
+     * Gets default style for displaying times, as defined in java.text.DateFormat
+     # Options are: FULL=0, LONG=1, MEDIUM=2, SHORT=3. Default is 3 or SHORT.
+
+     * @return default time style
+     */
     public Integer getDefaultTimeStyle() {
         return defaultTimeStyle;
     }
 
+    /**
+     * Gets the available page-size options for results components.
+     * Default is 5,10,25,50,100.
+     *
+     * @return available page-size options for results components
+     */
     public List<Integer> getPageSizeOptions() {
         String[] pageSizeStrings = pageSizeOptions.split(",");
         List<Integer> pageSizes = new ArrayList<Integer>();
@@ -232,6 +262,7 @@ public class ApplicationProperties {
 
     /**
      * Lifecycle method called after bean is constructed. Sets http.proxyHost and http.proxyPort system property
+     * and sets a proxy authenticator if httpProxyUsername and httpProxyPassword are not empty.
      */
     @PostConstruct
     public void postConstruct() {
@@ -246,6 +277,9 @@ public class ApplicationProperties {
         }
     }
 
+    /**
+     * Proxy authenticator that provides username and password from properties file
+     */
     public static class ProxyAuthenticator extends Authenticator {
 
         private String user, password;

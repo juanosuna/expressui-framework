@@ -50,7 +50,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * A field for display in the UI, e.g. as a column in results table or input field in a form.
+ * A field for display in the UI, as a column in results table or input field in a form.
  */
 public abstract class DisplayField {
 
@@ -63,8 +63,8 @@ public abstract class DisplayField {
     private String label;
 
     /**
-     * Construct with reference to fieldSet this field belongs to and the property name this field is bound to, e.g.
-     * an entity object.
+     * Constructs with reference to fieldSet this field belongs to and the property name this field is bound to,
+     * often in an entity object.
      *
      * @param fieldSet   fieldSet that contains this field
      * @param propertyId name of the property this field is bound to
@@ -77,7 +77,7 @@ public abstract class DisplayField {
     }
 
     /**
-     * Get FieldSet that contains this field.
+     * Gets FieldSet that contains this field.
      *
      * @return FieldSet that contains this field
      */
@@ -86,7 +86,7 @@ public abstract class DisplayField {
     }
 
     /**
-     * Get the name of the property this field is bound to, e.g. in an entity object
+     * Gets the name of the property this field is bound to, often in an entity object
      *
      * @return name of the property
      */
@@ -95,7 +95,7 @@ public abstract class DisplayField {
     }
 
     /**
-     * Get static type information about the property this field is bound to
+     * Gets static type information about the property this field is bound to.
      *
      * @return bean property type information
      */
@@ -104,7 +104,7 @@ public abstract class DisplayField {
     }
 
     /**
-     * Get the type of property this field is bound to.
+     * Gets the type of property this field is bound to.
      *
      * @return type of property
      */
@@ -113,8 +113,9 @@ public abstract class DisplayField {
     }
 
     /**
-     * Get the PropertyFormatter used to format values for display and parse values
-     * entered by user. If one is not already set, generates a default one automatically from DefaultFormats.
+     * Gets the PropertyFormatter used to format values for display and parse values
+     * entered by user. If one is not already set, generates a default one automatically from
+     * {@link DefaultFormats}.
      *
      * @return Vaadin property formatter
      */
@@ -127,7 +128,7 @@ public abstract class DisplayField {
     }
 
     /**
-     * Set the PropertyFormatter used to format values for display and parse values
+     * Sets the PropertyFormatter used to format values for display and parse values
      * entered by user.
      *
      * @param propertyFormatter Vaadin property formatter
@@ -136,7 +137,12 @@ public abstract class DisplayField {
         this.propertyFormatter = propertyFormatter;
     }
 
-    private PropertyFormatter generateDefaultPropertyFormatter() {
+    /**
+     * Generates the default property formatter for this field. Can be overridden to refine the behavior.
+     *
+     * @return Vaadin proprety formatter
+     */
+    protected PropertyFormatter generateDefaultPropertyFormatter() {
         DefaultFormats defaultFormats = getFieldSet().defaultFormats;
 
         if (getBeanPropertyType().getBusinessType() == BeanPropertyType.BusinessType.DATE) {
@@ -145,7 +151,7 @@ public abstract class DisplayField {
             return defaultFormats.getDateTimeFormat();
         } else if (getBeanPropertyType().getBusinessType() == BeanPropertyType.BusinessType.NUMBER) {
             if (getBeanPropertyType().getType().isPrimitive()) {
-                return defaultFormats.getNumberFormat(0, 0);
+                return defaultFormats.getNumberFormat(0);
             } else {
                 return defaultFormats.getNumberFormat();
             }
@@ -158,9 +164,13 @@ public abstract class DisplayField {
     }
 
     /**
-     * Get the label used for this field. Generates one automatically, if not already set.
-     * Generated one can be derived from the property name, @Label annotation on the bound property
-     * or looked up from domainMessageSource bean, using property name as key.
+     * Gets the label used for this field. Generates one automatically, if not already set.
+     * Generated one can be derived from the property name in the code, @Label annotation on the bound property
+     * or looked up from resource bundle properties file, using the property name as the key.
+     * <P/>
+     * If I18n is required, then define labels in resource bundle properties files resources/domainMessages/.
+     * These messages have priority over annotations. Generating a label from the property name in code is done as a
+     * last resort.
      *
      * @return display label
      */
@@ -173,7 +183,7 @@ public abstract class DisplayField {
     }
 
     /**
-     * Set the label used for this field.
+     * Sets the label used for this field, overwriting any automatically generated label.
      *
      * @param label label
      */
@@ -181,10 +191,21 @@ public abstract class DisplayField {
         this.label = label;
     }
 
+    /**
+     * Generates or re-generates label, passing in arguments for interpolation using standard {0}, {1}, {2}
+     * notation. This feature only works with resource bundle messages defined in resources/domainMessages/.
+     * @param args
+     */
     public void setLabelArgs(Object... args) {
         setLabel(generateLabelText(args));
     }
 
+    /**
+     * Generates label automatically, maybe override to refine default behavior.
+     *
+     * @param args arguments use for interpolation
+     * @return generated label
+     */
     protected String generateLabelText(Object... args) {
         String labelText = getLabelTextFromMessageSource(false, args);
         if (labelText == null) {
@@ -198,13 +219,13 @@ public abstract class DisplayField {
     }
 
     /**
-     * Get name for the type of label or section in a form where the label is found.
+     * Gets name for the type of label or section in a form where the label is found.
      * This is used internally by security admin components to indicate to the user
      * where components are located for assigning permissions.
      *
      * @return label section display name
      */
-    abstract protected String getLabelSectionDisplayName();
+    protected abstract String getLabelSectionDisplayName();
 
     private String getLabelTextFromMessageSource(boolean useDefaultLocale, Object... args) {
         List<BeanPropertyType> ancestors = beanPropertyType.getAncestors();
@@ -284,10 +305,10 @@ public abstract class DisplayField {
     }
 
     /**
-     * Set a link to open an entity form related to this field. Enables embedding
+     * Sets a link to open an entity form related to this field. Enables embedding
      * links in results table to open up related entity form.
      *
-     * @param propertyId property path that is many-to-one relationship with another entity
+     * @param propertyId property id path that is many-to-one relationship with another entity
      * @param entityForm entity form component to open when link is clicked
      */
     public void setFormLink(String propertyId, EntityForm entityForm) {
@@ -296,44 +317,13 @@ public abstract class DisplayField {
     }
 
     /**
-     * Get a link to open an entity form related to this field. Enables embedding
+     * Gets a link to open an entity form related to this field. Enables embedding
      * links in results table to open up related entity
      *
      * @return form link
      */
     public FormLink getFormLink() {
         return formLink;
-    }
-
-    /**
-     * A link for opening an EntityForm
-     */
-    public static class FormLink {
-        private String propertyId;
-        private EntityForm entityForm;
-
-        private FormLink(String propertyId, EntityForm entityForm) {
-            this.propertyId = propertyId;
-            this.entityForm = entityForm;
-        }
-
-        /**
-         * Get property path of many-to-one link to another entity
-         *
-         * @return name of property
-         */
-        public String getPropertyId() {
-            return propertyId;
-        }
-
-        /**
-         * Get EntityForm that is opened when link is clicked.
-         *
-         * @return entity form
-         */
-        public EntityForm getEntityForm() {
-            return entityForm;
-        }
     }
 
     @Override

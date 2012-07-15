@@ -45,7 +45,7 @@ import java.util.Collection;
  */
 public class CollectionsUtil {
     /**
-     * Convert collection to a string array by calling toString on each member
+     * Converts collection to a string array by calling toString on each member.
      *
      * @param collection collection to convert
      * @return string array
@@ -62,7 +62,7 @@ public class CollectionsUtil {
     }
 
     /**
-     * Convert a collection to a primitive array of a given type
+     * Converts a collection to a primitive array of a given type.
      *
      * @param type       type of array to create
      * @param collection collection to convert, must contain items that extend T

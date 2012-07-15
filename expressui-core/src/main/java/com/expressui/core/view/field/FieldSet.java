@@ -53,21 +53,29 @@ import java.util.*;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 /**
- * Collection of fields for display in a UI component, e.g. form or results
+ * Collection of fields for display in a UI component, for example in a form or results component.
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public abstract class FieldSet {
 
     /**
-     * MessageSource for internationalizing entity or domain-level labels
+     * MessageSource for internationalizing entity or domain-level messages.
      */
     @Resource
     public MessageSource domainMessageSource;
 
+    /**
+     * MessageSource for internationalizing UI-level messages.
+     */
     @Resource
     public MessageSource uiMessageSource;
 
+    /**
+     * MessageSource for internationalizing entity or domain-level messages, where system does not
+     * fallback to system locale if message is not found in user's locale. This is useful internally
+     * for trying different options in a single resource defined for a single locale.
+     */
     @Resource
     public MessageSource domainMessageSourceNoFallback;
 
@@ -78,7 +86,7 @@ public abstract class FieldSet {
     public DefaultFormats defaultFormats;
 
     /**
-     * Security service
+     * Security service.
      */
     @Resource
     public SecurityService securityService;
@@ -90,7 +98,7 @@ public abstract class FieldSet {
     }
 
     /**
-     * Add field to set.
+     * Adds a field to this collection.
      *
      * @param propertyId   property name
      * @param displayField DisplayField to add
@@ -100,7 +108,7 @@ public abstract class FieldSet {
     }
 
     /**
-     * Get the type of entity these fields are bound to
+     * Gets the type of entity these fields are bound to.
      *
      * @return type of entity in the Datasource
      */
@@ -109,7 +117,7 @@ public abstract class FieldSet {
     }
 
     /**
-     * Set the type of entity these fields are bound to
+     * Sets the type of entity these fields are bound to.
      *
      * @param type type of entity in the Datasource
      */
@@ -118,7 +126,7 @@ public abstract class FieldSet {
     }
 
     /**
-     * Get the property ids for data binding these fields to a Datasource of entities
+     * Gets a list of property ids for data binding these fields to a Datasource of entities.
      *
      * @return property ids
      */
@@ -127,7 +135,7 @@ public abstract class FieldSet {
     }
 
     /**
-     * Get list of property ids that current user is allowed to view, based on security permissions.
+     * Gets list of property ids that current user is allowed to view, based on security permissions.
      *
      * @return list of viewable property ids
      */
@@ -145,7 +153,7 @@ public abstract class FieldSet {
     }
 
     /**
-     * Get viewable property ids as array
+     * Gets viewable property ids as array.
      *
      * @return array of property ids
      */
@@ -154,7 +162,7 @@ public abstract class FieldSet {
     }
 
     /**
-     * Get labels (column headings) of viewable properties as array
+     * Gets labels (column headings) of viewable properties as an array.
      *
      * @return array of viewable property labels
      */
@@ -169,20 +177,20 @@ public abstract class FieldSet {
     }
 
     /**
-     * Ask if these fields contains a field bound to given property id
+     * Asks if these fields contain a field bound to given property id.
      *
      * @param propertyId property id to check
-     * @return true if a field is bound to given property id
+     * @return true if some field in this collection is bound to given property id
      */
     public boolean containsPropertyId(String propertyId) {
         return fields.containsKey(propertyId);
     }
 
     /**
-     * Get display field bound to given property id
+     * Gets DisplayField bound to given property id.
      *
      * @param propertyId property id
-     * @return display field bound to given property id
+     * @return DisplayField bound to given property id
      */
     public DisplayField getField(String propertyId) {
         DisplayField field = fields.get(propertyId);
@@ -192,24 +200,24 @@ public abstract class FieldSet {
     }
 
     /**
-     * Create field based on property id.
+     * Create DisplayField based on property id.
      *
      * @param propertyId name of property in the bound entity
-     * @return newly created field
+     * @return newly created DisplayField
      */
     abstract protected DisplayField createField(String propertyId);
 
     /**
-     * Get collection of DisplayFields
+     * Get raw collection of DisplayFields
      *
-     * @return collection of DisplayFields
+     * @return raw collection of DisplayFields
      */
     public Collection<DisplayField> getFields() {
         return fields.values();
     }
 
     /**
-     * Get display label for field bound to given property.
+     * Gets the display label for field bound to given property.
      *
      * @param propertyId property path in entity tree
      * @return display label
@@ -219,7 +227,7 @@ public abstract class FieldSet {
     }
 
     /**
-     * Set display label for field bound to given property.
+     * Sets display label for field bound to given property.
      *
      * @param propertyId property path in entity tree
      * @param label      label (column heading)
@@ -228,13 +236,19 @@ public abstract class FieldSet {
         getField(propertyId).setLabel(label);
     }
 
-    public void setLabelArgs(String propertyId, String label, Object... args) {
-        getField(propertyId).setLabelArgs(label, args);
+    /**
+     * Generates or re-generates label, passing in arguments for interpolation using standard {0}, {1}, {2}
+     * notation. This feature only works with resource bundle messages defined in resources/domainMessages/.
+     * @param propertyId property path in entity tree
+     * @param args
+     */
+    public void setLabelArgs(String propertyId, Object... args) {
+        getField(propertyId).setLabelArgs(args);
     }
 
     /**
-     * Set a link to open an entity form related to this field. Enables embedding
-     * links in results table to open up related entity
+     * Sets a link to open an entity form related to this field. Enables embedding
+     * links in results table to open up related entity form.
      *
      * @param propertyId       id property path for display content in the link
      * @param entityPropertyId property path that is many-to-one relationship with another entity
@@ -245,7 +259,7 @@ public abstract class FieldSet {
     }
 
     /**
-     * Set property formatter to be used for formatting display value.
+     * Sets property formatter to be used for formatting display value.
      *
      * @param propertyId        property path in entity tree
      * @param propertyFormatter property formatter

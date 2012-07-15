@@ -104,7 +104,7 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
     public void postWire() {
         super.postWire();
         getEntitySelect().postWire();
-        getEntitySelect().getResults().setSelectButtonListener(this, "itemsSelected");
+        getEntitySelect().getResults().addSelectActionListener(this, "itemsSelected");
     }
 
     /**

@@ -123,6 +123,7 @@ public class FormField extends DisplayField {
      * @return Vaadin label for this field
      */
     public com.vaadin.ui.Label getFieldLabel() {
+        getField(); // make sure field is initialized before label
         if (label == null) {
             String labelText = generateLabelText();
             if (isRequired()) {
@@ -344,7 +345,7 @@ public class FormField extends DisplayField {
         Object value = getField().getPropertyDataSource().getValue();
         if (value != null) {
             AbstractTextField textField = (AbstractTextField) getField();
-            int approximateWidth = StringUtil.approximateColumnWidth(value.toString());
+            int approximateWidth = StringUtil.approximateEmWidth(value.toString());
             if (autoAdjustWidthMode == AutoAdjustWidthMode.FULL) {
                 textField.setWidth(approximateWidth, Sizeable.UNITS_EM);
             } else if (autoAdjustWidthMode == AutoAdjustWidthMode.PARTIAL) {
@@ -400,7 +401,7 @@ public class FormField extends DisplayField {
         int maxWidth = 0;
         for (Object itemsId : itemsIds) {
             String caption = selectField.getItemCaption(itemsId);
-            int approximateWidth = StringUtil.approximateColumnWidth(caption);
+            int approximateWidth = StringUtil.approximateEmWidth(caption);
             maxWidth = Math.max(maxWidth, approximateWidth);
         }
 
@@ -579,12 +580,16 @@ public class FormField extends DisplayField {
         getFieldLabel().setVisible(false);
     }
 
+    public boolean isRequired() {
+        return isRequired;
+    }
+
     /**
      * Ask if this field is required.
      *
      * @return true if required
      */
-    public boolean isRequired() {
+    public boolean isCurrentlyRequired() {
         return getField().isRequired();
     }
 
@@ -593,7 +598,7 @@ public class FormField extends DisplayField {
      *
      * @param isRequired true if required
      */
-    public void setRequired(boolean isRequired) {
+    public void setCurrentlyRequired(boolean isRequired) {
         getField().setRequired(isRequired);
     }
 

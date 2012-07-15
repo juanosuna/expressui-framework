@@ -35,64 +35,37 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.core.util;
+package com.expressui.core.view.field;
+
+import com.expressui.core.view.form.EntityForm;
 
 /**
- * Utility class for managing Math operations.
+ * A link for opening another EntityForm from a DisplayField.
  */
-public class MathUtil {
+public class FormLink {
+    private String propertyId;
+    private EntityForm entityForm;
 
-    /**
-     * Gets the maximum integer, ignoring if one arg is null.
-     *
-     * @param a first integer
-     * @param b second integer
-     * @return maximum integer
-     */
-    public static Integer maxIgnoreNull(Integer a, Integer b) {
-        if (a == null) return b;
-        if (b == null) return a;
-
-        return Math.max(a, b);
+    FormLink(String propertyId, EntityForm entityForm) {
+        this.propertyId = propertyId;
+        this.entityForm = entityForm;
     }
 
     /**
-     * Gets the minimum integer, ignoring if one arg is null.
+     * Gets property path of many-to-one link to another entity.
      *
-     * @param a first integer
-     * @param b second integer
-     * @return minimum integer
+     * @return name of property
      */
-    public static Integer minIgnoreNull(Integer a, Integer b) {
-        if (a == null) return b;
-        if (b == null) return a;
-
-        return Math.min(a, b);
+    public String getPropertyId() {
+        return propertyId;
     }
 
     /**
-     * Gets the maximum integer, returning null if any arg is null.
+     * Gets EntityForm that is opened when link is clicked.
      *
-     * @param a first integer
-     * @param b second integer
-     * @return maximum integer, or null if any arg is null
+     * @return entity form
      */
-    public static Integer maxDisallowNull(Integer a, Integer b) {
-        if (a == null || b == null) return null;
-
-        return Math.max(a, b);
-    }
-
-    /**
-     * Get the minimum integer, returning null if any arg is null
-     *
-     * @param a first integer
-     * @param b second integer
-     * @return minimum integer, or null if any arg is null
-     */
-    public static Integer minDisallowNull(Integer a, Integer b) {
-        if (a == null || b == null) return null;
-
-        return Math.min(a, b);
+    public EntityForm getEntityForm() {
+        return entityForm;
     }
 }

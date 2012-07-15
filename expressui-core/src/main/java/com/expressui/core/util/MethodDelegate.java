@@ -52,7 +52,7 @@ public class MethodDelegate {
     private Method method;
 
     /**
-     * Construct method delegate on a given target with given method name and parameter types.
+     * Constructs method delegate on a given target with given method name and parameter types.
      *
      * @param target         instance for later executing the method
      * @param methodName     name of the method
@@ -66,7 +66,7 @@ public class MethodDelegate {
     }
 
     /**
-     * Execute the method with the give arguments.
+     * Executes the method with the give arguments.
      *
      * @param args arguments for passing to the method
      * @return value returned by the method
@@ -83,7 +83,7 @@ public class MethodDelegate {
     }
 
     /**
-     * Get the target instance on which method can be invoked.
+     * Gets the target instance on which method can be invoked.
      *
      * @return target instance
      */
@@ -92,7 +92,7 @@ public class MethodDelegate {
     }
 
     /**
-     * Get the method that can be invoked.
+     * Gets the method that can be invoked.
      *
      * @return method
      */

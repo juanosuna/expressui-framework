@@ -46,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Utility class for managing Strings
+ * Utility class for managing strings.
  */
 public class StringUtil {
 
@@ -59,7 +59,7 @@ public class StringUtil {
     }
 
     /**
-     * Ask if the given String is equal to any of the other args
+     * Asks if the given String is equal to any of the other args.
      *
      * @param s    string to query for
      * @param args strings to query in
@@ -76,27 +76,27 @@ public class StringUtil {
     }
 
     /**
-     * Get the approximate column width in EM units of the given string
+     * Gets the approximate width in EM units of the given string.
      *
      * @param s string to measure
      * @return width in EM units
      */
-    public static int approximateColumnWidth(String s) {
+    public static int approximateEmWidth(String s) {
         return (int) Math.ceil(FONT_METRICS.stringWidth(s) * 0.08) + 2;
     }
 
     /**
-     * Get the approximate column width in pixels of the given string
+     * Gets the approximate width in pixels of the given string.
      *
      * @param s string to measure
      * @return width in pixels
      */
-    public static int approximateColumnPixelWidth(String s) {
+    public static int approximatePixelWidth(String s) {
         return FONT_METRICS.stringWidth(s) + 30;
     }
 
     /**
-     * Extract part of string after last period.
+     * Extracts the part of string after last period.
      *
      * @param str string to extract from
      * @return last part of string, after period, just returns str if no period found
@@ -111,8 +111,8 @@ public class StringUtil {
     }
 
     /**
-     * Converts camel case to human-readable form, i.e. spaced-delimited words with each first
-     * letter capitalized
+     * Converts camel case to human-readable form, that is spaced-delimited words with each first
+     * letter capitalized.
      *
      * @param camelCase string in camel case
      * @return humanized value
@@ -124,7 +124,7 @@ public class StringUtil {
     }
 
     /**
-     * Hyphenate and lower-case camel-case string.
+     * Hyphenates and lower-cases camel-case string.
      *
      * @param camelCase string in camel case
      * @return hyphenated value
@@ -136,7 +136,7 @@ public class StringUtil {
     }
 
     /**
-     * Capitalize first letter of given string
+     * Capitalizes first letter of given string.
      *
      * @param str string to capitalize first letter of
      * @return new String with first letter capitalized
@@ -146,7 +146,7 @@ public class StringUtil {
     }
 
     /**
-     * Lower-case first letter of given string
+     * Lower-cases first letter of given string.
      *
      * @param str string to lower-case first letter of
      * @return new String with first letter lower-cased
@@ -156,7 +156,7 @@ public class StringUtil {
     }
 
     /**
-     * Ask if the given arg is empty, i.e. null or empty string
+     * Asks if the given arg is empty, that is null or zero-length toString
      *
      * @param s any object
      * @return true if arg is null or empty string
@@ -170,7 +170,7 @@ public class StringUtil {
     }
 
     /**
-     * Generate style names from an object's class and all its parents in class hierarchy, useful for UI component.
+     * Generates CSS style names from an object's class and all its parents in class hierarchy.
      *
      * @param prefix        to prepend to style name
      * @param topLevelClass style names are only generated up to this top level class in the class hierarchical. Higher
@@ -192,7 +192,8 @@ public class StringUtil {
     }
 
     /**
-     * Generates a debug ID that is inserted into the HTML, which can be useful finding elements in a tool like FireBug
+     * Generates a debug ID that is inserted into the HTML, which can be useful finding elements in a tool like FireBug.
+     *
      * @param prefix prefix to prepend to debug ID
      * @param mainComponent component to add debug ID to, debug ID contains this component's class name
      * @param subComponent includes object hashcode from subcomponent to ensure uniqueness

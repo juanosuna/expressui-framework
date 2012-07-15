@@ -91,7 +91,7 @@ public abstract class EntitySelectResults<T> extends Results<T> {
     }
 
     /**
-     * Listener method invoked when the user selects an entity in the results.
+     * Listener method invoked when the user selects an entity in the results table.
      */
     public void selectionChanged() {
         Object itemId = getResultsTable().getValue();
@@ -118,12 +118,13 @@ public abstract class EntitySelectResults<T> extends Results<T> {
     }
 
     /**
-     * Set a listener to be invoked when use selects entity.
+     * Adds a listener to be invoked when the user performs the select action,
+     * by click select button or selecting from context menu.
      *
      * @param target     target object to be invoked
      * @param methodName listener method to be invoked
      */
-    public void setSelectButtonListener(Object target, String methodName) {
+    public void addSelectActionListener(Object target, String methodName) {
         selectButton.removeListener(Button.ClickEvent.class, target, methodName);
         selectButton.addListener(Button.ClickEvent.class, target, methodName);
         actionContextMenu.addAction("results.select", target, methodName);

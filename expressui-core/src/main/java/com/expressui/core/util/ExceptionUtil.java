@@ -43,7 +43,7 @@ package com.expressui.core.util;
 public class ExceptionUtil {
 
     /**
-     * Find given throwable within a tree of chained throwables
+     * Finds given throwable within a tree of chained throwables.
      *
      * @param rootThrowable      throwable to traverse/search
      * @param queryThrowableType throwable type to query for

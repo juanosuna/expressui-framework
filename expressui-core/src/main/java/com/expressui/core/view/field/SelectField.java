@@ -144,7 +144,7 @@ public class SelectField<T, V> extends CustomField {
         clearButton.setIcon(new ThemeResource("../runo/icons/16/cancel.png"));
         selectFieldLayout.addComponent(clearButton);
 
-        entitySelect.getResults().setSelectButtonListener(this, "itemSelected");
+        entitySelect.getResults().addSelectActionListener(this, "itemSelected");
         clearButton.addListener(Button.ClickEvent.class, this, "itemCleared");
 
         setCompositionRoot(selectFieldLayout);

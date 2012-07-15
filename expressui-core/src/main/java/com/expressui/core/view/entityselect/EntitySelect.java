@@ -45,7 +45,7 @@ import com.vaadin.ui.Window;
 import javax.annotation.PostConstruct;
 
 /**
- * A popup component for soliciting a entity selection from the user in a form.
+ * A popup component for prompting the user for a entity selection in a form.
  * This is useful in many-to-one relationships, where the user must search among
  * a large number of available entities and select one for assignment in a
  * many-to-one relationship.
@@ -61,20 +61,26 @@ public abstract class EntitySelect<T> extends TypedComponent<T> {
     }
 
     /**
-     * Get the search form component.
+     * Gets the search form component.
      *
      * @return search form component
      */
     public abstract SearchForm getSearchForm();
 
     /**
-     * Get the results component presented to user for selection.
+     * Gets the results component presented to user for selection.
      *
      * @return results from which entity is selected
      */
     public abstract EntitySelectResults<T> getResults();
 
-    public void configurePopupWindow(Window popupWindow) {
+    /**
+     * Configures the popup window size at 95% height and undefined width.
+     * May be overriden to customize size.
+     *
+     * @param popupWindow popup window available custome configuration
+     */
+    protected void configurePopupWindow(Window popupWindow) {
         popupWindow.setSizeUndefined();
         popupWindow.setHeight("95%");
     }
@@ -119,7 +125,7 @@ public abstract class EntitySelect<T> extends TypedComponent<T> {
     }
 
     /**
-     * Open a popup window with this component
+     * Opens a popup window with this component.
      */
     public void open() {
         popupWindow = new Window(getTypeCaption());
@@ -145,12 +151,17 @@ public abstract class EntitySelect<T> extends TypedComponent<T> {
     }
 
     /**
-     * Close this popup.
+     * Closes this popup window.
      */
     public void close() {
         getMainApplication().getMainWindow().removeWindow(popupWindow);
     }
 
+    /**
+     * Sets whether the results component supports selection of multiple rows.
+     *
+     * @param isMultiSelect true to enable multiple selection
+     */
     public void setMultiSelect(boolean isMultiSelect) {
         getResults().setMultiSelect(isMultiSelect);
     }

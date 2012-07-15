@@ -102,10 +102,5 @@ public class SpringApplicationServlet extends ApplicationServlet {
             throw new ServletException(e);
         }
     }
-
-    @Override
-    protected boolean isAllowedVAADINResourceUrl(HttpServletRequest request, URL resourceUrl) {
-        return true;
-    }
 }
 

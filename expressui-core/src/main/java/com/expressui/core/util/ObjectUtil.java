@@ -45,7 +45,7 @@ import java.util.Collection;
 public class ObjectUtil {
 
     /**
-     * Ask if two args are equal. Differs from Object.equals in that method returns true if
+     * Asks if two args are equal. Differs from Object.equals in that method returns true if
      * both args are null or returns false if only one is null (without throwing a
      * NullPointerException).
      *
@@ -59,7 +59,7 @@ public class ObjectUtil {
     }
 
     /**
-     * Ask if two collections are equal by comparing them deeply.
+     * Asks if two collections are equal by comparing them deeply.
      * Returns true if both args are null or returns false if only one is null
      * (without throwing a NullPointerException).
      *
@@ -82,7 +82,7 @@ public class ObjectUtil {
     }
 
     /**
-     * Calculate the hashCode of a collection by summing up the hashcodes of all its members.
+     * Calculates the hashCode of a collection by summing up the hashcodes of all its members.
      * This assures that any two collections with exactly the same members have the same hashCode.
      *
      * @param collection collection from which to extract hashCode

@@ -48,7 +48,7 @@ import java.util.Locale;
 public class CurrencyUtil {
 
     /**
-     * Get a list of available currencies from the JDK from all locales.
+     * Gets a list of available currencies from the JDK from all locales.
      *
      * @return list of all currencies supported by the JDK
      */

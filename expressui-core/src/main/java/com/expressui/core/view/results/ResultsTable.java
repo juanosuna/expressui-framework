@@ -40,6 +40,7 @@ package com.expressui.core.view.results;
 import com.expressui.core.dao.query.EntityQuery;
 import com.expressui.core.util.MethodDelegate;
 import com.expressui.core.view.field.DisplayField;
+import com.expressui.core.view.field.FormLink;
 import com.expressui.core.view.field.ResultsField;
 import com.expressui.core.view.field.format.EmptyPropertyFormatter;
 import com.expressui.core.view.form.EntityForm;
@@ -296,7 +297,7 @@ public class ResultsTable extends Table {
         public Field createField(Container container, Object itemId,
                                  Object propertyId, Component uiContext) {
 
-            DisplayField.FormLink formLink = results.getResultsFieldSet().getField(propertyId.toString()).getFormLink();
+            FormLink formLink = results.getResultsFieldSet().getField(propertyId.toString()).getFormLink();
 
             if (formLink != null) {
                 BeanItem item = getContainerDataSource().getItem(itemId);
@@ -310,10 +311,10 @@ public class ResultsTable extends Table {
     }
 
     private class ButtonLinkClickListener implements Button.ClickListener {
-        private DisplayField.FormLink formLink;
+        private FormLink formLink;
         private BeanItem item;
 
-        public ButtonLinkClickListener(DisplayField.FormLink formLink, BeanItem item) {
+        public ButtonLinkClickListener(FormLink formLink, BeanItem item) {
             this.formLink = formLink;
             this.item = item;
         }

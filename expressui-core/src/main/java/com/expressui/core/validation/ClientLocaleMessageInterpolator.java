@@ -42,6 +42,10 @@ import com.expressui.core.MainApplication;
 import javax.validation.MessageInterpolator;
 import java.util.Locale;
 
+/**
+ * Wrapper that intercepts  JSR 303 Validation interpolation and applies the locale that
+ * resides in the user's current session.
+ */
 public class ClientLocaleMessageInterpolator implements MessageInterpolator {
     private final MessageInterpolator delegate;
 

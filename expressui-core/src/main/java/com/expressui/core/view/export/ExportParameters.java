@@ -43,7 +43,8 @@ import org.springframework.stereotype.Component;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 /**
- * Parameters for exporting excel. See <a href="https://vaadin.com/directory#addon/tableexport">TableExport Add-On</a>.
+ * Parameters for exporting to excel. See <a href="https://vaadin.com/directory#addon/tableexport">TableExport Add-On</a>.
+ * Defaults can be customized in application.properties.
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -57,7 +58,7 @@ public class ExportParameters {
     private boolean displayTotals;
 
     /**
-     * Get the filename to be export to. Default is export.xls.
+     * Gets the filename to be export to.
      *
      * @return export filename
      */
@@ -66,7 +67,7 @@ public class ExportParameters {
     }
 
     /**
-     * Set the filename to be export to
+     * Sets the filename to be export to.
      *
      * @param exportFilename export filename
      */
@@ -75,7 +76,7 @@ public class ExportParameters {
     }
 
     /**
-     * Get workbook name to contain exported data. Default is Export.
+     * Gets workbook name to contain exported data.
      *
      * @return workbook name
      */
@@ -84,7 +85,7 @@ public class ExportParameters {
     }
 
     /**
-     * Set workbook name to contain exported data.
+     * Sets workbook name to contain exported data.
      *
      * @param workbookName workbook name
      */
@@ -93,7 +94,7 @@ public class ExportParameters {
     }
 
     /**
-     * Get sheet name. Default is Export.
+     * Gets sheet name.
      *
      * @return sheet name
      */
@@ -102,7 +103,7 @@ public class ExportParameters {
     }
 
     /**
-     * Set sheet name
+     * Sets sheet name.
      *
      * @param sheetName sheet name
      */
@@ -111,7 +112,7 @@ public class ExportParameters {
     }
 
     /**
-     * Get date format. Default is mm/dd/yyyy.
+     * Gets date format.
      *
      * @return date format
      */
@@ -120,7 +121,7 @@ public class ExportParameters {
     }
 
     /**
-     * Set date format
+     * Sets date format.
      *
      * @param dateFormat date format
      */
@@ -129,7 +130,7 @@ public class ExportParameters {
     }
 
     /**
-     * Get double format. Default is #0.00.
+     * Gets double format.
      *
      * @return double format
      */
@@ -138,7 +139,7 @@ public class ExportParameters {
     }
 
     /**
-     * Set double format.
+     * Sets double format.
      *
      * @param doubleFormat double format
      */
@@ -147,7 +148,7 @@ public class ExportParameters {
     }
 
     /**
-     * Ask whether or not to include row headers. Default is false.
+     * Asks whether or not to include row headers. Default is false.
      *
      * @return true to include row headers
      */
@@ -156,7 +157,7 @@ public class ExportParameters {
     }
 
     /**
-     * Set whether or not to include row headers.
+     * Sets whether or not to include row headers.
      *
      * @param displayRowHeaders true to include row headers
      */
@@ -165,7 +166,7 @@ public class ExportParameters {
     }
 
     /**
-     * Ask whether or not to include totals. Default is false.
+     * Asks whether or not to include totals. Default is false.
      *
      * @return true to include totals
      */
@@ -174,7 +175,7 @@ public class ExportParameters {
     }
 
     /**
-     * Set whether or not to include totals.
+     * Sets whether or not to include totals.
      *
      * @param displayTotals true to include totals
      */

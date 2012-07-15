@@ -46,7 +46,7 @@ import org.hibernate.type.Type;
 import java.util.Properties;
 
 /**
- * Generates database table names that contain sequences
+ * Generates database table names that contain sequences.
  */
 public class TableNameSequenceGenerator extends SequenceGenerator {
     @Override
@@ -61,6 +61,4 @@ public class TableNameSequenceGenerator extends SequenceGenerator {
         }
         super.configure(type, params, dialect);
     }
-
-
 }

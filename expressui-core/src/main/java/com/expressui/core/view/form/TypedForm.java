@@ -393,7 +393,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
             if (isEnabled) {
                 field.restoreIsRequired();
             } else {
-                field.setRequired(false);
+                field.setCurrentlyRequired(false);
             }
         }
     }

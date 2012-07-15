@@ -50,7 +50,7 @@ import java.util.Properties;
 public class DBPropertyInitializer {
 
     /**
-     * Initialize "DB" system properties.
+     * Initializes "DB" system properties.
      */
     public void initialize() {
         if (System.getProperty("DB") == null) {

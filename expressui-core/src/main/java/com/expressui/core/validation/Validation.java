@@ -92,7 +92,7 @@ public class Validation {
     }
 
     /**
-     * Iterate through constraint violations and find ones that are not-null violations.
+     * Iterates through constraint violations and find ones that are not-null violations.
      */
     private <T> ConstraintViolation findNotNullViolation(Set<ConstraintViolation<T>> violations) {
         for (ConstraintViolation violation : violations) {
@@ -178,7 +178,7 @@ public class Validation {
     }
 
     /**
-     * Return the descriptor object describing bean constraints.
+     * Returns the descriptor object describing bean constraints.
      * The returned object (and associated objects including
      * <code>ConstraintDescriptor<code>s) are immutable.
      *
@@ -195,7 +195,7 @@ public class Validation {
     }
 
     /**
-     * Return an instance of the specified type allowing access to
+     * Returns an instance of the specified type allowing access to
      * provider-specific APIs.  If the Bean Validation provider
      * implementation does not support the specified class,
      * <code>ValidationException</code> is thrown.
@@ -215,7 +215,7 @@ public class Validation {
     }
 
     /**
-     * Ask if a property in a bean class has NotNull annotation
+     * Asks if a property in a bean class has NotNull annotation.
      *
      * @param beanClass    bean class to check
      * @param propertyName name of property to check
@@ -226,7 +226,7 @@ public class Validation {
     }
 
     /**
-     * Ask if property in a bean class has an annotation
+     * Asks if property in a bean class has an annotation.
      *
      * @param beanClass       bean class to check
      * @param propertyName    name of property to check

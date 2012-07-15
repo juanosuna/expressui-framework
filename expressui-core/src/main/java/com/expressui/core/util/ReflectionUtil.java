@@ -55,7 +55,7 @@ import java.util.Collection;
 public class ReflectionUtil {
 
     /**
-     * Create new instance from the given type.
+     * Creates new instance from the given type.
      *
      * @param type class to reflectively instantiate
      * @param <T>  type of the class
@@ -72,7 +72,7 @@ public class ReflectionUtil {
     }
 
     /**
-     * Create new instance from the given type, based on given parameter types and args.
+     * Creates new instance from the given type, based on given parameter types and args.
      *
      * @param type           class to reflectively instantiate
      * @param <T>            type of the class
@@ -97,7 +97,7 @@ public class ReflectionUtil {
     }
 
     /**
-     * Get the first generic argument of the given class
+     * Gets the first generic argument of the given class.
      *
      * @param clazz class from which to extract generic argument
      * @return type of generic argument
@@ -107,7 +107,7 @@ public class ReflectionUtil {
     }
 
     /**
-     * Get a generic argument of the given class, based on arg index
+     * Gets a generic argument of the given class, based on arg index.
      *
      * @param clazz    class from which to extract generic argument
      * @param argIndex index of the declared argument type
@@ -132,7 +132,7 @@ public class ReflectionUtil {
     }
 
     /**
-     * Get the value type of the given collection, as declared by the collection property type
+     * Gets the value type of the given collection, as declared by the collection property type.
      *
      * @param beanType     bean class
      * @param beanProperty name of property, which must be a collection
@@ -163,7 +163,7 @@ public class ReflectionUtil {
     }
 
     /**
-     * Ask if the bean's properties are empty. boolean properties that are false and numbers
+     * Asks if the bean's properties are empty. boolean properties that are false and numbers
      * that are zero are considered empty. String values that are zero-length are considered empty.
      * All other property types must be null to be considered empty.
      *
@@ -204,7 +204,7 @@ public class ReflectionUtil {
     }
 
     /**
-     * Find all properties in the bean that are complex, i.e. not BeanUtils.isSimpleValueType
+     * Finds all properties in the bean that are complex, that is not BeanUtils.isSimpleValueType
      *
      * @param bean bean to reflectively analyze
      * @return collection of properties on the bean
@@ -226,7 +226,7 @@ public class ReflectionUtil {
     }
 
     /**
-     * Convert object value to given type. Converts primitives to their wrappers.
+     * Converts object value to given type. Converts primitives to their wrappers.
      * Converts strings to numbers.
      *
      * @param value value to convert
@@ -256,7 +256,7 @@ public class ReflectionUtil {
     }
 
     /**
-     * Ask if given type is a number type.
+     * Asks if given type is a number type.
      *
      * @param type type to check
      * @return true if a number
@@ -273,7 +273,7 @@ public class ReflectionUtil {
     }
 
     /**
-     * Find a method on a class.
+     * Finds a method on a class.
      *
      * @param type           class containing the method
      * @param methodName     name of the method to search for
@@ -297,7 +297,7 @@ public class ReflectionUtil {
     }
 
     /**
-     * Find field on a given type
+     * Finds field on a given type.
      *
      * @param type      class containing the field
      * @param fieldName name of field to search for

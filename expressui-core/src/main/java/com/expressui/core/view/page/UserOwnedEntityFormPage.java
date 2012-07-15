@@ -100,7 +100,7 @@ public abstract class UserOwnedEntityFormPage<T extends UserOwnedEntity> extends
             getEntityForm().load(entity);
         }
 
-        getEntityForm().getForm().setCaption(getTypeCaption());
+        getEntityForm().getForm().setCaption(getEntityForm().getTypeCaption());
 
         getEntityForm().onDisplay();
     }

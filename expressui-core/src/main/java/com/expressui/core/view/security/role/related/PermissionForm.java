@@ -195,7 +195,7 @@ public class PermissionForm extends EntityForm<Permission> {
     }
 
     public void syncIsRequiredIndicator(Property.ValueChangeEvent event) {
-        getFormFieldSet().setRequired("field", anotherPermissionHasNullField(getBean().getTargetType()));
+        getFormFieldSet().setCurrentlyRequired("field", anotherPermissionHasNullField(getBean().getTargetType()));
         syncTabAndSaveButtonErrors();
     }
 

@@ -49,7 +49,8 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 /**
- * Defines some default formats, e.g. for dates, times, numbers
+ * Defines some default formats, for currency, dates, times, numbers, using the current
+ * user's locale. Default date and time styles are defined in application.properties.
  */
 @Component
 public class DefaultFormats {
@@ -57,14 +58,32 @@ public class DefaultFormats {
     @Resource
     private ApplicationProperties applicationProperties;
 
+    /**
+     * Gets an empty formatter that just throws UnsupportedOperationException, if it is used.
+     * @return empty formatter
+     */
     public PropertyFormatter getEmptyFormat() {
         return new EmptyPropertyFormatter();
     }
 
+    /**
+     * Gets number format for currency.
+     *
+     * @param maximumFractionDigits maximum number of fraction digits
+     * @return currency property formatter
+     */
     public PropertyFormatter getCurrencyFormat(int maximumFractionDigits) {
         return getCurrencyFormat(MainApplication.getInstance().getLocale(), maximumFractionDigits);
     }
 
+    /**
+     * Gets number format for currency.
+     *
+     * @param locale locale to apply to format, useful for displaying currencies other than
+     *               the standard currency of the user's locale.
+     * @param maximumFractionDigits maximum number of fraction digits
+     * @return currency property formatter
+     */
     public PropertyFormatter getCurrencyFormat(Locale locale, int maximumFractionDigits) {
         NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
         numberFormat.setMaximumFractionDigits(maximumFractionDigits);
@@ -72,9 +91,9 @@ public class DefaultFormats {
     }
 
     /**
-     * Get default number format, NumberFormat.getNumberInstance()
+     * Gets number format, NumberFormat.getNumberInstance(), using current user's locale.
      *
-     * @return default number format
+     * @return number format with current user's locale
      */
     public PropertyFormatter getNumberFormat() {
         return new JDKBridgePropertyFormatter(
@@ -83,8 +102,9 @@ public class DefaultFormats {
     }
 
     /**
-     * Get default number format, NumberFormat.getNumberInstance()
+     * Gets number format, NumberFormat.getNumberInstance(), using current user's locale.
      *
+     * @param maximumFractionDigits maximum number of fraction digits
      * @param defaultValueWhenEmpty when parsing Strings, returns this value when String is empty
      * @return default number format
      */
@@ -95,7 +115,18 @@ public class DefaultFormats {
     }
 
     /**
-     * Get default date format.
+     * Gets number format, NumberFormat.getNumberInstance(), using current user's locale.
+     *
+     * @param defaultValueWhenEmpty when parsing Strings, returns this value when String is empty
+     * @return default number format
+     */
+    public PropertyFormatter getNumberFormat(Object defaultValueWhenEmpty) {
+        NumberFormat numberFormat = NumberFormat.getNumberInstance(MainApplication.getInstance().getLocale());
+        return new JDKBridgePropertyFormatter(numberFormat, defaultValueWhenEmpty);
+    }
+
+    /**
+     * Get date format, using current user's locale and default date style defined in application.properties.
      *
      * @return default date format
      */
@@ -107,7 +138,8 @@ public class DefaultFormats {
     }
 
     /**
-     * Get default date-time format.
+     * Gets date-time format, using current user's locale and default date and time styles defined in
+     * application.properties.
      *
      * @return default date-time format
      */

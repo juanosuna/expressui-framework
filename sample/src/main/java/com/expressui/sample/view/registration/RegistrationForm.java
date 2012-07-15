@@ -97,8 +97,8 @@ public class RegistrationForm extends MyProfileForm<Profile> {
         // applied against same data as Vaadin Validator
         formFields.getFormField("user.loginName").getField().setInvalidCommitted(true);
 
-        formFields.setRequired("user.loginPassword", true);
-        formFields.setRequired("user.repeatLoginPassword", true);
+        formFields.setCurrentlyRequired("user.loginPassword", true);
+        formFields.setCurrentlyRequired("user.repeatLoginPassword", true);
     }
 
     @Override

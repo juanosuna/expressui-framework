@@ -47,7 +47,7 @@ import java.text.Format;
 import java.text.ParsePosition;
 
 /**
- * Validates that value can be converted to a number.
+ * Validates that a value can be converted to a number.
  */
 public class NumberConversionValidator extends AbstractConversionValidator {
 

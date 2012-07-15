@@ -52,18 +52,18 @@ import java.math.BigDecimal;
 import java.util.*;
 
 /**
- * Provides reflection and contextual information about the bean property type.
+ * Provides static reflection and contextual information about a bean property.
  * Represents type information about a bean property within a static tree structure.
  */
 public class BeanPropertyType {
     private static Map<String, BeanPropertyType> cache = new HashMap<String, BeanPropertyType>();
 
     /**
-     * Get the BeanPropertyType instance from the given class and dot-delimited propertyPath.
+     * Gets the BeanPropertyType instance from the given class and dot-delimited propertyPath.
      * Uses caching to speed-up repeated calls for the same property.
      *
      * @param clazz        root type
-     * @param propertyPath dot-delimited property path
+     * @param propertyPath dot-delimited property path starting from the root type
      * @return BeanPropertyType representing property within the type tree
      */
     public static BeanPropertyType getBeanPropertyType(Class clazz, String propertyPath) {
@@ -161,10 +161,10 @@ public class BeanPropertyType {
     }
 
     /**
-     * Ask if property has given annotation.
+     * Asks if a property has a given annotation.
      *
      * @param annotationClass annotation to check
-     * @return true if bean property has annotation
+     * @return true if bean property has the annotation
      */
     public boolean hasAnnotation(Class annotationClass) {
         for (Annotation annotation : annotations) {
@@ -177,7 +177,7 @@ public class BeanPropertyType {
     }
 
     /**
-     * Get instance of given annotation type from bean property.
+     * Gets the instance of given annotation type from bean property.
      *
      * @param annotationClass annotation to find on the property
      * @param <T>             annotation type
@@ -194,7 +194,7 @@ public class BeanPropertyType {
     }
 
     /**
-     * Get minimum length from validation annotations.
+     * Gets minimum length from validation annotations.
      *
      * @return minimum length for the property
      */
@@ -203,7 +203,7 @@ public class BeanPropertyType {
     }
 
     /**
-     * Get maximum length from validation annotations.
+     * Gets maximum length from validation annotations.
      *
      * @return maximum length for the property
      */
@@ -262,7 +262,7 @@ public class BeanPropertyType {
     }
 
     /**
-     * Get the parent property of this nested property within the type tree.
+     * Gets the parent property of this nested property within the type tree.
      *
      * @return parent property
      */
@@ -270,6 +270,11 @@ public class BeanPropertyType {
         return parent;
     }
 
+    /**
+     * Gets the list of ancestors of this property type, starting with the root and ending with this property type.
+     *
+     * @return list of property type ancestors
+     */
     public List<BeanPropertyType> getAncestors() {
         List<BeanPropertyType> ancestors = new ArrayList<BeanPropertyType>();
         BeanPropertyType currentBeanPropertyType = this;
@@ -284,7 +289,7 @@ public class BeanPropertyType {
     }
 
     /**
-     * Get the bean property name with its full path.
+     * Gets the bean property name with its full path.
      *
      * @return bean property name
      */
@@ -293,7 +298,7 @@ public class BeanPropertyType {
     }
 
     /**
-     * Get only the leaf part of the bean property, i.e. after the last period.
+     * Gets only the leaf part of the bean property, that is after the last period.
      *
      * @return leaf part of the bean property
      */
@@ -302,7 +307,7 @@ public class BeanPropertyType {
     }
 
     /**
-     * Get the class type, declared for this property.
+     * Gets the class type, declared for this property.
      *
      * @return declared class type
      */
@@ -311,7 +316,7 @@ public class BeanPropertyType {
     }
 
     /**
-     * Get type from a business standpoint.
+     * Gets type from a more abstract business standpoint.
      *
      * @return business type
      */
@@ -343,7 +348,7 @@ public class BeanPropertyType {
     }
 
     /**
-     * Get the class that contains this property.
+     * Gets the class that contains this property.
      *
      * @return class of property container
      */
@@ -352,7 +357,7 @@ public class BeanPropertyType {
     }
 
     /**
-     * If this property is a collection, get the declared type of its members.
+     * If this property is a collection, get the generically declared type of its members.
      *
      * @return type of collection values, as specified by declared generic parameter
      */
@@ -361,7 +366,7 @@ public class BeanPropertyType {
     }
 
     /**
-     * Ask if this property is a collection.
+     * Asks if this property is a collection.
      *
      * @return true if property is a collection type
      */
@@ -370,9 +375,9 @@ public class BeanPropertyType {
     }
 
     /**
-     * Ask if this property is validatable recursively because it as @Valid annotation
+     * Asks if this property is validatable recursively because it has a @Valid annotation.
      *
-     * @return true if this property is validatable recursively because it as @Valid annotation
+     * @return true if this property is validatable recursively because it has a @Valid annotation
      */
     public boolean isValidatable() {
         BeanPropertyType beanPropertyType = parent;
@@ -404,7 +409,7 @@ public class BeanPropertyType {
     }
 
     /**
-     * Get the root type of the type tree where this nested property resides.
+     * Gets the root type of the type tree where this nested property resides.
      *
      * @return root of the type tree
      */
@@ -420,10 +425,25 @@ public class BeanPropertyType {
      * Simplified type from a business/end-user perspective
      */
     public static enum BusinessType {
+        /**
+         * Any kind of integer or decimal number.
+         */
         NUMBER,
+        /**
+         * Date without time.
+         */
         DATE,
+        /**
+         * Date and time.
+         */
         DATE_TIME,
+        /**
+         * BigDecimal that commonly used for money.
+         */
         MONEY,
+        /**
+         * Straight text.
+         */
         TEXT
     }
 }

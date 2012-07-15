@@ -729,8 +729,8 @@ public class FormFieldSet extends FieldSet {
      * @param propertyId property id to identify field to set
      * @param isRequired true if required
      */
-    public void setRequired(String propertyId, boolean isRequired) {
-        getFormField(propertyId).setRequired(isRequired);
+    public void setCurrentlyRequired(String propertyId, boolean isRequired) {
+        getFormField(propertyId).setCurrentlyRequired(isRequired);
     }
 
     /**

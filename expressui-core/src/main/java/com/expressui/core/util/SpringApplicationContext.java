@@ -48,7 +48,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Wraps Spring's Application Context, providing some extra logic for finding beans.
+ * Wraps Spring's Application Context, providing some extra features for finding beans and autowiring a non-bean.
  */
 @Component
 public class SpringApplicationContext implements ApplicationContextAware {
@@ -56,7 +56,7 @@ public class SpringApplicationContext implements ApplicationContextAware {
     private static ApplicationContext applicationContext;
 
     /**
-     * Set Spring's application context
+     * Sets Spring's application context.
      *
      * @param context context to set
      * @throws BeansException
@@ -66,7 +66,7 @@ public class SpringApplicationContext implements ApplicationContextAware {
     }
 
     /**
-     * Get Spring's application context.
+     * Gets Spring's application context.
      *
      * @return Spring's application context
      */
@@ -75,28 +75,10 @@ public class SpringApplicationContext implements ApplicationContextAware {
     }
 
     /**
-     * Look up a bean in the context by name.
+     * If the application context has been set, autowires the given target.
+     * This is a helpful utility method for injecting Spring beans into a non-Spring beans.
      *
-     * @param beanName name of the bean to lookup
-     * @return bean found in the context
-     */
-    public static Object getBean(String beanName) {
-        return applicationContext.getBean(beanName);
-    }
-
-    public static <T> T getBean(Class<T> requiredType) {
-        return applicationContext.getBean(requiredType);
-    }
-
-    public static <T> T getBean(String beanName, Class<T> requiredType) {
-        return applicationContext.getBean(beanName, requiredType);
-    }
-
-    /**
-     * If the application context has been set, autowire the given target.
-     * This is a helpful utility method for injecting Spring beans into a non-Spring-bean.
-     *
-     * @param target non-Spring-bean for injecting
+     * @param target non-Spring bean to be injected
      */
     public static void autowire(Object target) {
         if (getApplicationContext() != null && getApplicationContext().getAutowireCapableBeanFactory() != null) {
@@ -105,7 +87,27 @@ public class SpringApplicationContext implements ApplicationContextAware {
     }
 
     /**
-     * Find all beans of a given type in the application context.
+     * Looks up a single bean in the context by name.
+     *
+     * @param beanName name of the bean to lookup
+     * @return bean found in the context
+     */
+    public static Object getBean(String beanName) {
+        return applicationContext.getBean(beanName);
+    }
+
+    /**
+     * Looks up a single bean in the context by type.
+     * @param requiredType type to look up
+     * @param <T> type of bean
+     * @return found bean
+     */
+    public static <T> T getBean(Class<T> requiredType) {
+        return applicationContext.getBean(requiredType);
+    }
+
+    /**
+     * Finds all beans of a given type in the application context.
      *
      * @param type type to search for
      * @param <T>  type to query
@@ -117,12 +119,24 @@ public class SpringApplicationContext implements ApplicationContextAware {
     }
 
     /**
-     * Find bean of a given type, declared with given generic argument type.
+     * Looks up a bean in the context by name and type.
+     * @param requiredType type to look up
+     * @param beanName name of the bean to lookup
+     * @param <T> type of bean
+     * @return found bean
+     */
+    public static <T> T getBean(String beanName, Class<T> requiredType) {
+        return applicationContext.getBean(beanName, requiredType);
+    }
+
+    /**
+     * Finds a single bean of a given type and whose class is declared with given generic argument type.
      *
      * @param type                type to search for
      * @param genericArgumentType generic argument type declared on the bean
      * @param <T>                 type to query
      * @return found bean
+     * @throws RuntimeException if bean not found
      */
     public static <T> T mustGetBeanByTypeAndGenericArgumentType(Class<T> type, Class genericArgumentType) {
         T foundBean = getBeanByTypeAndGenericArgumentType(type, genericArgumentType);
@@ -135,6 +149,14 @@ public class SpringApplicationContext implements ApplicationContextAware {
         }
     }
 
+    /**
+     * Finds a single bean of a given type and whose class is declared with given generic argument type.
+     *
+     * @param type                type to search for
+     * @param genericArgumentType generic argument type declared on the bean
+     * @param <T>                 type to query
+     * @return found bean or null if not found
+     */
     public static <T> T getBeanByTypeAndGenericArgumentType(Class<T> type, Class genericArgumentType) {
         Set<T> beans = getBeansByType(type);
 
@@ -154,7 +176,7 @@ public class SpringApplicationContext implements ApplicationContextAware {
     }
 
     /**
-     * Find all beans of a given type, declared with given generic argument type.
+     * Finds al bean of a given type and whose class is declared with given generic argument type.
      *
      * @param type                type to search for
      * @param genericArgumentType generic argument type declared on the bean
