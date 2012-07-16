@@ -53,7 +53,7 @@ import java.util.Map;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 /**
- * Context menu (right-mouse click) for handling any actions
+ * Context menu (right-mouse click) for handling any actions, for example in results.
  */
 @Scope(SCOPE_PROTOTYPE)
 @Component
@@ -65,7 +65,7 @@ public class ActionContextMenu implements Action.Handler {
     private Map<String, ContextMenuAction> actions = new LinkedHashMap<String, ContextMenuAction>();
 
     /**
-     * Add action to the context menu.
+     * Adds action to the context menu.
      *
      * @param caption    caption to display in context menu item
      * @param target     target object to invoke when user selects action

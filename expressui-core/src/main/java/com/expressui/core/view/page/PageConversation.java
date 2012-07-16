@@ -40,6 +40,9 @@ package com.expressui.core.view.page;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Place for storing beans during a page conversation, which exists for as long as user remains on a single page.
+ */
 public class PageConversation {
     private String id;
     private Map<String, Object> beans = new HashMap<String, Object>();
@@ -48,22 +51,49 @@ public class PageConversation {
         this.id = id;
     }
 
+    /**
+     * Gets this conversations id.
+     *
+     * @return conversation id
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Puts a bean into this conversation's storage.
+     *
+     * @param key key
+     * @param bean value
+     */
     public void put(String key, Object bean) {
         beans.put(key, bean);
     }
 
+    /**
+     * Gets a bean from this conversation's storage.
+     * @param key
+     * @return value
+     */
     public Object get(String key) {
         return beans.get(key);
     }
 
+    /**
+     * Removes a bean from this conversation's storage.
+     * @param key key
+     * @return removed bean
+     */
     public Object remove(String key) {
         return beans.remove(key);
     }
 
+    /**
+     * Asks if this conversation contains a bean.
+     *
+     * @param key key
+     * @return true if this conversation contains the bean.
+     */
     public boolean containsKey(String key) {
         return beans.containsKey(key);
     }

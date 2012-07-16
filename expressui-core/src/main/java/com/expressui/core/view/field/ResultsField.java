@@ -47,7 +47,7 @@ public class ResultsField extends DisplayField {
     private String alignment;
 
     /**
-     * Construct with reference to fieldSet this field belongs to and the property name this field is bound to, e.g.
+     * Constructs with reference to fieldSet this field belongs to and the property name this field is bound to, often
      * an entity object.
      *
      * @param fieldSet   fieldSet that contains this field
@@ -58,7 +58,7 @@ public class ResultsField extends DisplayField {
     }
 
     /**
-     * Ask if this field is a sortable column in results table. Default is true. This should be disabled for derived
+     * Asks if this field is a sortable column in results table. Default is true. This should be disabled for derived
      * fields that do not correspond to columns in the database.
      *
      * @return true if sortable
@@ -68,7 +68,7 @@ public class ResultsField extends DisplayField {
     }
 
     /**
-     * Set whether or not this field is a sortable column in results table
+     * Sets whether or not this field is a sortable column in results table.
      *
      * @param sortable true if sortable
      */
@@ -77,7 +77,7 @@ public class ResultsField extends DisplayField {
     }
 
     /**
-     * Get column width.
+     * Gets column width.
      *
      * @return column width, null if adjusted automatically
      */
@@ -86,7 +86,7 @@ public class ResultsField extends DisplayField {
     }
 
     /**
-     * Set column width.
+     * Sets column width.
      *
      * @param width column width, null if adjusted automatically
      */
@@ -95,9 +95,7 @@ public class ResultsField extends DisplayField {
     }
 
     /**
-     * Get alignment.
-     *
-     * @see com.vaadin.ui.Table constants
+     * Gets alignment. See constants defined in {@link com.vaadin.ui.Table}.
      *
      * @return alignment
      */
@@ -106,9 +104,7 @@ public class ResultsField extends DisplayField {
     }
 
     /**
-     * Set alignment.
-     *
-     * @see com.vaadin.ui.Table constants
+     * Sets alignment. See constants defined in {@link com.vaadin.ui.Table}.
      *
      * @param alignment alignment
      */

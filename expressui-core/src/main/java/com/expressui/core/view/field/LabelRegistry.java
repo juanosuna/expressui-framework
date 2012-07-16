@@ -57,7 +57,7 @@ public class LabelRegistry {
     private Map<String, Set<DisplayLabel>> labels = new HashMap<String, Set<DisplayLabel>>();
 
     /**
-     * Put label into registry.
+     * Puts label into registry.
      *
      * @param type  type
      * @param label label
@@ -70,7 +70,7 @@ public class LabelRegistry {
     }
 
     /**
-     * Get label associated with type
+     * Gets label associated with type.
      *
      * @param type type for looking up label
      * @return label
@@ -80,7 +80,7 @@ public class LabelRegistry {
     }
 
     /**
-     * Get Map of all type labels keyed by type name
+     * Gets Map of all type labels keyed by type name.
      *
      * @return map of all type labels
      */
@@ -89,7 +89,7 @@ public class LabelRegistry {
     }
 
     /**
-     * Get all property ids that have been registered for a given type.
+     * Gets all property ids that have been registered for a given type.
      *
      * @param type type to find property ids on
      * @return Map where key and value are the same
@@ -106,7 +106,7 @@ public class LabelRegistry {
     }
 
     /**
-     * Field (property) label into registry
+     * Puts field (property) label into registry.
      *
      * @param type       type for the label
      * @param propertyId property id of the field
@@ -137,7 +137,7 @@ public class LabelRegistry {
     }
 
     /**
-     * Get field label for given type and property
+     * Gets field label for given type and property.
      *
      * @param type       type
      * @param propertyId property in the type
@@ -158,7 +158,7 @@ public class LabelRegistry {
     }
 
     /**
-     * Register all the labels from FieldSet.
+     * Registers all the labels from FieldSet.
      *
      * @param fieldSet collection of all fields associated with a display component
      */
@@ -179,7 +179,7 @@ public class LabelRegistry {
     }
 
     /**
-     * Label for display to end user in UI
+     * Label for display to end user in UI.
      */
     public static class DisplayLabel {
         private String propertyId;
@@ -187,7 +187,7 @@ public class LabelRegistry {
         String label;
 
         /**
-         * Construct based on property, section and label.
+         * Constructs based on property, section and label.
          *
          * @param propertyId id of property (field)
          * @param section    section (tab)
@@ -200,7 +200,7 @@ public class LabelRegistry {
         }
 
         /**
-         * Get property id of the label.
+         * Gets property id of the label.
          *
          * @return property id
          */
@@ -209,7 +209,7 @@ public class LabelRegistry {
         }
 
         /**
-         * Get display label for display to end user in UI.
+         * Gets display label for display to end user in UI.
          *
          * @return display label
          */

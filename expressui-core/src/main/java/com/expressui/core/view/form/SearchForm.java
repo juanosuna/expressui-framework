@@ -83,7 +83,7 @@ public abstract class SearchForm<T extends EntityQuery> extends TypedForm<T> {
     }
 
     /**
-     * Get results UI component connected to this search form.
+     * Gets results UI component connected to this search form.
      *
      * @return results UI component
      */
@@ -92,7 +92,7 @@ public abstract class SearchForm<T extends EntityQuery> extends TypedForm<T> {
     }
 
     /**
-     * Set results UI component connected to this search form.
+     * Sets results UI component connected to this search form.
      *
      * @param results results UI component
      */
@@ -119,7 +119,7 @@ public abstract class SearchForm<T extends EntityQuery> extends TypedForm<T> {
     }
 
     /**
-     * Clear the contents of the search form and execute empty query, thus
+     * Clears the contents of the search form and executes empty (or with default filter) query, thus
      * returning all results.
      */
     public void clear() {
@@ -133,7 +133,7 @@ public abstract class SearchForm<T extends EntityQuery> extends TypedForm<T> {
     }
 
     /**
-     * Execute search.
+     * Executes search.
      */
     public void search() {
         getForm().commit();
@@ -146,6 +146,6 @@ public abstract class SearchForm<T extends EntityQuery> extends TypedForm<T> {
         Assert.PROGRAMMING.notNull(type, "This component must specify a generic type");
 
         String typeName = domainMessageSource.getMessage(type.getName(), type.getSimpleName());
-        return uiMessageSource.getMessage("searchForm.typeCaption", new Object[] {typeName});
+        return uiMessageSource.getMessage("searchForm.typeCaption", new Object[]{typeName});
     }
 }

@@ -42,7 +42,7 @@ import com.expressui.core.view.field.FormField;
 import java.util.Set;
 
 /**
- * Tab contained within a form. Note that one logical tab is displayed as no tabs to the user.
+ * Tab contained within a form. One logical tab without a name is displayed as no tabs to the user.
  */
 public class FormTab {
 
@@ -50,7 +50,7 @@ public class FormTab {
     private String tabName;
 
     /**
-     * Construct FormTab based on FormFieldSet and tab name
+     * Constructs FormTab based on FormFieldSet and tab name.
      *
      * @param formFieldSet set of all fields in the form, this tab contains only a subset
      * @param tabName      name of tab
@@ -61,7 +61,7 @@ public class FormTab {
     }
 
     /**
-     * Set the position of a field in this tab. Field occupies just one cell.
+     * Sets the position of a field in this tab. Field occupies just one cell.
      *
      * @param propertyId  property id in entity to bind field to
      * @param rowStart    row start coordinate
@@ -72,7 +72,7 @@ public class FormTab {
     }
 
     /**
-     * Set the position of a field in this tab.
+     * Sets the position of a field in this tab.
      *
      * @param propertyId  property id in entity to bind field to
      * @param rowStart    row start coordinate
@@ -85,7 +85,7 @@ public class FormTab {
     }
 
     /**
-     * Get method delegate that listens for adding and removing this tab.
+     * Gets method delegate that listens for adding and removing this tab.
      *
      * @return delegate
      */
@@ -94,7 +94,7 @@ public class FormTab {
     }
 
     /**
-     * Get number of columns in this tab
+     * Gets number of columns in this tab.
      *
      * @return number of columns in this tab
      */
@@ -103,7 +103,7 @@ public class FormTab {
     }
 
     /**
-     * Get number of rows in this tab.
+     * Gets number of rows in this tab.
      *
      * @return number of rows in this form's tab
      */
@@ -112,7 +112,7 @@ public class FormTab {
     }
 
     /**
-     * Ask if this tab is optional.
+     * Asks if this tab is optional.
      *
      * @return true if optional
      */
@@ -121,7 +121,7 @@ public class FormTab {
     }
 
     /**
-     * Set this tab as optional.
+     * Sets this tab as optional.
      *
      * @param addTarget    target object to invoke method on, when tab is added
      * @param addMethod    method to invoke, when tab is added
@@ -133,7 +133,7 @@ public class FormTab {
     }
 
     /**
-     * Ask if this form contains property in this tab.
+     * Asks if this form contains property in this tab.
      *
      * @param propertyId property id
      * @return true if this form contains property in the given tab
@@ -143,7 +143,7 @@ public class FormTab {
     }
 
     /**
-     * Get all the FormFields positioned in this tab.
+     * Gets all the FormFields positioned in this tab.
      *
      * @return all the FormField under the tab
      */
@@ -152,7 +152,7 @@ public class FormTab {
     }
 
     /**
-     * Ask if any field has an error in this tab.
+     * Asks if any field has an error in this tab.
      *
      * @return true if any field has an error in this tab
      */

@@ -53,7 +53,7 @@ import java.io.Serializable;
 public abstract class ManyToManyRelationship<T, A> extends AggregationRelationship<T> {
 
     /**
-     * Get the DAO for accessing entities of the association type.
+     * Gets the DAO for accessing entities of the association type.
      *
      * @return association DAO
      */
@@ -63,6 +63,11 @@ public abstract class ManyToManyRelationship<T, A> extends AggregationRelationsh
     public void create() {
         super.create();
         getEntityForm().addSaveListener(this, "postPersist");
+    }
+
+    @Override
+    protected void addCodePopupButtonIfEnabledForCrudResults() {
+        addCodePopupButtonIfEnabled(ManyToManyRelationship.class);
     }
 
     protected void postPersist() {
@@ -105,7 +110,7 @@ public abstract class ManyToManyRelationship<T, A> extends AggregationRelationsh
     }
 
     /**
-     * Implementation should create the appropriate associate entity for linking the given value to the parent
+     * Implementation should create the appropriate associate entity for linking the given value to the parent.
      *
      * @param value entity to add to the relationship
      * @return the newly created association entity

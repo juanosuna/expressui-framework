@@ -68,22 +68,17 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 /**
- * A field in a form. Wraps Vaadin field component, while providing other features and integration with ExpressUI.
- * <p/>
- * Automatically generates labels with required asterisks.
- * Keeps track of row and column positions in the form grid layout.
+ * A field in a form that wraps a Vaadin field component, while providing other features and integration with ExpressUI:
+ * <ul>
+ * <li>Automatically and intelligently generates Vaadin field component based on data type of property this field
+ * is bound to</li>
+ * <li>Automatically and intelligently configures each Vaadin field with default settings</li>
+ * <li>Automatically sets fields as required (with *) if bound property is @NotNull or @NotEmpty</li>
+ * <li>Automatically adjusts width of fields based on property values/data</li>
+ * <li>Keeps track of row and column positions in the form grid layout. A field can span multiple rows and columns.</li>
+ * </ul>
  */
 public class FormField extends DisplayField {
-
-    /**
-     * Default text field width in EM
-     */
-    public static final Integer DEFAULT_TEXT_FIELD_WIDTH = 11;
-
-    /**
-     * Default select field width in EM
-     */
-    public static final Integer DEFAULT_SELECT_FIELD_WIDTH = 11;
 
     private String tabName;
     private Field field;
@@ -103,7 +98,7 @@ public class FormField extends DisplayField {
     private ReferenceEntityDao referenceEntityDao;
 
     /**
-     * Construct with reference to fieldSet this field belongs to and the property name this field is bound to, e.g.
+     * Constructs with reference to fieldSet this field belongs to and the property name this field is bound to, often
      * an entity object.
      *
      * @param formFieldSet fieldSet that contains this field
@@ -116,11 +111,15 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get Vaadin label for this field. Label is automatically generated from property Id unless configured
-     * by the application. Generated one can be derived from the property name, @Label annotation on the bound property
-     * or looked up from domainMessageSource bean, using property name as key.
+     * Gets the label used for this field. Generates one automatically, if not already set.
+     * Generated one can be derived from the property name in the code, @Label annotation on the bound property
+     * or looked up from resource bundle properties file, using the property name as the key.
+     * <p/>
+     * If I18n is required, then define labels in resource bundle properties files resources/domainMessages/.
+     * These messages have priority over annotations. Generating a label from the property name in code is done as a
+     * last resort.
      *
-     * @return Vaadin label for this field
+     * @return display label
      */
     public com.vaadin.ui.Label getFieldLabel() {
         getField(); // make sure field is initialized before label
@@ -148,7 +147,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set the field label, thus overriding default generated label.
+     * Sets the field label, thus overriding default generated label.
      *
      * @param labelText display label
      */
@@ -157,7 +156,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get the name of the form tab this field resides in.
+     * Gets the name of the form tab this field resides in.
      *
      * @return name of form tab that contains this field
      */
@@ -166,7 +165,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set the name of the form tab this field resides in.
+     * Sets the name of the form tab this field resides in.
      *
      * @param tabName name of form tab that contains this field
      */
@@ -185,7 +184,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get the column start coordinate of this field, starting with 1 not 0
+     * Gets the column start coordinate of this field, starting with 1 not 0.
      *
      * @return column start coordinate
      */
@@ -194,7 +193,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set the column start coordinate of this field, starting with 1 not 0
+     * Sets the column start coordinate of this field, starting with 1 not 0.
      *
      * @param columnStart column start coordinate
      */
@@ -203,7 +202,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get the row start coordinate of this field, starting with 1 not 0
+     * Gets the row start coordinate of this field, starting with 1 not 0.
      *
      * @return row start coordinate
      */
@@ -212,7 +211,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set the row start coordinate of this field, starting with 1 not 0
+     * Sets the row start coordinate of this field, starting with 1 not 0.
      *
      * @param rowStart row start coordinate
      */
@@ -221,7 +220,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get the column end coordinate of this field
+     * Gets the column end coordinate of this field.
      *
      * @return column end coordinate
      */
@@ -230,7 +229,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set the column end coordinate of this field
+     * Sets the column end coordinate of this field.
      *
      * @param columnEnd column end coordinate
      */
@@ -239,7 +238,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get the row end coordinate of this field
+     * Gets the row end coordinate of this field.
      *
      * @return row end coordinate
      */
@@ -248,7 +247,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set the row end coordinate of this field
+     * Sets the row end coordinate of this field.
      *
      * @param rowEnd row end coordinate
      */
@@ -257,7 +256,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Assert that column start and row start are not null.
+     * Asserts that column start and row start are not null.
      */
     public void assertValid() {
         Assert.PROGRAMMING.notNull(columnStart, "columnStart must not be null");
@@ -265,11 +264,11 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get the underlying Vaadin field. The field is intelligently and automatically generated based on the property
+     * Gets the underlying Vaadin field. The field is intelligently and automatically generated based on the property
      * type.
      * <p/>
      * In most cases, applications will not need to access Vaadin APIs directly. However,
-     * it is exposed in case Vaadin features are needed that are not exposed by ExpressUI.
+     * the Vaadin field is exposed in case Vaadin features are needed that are not exposed by ExpressUI.
      *
      * @return Vaadin field
      */
@@ -283,17 +282,17 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get the underlying Vaadin field. The field is intelligently and automatically generated based on the property type.
+     * Sets the underlying Vaadin field. The field is intelligently and automatically generated based on the property type.
      * <p/>
      * In most cases, applications will not need to access Vaadin APIs directly. However,
-     * it is exposed in case Vaadin features are needed that are not exposed by ExpressUI.
+     * the Vaadin field is exposed in case Vaadin features are needed that are not exposed by ExpressUI.
      */
     public void setField(Field field) {
         setField(field, true);
     }
 
     /**
-     * Set the underlying Vaadin field, overriding the automatically generated one.
+     * Sets the underlying Vaadin field, overriding the automatically generated one.
      *
      * @param field              Vaadin field
      * @param initializeDefaults allow ExpressUI to initialize the default settings for Vaadin field
@@ -306,7 +305,8 @@ public class FormField extends DisplayField {
     }
 
     private void initWidthAndMaxLengthDefaults(AbstractTextField abstractTextField) {
-        defaultWidth = MathUtil.maxIgnoreNull(DEFAULT_TEXT_FIELD_WIDTH, getBeanPropertyType().getMinimumLength());
+        Integer defaultTextWidth = MainApplication.getInstance().applicationProperties.getDefaultTextFieldWidth();
+        defaultWidth = MathUtil.maxIgnoreNull(defaultTextWidth, getBeanPropertyType().getMinimumLength());
         abstractTextField.setWidth(defaultWidth, Sizeable.UNITS_EM);
 
         Integer maxWidth = getBeanPropertyType().getMaximumLength();
@@ -316,7 +316,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get auto-adjust-width mode
+     * Gets auto-adjust-width mode.
      *
      * @return auto-adjust-width mode
      */
@@ -325,7 +325,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set auto-adjust-width mode
+     * Sets auto-adjust-width mode.
      *
      * @param autoAdjustWidthMode auto-adjust-width mode
      */
@@ -355,7 +355,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get width of the field
+     * Gets width of the field.
      *
      * @return width of the field
      */
@@ -364,7 +364,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Manually set width of the field and turn off auto width adjustment.
+     * Manually sets width of the field and turns off auto width adjustment.
      *
      * @param width size of width
      * @param unit  unit of measurement defined in Sizeable
@@ -376,7 +376,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set height of the field.
+     * Sets height of the field.
      *
      * @param height size of width
      * @param unit   unit of measurement defined in Sizeable
@@ -408,15 +408,16 @@ public class FormField extends DisplayField {
         if (autoAdjustWidthMode == AutoAdjustWidthMode.FULL) {
             selectField.setWidth(maxWidth, Sizeable.UNITS_EM);
         } else if (autoAdjustWidthMode == AutoAdjustWidthMode.PARTIAL) {
-            selectField.setWidth(MathUtil.maxIgnoreNull(maxWidth, DEFAULT_SELECT_FIELD_WIDTH), Sizeable.UNITS_EM);
+            Integer defaultSelectWidth = MainApplication.getInstance().applicationProperties.getDefaultSelectFieldWidth();
+            selectField.setWidth(MathUtil.maxIgnoreNull(maxWidth, defaultSelectWidth), Sizeable.UNITS_EM);
         }
     }
 
     /**
-     * Set the menu options in a select.
+     * Sets the menu options in a select.
      *
      * @param items list of items
-     * @see com.expressui.core.entity.ReferenceEntity.DISPLAY_PROPERTY
+     *              see com.expressui.core.entity.ReferenceEntity.DISPLAY_PROPERTY
      */
     public void setSelectItems(List items) {
         // could be either collection or single item
@@ -449,7 +450,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set menu options in a select.
+     * Sets menu options in a select.
      *
      * @param items map of items where key is bound to entity and value is the display caption
      */
@@ -459,7 +460,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set menu options in a select.
+     * Sets menu options in a select.
      *
      * @param items       map of items where key is bound to entity and value is the display caption
      * @param nullCaption caption displayed to represent null or no selection
@@ -494,7 +495,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get selected items, which could be a single item or collection.
+     * Gets selected items, which could be a single item or collection.
      *
      * @return single item or collection
      */
@@ -507,7 +508,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set the dimensions of a multi-select menu
+     * Sets the dimensions of a multi-select menu
      *
      * @param rows    height
      * @param columns width
@@ -522,7 +523,8 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set the property Id to be used as display caption in select menu.
+     * Sets the property Id to be used as display caption in select menu. This property id must be defined
+     * in the type of object that is bound to this select field.
      *
      * @param displayCaptionPropertyId bean property name
      */
@@ -534,7 +536,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Add listener for changes in this field's value.
+     * Adds listener for changes in this field's value.
      *
      * @param target     target object to invoke
      * @param methodName name of method to invoke
@@ -545,7 +547,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get the FormFieldSet that contains this field.
+     * Gets the FormFieldSet that contains this field.
      *
      * @return FormFieldSet that contains this field
      */
@@ -554,7 +556,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set the visibility of this field and label
+     * Sets the visibility of this field and label
      *
      * @param isVisible true if visible
      */
@@ -565,7 +567,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Allow the field to be visible from a security permissions standpoint, if it is configured to be visible
+     * Allows the field to be visible from a security permissions standpoint, if it is configured to be visible
      */
     public void allowView() {
         getField().setVisible(isVisible);
@@ -573,19 +575,30 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Deny the field from being visible from a security permissions standpoint
+     * Prevents the field from being visible from a security permissions standpoint.
      */
     public void denyView() {
         getField().setVisible(false);
         getFieldLabel().setVisible(false);
     }
 
+    /**
+     * Asks if this field is required, which is automatically set based on the bound bean's validation annotations.
+     * This value may also be set programmatically.
+     *
+     * @return true if required
+     */
     public boolean isRequired() {
         return isRequired;
     }
 
     /**
-     * Ask if this field is required.
+     * Asks if this field is currently required. Note that this may be false while {@link #isRequired} is true.
+     * This may happen in the case where this field is bound to nested property id where the leaf is required but
+     * one of its ancestors is not required and is currently null. For example, street may be required in Address but
+     * contact.mailingAddress is not required and currently null. In this scenario, the street field may be currently
+     * not required, since it's ancestor (contact.mailingAddress) is null. If contact.mailingAddress is set,
+     * then the street field becomes required.
      *
      * @return true if required
      */
@@ -594,7 +607,12 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set whether or not this field is required
+     * Sets whether or not this field is currently required. Note that this may be false while {@link #isRequired} is true.
+     * This may happen in the case where this field is bound to nested property id where the leaf is required but
+     * one of its ancestors is not required and is currently null. For example, street may be required in Address but
+     * contact.mailingAddress is not required and currently null. In this scenario, the street field may be currently
+     * not required, since it's ancestor (contact.mailingAddress) is null. If contact.mailingAddress is set,
+     * then the street field becomes required.
      *
      * @param isRequired true if required
      */
@@ -603,7 +621,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Restore is-required setting to originally configured value, as specified in validation annotations
+     * Restore is-required setting to originally statically configured value, as specified in validation annotations.
      */
     public void restoreIsRequired() {
         getField().setRequired(isRequired);
@@ -691,7 +709,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Get the description displayed during mouse-over/hovering
+     * Gets the description displayed during mouse-over/hovering.
      *
      * @return description displayed to user
      */
@@ -700,7 +718,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set the description displayed during mouse-over/hovering
+     * Sets the description displayed during mouse-over/hovering.
      *
      * @param toolTip description displayed to user
      */
@@ -710,12 +728,18 @@ public class FormField extends DisplayField {
         }
     }
 
+    /**
+     * Generates or re-generates tooltip, passing in arguments for interpolation using standard {0}, {1}, {2}
+     * notation. This feature only works with resource bundle messages defined in resources/domainMessages/.
+     *
+     * @param args
+     */
     public void setToolTipArgs(Object... args) {
         setToolTip(generateTooltip(args));
     }
 
     /**
-     * Set whether or not field is enabled.
+     * Sets whether or not field is enabled.
      *
      * @param isEnabled true if enabled
      */
@@ -724,7 +748,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set whether or not field is read-only.
+     * Sets whether or not field is read-only.
      *
      * @param isReadOnly true if read-only
      */
@@ -739,7 +763,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Restore read-only setting to originally configured value
+     * Restores read-only setting for all fields, if they were temporarily changed for view-only mode.
      */
     public void restoreIsReadOnly() {
         if (getField() instanceof SelectField) {
@@ -749,7 +773,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set the value of the field.
+     * Sets the value of the field.
      *
      * @param value value of field
      */
@@ -774,7 +798,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Ask if field currently has error because field is empty but is required
+     * Asks if field currently has error because field is empty but is required.
      *
      * @return true if field currently has error because field is empty but is required
      */
@@ -783,7 +807,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Clear any errors on this field.
+     * Clears any errors on this field.
      *
      * @param clearConversionError true to clear data-type conversion error as well
      */
@@ -798,7 +822,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Ask if this field has a data-type conversion error.
+     * Asks if this field has a data-type conversion error.
      *
      * @return true if this field as a data-type conversion error
      */
@@ -807,7 +831,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Set whether or not this field has a data-type conversion error.
+     * Sets whether or not this field has a data-type conversion error.
      *
      * @param hasConversionError true if this field as a data-type conversion error
      */
@@ -984,7 +1008,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Add Vaadin validator to this field.
+     * Adds Vaadin validator to this field.
      *
      * @param validator Vaadin validator
      */
@@ -1007,7 +1031,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Initialize field to default settings.
+     * Initializes field to default settings.
      *
      * @param field Vaadin field to initialize
      */
@@ -1022,18 +1046,19 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Initialize field to default settings.
+     * Initializes field to default settings.
      *
      * @param field Vaadin field to initialize
      */
     public static void initTextFieldDefaults(AbstractTextField field) {
-        field.setWidth(DEFAULT_TEXT_FIELD_WIDTH, Sizeable.UNITS_EM);
+        Integer defaultTextWidth = MainApplication.getInstance().applicationProperties.getDefaultTextFieldWidth();
+        field.setWidth(defaultTextWidth, Sizeable.UNITS_EM);
         field.setNullRepresentation("");
         field.setNullSettingAllowed(true);
     }
 
     /**
-     * Initialize field to default settings.
+     * Initializes field to default settings.
      *
      * @param field Vaadin field to initialize
      */
@@ -1043,21 +1068,24 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Initialize field to default settings.
+     * Initializes field to default settings.
      *
      * @param field Vaadin field to initialize
      */
     public static void initDateFieldDefaults(DateField field) {
         field.setResolution(DateField.RESOLUTION_DAY);
+        field.setParseErrorMessage(MainApplication.getInstance().validationMessageSource.getMessage(
+                "com.expressui.core.view.field.FormField.dateParseError.message"));
     }
 
     /**
-     * Initialize field to default settings.
+     * Initializes field to default settings.
      *
      * @param field Vaadin field to initialize
      */
     public void initAbstractSelectDefaults(AbstractSelect field) {
-        field.setWidth(DEFAULT_SELECT_FIELD_WIDTH, Sizeable.UNITS_EM);
+        Integer defaultSelectWidth = MainApplication.getInstance().applicationProperties.getDefaultSelectFieldWidth();
+        field.setWidth(defaultSelectWidth, Sizeable.UNITS_EM);
         field.setItemCaptionMode(Select.ITEM_CAPTION_MODE_PROPERTY);
         if (getBeanPropertyType().hasAnnotation(NotNull.class) || getBeanPropertyType().hasAnnotation(NotEmpty.class)
                 || getBeanPropertyType().hasAnnotation(NotBlank.class)) {
@@ -1070,7 +1098,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Initialize field to default settings.
+     * Initializes field to default settings.
      *
      * @param field Vaadin field to initialize
      */
@@ -1079,7 +1107,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Initialize field to default settings.
+     * Initializes field to default settings.
      *
      * @param field Vaadin field to initialize
      */
@@ -1099,7 +1127,7 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Mode for automatically adjusting field widths
+     * Mode for automatically adjusting field widths.
      */
     public enum AutoAdjustWidthMode {
         /**
@@ -1107,7 +1135,7 @@ public class FormField extends DisplayField {
          */
         FULL,
         /**
-         * Automatic but with minimum width specified by DEFAULT_TEXT_FIELD_WIDTH and DEFAULT_SELECT_FIELD_WIDTH
+         * Automatic but with minimum width specified in application.properties
          */
         PARTIAL,
         /**

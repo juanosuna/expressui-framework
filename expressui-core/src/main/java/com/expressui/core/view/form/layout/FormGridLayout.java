@@ -48,17 +48,18 @@ import com.vaadin.ui.*;
  * columns and rows:
  * <ul>
  * <li>ExpressUI columns and rows start at 1, where as Vaadin starts as 0.</li>
- * <li>In left-label layout, ExpressUI column includes label, field and spacers, whereas Vaadin has separate columns
- * for each.</li>
+ * <li>In left-label layout, each ExpressUI logical column includes label, field and spacers, whereas
+ * the underlying Vaadin layout provides separate columns for each.</li>
  * </ul>
- * Compared to Vaadin, ExpressUI simplifies the layout so the developer does not have to worry about labels and spacers.
+ * Compared to using Vaadin directly, ExpressUI simplifies the layout so the developer does not have to worry about
+ * labels and spacers.
  */
 public abstract class FormGridLayout extends CustomComponent implements Layout {
 
     private GridLayout rootLayout;
 
     /**
-     * Construct specifying the actual number of columns and rows, from Vaadin perspective
+     * Constructs specifying the actual number of columns and rows, from Vaadin perspective.
      *
      * @param columns number of columns
      * @param rows    number of rows
@@ -71,21 +72,21 @@ public abstract class FormGridLayout extends CustomComponent implements Layout {
     }
 
     /**
-     * Set the number of columns in the form, from ExpressUI perspective.
+     * Sets the number of columns in the form, from ExpressUI perspective.
      *
      * @param columns number of columns in the two-dimension form grid
      */
     public abstract void setFormColumns(int columns);
 
     /**
-     * Add a field to the form
+     * Adds a field to the form.
      *
      * @param formField field to add
      */
     public abstract void addField(FormField formField);
 
     /**
-     * Remove field from the form.
+     * Removes field from the form.
      *
      * @param formField field to remove
      */
@@ -102,7 +103,7 @@ public abstract class FormGridLayout extends CustomComponent implements Layout {
     }
 
     /**
-     * Add and position component in layout.
+     * Adds and positions component in layout.
      *
      * @param component component to add
      * @param column1   column start position from Vaadin perspective
@@ -130,7 +131,7 @@ public abstract class FormGridLayout extends CustomComponent implements Layout {
     }
 
     /**
-     * Set number of columns from Vaadin perspective, used internally.
+     * Sets number of columns from Vaadin perspective, used internally.
      *
      * @param columns number of columns
      */
@@ -139,7 +140,7 @@ public abstract class FormGridLayout extends CustomComponent implements Layout {
     }
 
     /**
-     * Set number of rows from Vaadin perspective, used internally.
+     * Sets number of rows from Vaadin perspective, used internally.
      *
      * @param rows number of rows
      */
@@ -148,7 +149,7 @@ public abstract class FormGridLayout extends CustomComponent implements Layout {
     }
 
     /**
-     * Get component at column, row coordinates
+     * Gets component at column, row coordinates
      *
      * @param column coordinate
      * @param row    coordinate
@@ -159,7 +160,7 @@ public abstract class FormGridLayout extends CustomComponent implements Layout {
     }
 
     /**
-     * Add and position component to layout
+     * Adds and positions component to layout.
      *
      * @param component component
      * @param column    column from Vaadin perspective
@@ -173,7 +174,7 @@ public abstract class FormGridLayout extends CustomComponent implements Layout {
     }
 
     /**
-     * Remove component at column, row coordinates
+     * Removes component at column, row coordinates.
      *
      * @param column coordinate
      * @param row    coordinate
@@ -183,7 +184,7 @@ public abstract class FormGridLayout extends CustomComponent implements Layout {
     }
 
     /**
-     * Set component alignment.
+     * Sets component alignment.
      *
      * @param childComponent component to align
      * @param alignment      alignment
@@ -193,7 +194,7 @@ public abstract class FormGridLayout extends CustomComponent implements Layout {
     }
 
     /**
-     * Set whether or not spacing is enabled
+     * Sets whether or not spacing is enabled.
      *
      * @param enabled true if spacing is enabled
      */

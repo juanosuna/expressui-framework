@@ -47,8 +47,8 @@ import org.springframework.stereotype.Component;
 import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
 
 /**
- * Main menu bar displayed for navigation. Bar consists of left and right root nodes. Each root node
- * can contain a tree of nested menu nodes, where each node is a link to a page or an action.
+ * Main menu bar displayed for navigating the application. Bar consists of left and right root nodes. Each root node
+ * can contain a tree of nested menu nodes, where each node is a caption, a link to a page or an action.
  */
 @Component
 @Scope(SCOPE_SESSION)
@@ -80,7 +80,7 @@ public class MainMenuBar extends RootComponent {
     }
 
     /**
-     * Get the root node displayed on the left.
+     * Gets the root node displayed on the left.
      *
      * @return left root node
      */
@@ -89,7 +89,7 @@ public class MainMenuBar extends RootComponent {
     }
 
     /**
-     * Get the root node displayed on the right.
+     * Gets the root node displayed on the right.
      *
      * @return right root node
      */
@@ -98,7 +98,8 @@ public class MainMenuBar extends RootComponent {
     }
 
     /**
-     * Refresh the menu bar, useful when security permissions change, e.g. when user logs in and is no longer anonymous.
+     * Refreshes the menu bar, useful when security permissions change, for example when user logs in and
+     * is no longer anonymous.
      */
     public void refresh() {
         removeAllComponents();

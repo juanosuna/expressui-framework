@@ -60,21 +60,21 @@ public abstract class ToManyRelationship<T> extends CrudResults<T> {
     }
 
     /**
-     * Get the property id in the parent entity for referencing the child in this to-many relationship
+     * Gets the property id in the parent entity for referencing the child in this to-many relationship.
      *
      * @return child property id
      */
     public abstract String getChildPropertyId();
 
     /**
-     * Get the property id in the child entity for referencing the parent entity in this to-many relationship
+     * Gets the property id in the child entity for referencing the parent entity in this to-many relationship.
      *
      * @return parent property id
      */
     public abstract String getParentPropertyId();
 
     /**
-     * Get the entity query that generates these results.
+     * Gets the entity query that generates these results.
      *
      * @return entity query
      */
@@ -90,7 +90,7 @@ public abstract class ToManyRelationship<T> extends CrudResults<T> {
     }
 
     /**
-     * Set references in given values to the parent and then persists all values.
+     * Sets references inside given values to the parent and then persists all values.
      *
      * @param values values in which to set reference
      */
@@ -108,7 +108,7 @@ public abstract class ToManyRelationship<T> extends CrudResults<T> {
     }
 
     /**
-     * Set reference in given value to the parent.
+     * Sets references inside the given value to the parent.
      *
      * @param value value in which to set reference
      */
@@ -128,7 +128,7 @@ public abstract class ToManyRelationship<T> extends CrudResults<T> {
     }
 
     /**
-     * Get the type of the parent entity in this relationship
+     * Gets the type of the parent entity in this relationship.
      *
      * @return type of parent entity
      */
@@ -139,7 +139,7 @@ public abstract class ToManyRelationship<T> extends CrudResults<T> {
 
 
     /**
-     * Ask if this component is in view-only mode.
+     * Asks if this component is in view-only mode.
      *
      * @return true if in view-only mode
      */
@@ -148,7 +148,7 @@ public abstract class ToManyRelationship<T> extends CrudResults<T> {
     }
 
     /**
-     * Set whether or not this component is in view-only mode.
+     * Sets whether or not this component is in view-only mode.
      *
      * @param viewMode true to set in view-only mode
      */

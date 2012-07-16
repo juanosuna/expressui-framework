@@ -46,7 +46,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 /**
- * Page for searching for roles and editing/viewing them.
+ * Page to search for roles and edit/view them.
  */
 @Component
 @Scope(Page.SCOPE_PAGE)

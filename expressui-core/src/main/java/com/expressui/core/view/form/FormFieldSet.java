@@ -71,7 +71,7 @@ public class FormFieldSet extends FieldSet {
     private Map<String, AddRemoveTabMethodDelegate> optionalTabs = new HashMap<String, AddRemoveTabMethodDelegate>();
 
     /**
-     * Get form component that contains these fields.
+     * Gets form component that contains these fields.
      *
      * @return form component containing these fields
      */
@@ -80,7 +80,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set the form component that contains these fields.
+     * Sets the form component that contains these fields.
      *
      * @param form component containing these fields
      */
@@ -90,7 +90,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Create a form tab that contains a subset of these fields.
+     * Creates a form tab that contains a subset of these fields.
      *
      * @param tabName name of the tab
      * @return newly created form tab
@@ -101,7 +101,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get number of columns in this form, assuming form has no tabs.
+     * Gets number of columns in this form, assuming form has no tabs.
      *
      * @return number of columns in this form
      */
@@ -110,7 +110,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get number of columns in this form's tab
+     * Gets number of columns in this form's tab.
      *
      * @param tabName name of tab
      * @return number of columns in this form's tab
@@ -132,7 +132,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get number of rows in this form, assuming form has no tabs.
+     * Gets number of rows in this form, assuming form has no tabs.
      *
      * @return number of rows in this form
      */
@@ -141,7 +141,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get number of rows in this form's tab.
+     * Gets number of rows in this form's tab.
      *
      * @param tabName name of tab
      * @return number of rows in this form's tab
@@ -163,7 +163,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get the name of the first tab in this form.
+     * Gets the name of the first tab in this form.
      *
      * @return name of first tab
      */
@@ -172,7 +172,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Create form grid layout for containing form fields, assuming form has no tabs.
+     * Creates form grid layout for containing form fields, assuming form has no tabs.
      *
      * @return form grid layout
      */
@@ -181,7 +181,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Create form grid layout for containing form fields in given tab;
+     * Creates form grid layout for containing form fields in given tab;
      *
      * @param tabName tab subsection of form
      * @return grid layout for tab
@@ -212,7 +212,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set the position of a field in the form's tab. Field occupies just one cell.
+     * Sets the position of a field in the form's tab, where the field occupies just one cell.
      *
      * @param tabName     tab to place field
      * @param propertyId  property id in entity to bind field to
@@ -224,7 +224,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set the position of a field in the form. Field occupies just one cell in form without tabs.
+     * Sets the position of a field in the form, where the field occupies just one cell in form without tabs.
      *
      * @param propertyId  property id in entity to bind field to
      * @param rowStart    row start coordinate
@@ -235,7 +235,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set the position of a field in the form without tabs.
+     * Sets the position of a field in the form without tabs, where field can span multiple cells.
      *
      * @param propertyId  property id in entity to bind field to
      * @param rowStart    row start coordinate
@@ -248,7 +248,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set the position of a field in the form's tab.
+     * Sets the position of a field in the form's tab, where field can span multiple cells.
      *
      * @param tabName     tab to place field
      * @param propertyId  property id in entity to bind field to
@@ -273,7 +273,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Assert that all the FormFields in this form are valid.
+     * Asserts that all the FormFields in this form are valid.
      */
     public void assertValid() {
         Collection<FormField> formFields = getFormFields();
@@ -283,7 +283,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Find FormField based on the Vaadin field it contains.
+     * Finds FormField based on the Vaadin field it contains.
      *
      * @param field Vaadin field for looking up FormField
      * @return FormField
@@ -301,7 +301,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get method delegate that listens for adding and removing a tab.
+     * Gets method delegate that listens for adding and removing a tab.
      *
      * @param tabName name of tab to trigger the delegate
      * @return delegate
@@ -311,7 +311,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Ask if the given tab is optional.
+     * Asks if the given tab is optional.
      *
      * @param tabName name of tab
      * @return true if optional
@@ -321,7 +321,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Ask if form contains any optional tabs.
+     * Asks if form contains any optional tabs.
      *
      * @return true if form contains optional tabs
      */
@@ -330,7 +330,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set a tab as optional.
+     * Sets a tab as optional.
      *
      * @param tabName      name of tab to set
      * @param addTarget    target object to invoke method on, when tab is added
@@ -350,7 +350,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get FormField bound to given property.
+     * Gets FormField bound to given property.
      *
      * @param propertyId property id (name)
      * @return FormField bound to property
@@ -360,7 +360,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set Vaadin field to be displayed.
+     * Sets Vaadin field to be displayed.
      *
      * @param propertyId property id to identify FormField
      * @param field      Vaadin field
@@ -371,7 +371,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Ask if this form contains property in the given tab.
+     * Asks if this form contains property in the given tab.
      *
      * @param tabName    name of tab
      * @param propertyId property id
@@ -383,7 +383,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get all the FormFields positioned in given tab.
+     * Gets all the FormFields in given tab.
      *
      * @param tabName name of tab
      * @return all the FormField under the tab
@@ -402,7 +402,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get all the FormFields.
+     * Gets all the FormFields in all tabs.
      *
      * @return all FormFields
      */
@@ -418,7 +418,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Clear all errors associated with all fields
+     * Clears all errors associated with all fields.
      *
      * @param clearConversionErrors true to clear conversion errors as well
      */
@@ -431,7 +431,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Ask if any field has an error in given tab.
+     * Asks if any field has an error in a tab.
      *
      * @param tabName name of tab
      * @return true if any field has an error in given tab
@@ -448,7 +448,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get names of all tabs in this form.
+     * Gets names of all tabs in this form.
      *
      * @return names of all tabs
      */
@@ -466,7 +466,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Ask if this form has tabs.
+     * Asks if this form has tabs.
      *
      * @return true if this form has tabs
      */
@@ -475,7 +475,8 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get all tabs that are viewable, based on security rules.
+     * Gets all tabs that are viewable, based on whether each tab contains viewable fields
+     * according to security permissions.
      *
      * @return all viewable tabs
      */
@@ -498,7 +499,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get all viewable FormFields, based on security rules
+     * Gets all viewable FormFields, based on security permissions.
      *
      * @return all viewable form fields
      */
@@ -518,7 +519,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get all editable FormFields, based on security rules
+     * Gets all editable FormFields, based on security permissions.
      *
      * @return all editable form fields
      */
@@ -552,7 +553,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Manually set width of the field and turn off auto width adjustment.
+     * Manually sets width of the field and turn off auto width adjustment.
      *
      * @param propertyId property id to identify field to set
      * @param width      size of width
@@ -564,7 +565,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set height of the field.
+     * Sets height of the field.
      *
      * @param propertyId property id to identify field to set
      * @param height     size of width
@@ -576,7 +577,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Automatically adjust widths of fields based on their value contents.
+     * Automatically adjusts widths of fields based on their value contents.
      */
     public void autoAdjustWidths() {
         Set<FormField> formFields = getFormFields();
@@ -590,7 +591,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set auto-adjust-width mode
+     * Sets auto-adjust-width mode.
      *
      * @param propertyId          property id to identify field to set
      * @param autoAdjustWidthMode auto-adjust-width mode
@@ -600,7 +601,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Add a validator to field.
+     * Adds a validator to field.
      *
      * @param propertyId property id to identify field to be validated
      * @param validator  validator to attach to field
@@ -610,7 +611,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Add a conversion validator to field by reflectively instantiating given class.
+     * Adds a conversion validator to field by reflectively instantiating given class.
      *
      * @param propertyId     property id to identify field to be validated
      * @param validatorClass class of the validator that to be instantiated and set on the field
@@ -632,7 +633,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Add a conversion validator to field.
+     * Adds a conversion validator to field.
      *
      * @param propertyId property id to identify field to be validated
      * @param validator  validator to be attached to the field
@@ -643,7 +644,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Get the description displayed during mouse-over/hovering
+     * Gets the description displayed during mouse-over/hovering.
      *
      * @param propertyId property id to identify field to set
      * @return description displayed to user
@@ -653,7 +654,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set the description displayed during mouse-over/hovering
+     * Sets the description displayed during mouse-over/hovering.
      *
      * @param propertyId property id to identify field to set
      * @param toolTip    description displayed to user
@@ -662,27 +663,39 @@ public class FormFieldSet extends FieldSet {
         getFormField(propertyId).setToolTip(toolTip);
     }
 
+    /**
+     * Generates or re-generates tooltip, passing in arguments for interpolation using standard {0}, {1}, {2}
+     * notation. This feature only works with resource bundle messages defined in resources/domainMessages/.
+     *
+     * @param propertyId property id to identify field to set
+     * @param args
+     */
     public void setToolTipArgs(String propertyId, Object... args) {
         getFormField(propertyId).setToolTipArgs(args);
     }
 
+    /**
+     * Clears the menu options in a select.
+     *
+     * @param propertyId property id to identify field to set
+     */
     public void clearSelectItems(String propertyId) {
         getFormField(propertyId).setSelectItems(new ArrayList());
     }
 
     /**
-     * Set the menu options in a select.
+     * Sets the menu options in a select.
      *
      * @param propertyId property id to identify field to set
      * @param items      list of items
-     * @see com.expressui.core.entity.ReferenceEntity.DISPLAY_PROPERTY
+     * see com.expressui.core.entity.ReferenceEntity.DISPLAY_PROPERTY
      */
     public void setSelectItems(String propertyId, List items) {
         getFormField(propertyId).setSelectItems(items);
     }
 
     /**
-     * Set menu options in a select.
+     * Sets menu options in a select.
      *
      * @param propertyId property id to identify field to set
      * @param items      map of items where key is bound to entity and value is the display caption
@@ -692,7 +705,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set menu options in a select.
+     * Sets menu options in a select.
      *
      * @param propertyId  property id to identify field to set
      * @param items       map of items where key is bound to entity and value is the display caption
@@ -703,7 +716,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set the dimensions of a multi-select menu
+     * Sets the dimensions of a multi-select menu
      *
      * @param propertyId property id to identify field to set
      * @param rows       height
@@ -714,7 +727,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set the visibility of this field and label
+     * Sets the visibility of this field and label.
      *
      * @param propertyId property id to identify field to set
      * @param isVisible  true if visible
@@ -724,7 +737,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set whether or not this field is required
+     * Sets whether or not this field is required.
      *
      * @param propertyId property id to identify field to set
      * @param isRequired true if required
@@ -734,7 +747,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set whether or not field is enabled.
+     * Sets whether or not field is enabled.
      *
      * @param propertyId property id to identify field to set
      * @param isEnabled  true if enabled
@@ -744,7 +757,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set whether or not field is read-only.
+     * Sets whether or not field is read-only.
      *
      * @param propertyId property id to identify field to set
      * @param isReadOnly true if read-only
@@ -754,7 +767,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set whether or not all fields are read-only.
+     * Sets whether or not all fields are read-only.
      *
      * @param isReadOnly true if read-only
      */
@@ -766,7 +779,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Restore read-only setting for all fields
+     * Restores read-only setting for all fields, if they were temporarily changed for view-only mode.
      */
     public void restoreIsReadOnly() {
         Collection<FormField> formFields = getFormFields();
@@ -776,7 +789,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Apply security is-editable rules to all fields
+     * Applies security is-editable permissions to all fields.
      */
     public void applySecurityIsEditable() {
         Collection<FormField> formFields = getFormFields();
@@ -808,7 +821,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set the value of the field.
+     * Sets the value of the field.
      *
      * @param value value of field
      */
@@ -817,7 +830,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Set component error.
+     * Sets component error.
      *
      * @param propertyId   property id to identify field to set
      * @param errorMessage error message
@@ -830,7 +843,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Add change listener to field
+     * Adds change listener to field.
      *
      * @param propertyId property id to identify field to set
      * @param target target of the listener
@@ -842,7 +855,7 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Ask if this form is EntityForm
+     * Asks if this form is EntityForm.
      *
      * @return true if EntityForm
      */
@@ -863,7 +876,7 @@ public class FormFieldSet extends FieldSet {
         }
 
         /**
-         * Get delegate for handling add tab action
+         * Gets delegate for handling add tab action.
          *
          * @return delegate for handling add tab action
          */
@@ -872,7 +885,7 @@ public class FormFieldSet extends FieldSet {
         }
 
         /**
-         * Get delegate for handling remove tab action
+         * Gets delegate for handling remove tab action.
          *
          * @return delegate for handling remove tab action
          */

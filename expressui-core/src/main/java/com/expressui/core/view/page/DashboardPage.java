@@ -51,7 +51,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 /**
- * Dashboard for displaying a grid of any custom components. Components can be added to
+ * Dashboard for displaying a grid of components. Components can be added to
  * the Dashboard's grid layout, using X, Y coordinates, in the same way that fields are
  * added to forms.
  */
@@ -90,34 +90,49 @@ public abstract class DashboardPage extends RootComponent implements Page {
     public void onDisplay() {
     }
 
-    /**
-     * Default caption is null, since Dashboard is not associated with any specific entity type.
-     *
-     * @return null
-     */
     @Override
     public String getCaption() {
         return null;
     }
 
+    /**
+     * Gets the pixel width of each cell in the Dashboard's grid layout.
+     *
+     * @return pixel width of each cell.
+     */
     public Integer getCellPixelWidth() {
         return cellPixelWidth;
     }
 
+    /**
+     * Sets the pixel width of each cell in the Dashboard's grid layout.
+     *
+     * @param cellPixelWidth pixel width of each cell.
+     */
     public void setCellPixelWidth(Integer cellPixelWidth) {
         this.cellPixelWidth = cellPixelWidth;
     }
 
+    /**
+     * Gets the pixel height of each cell in the Dashboard's grid layout.
+     *
+     * @return pixel height of each cell.
+     */
     public Integer getCellPixelHeight() {
         return cellPixelHeight;
     }
 
+    /**
+     * Sets the pixel height of each cell in the Dashboard's grid layout.
+     *
+     * @param cellPixelHeight pixel height of each cell.
+     */
     public void setCellPixelHeight(Integer cellPixelHeight) {
         this.cellPixelHeight = cellPixelHeight;
     }
 
     /**
-     * Add a component to the dashboard.
+     * Adds a component to the dashboard.
      *
      * @param component   component to add
      * @param caption     caption to display above component
@@ -129,7 +144,7 @@ public abstract class DashboardPage extends RootComponent implements Page {
     }
 
     /**
-     * Add a component to the dashboard.
+     * Adds a component to the dashboard.
      *
      * @param component   component to add
      * @param caption     caption to display above component
@@ -183,7 +198,7 @@ public abstract class DashboardPage extends RootComponent implements Page {
     }
 
     /**
-     * Remove component from the dashboard
+     * Removes component from the dashboard.
      *
      * @param startRow    start row coordinate in Dashboard grid
      * @param startColumn start column coordinate in Dashboard grid

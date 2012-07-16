@@ -46,7 +46,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 
 /**
- * Page for searching for users and editing/viewing them.
+ * Page to search for users and edit/view them.
  */
 @Component
 @Scope(Page.SCOPE_PAGE)

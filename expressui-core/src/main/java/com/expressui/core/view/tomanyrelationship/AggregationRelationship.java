@@ -63,7 +63,7 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
     private Button removeButton;
 
     /**
-     * Get the EntitySelect component used to select an entity for adding to the relationship
+     * Gets the EntitySelect component used to select an entity to add to the relationship.
      *
      * @return EntitySelect component
      */
@@ -96,8 +96,11 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
         getCrudButtons().setComponentAlignment(crudButtons, Alignment.MIDDLE_LEFT);
 
         actionContextMenu.addAction("aggregationRelationship.remove", this, "remove");
+    }
 
-//        addCodePopupButtonIfEnabled(aggregationRelationship.class);
+    @Override
+    protected void addCodePopupButtonIfEnabledForCrudResults() {
+        addCodePopupButtonIfEnabled(AggregationRelationship.class);
     }
 
     @Override
@@ -108,10 +111,9 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
     }
 
     /**
-     * Invoked when user clicks to add an entity to the to-many relationship. Implementation should
-     * take appropriate action, depending on type of relationships, aggregation, composition.
+     * Automatically invoked when user clicks to add an entity to the to-many relationship.
      */
-    public void add() {
+    protected void add() {
         preAdd();
         EntitySelect<T> entitySelect = getEntitySelect();
         entitySelect.setMultiSelect(true);
@@ -122,9 +124,9 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
     }
 
     /**
-     * Invoked when user clicks action to remove selected entities.
+     * Automatically invoked when user clicks action to remove selected entities.
      */
-    public void remove() {
+    protected void remove() {
         getMainApplication().showConfirmationDialog(
                 new ConfirmDialog.Listener() {
                     public void onClose(ConfirmDialog dialog) {
@@ -167,6 +169,9 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
         selectionChanged(null);
     }
 
+    /**
+     * Shows confirmation message the items were successfully removed.
+     */
     public void showRemoveSuccessful() {
         MainApplication.getInstance().showMessage(uiMessageSource.getMessage("aggregationRelationship.removed"));
     }
@@ -180,7 +185,7 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
     }
 
     /**
-     * Set this results component to read-only or writable.
+     * Sets this results component to read-only or writable.
      *
      * @param isReadOnly true if read only
      */
@@ -206,7 +211,7 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
     }
 
     /**
-     * Reads current security rules and applies them to this results component, i.e. making CRUD buttons (in)visible
+     * Reads current security rules and applies them to this results component, making CRUD buttons (in)visible.
      */
     private void applySecurityIsEditable() {
         boolean isEditable = securityService.getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId());

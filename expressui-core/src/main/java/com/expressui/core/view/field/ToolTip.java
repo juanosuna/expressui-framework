@@ -47,7 +47,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * A tooltip for display to end user. Can be used to annotate
  * a property to define UI display tooltip in an entity.
  * Embedding UI tooltip in entities is a questionable practice. However,
- * it avoids having to define redundant labels throughout the UI at the
+ * it avoids having to define redundant tooltips throughout the UI at the
  * expense of flexibility.
  */
 @Target(ElementType.FIELD)

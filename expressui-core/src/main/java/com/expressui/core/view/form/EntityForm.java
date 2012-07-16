@@ -64,8 +64,12 @@ import java.lang.annotation.Annotation;
 import java.util.*;
 
 /**
- * A form bound to a JPA entity, providing save, refresh and cancel actions. Underneath the form
- * are tabs representing to-many relationships, allowing related entities to be added and removed.
+ * A form bound to a JPA entity, providing save, refresh and cancel actions.
+ * The main area of the form can have tabs for different sections. Underneath the form
+ * are more tabs representing to-many relationships, allowing related entities to be added and removed.
+ * <p/>
+ * Other features include displaying in view-only mode, handling security permissions, validating fields and
+ * keeping track of which tabs contain validation errors.
  *
  * @param <T> type of entity
  */
@@ -143,7 +147,10 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Get a caption that describes the entity bean bound to this form.
+     * Gets caption that describes the entity bean bound to this form. If the bean
+     * implements {@link NameableEntity}, then {@link NameableEntity.getName} is
+     * used. Otherwise, the bean's toString is used as a caption. Override
+     * this method to customize the caption.
      *
      * @return caption that describes entity
      */
@@ -171,7 +178,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Get all to-many relationships, displayed as tabs below the form.
+     * Gets all to-many relationships, displayed as tabs below the form.
      *
      * @return list of to-many relationships
      */
@@ -180,7 +187,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Get all viewable to-many relationships, based on security permissions.
+     * Gets all viewable to-many relationships, based on security permissions.
      *
      * @return all viewable to-many relationships
      */
@@ -202,8 +209,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Make the component collapsible if and only if there are viewable to-many tabs, i.e. allow component's
-     * visibility to be toggled
+     * Makes the component collapsible if and only if there are viewable to-many tabs, toggling component's
+     * visibility.
      *
      * @param component component to show/hide
      * @return the newly created wrapper layout that contains the toggle button and collapsible component
@@ -218,7 +225,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Create the footer buttons: cancel, refresh, save
+     * Creates the footer buttons: cancel, refresh, save.
      *
      * @param footerLayout horizontal layout containing buttons
      */
@@ -255,7 +262,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Ask if this form is in read/view-only mode.
+     * Asks if this form is in read/view-only mode.
      *
      * @return true if in view-only mode
      */
@@ -264,9 +271,9 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Set whether or not this form is in read/view-only mode. Note that this action does not immediately change
+     * Sets whether or not this form is in read/view-only mode. Note that this action does not immediately change
      * fields to read-only or restore them to writable. It just sets the mode for the next time
-     * an entity is loaded or applyViewMode is called.
+     * an entity is loaded or {@link #applyViewMode} is called.
      *
      * @param viewMode true if in view-only mode
      */
@@ -279,7 +286,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Apply view mode to form.
+     * Applies current view mode to form.
      */
     public void applyViewMode() {
         if (isViewMode()) {
@@ -290,7 +297,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Set entire form to read-only or writable, including fields, to-many relationships and action buttons
+     * Sets entire form to either read-only or writable, including fields, to-many relationships and action buttons.
      *
      * @param isReadOnly true to set to read-only, otherwise make writable
      */
@@ -311,7 +318,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Restore the read-only settings of the form fields to how they were originally configured.
+     * Restores the read-only settings of the form fields to how they were originally configured,
+     * based on security permissions and programatic settings.
      */
     public void restoreIsReadOnly() {
         getFormFieldSet().restoreIsReadOnly();
@@ -327,7 +335,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Apply security permission logic to fields for controlling if each field is editable
+     * Applies security permission logic to fields for controlling if each field is editable.
      */
     public void applySecurityIsEditable() {
         saveAndCloseButton.setVisible(true);
@@ -343,8 +351,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
 
     /**
      * If this entity form is displayed in popup window, asks if the window's height is full.
-     * If this is not set, i.e. is null, default behavior is used where
-     * entity form's with to-many relationships use full height and those without are undefined
+     * If this is not set (is null), default behavior is as follows:
+     * an entity form with to-many relationships uses full height and those without are undefined
      * and automatically adjust their size according to contents.
      *
      * @return true if popup window's height is full or null for default behavior
@@ -355,8 +363,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
 
     /**
      * If this entity form is displayed in popup window, set if the window's height is full.
-     * If this is not set, i.e. is null, default behavior is used where
-     * entity form's with to-many relationships use full height and those without are undefined
+     * If this is not set (is null), default behavior is as follows:
+     * an entity form with to-many relationships uses full height and those without are undefined
      * and automatically adjust their size according to contents.
      *
      * @param popupWindowHeightFull true if popup window's height is full or null for default behavior
@@ -366,8 +374,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Ask if validation is currently enabled for this form. Sometimes it is useful to temporarily turn off
-     * validation, e.g. when setting a new data-source
+     * Asks if validation is currently enabled for this form. Sometimes it is useful to temporarily turn off
+     * validation, for example when setting a new data-source.
      *
      * @return true if validation is currently enabled
      */
@@ -382,7 +390,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Load and bind a new entity to the form. Automatically selects the first tab (if tabs exist), whenever
+     * Loads and binds a new entity to the form. Automatically selects the first tab (if tabs exist), whenever
      * a new entity is loaded.
      *
      * @param entity entity to load
@@ -392,10 +400,11 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Load and bind a new entity to the form.
+     * Loads and binds a new entity to the form.
      *
      * @param entity         entity to load
-     * @param selectFirstTab true to select the first tab, once the entity is loaded
+     * @param selectFirstTab true to select the first tab, once the entity is loaded, otherwise maintains the
+     *                       tab selection of any previously shown entity
      * @throws EntityNotFoundException
      */
     public void load(T entity, boolean selectFirstTab) throws EntityNotFoundException {
@@ -442,7 +451,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Clear the form of data and all errors.
+     * Clears the form of data and all errors.
      */
     public void clear() {
         clearAllErrors(true);
@@ -450,8 +459,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Create an empty form with an empty entity. Makes to-many relationship tabs invisible. User must
-     * save an entity and reload to add to-many relationships.
+     * Creates an empty form with an empty entity. Makes to-many relationship tabs invisible. User must
+     * save an entity and then to-many relationships will appear.
      */
     public void create() {
         createImpl();
@@ -553,7 +562,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Add cancel listener.
+     * Adds cancel listener. Listener is invoked when form is canceled.
      *
      * @param target     target object
      * @param methodName name of method to invoke
@@ -563,7 +572,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Add close listener. Listener is invoked when form is closed.
+     * Adds close listener. Listener is invoked when form is closed.
      *
      * @param target     target object
      * @param methodName name of method to invoke
@@ -573,7 +582,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Add save listener. Listener is invoked when form is saved.
+     * Adds save listener. Listener is invoked when form is saved.
      *
      * @param target     target object
      * @param methodName name of method to invoke
@@ -582,6 +591,11 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         saveListeners.add(new MethodDelegate(target, methodName));
     }
 
+    /**
+     * Removes all listeners from the given target.
+     *
+     * @param target all listeners defined on this target are removed
+     */
     public void removeListeners(Object target) {
         Set<MethodDelegate> listenersToRemove;
 
@@ -617,7 +631,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Cancel and close the form, discarding any changes.
+     * Cancels and closes the form, discarding any changes.
      */
     public void cancel() {
         clearAllErrors(true);
@@ -648,7 +662,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Save changes to the entity, either persisting a transient entity or updating existing one, then close form.
+     * Saves changes to the entity, either persisting a transient entity or updating existing one, then closes form.
      *
      * @return true if save was successful
      */
@@ -657,7 +671,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Save changes to the entity, either persisting a transient entity or updating existing one, while
+     * Saves changes to the entity, either persisting a transient entity or updating existing one, while
      * keeping form open.
      *
      * @return true if save was successful
@@ -673,7 +687,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Save changes to the entity, either persisting a transient entity or updating existing one.
+     * Saves changes to the entity, either persisting a transient entity or updating existing one.
      *
      * @param executeCloseListeners whether or not to execute close listeners
      * @return true if save was successful
@@ -757,7 +771,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Show notification message that save was successful.
+     * Shows notification message that save was successful.
      */
     public void showSaveSuccessfulMessage() {
         MainApplication.getInstance().showMessage(
@@ -767,7 +781,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Show notification message that save was successful because of conflict with another user's changes.
+     * Shows notification message that save was unsuccessful because of a conflict with another user's changes.
      */
     public void showSaveConflictMessage() {
         Window.Notification notification = new Window.Notification(
@@ -779,7 +793,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Show notification message that save was unsuccessful.
+     * Shows notification message that save was unsuccessful because of validation error.
      */
     public void showSaveValidationErrorMessage() {
         Window.Notification notification = new Window.Notification("\"" + getEntityCaption()
@@ -791,7 +805,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Reload entity from the database, discarding any changes and clearing any errors.
+     * Reloads entity from the database, discarding any changes and clearing any errors.
      */
     public void refresh() {
         clearAllErrors(true);
@@ -816,7 +830,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Validate this form by validating the bound JPA entity, annotated with JSR 303 annotations.
+     * Validates this form by validating the bound JPA entity, annotated with JSR 303 annotations.
      *
      * @param clearConversionErrors true if any existing type-conversion errors should be cleared
      * @return true if no validation errors were found
@@ -882,8 +896,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Reset validation error indicators on tabs and save buttons, according to whether
-     * any validation errors exist in any fields.
+     * Resets validation error indicators on tabs and save buttons, according to whether
+     * any validation errors currently exist in any fields.
      */
     public void syncTabAndSaveButtonErrors() {
         Set<String> tabNames = getFormFieldSet().getViewableTabNames();
@@ -925,7 +939,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Set whether or not to enable and hide cancel button.
+     * Sets whether or not to enable and hide cancel button.
      *
      * @param isEnabled true if cancel button will be enabled
      */
@@ -935,7 +949,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Set whether or not to enable and hide save-and-close button.
+     * Sets whether or not to enable and hide save-and-close button.
      *
      * @param isEnabled true if save-and-close button will be enabled
      */
@@ -977,7 +991,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Get cancel button.
+     * Gets cancel button.
      *
      * @return cancel button
      */
@@ -986,7 +1000,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Get refresh button.
+     * Gets refresh button.
      *
      * @return refresh button
      */
@@ -995,7 +1009,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Get save-and-close button.
+     * Gets save-and-close button.
      *
      * @return save-and-close button
      */
@@ -1004,7 +1018,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Get save-and-stay-open button.
+     * Gets save-and-stay-open button.
      *
      * @return save-and-stay-open button
      */

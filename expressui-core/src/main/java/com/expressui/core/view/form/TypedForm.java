@@ -61,9 +61,9 @@ import javax.annotation.Resource;
 import java.util.*;
 
 /**
- * A form that can be data-bound to any domain class.
+ * A form that can be data-bound to any domain object.
  *
- * @param <T> type of domain class
+ * @param <T> type of domain object
  */
 public abstract class TypedForm<T> extends TypedComponent<T> {
 
@@ -81,21 +81,21 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     private Animator formAnimator;
 
     /**
-     * Configure the form fields, e.g. positioning, custom field components, listeners, etc.
+     * Configures the form fields, for example layout coordinates, labels, custom field components, listeners, etc.
      *
      * @param formFields to configure
      */
     protected abstract void init(FormFieldSet formFields);
 
     /**
-     * Create the layout for holding footer buttons.
+     * Creates the layout for holding footer buttons.
      *
      * @param footerButtons layout for holding footer buttons
      */
     protected abstract void createFooterButtons(HorizontalLayout footerButtons);
 
     /**
-     * Get the form fields for this form.
+     * Gets the form fields for this form.
      *
      * @return form fields
      */
@@ -109,7 +109,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     }
 
     /**
-     * Get the Vaadin form that is wrapped by this form component, useful in case Vaadin features are needed that
+     * Gets the Vaadin form that is wrapped by this form component, useful in case Vaadin features are needed that
      * ExpressUI does not expose.
      *
      * @return Vaadin form
@@ -239,13 +239,13 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     }
 
     /**
-     * Make the component collapsible by wrapping it with a layout and button for toggling
+     * Makes the component collapsible by wrapping it with a layout and button for toggling
      * the component's visibility. This allows the user to expand/collapse the given component in order
      * to free space for viewing other components.
      * <p/>
      * Uses horizontal layout for placing toggle button and animated component.
      *
-     * @param caption to display as a header above collapsible component
+     * @param caption   to display as a header above collapsible component
      * @param component component to show/hide
      * @return the newly created layout that contains the toggle button and animated component
      */
@@ -254,7 +254,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     }
 
     /**
-     * Animate the component by wrapping it with a layout and button for toggling
+     * Makes the component collapsible by wrapping it with a layout and button for toggling
      * the component's visibility. This allows the user to expand/collapse the given component in order
      * to free space for viewing other components.
      *
@@ -305,10 +305,20 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
         return animatorLayout;
     }
 
+    /**
+     * Asks if this form is visible (not collapsed).
+     *
+     * @return true if expanded
+     */
     public boolean isFormVisible() {
         return formAnimator == null || !formAnimator.isRolledUp();
     }
 
+    /**
+     * Sets whether or not this form is visible (not collapsed).
+     *
+     * @param isVisible true to expand, false to collapse.
+     */
     public void setFormVisible(boolean isVisible) {
         if (formAnimator != null) {
             formAnimator.setRolledUp(!isVisible);
@@ -321,8 +331,8 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     }
 
     /**
-     * Set visibility of the collapse toggle button. Sometimes it is useful to hide the toggle button
-     * when hiding the collapsible component provides no benefit in terms of free space, e.g. when editing new entity,
+     * Sets visibility of the collapse toggle button. Sometimes it is useful to hide the toggle button
+     * when collapsibility provides no benefit in terms of free space, for example when editing new entity,
      * there are no to-many tabs and no point in hiding the form.
      *
      * @param isVisible true to hide visibility of toggle button
@@ -360,7 +370,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     }
 
     /**
-     * Reset the context menu for the tabs so that optional tabs can be added/removed, if there are any.
+     * Resets the context menu for the tabs so that optional tabs can be added/removed, if there are any.
      */
     protected void resetContextMenu() {
         if (getFormFieldSet().hasOptionalTabs()) {
@@ -399,7 +409,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     }
 
     /**
-     * Get tab by its name.
+     * Gets tab by its name.
      *
      * @param tabName name of the tab to find
      * @return Vaadin tab
@@ -415,7 +425,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     }
 
     /**
-     * Get currently selected tab name.
+     * Gets currently selected tab name.
      *
      * @return currently selected tab name
      */
@@ -428,7 +438,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     }
 
     /**
-     * Select the first tab.
+     * Selects the first tab.
      */
     public void selectFirstTab() {
         if (formTabSheet != null && getFormFieldSet().getTabNames().iterator().hasNext()) {
@@ -438,7 +448,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     }
 
     /**
-     * Ask if this form has tabs, i.e. more than one. Note that one logical tab is actually displayed as no tabs to
+     * Asks if this form has tabs, i.e. more than one. Note that one logical tab is actually displayed as no tabs to
      * the user.
      *
      * @return true if form has more than one tab
@@ -448,7 +458,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
     }
 
     /**
-     * Get the domain object that is bound to this form.
+     * Gets the domain object that is bound to this form.
      *
      * @return data-bound domain object
      */
@@ -461,6 +471,11 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
         }
     }
 
+    /**
+     * Creates a BeanItem for data-binding the entity to the form.
+     * @param entity to be bound
+     * @return BeanItem which can be used as a data source
+     */
     protected BeanItem createBeanItem(Object entity) {
         Assert.PROGRAMMING.notNull(entity);
         List<String> propertyIds = getFormFieldSet().getPropertyIds();

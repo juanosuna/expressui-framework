@@ -46,14 +46,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Context menu that can be added to any layout.
+ * Context menu that can be added to any layout, for example used in Tabs.
  */
 public class LayoutContextMenu extends ContextMenu implements LayoutEvents.LayoutClickListener, ContextMenu.ClickListener {
 
     private Map<String, ContextMenuAction> actions = new LinkedHashMap<String, ContextMenuAction>();
 
     /**
-     * Construct this context menu on given layout.
+     * Constructs this context menu on given layout.
      *
      * @param layout layout for adding the context menu to
      */
@@ -65,7 +65,7 @@ public class LayoutContextMenu extends ContextMenu implements LayoutEvents.Layou
     }
 
     /**
-     * Add action to the context menu.
+     * Adds action to the context menu.
      *
      * @param caption    caption for displaying in context menu item
      * @param target     target object to invoke when user selects action
@@ -82,7 +82,7 @@ public class LayoutContextMenu extends ContextMenu implements LayoutEvents.Layou
     }
 
     /**
-     * Get the context menu item identified by caption
+     * Gets the context menu item identified by caption.
      *
      * @param caption caption for identifying the context menu item
      * @return context menu item
@@ -92,7 +92,7 @@ public class LayoutContextMenu extends ContextMenu implements LayoutEvents.Layou
     }
 
     /**
-     * Ask if this context menu contains item associated with given caption.
+     * Asks if this context menu contains item associated with given caption.
      *
      * @param caption caption for identifying the context menu item
      * @return true if context menu contains item with caption

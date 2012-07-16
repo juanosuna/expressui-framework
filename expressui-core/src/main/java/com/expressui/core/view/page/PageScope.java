@@ -43,9 +43,12 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.config.Scope;
 
 /**
- * When user leaves the Page, this custom Spring scope tells ExpressUI to purge
- * it from Spring's ApplicationContext and the UI. This results is
- * a small delay but lower memory consumption.
+ * Beans in PageScope live as long as the user remains on a single Page.
+ * When user changes Pages, a new PageConversation is started and the previous one is discarded,
+ * meaning all beans in the old conversation are also discarded.
+ *
+ * Using SCOPE_PAGE instead of SCOPE_SESSION results in a small delay but lower memory consumption, since
+ * page-scoped beans are discarded from the session when the user switches pages.
  */
 public class PageScope implements Scope {
 

@@ -58,8 +58,8 @@ import java.util.Map;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 /**
-* User: Juan
-* Date: 7/7/12
+* Permission Form for assigning a permission to a specific entity, entity property
+* or UI component.
 */
 @Component
 @Scope(SCOPE_PROTOTYPE)
@@ -94,6 +94,11 @@ public class PermissionForm extends EntityForm<Permission> {
         formFields.addValueChangeListener("field", this, "syncIsRequiredIndicator");
     }
 
+    /**
+     * Synchronize CRUD-permission checkboxes to be logically consistently. For example,
+     * edit should disabled and unchecked if view is not checked.
+     * @param event
+     */
     public void syncCRUDCheckboxes(Property.ValueChangeEvent event) {
         Field viewField = getFormFieldSet().getFormField("viewAllowed").getField();
         Boolean isViewChecked = (Boolean) viewField.getValue();
@@ -136,8 +141,6 @@ public class PermissionForm extends EntityForm<Permission> {
 
         getFormFieldSet().setSelectItems("targetType", getTargetTypeItems());
         syncIsRequiredIndicator(null);
-//            getFormFields().setRequired("field", false);
-//            syncTabAndSaveButtonErrors();
     }
 
 
@@ -181,6 +184,12 @@ public class PermissionForm extends EntityForm<Permission> {
         return targetTypeItems;
     }
 
+    /**
+     * When target type selection changed, synchronizes CRUD checkboxes and
+     * refreshes dependent field items.
+     *
+     * @param event not used
+     */
     public void targetTypeChanged(Property.ValueChangeEvent event) {
         String newTargetType = (String) event.getProperty().getValue();
 
@@ -194,6 +203,11 @@ public class PermissionForm extends EntityForm<Permission> {
         }
     }
 
+    /**
+     * Synchronizes is-required indicator.
+     *
+     * @param event not used
+     */
     public void syncIsRequiredIndicator(Property.ValueChangeEvent event) {
         getFormFieldSet().setCurrentlyRequired("field", anotherPermissionHasNullField(getBean().getTargetType()));
         syncTabAndSaveButtonErrors();
@@ -225,10 +239,21 @@ public class PermissionForm extends EntityForm<Permission> {
         return fieldItems;
     }
 
+    /**
+     * Gets related permissions query.
+     *
+     * @return related permissions query
+     */
     public RelatedPermissionsQuery getRelatedPermissionsQuery() {
         return relatedPermissionsQuery;
     }
 
+    /**
+     * Sets related permissions query, useful for ensuring that a permission is created
+     * for the same entity or entity property.
+     *
+     * @param relatedPermissionsQuery related permissions query
+     */
     public void setRelatedPermissionsQuery(RelatedPermissionsQuery relatedPermissionsQuery) {
         this.relatedPermissionsQuery = relatedPermissionsQuery;
     }

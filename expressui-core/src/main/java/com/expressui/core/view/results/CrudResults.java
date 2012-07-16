@@ -82,10 +82,10 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     }
 
     /**
-     * Create the entity form used for viewing or editing items in the results. Only called once lazily
+     * Creates the entity form used for viewing or editing items in the results. Only called once lazily
      * when user views or edits a selected result.
      * <p/>
-     * Unlike other view components, EntityForm is created lazily for better performance and to avoid infinite
+     * Unlike many other view components, EntityForm is created lazily for better performance and to avoid infinite
      * circular dependency injection.
      *
      * @return entity form
@@ -93,7 +93,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     public abstract EntityForm<T> createEntityForm();
 
     /**
-     * Get the entity form used for viewing or editing items in the results. Lazily initializes
+     * Gets the entity form used for viewing or editing items in the results. Lazily initializes
      * entityForm by calling createEntityForm().
      *
      * @return entity form
@@ -158,6 +158,13 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
 
         getResultsTable().addListener(new DoubleClickListener());
 
+        addCodePopupButtonIfEnabledForCrudResults();
+    }
+
+    /**
+     * Add code popup button next to this component.
+     */
+    protected void addCodePopupButtonIfEnabledForCrudResults() {
         addCodePopupButtonIfEnabled(CrudResults.class);
     }
 
@@ -168,11 +175,11 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
 
     @Override
     public void onDisplay() {
-//        applySecurity();
     }
 
     /**
-     * Apply current security permissions to CRUD buttons so that they are enabled if and only if allowed.
+     * Applies current security permissions to CRUD buttons so that they are enabled if and only if allowed
+     * by permissions.
      */
     public void applySecurity() {
         boolean isViewAllowed = securityService.getCurrentUser().isViewAllowed(getType().getName());
@@ -209,7 +216,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     }
 
     /**
-     * Create a new entity and open edit form to edit new entity
+     * Creates a new entity and opens edit form to edit new entity.
      */
     public void create() {
         getEntityForm().setViewMode(false);
@@ -220,7 +227,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     }
 
     /**
-     * View an entity and open form in read-only mode.
+     * Views an entity and opens form in read-only mode.
      */
     public void view() {
         getEntityForm().setViewMode(true);
@@ -228,7 +235,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     }
 
     /**
-     * Edit the selected entity and open edit form to edit selected entity
+     * Edits the selected entity and opens edit form to edit selected entity.
      */
     public void edit() {
         getEntityForm().setViewMode(false);
@@ -296,12 +303,6 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     }
 
     @Override
-    public boolean hasPreviousItem() {
-        Object previousItemId = getResultsTable().getContainerDataSource().prevItemId(currentItemId);
-        return previousItemId != null || getEntityQuery().hasPreviousPage();
-    }
-
-    @Override
     public void editOrViewNextItem() {
         Object nextItemId = getResultsTable().getContainerDataSource().nextItemId(currentItemId);
         if (nextItemId == null) {
@@ -320,12 +321,6 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
                 editOrViewNextItem();
             }
         }
-    }
-
-    @Override
-    public boolean hasNextItem() {
-        Object nextItemId = getResultsTable().getContainerDataSource().nextItemId(currentItemId);
-        return nextItemId != null || getEntityQuery().hasNextPage();
     }
 
     private void deleteConfirmed() {
@@ -351,14 +346,14 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
     }
 
     /**
-     * Show notification message that delete was successful.
+     * Shows notification message that a delete was successful.
      */
     public void showDeleteSuccessfulMessage() {
         MainApplication.getInstance().showMessage(uiMessageSource.getMessage("crudResults.deleted"));
     }
 
     /**
-     * Delete selected entities. First, pops up confirmation dialog.
+     * Deletes selected entities but first pops up confirmation dialog.
      */
     public void delete() {
         getMainApplication().showConfirmationDialog(

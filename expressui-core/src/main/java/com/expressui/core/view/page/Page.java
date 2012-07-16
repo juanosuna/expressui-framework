@@ -41,7 +41,7 @@ import com.expressui.core.view.ViewBean;
 import com.vaadin.ui.Component;
 
 /**
- * A interface for indicating a page for display in the main window of ExpressUI.
+ * An interface for marking a page for display in the main window of ExpressUI.
  * A page is also both a Vaadin component and a Spring bean.
  */
 public interface Page extends Component, ViewBean {

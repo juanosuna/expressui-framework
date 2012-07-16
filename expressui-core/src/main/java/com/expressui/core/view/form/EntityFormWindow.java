@@ -56,7 +56,7 @@ public class EntityFormWindow extends Window {
     private Set<MethodDelegate> closeListeners = new LinkedHashSet<MethodDelegate>();
 
     /**
-     * Construct window to display entity form that is not connected to results, i.e.
+     * Constructs window to display entity form that is not connected to results, in other words, where the
      * user cannot step through results with previous/next buttons.
      *
      * @param entityForm form to display inside window
@@ -74,7 +74,7 @@ public class EntityFormWindow extends Window {
     }
 
     /**
-     * Construct window to display a results-connected entity form, i.e.
+     * Constructs window to display a results-connected entity form, in other words, where the
      * user can step through results with previous/next buttons.
      *
      * @param resultsConnectedEntityForm results-connected form
@@ -117,7 +117,7 @@ public class EntityFormWindow extends Window {
     }
 
     /**
-     * Open window to display entity form that is connected to results
+     * Opens window to display entity form that is connected to results.
      *
      * @param resultsConnectedEntityForm results-connected form
      * @return window
@@ -127,7 +127,7 @@ public class EntityFormWindow extends Window {
     }
 
     /**
-     * Open window to display entity form that is not connected to results.
+     * Opens window to display entity form that is not connected to results.
      *
      * @param entityForm entityForm form to display inside window
      * @return window
@@ -154,7 +154,7 @@ public class EntityFormWindow extends Window {
     }
 
     /**
-     * Add a listener to get invoked when user closes the window.
+     * Adds a listener to get invoked when user closes the window.
      *
      * @param target     object to invoke
      * @param methodName name of method to invoke

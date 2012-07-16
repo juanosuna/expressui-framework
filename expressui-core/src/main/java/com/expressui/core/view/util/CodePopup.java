@@ -58,7 +58,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Used in demo applications for popping up sample code associated with visual components.
+ * Used in demo applications for popping up sample code associated with UI components.
  */
 @Component
 public class CodePopup {
@@ -70,7 +70,7 @@ public class CodePopup {
     public MessageSource uiMessageSource;
 
     /**
-     * Create a popup code button.
+     * Creates a popup code button.
      *
      * @param classes classes for displaying related source code and Javadoc. If
      *                class is within com.expressui.core or com.expressui.domain,
@@ -91,7 +91,7 @@ public class CodePopup {
     }
 
     /**
-     * Open popup for given classes.
+     * Opens popup for given classes.
      *
      * @param classes classes for displaying related source code and Javadoc. If
      *                class is within com.expressui.core or com.expressui.domain,

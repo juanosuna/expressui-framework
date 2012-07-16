@@ -52,14 +52,14 @@ import javax.annotation.PostConstruct;
 public abstract class SearchPage<T> extends TypedComponent<T> implements Page {
 
     /**
-     * Get the search form component of this page
+     * Gets the search form component of this page.
      *
      * @return search form component
      */
     public abstract SearchForm getSearchForm();
 
     /**
-     * Get the results component for this page.
+     * Gets the results component for this page.
      *
      * @return Results component embedded in this page
      */

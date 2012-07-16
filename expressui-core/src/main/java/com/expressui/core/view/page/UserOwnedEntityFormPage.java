@@ -46,7 +46,7 @@ import com.vaadin.ui.Alignment;
 import javax.annotation.PostConstruct;
 
 /**
- * A page for editing an entity belonging to the current.
+ * A page for editing an entity belonging to the current user.
  *
  * @param <T> type of entity for this page
  */
@@ -80,7 +80,7 @@ public abstract class UserOwnedEntityFormPage<T extends UserOwnedEntity> extends
     }
 
     /**
-     * Get the entity form for editing the user-owned entity.
+     * Gets the entity form for editing the user-owned entity.
      *
      * @return entity form
      */

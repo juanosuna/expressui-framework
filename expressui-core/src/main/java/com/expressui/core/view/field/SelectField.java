@@ -57,9 +57,9 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 
 /**
- * A custom field in a TypedForm for selecting an entity in a many-to-one relationship. EntitySelect represents the
- * popup selection window, whereas this custom field consists of a text input that displays a property in the selected
- * entity and the popup button for opening EntitySelect.
+ * A custom field in a TypedForm for selecting an entity in a many-to-one relationship. {@link EntitySelect} presents a
+ * popup selection window, whereas this custom field presents of a text input that displays a property in the selected
+ * entity and the popup button for opening {@link EntitySelect}.
  *
  * @see EntitySelect
  */
@@ -79,7 +79,7 @@ public class SelectField<T, V> extends CustomField {
     private GenericDao genericDao;
 
     /**
-     * Construct in the given typed form for given property id
+     * Constructs in the given typed form for given property id.
      *
      * @param typedForm    typed form that contains this field
      * @param propertyId   property id bound to this field
@@ -95,7 +95,7 @@ public class SelectField<T, V> extends CustomField {
     }
 
     /**
-     * Get popup component for selecting entity.
+     * Gets popup component for selecting entity.
      *
      * @return component for selecting entity
      */
@@ -104,7 +104,7 @@ public class SelectField<T, V> extends CustomField {
     }
 
     /**
-     * Make clear and search buttons (in)visible
+     * Makes clear and search buttons (in)visible.
      *
      * @param isVisible true to make visible
      */
@@ -200,7 +200,7 @@ public class SelectField<T, V> extends CustomField {
     }
 
     /**
-     * Get the property id of the containing bean that this field is bound to
+     * Gets the property id of the containing bean that this field is bound to.
      *
      * @return property id
      */
@@ -209,7 +209,7 @@ public class SelectField<T, V> extends CustomField {
     }
 
     /**
-     * Get selected bean.
+     * Gets the selected bean.
      *
      * @return selected bean
      */

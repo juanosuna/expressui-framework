@@ -51,7 +51,7 @@ import com.vaadin.ui.Label;
 public class LeftLabelGridLayout extends FormGridLayout {
 
     /**
-     * Construct layout with given number of columns and rows, from ExpressUI perspective
+     * Constructs layout with given number of columns and rows, from ExpressUI perspective.
      *
      * @param columns number of columns
      * @param rows    number of rows
@@ -66,7 +66,7 @@ public class LeftLabelGridLayout extends FormGridLayout {
     }
 
     /**
-     * Get the column coordinate of label for the given field
+     * Gets the column coordinate of the label for the given field.
      *
      * @param formField field to find label coordinate
      * @return label coordinate
@@ -80,7 +80,7 @@ public class LeftLabelGridLayout extends FormGridLayout {
     }
 
     /**
-     * Get the column coordinate of spacer for the given field
+     * Gets the column coordinate of spacer for the given field.
      *
      * @param formField field to find spacer coordinate
      * @return spacer coordinate
@@ -94,7 +94,7 @@ public class LeftLabelGridLayout extends FormGridLayout {
     }
 
     /**
-     * Get the column end coordinate for given field
+     * Gets the column end coordinate for given field.
      *
      * @param formField field to find column end coordinate
      * @return column end coordinate
@@ -109,7 +109,7 @@ public class LeftLabelGridLayout extends FormGridLayout {
     }
 
     /**
-     * Get the start row coordinate of given field
+     * Gets the start row coordinate of given field.
      *
      * @param formField field to find start row coordinate
      * @return start row coordinate
@@ -119,7 +119,7 @@ public class LeftLabelGridLayout extends FormGridLayout {
     }
 
     /**
-     * Get the end row coordinate of given field
+     * Gets the end row coordinate of given field.
      *
      * @param formField field to find end row coordinate
      * @return end row coordinate

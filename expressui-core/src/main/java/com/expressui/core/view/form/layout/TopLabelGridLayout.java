@@ -45,12 +45,12 @@ import com.vaadin.ui.Field;
 import com.vaadin.ui.VerticalLayout;
 
 /**
- * Form grid layout that places labels on top of the fields
+ * Form grid layout that places labels on top of the fields.
  */
 public class TopLabelGridLayout extends FormGridLayout {
 
     /**
-     * Construct layout with given number of columns and rows, from ExpressUI perspective
+     * Constructs layout with given number of columns and rows, from ExpressUI perspective.
      *
      * @param columns number of columns
      * @param rows    number of rows

@@ -91,21 +91,23 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Configure the fields/columns to be displayed in the results
+     * Configures the fields/columns to be displayed in the results. Implementation can control
+     * labels, alignment, formatting, whether specific columns are sortable, etc.
      *
      * @param resultsFields used for configuring fields/columns
      */
     public abstract void init(ResultsFieldSet resultsFields);
 
     /**
-     * Get the query used to create these results.
+     * Gets the query used to create these results.
      *
      * @return query used to create these results
      */
     public abstract EntityQuery<T> getEntityQuery();
 
     /**
-     * Get the fields to be displayed in the results.
+     * Gets the set of fields to be displayed in the results, which can be used for customizing things
+     * like labels, formatting, alignment, etc.
      *
      * @return fields to be displayed in the results
      */
@@ -114,7 +116,7 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Get the underlying UI table component used to display results.
+     * Gets the underlying UI table component used to display results.
      *
      * @return UI table component
      */
@@ -123,7 +125,7 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Get horizontal layout of CRUD buttons
+     * Gets horizontal layout of CRUD buttons.
      *
      * @return horizontal layout of CRUD buttons, create, edit, view, delete
      */
@@ -170,7 +172,7 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Configure the results table. Maybe overridden to make any configuration changes to the Vaadin table
+     * Configures the results table. Maybe overridden to make any configuration changes to the Vaadin table component.
      *
      * @param resultsTable Vaadin table
      */
@@ -322,7 +324,7 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Change the page size selection
+     * Changes the page size selection.
      *
      * @param pageSize new page size
      */
@@ -331,7 +333,7 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Get currently selected page size
+     * Gets currently selected page size.
      *
      * @return currently selected page size
      */
@@ -340,7 +342,7 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Set the page size in the entity query
+     * Sets the page size in the entity query.
      *
      * @param pageSize new page size
      */
@@ -349,7 +351,7 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Ask if page-size menu is visible.
+     * Asks if page-size menu is visible.
      *
      * @return true if visible
      */
@@ -358,8 +360,8 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Set whether or not the page-size menu is visible, useful if the number of items is known to be small
-     * or when layout does not permit larger pages.
+     * Sets whether or not the page-size menu is visible, useful if the number of items is known to be small
+     * or when containing layout does not permit larger pages.
      *
      * @param isVisible true if visible
      */
@@ -368,7 +370,7 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Add a listener that detects row-selection changes in the results
+     * Adds a listener that detects row-selection changes in the results.
      *
      * @param target     target object to invoke listener on
      * @param methodName name of method to invoke when selection occurs
@@ -378,7 +380,7 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Get the currently selected value in the results table. Could be a single entity or a collection of entities.
+     * Gets the currently selected value in the results table. Could be a single entity or a collection of entities.
      *
      * @return either single entity or collection of entities
      */
@@ -387,7 +389,7 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Get the currently selected values in the results table.
+     * Gets the currently selected values in the results table.
      *
      * @return collection of entities
      */
@@ -402,14 +404,14 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Execute current query and refresh results. Any existing selected rows are cleared.
+     * Executes the current query and refreshes the results. Any existing row selection is cleared.
      */
     public void search() {
         searchImpl(true);
     }
 
     /**
-     * Execute current query and refresh results.
+     * Executes current query and refreshes the results.
      *
      * @param clearSelection true if row selection should be cleared
      */
@@ -422,17 +424,25 @@ public abstract class Results<T> extends TypedComponent<T> {
         }
     }
 
+    /**
+     * Clears the row selection on the results table.
+     */
     public void clearSelection() {
         getResultsTable().clearSelection();
         getResultsTable().selectFirstItemInCurrentPage();
     }
 
+    /**
+     * Sets whether or not the results table supports selection of multiple rows.
+     *
+     * @param isMultiSelect true to support selection of multiple rows
+     */
     public void setMultiSelect(boolean isMultiSelect) {
         getResultsTable().setMultiSelect(isMultiSelect);
     }
 
     /**
-     * Refresh the first result text field and label displaying the result count
+     * Refreshes the first result text field and label displaying the result count.
      */
     protected void refreshFirstResultAndCount() {
         EntityQuery query = getEntityQuery();
@@ -449,7 +459,7 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Open the excel-export popup form.
+     * Opens the excel-export popup form.
      */
     public void openExportForm() {
         String entityLabel = labelRegistry.getTypeLabel(getType().getName());
@@ -473,7 +483,7 @@ public abstract class Results<T> extends TypedComponent<T> {
     }
 
     /**
-     * Export the single page of displayed data to Excel, using parameters configured by user in popup form.
+     * Exports the single page of displayed data to Excel, using parameters configured by the user in the popup form.
      */
     public void exportToExcel() {
         ExportParameters exportParameters = exportForm.getExportParameters();

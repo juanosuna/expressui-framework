@@ -89,6 +89,12 @@ public class ApplicationProperties {
     @Value("${expressui.defaultTimeStyle:3}")
     private Integer defaultTimeStyle = DateFormat.SHORT;
 
+    @Value("${expressui.defaultTextFieldWidth:1}")
+    private Integer defaultTextFieldWidth = 11;
+
+    @Value("${expressui.defaultSelectFieldWidth:1}")
+    private Integer defaultSelectFieldWidth = 11;
+
     @Value("${expressui.pageSizeOptions:5,10,25,50,100}")
     private String pageSizeOptions = "5,10,25,50,100";
 
@@ -241,6 +247,22 @@ public class ApplicationProperties {
      */
     public Integer getDefaultTimeStyle() {
         return defaultTimeStyle;
+    }
+
+    /**
+     * Gets default text field width in EM, which is used only if automatically adjustment is turned off and
+     * a programmatic setting is not used.
+     */
+    public Integer getDefaultTextFieldWidth() {
+        return defaultTextFieldWidth;
+    }
+
+    /**
+     * Gets default select field width in EM, which is used only if automatically adjustment is turned off and
+     * a programmatic setting is not used.
+     */
+    public Integer getDefaultSelectFieldWidth() {
+        return defaultSelectFieldWidth;
     }
 
     /**

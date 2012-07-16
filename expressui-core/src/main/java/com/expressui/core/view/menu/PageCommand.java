@@ -41,6 +41,9 @@ import com.expressui.core.MainApplication;
 import com.expressui.core.view.page.Page;
 import com.vaadin.ui.MenuBar;
 
+/**
+ * Command for loading pages in the application.
+ */
 class PageCommand implements MenuBar.Command {
     private Class<? extends Page> pageClass;
 

@@ -61,4 +61,9 @@ public class PhoneConversionValidator extends AbstractConversionValidator {
         PropertyFormatter propertyFormatter = getFormField().getPropertyFormatter();
         propertyFormatter.parse(value.toString());
     }
+
+    @Override
+    public String getErrorMessage() {
+        return validationMessageSource.getMessage("com.expressui.sample.validator.PhoneConversionValidator.message");
+    }
 }

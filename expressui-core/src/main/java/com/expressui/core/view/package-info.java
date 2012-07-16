@@ -1,4 +1,4 @@
 /**
- * Components that display to the end user.
+ * Components that presented to the end user.
  */
 package com.expressui.core.view;

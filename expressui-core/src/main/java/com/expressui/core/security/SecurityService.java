@@ -46,6 +46,7 @@ import com.expressui.core.security.exception.*;
 import com.expressui.core.util.assertion.Assert;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -57,7 +58,7 @@ import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSIO
  * Service for logging in/out and getting the current user. This service is bound to the user's session.
  * The current user entity provides access to roles and permissions.
  */
-@Service
+@Component
 @Scope(SCOPE_SESSION)
 public class SecurityService {
 

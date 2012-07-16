@@ -159,7 +159,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Add execute-query listener. Listener is invoked when query is executed or re-executed during
+     * Adds execute-query listener. Listener is invoked when query is executed or re-executed during
      * paging, sorting, etc.
      *
      * @param target     target object
@@ -170,7 +170,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Get the offset of the first result displayed, starting with 1.
+     * Gets the offset of the first result displayed, starting with 1.
      *
      * @return offset of first result, or 0 if there are no results
      */
@@ -180,7 +180,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Set the offset of the first result displayed, starting with 1.
+     * Sets the offset of the first result displayed, starting with 1.
      *
      * @param firstResult offset of first result, or 0 if there are no results
      */
@@ -192,7 +192,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Re-execute query.
+     * Re-executes query.
      */
     public void refresh() {
         clearSelection();
@@ -201,7 +201,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Go to first page and re-execute query.
+     * Goes to first page and re-executes query.
      */
     public void firstPage() {
         clearSelection();
@@ -211,7 +211,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Go to previous page and re-execute query.
+     * Goes to previous page and re-executes query.
      */
     public void previousPage() {
         clearSelection();
@@ -221,7 +221,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Go to next page and re-execute query.
+     * Goes to next page and re-executes query.
      */
     public void nextPage() {
         clearSelection();
@@ -231,7 +231,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Go to last page and re-execute query.
+     * Goes to last page and re-executes query.
      */
     public void lastPage() {
         clearSelection();
@@ -241,7 +241,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Execute the current query.
+     * Executes the current query.
      */
     public void executeCurrentQuery() {
         List entities = results.getEntityQuery().execute();
@@ -259,7 +259,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * Clear any selected rows.
+     * Clears any selected rows.
      */
     public void clearSelection() {
         if (isMultiSelect()) {
@@ -269,6 +269,9 @@ public class ResultsTable extends Table {
         }
     }
 
+    /**
+     * Selects the first row in the current page.
+     */
     public void selectFirstItemInCurrentPage() {
         if (firstItemId() != null) {
             select(firstItemId());

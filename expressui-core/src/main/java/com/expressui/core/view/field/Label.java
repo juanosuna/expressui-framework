@@ -45,7 +45,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * A label for display to end user. Can be used to annotate
- * a property to define UI display label in an entity.
+ * a property to define UI display label in an entity class.
  * Embedding UI labels in entities is a questionable practice. However,
  * it avoids having to define redundant labels throughout the UI at the
  * expense of flexibility.

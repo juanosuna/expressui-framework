@@ -55,6 +55,8 @@ import java.util.List;
 
 /**
  * A node in the menu bar tree. Each node has a caption and is linked to a Page or action/listener method.
+ * Captions may be set programmatically or looked up in messages file residing in resources/domainMessages/.
+ * See for {@link #getKey()} to understand how captions are looked up.
  */
 public class MenuBarNode {
 
@@ -74,7 +76,7 @@ public class MenuBarNode {
     private LinkedHashMap<String, MenuBarNode> children = new LinkedHashMap<String, MenuBarNode>();
 
     /**
-     * Construct a root node without caption or page/action or nested node where caption and page/action
+     * Constructs a root node without a caption or page/action, or a nested node where caption and page/action
      * will be set later.
      */
     public MenuBarNode() {
@@ -82,7 +84,7 @@ public class MenuBarNode {
     }
 
     /**
-     * Construct nested node with caption and no page or action.
+     * Constructs nested node with a caption and no page or action.
      *
      * @param caption caption to display to user as menu item
      */
@@ -95,7 +97,7 @@ public class MenuBarNode {
     }
 
     /**
-     * Construct nested node with caption and page.
+     * Constructs nested node with caption and page.
      *
      * @param caption   caption to display to user as menu item
      * @param pageClass page to display when user chooses menu item
@@ -109,7 +111,7 @@ public class MenuBarNode {
     }
 
     /**
-     * Construct nested node with caption and action/listener
+     * Constructs nested node with caption and action/listener.
      *
      * @param caption    caption to display to user as menu item
      * @param target     target listener object to be invoked when user chooses menu item
@@ -133,25 +135,44 @@ public class MenuBarNode {
         return command;
     }
 
+    /**
+     * Gets the key used to look up captions optionally in resources/domainMessages/ files. This key is generated
+     * depending on the type of node:
+     * <ul>
+     * <li>For pages, the key is the package and class name of the page class</li>
+     * <li>For commands, the key is the package and class name of the command target plus the method name
+     * of the command listener.</li>
+     * <li>For captions, the key must be set programmatically in {@link #addCaption(String)}</li>
+     * </ul>
+     *
+     * @return
+     */
     public String getKey() {
         return key;
     }
 
     /**
      * Gets caption to display to user as menu item.
+     *
      * @return caption
      */
     public String getCaption() {
         return caption;
     }
 
+    /**
+     * Sets caption to display to user as menu item, thus overwriting any caption obtained from messages file
+     * in resources/domainMessages/.
+     *
+     * @param caption caption to display
+     */
     public void setCaption(String caption) {
         Assert.PROGRAMMING.notNull(caption, "caption argument must not be null");
         this.caption = caption;
     }
 
     /**
-     * Ask if this node/menu item is visible.
+     * Asks if this node/menu item is visible.
      *
      * @return true if visible
      */
@@ -160,7 +181,7 @@ public class MenuBarNode {
     }
 
     /**
-     * Set whether or not this node/menu item is visible.
+     * Sets whether or not this node/menu item is visible.
      *
      * @param visible true if visible
      */
@@ -169,7 +190,7 @@ public class MenuBarNode {
     }
 
     /**
-     * Get child node associated with given name
+     * Gets child node associated with given key.
      *
      * @param key key to look up child
      * @return child node
@@ -179,7 +200,7 @@ public class MenuBarNode {
     }
 
     /**
-     * Get all immediate child nodes.
+     * Gets all immediate child nodes.
      *
      * @return all child nodes
      */
@@ -188,7 +209,7 @@ public class MenuBarNode {
     }
 
     /**
-     * Add a caption to this node without any page or action associated with caption
+     * Adds a caption to this node without any page or action associated with caption.
      *
      * @param caption caption to display in menu item
      * @return newly created node, to which nested nodes may be added
@@ -201,7 +222,8 @@ public class MenuBarNode {
     }
 
     /**
-     * Add a caption to this node without any page or action associated with caption
+     * Adds a caption to this node without any page or action associated with caption.
+     * Caption is looked up by the key in messages file in resources/domainMessages/.
      *
      * @return newly created node, to which nested nodes may be added
      */
@@ -212,7 +234,7 @@ public class MenuBarNode {
     }
 
     /**
-     * Add a page to this node so that the page is loaded
+     * Adds a page to this node.
      *
      * @param caption   caption to display in menu item
      * @param pageClass page to display when menu item is chosen
@@ -226,7 +248,7 @@ public class MenuBarNode {
     }
 
     /**
-     * Add a page to this node so that the page is loaded
+     * Adds a page to this node.
      *
      * @param pageClass page to display when menu item is chosen
      * @return newly created node, to which nested nodes may be added
@@ -237,7 +259,7 @@ public class MenuBarNode {
     }
 
     /**
-     * Add a page to this node so that the page is loaded
+     * Adds a page to this node.
      *
      * @param caption    caption to display in menu item
      * @param target     target listener object to be invoked when user chooses menu item
@@ -252,7 +274,7 @@ public class MenuBarNode {
     }
 
     /**
-     * Add a page to this node so that the page is loaded
+     * Adds a page to this node.
      *
      * @param target     target listener object to be invoked when user chooses menu item
      * @param methodName listener method to be invoked when user chooses menu item

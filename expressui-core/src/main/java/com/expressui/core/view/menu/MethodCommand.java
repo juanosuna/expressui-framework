@@ -40,6 +40,9 @@ package com.expressui.core.view.menu;
 import com.expressui.core.util.MethodDelegate;
 import com.vaadin.ui.MenuBar;
 
+/**
+ * Command for execute a method in a MethodDelegate.
+ */
 class MethodCommand implements MenuBar.Command {
     private MethodDelegate methodDelegate;
 

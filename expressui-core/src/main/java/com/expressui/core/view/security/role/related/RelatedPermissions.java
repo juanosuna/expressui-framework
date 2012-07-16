@@ -50,8 +50,7 @@ import javax.annotation.Resource;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 /**
- * User: Juan
- * Date: 7/7/12
+ * Permissions related to a role.
  */
 @Component
 @Scope(SCOPE_PROTOTYPE)

@@ -45,8 +45,8 @@ import com.expressui.core.entity.security.User;
 import javax.annotation.Resource;
 
 /**
- * A form bound to an entity that is owned by a user. A user-owned entity form, e.g. profile, registration, etc., is
- * typically displayed in the page without requiring a search and selection from results.
+ * A form bound to an entity that is owned by a user. A user-owned entity form, for example profile, registration, etc,
+ * is typically displayed in the page without requiring a search and selection from results.
  * <p/>
  * The current user is automatically set on the user-owned entity, whenever the entity is saved.
  *
@@ -68,7 +68,8 @@ public abstract class UserOwnedEntityForm<T extends UserOwnedEntity> extends Ent
     }
 
     /**
-     * The current user is automatically set, whenever the entity is saved.
+     * Lifecycle method called before entity is saved to database.
+     * The current user is automatically set on the entity, whenever the entity is saved.
      *
      * @param entity entity to be saved
      */

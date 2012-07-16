@@ -61,7 +61,7 @@ public class ResultsFieldSet extends FieldSet {
     }
 
     /**
-     * Set the property ids for binding columns to a Datasource of entities
+     * Sets the property ids for binding columns to a Datasource of entities.
      *
      * @param propertyIds names of entity properties
      */
@@ -72,7 +72,7 @@ public class ResultsFieldSet extends FieldSet {
     }
 
     /**
-     * Get labels (column headings) as array
+     * Gets labels (column headings) as array.
      *
      * @return array of property labels
      */
@@ -98,9 +98,9 @@ public class ResultsFieldSet extends FieldSet {
     }
 
     /**
-     * Get collection of ResultsField objects
+     * Gets collection of ResultsFields.
      *
-     * @return collection of ResultsField objects
+     * @return collection of ResultsFields
      */
     public Collection<ResultsField> getResultFields() {
         Collection<ResultsField> resultsFields = new HashSet<ResultsField>();
@@ -113,7 +113,7 @@ public class ResultsFieldSet extends FieldSet {
     }
 
     /**
-     * Get results field/column bound to given property id
+     * Gets field/column bound to given property id.
      *
      * @param propertyId property id
      * @return results field bound to given property id
@@ -123,7 +123,7 @@ public class ResultsFieldSet extends FieldSet {
     }
 
     /**
-     * Get all property ids that have been set as non-sortable
+     * Get all property ids that have been set as non-sortable.
      *
      * @return non-sortable properties
      */
@@ -139,7 +139,7 @@ public class ResultsFieldSet extends FieldSet {
     }
 
     /**
-     * Set field/column associated with given property id as sortable or not
+     * Sets field/column associated with given property id as sortable or not
      *
      * @param propertyId id for identify column
      * @param isSortable true if sortable
@@ -149,7 +149,7 @@ public class ResultsFieldSet extends FieldSet {
     }
 
     /**
-     * Set column width.
+     * Sets column width.
      *
      * @param propertyId id for identify column
      * @param width column width, null if adjusted automatically
@@ -159,9 +159,9 @@ public class ResultsFieldSet extends FieldSet {
     }
 
     /**
-     * Set alignment.
+     * Sets alignment.
      *
-     * @see com.vaadin.ui.Table constants
+     * See constants defined in {@link com.vaadin.ui.Table}
      *
      * @param alignment alignment
      */

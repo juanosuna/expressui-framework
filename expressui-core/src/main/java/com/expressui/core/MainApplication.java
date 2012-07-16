@@ -114,6 +114,9 @@ public abstract class MainApplication extends Application implements ViewBean, H
     @Resource
     public MessageSource validationMessageSource;
 
+    @Resource
+    public ApplicationProperties applicationProperties;
+
     /**
      * A registry for managing UI display labels.
      */

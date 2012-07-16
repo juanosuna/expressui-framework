@@ -38,28 +38,19 @@
 package com.expressui.core.view.results;
 
 /**
- * Results that can be walked, i.e. navigating next/previous for editing and viewing
- * current entity.
+ * Results that can be walked by navigating to next and previous entities, which can then be edited or viewed.
+ * Navigation logic is circular, meaning the previous item to the first item is the last item and the next item
+ * to the last item is the first item.
  */
 public interface WalkableResults {
 
     /**
-     * Edit or view previous item in results.
+     * Edits or views previous item in results.
      */
     void editOrViewPreviousItem();
-
-    /**
-     * Ask if there is a previous item available (if user isn't already at the first item).
-     */
-    boolean hasPreviousItem();
 
     /**
      * Edit or view next item in results.
      */
     void editOrViewNextItem();
-
-    /**
-     * Ask if there is a next item available (if user isn't already at the last item).
-     */
-    boolean hasNextItem();
 }

@@ -37,7 +37,6 @@
 
 package com.expressui.core.view.form;
 
-import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.util.MethodDelegate;
 import com.expressui.core.util.StringUtil;
 import com.expressui.core.view.results.WalkableResults;
@@ -168,7 +167,7 @@ public class ResultsConnectedEntityForm<T> extends CustomComponent {
     }
 
     /**
-     * Get entity form that is connected to results
+     * Gets the underlying entity form that is connected to results.
      */
     public EntityForm<T> getEntityForm() {
         return entityForm;
@@ -181,7 +180,7 @@ public class ResultsConnectedEntityForm<T> extends CustomComponent {
     }
 
     /**
-     * Add a listener to detect any time user goes to next or previous records in results
+     * Adds a listener to detect any time user goes to next or previous records in results.
      *
      * @param target     target object to invoke
      * @param methodName name of method to invoke
@@ -190,6 +189,10 @@ public class ResultsConnectedEntityForm<T> extends CustomComponent {
         walkListeners.add(new MethodDelegate(target, methodName));
     }
 
+    /**
+     * Removes all listeners defined on a given target.
+     * @param target target object from which to remove all listeners
+     */
     public void removeListeners(Object target) {
         Set<MethodDelegate> listenersToRemove;
 
