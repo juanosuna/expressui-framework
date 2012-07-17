@@ -63,7 +63,7 @@ public class PageConversation {
     /**
      * Puts a bean into this conversation's storage.
      *
-     * @param key key
+     * @param key  key
      * @param bean value
      */
     public void put(String key, Object bean) {
@@ -72,6 +72,7 @@ public class PageConversation {
 
     /**
      * Gets a bean from this conversation's storage.
+     *
      * @param key
      * @return value
      */
@@ -81,6 +82,7 @@ public class PageConversation {
 
     /**
      * Removes a bean from this conversation's storage.
+     *
      * @param key key
      * @return removed bean
      */

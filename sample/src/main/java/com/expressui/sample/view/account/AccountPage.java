@@ -71,7 +71,7 @@ public class AccountPage extends SearchPage<Account> {
     @Override
     public void onDisplay() {
         super.onDisplay();
-        MainApplication.getInstance().showTrayMessage(
+        getMainApplication().showTrayMessage(
                 "<h3>Feature Tips:</h3>" +
                         "<ul>" +
                         "<li>Select US, Canada, Mexico or Australia to see dependent states" +

@@ -473,6 +473,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
 
     /**
      * Creates a BeanItem for data-binding the entity to the form.
+     *
      * @param entity to be bound
      * @return BeanItem which can be used as a data source
      */

@@ -45,7 +45,6 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.text.DateFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 /**
@@ -60,6 +59,7 @@ public class DefaultFormats {
 
     /**
      * Gets an empty formatter that just throws UnsupportedOperationException, if it is used.
+     *
      * @return empty formatter
      */
     public PropertyFormatter getEmptyFormat() {
@@ -79,8 +79,8 @@ public class DefaultFormats {
     /**
      * Gets number format for currency.
      *
-     * @param locale locale to apply to format, useful for displaying currencies other than
-     *               the standard currency of the user's locale.
+     * @param locale                locale to apply to format, useful for displaying currencies other than
+     *                              the standard currency of the user's locale.
      * @param maximumFractionDigits maximum number of fraction digits
      * @return currency property formatter
      */

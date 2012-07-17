@@ -58,9 +58,9 @@ import java.util.Map;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 /**
-* Permission Form for assigning a permission to a specific entity, entity property
-* or UI component.
-*/
+ * Permission Form for assigning a permission to a specific entity, entity property
+ * or UI component.
+ */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class PermissionForm extends EntityForm<Permission> {
@@ -97,6 +97,7 @@ public class PermissionForm extends EntityForm<Permission> {
     /**
      * Synchronize CRUD-permission checkboxes to be logically consistently. For example,
      * edit should disabled and unchecked if view is not checked.
+     *
      * @param event
      */
     public void syncCRUDCheckboxes(Property.ValueChangeEvent event) {

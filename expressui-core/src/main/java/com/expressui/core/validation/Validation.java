@@ -37,10 +37,7 @@
 
 package com.expressui.core.validation;
 
-import org.hibernate.validator.messageinterpolation.ValueFormatterMessageInterpolator;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.validation.Configuration;
@@ -54,8 +51,6 @@ import javax.validation.metadata.PropertyDescriptor;
 import java.lang.annotation.Annotation;
 import java.util.HashSet;
 import java.util.Set;
-
-import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
 
 /**
  * Service for validating beans against JSR-303 validator implementation.

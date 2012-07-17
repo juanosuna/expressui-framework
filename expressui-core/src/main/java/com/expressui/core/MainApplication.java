@@ -93,6 +93,12 @@ public abstract class MainApplication extends Application implements ViewBean, H
     private final Logger log = Logger.getLogger(getClass());
 
     /**
+     * Application properties defined in application.properties
+     */
+    @Resource
+    public ApplicationProperties applicationProperties;
+
+    /**
      * Service for logging in/out and getting the current user. The current user entity
      * provides access to roles and permissions.
      */
@@ -100,22 +106,22 @@ public abstract class MainApplication extends Application implements ViewBean, H
     public SecurityService securityService;
 
     /**
-     * Provides access to internationalized messages.
+     * Provides access to internationalized UI messages.
      */
     @Resource
     public MessageSource uiMessageSource;
 
     /**
-     * Provides messages (display labels) associated with domain-level entities
+     * Provides messages (display labels) associated with domain-level entities.
      */
     @Resource
     public MessageSource domainMessageSource;
 
+    /**
+     * Provides validation error messages.
+     */
     @Resource
     public MessageSource validationMessageSource;
-
-    @Resource
-    public ApplicationProperties applicationProperties;
 
     /**
      * A registry for managing UI display labels.
@@ -140,20 +146,41 @@ public abstract class MainApplication extends Application implements ViewBean, H
 
     public abstract void configureRightMenuBar(MenuBarNode rootNode);
 
+    /**
+     * Gets the custom style theme for this application. Normally, applications would want to override this.
+     * For example, a custom theme called "sample" would activate a style sheet found at
+     * VAADIN/themes/sample/styles.css. Any custom theme should also import
+     * ../chameleon/styles.css, ../chameleon-blue/styles.css, ../expressui/styles.css, as shown in sample app.
+     *
+     * @return name of custom theme
+     */
     public String getCustomTheme() {
         return "expressui";
     }
 
+    /**
+     * Gets domain message associated with this component and given code.
+     *
+     * @param code code to prepend class name
+     * @return internationalized domain message
+     */
     public String getDomainMessage(String code) {
         return domainMessageSource.getMessage(getClass().getName() + "." + code);
     }
 
+    /**
+     * Gets domain message associated with this component and given code.
+     *
+     * @param code code to prepend class name
+     * @param args used to interpolate the message
+     * @return internationalized domain message
+     */
     public String getDomainMessage(String code, Object... args) {
         return domainMessageSource.getMessage(getClass().getName() + "." + code, args);
     }
 
     /**
-     * Get the current page conversation.
+     * Gets the current page conversation.
      *
      * @return current page conversation
      */
@@ -162,7 +189,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Begin a new page conversation.
+     * Begins a new page conversation.
      *
      * @param id unique id of conversation
      * @return newly created page conversation
@@ -174,7 +201,8 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * End the current page conversation.
+     * Ends the current page conversation. This doesn't need to be called, since a new page conversation automatically
+     * ends the previous conversation.
      */
     public void endPageConversation() {
         currentPageConversation = null;
@@ -196,7 +224,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Get instance of MainApplication associated with current session.
+     * Gets instance of MainApplication associated with the current HTTP session.
      * The user's MainApplication is always tied to the current thread and can be looked up by calling getInstance().
      *
      * @return MainApplication associated with user's session
@@ -205,14 +233,30 @@ public abstract class MainApplication extends Application implements ViewBean, H
         return currentInstance.get();
     }
 
+    /**
+     * Sets instance of MainApplication associated with the current HTTP session.
+     * The user's MainApplication is always tied to the current thread and can be looked up by calling getInstance().
+     *
+     * @param mainApplication MainApplication associated with user's session
+     */
     public static void setInstance(MainApplication mainApplication) {
         currentInstance.set(mainApplication);
     }
 
+    /**
+     * Gets the current HTTP servlet request.
+     *
+     * @return current HTTP service request
+     */
     public static HttpServletRequest getRequest() {
         return currentRequest.get();
     }
 
+    /**
+     * Gets the current HTTP servlet response.
+     *
+     * @return current HTTP service response
+     */
     public static HttpServletResponse getResponse() {
         return currentResponse.get();
     }
@@ -235,6 +279,12 @@ public abstract class MainApplication extends Application implements ViewBean, H
         SecurityService.removeCurrentLoginName();
     }
 
+    /**
+     * Gets cookie associated with given name.
+     *
+     * @param name name of the cookie
+     * @return cookie
+     */
     public Cookie getCookie(String name) {
         Cookie[] cookies = getRequest().getCookies();
         for (Cookie cookie : cookies) {
@@ -246,17 +296,37 @@ public abstract class MainApplication extends Application implements ViewBean, H
         return null;
     }
 
+    /**
+     * Adds a cookie to the HTTP response.
+     *
+     * @param name  name of the cookie
+     * @param value value
+     */
     public void addCookie(String name, String value) {
         Cookie cookie = new Cookie(name, value);
         getResponse().addCookie(cookie);
     }
 
+    /**
+     * Adds a cookie to the HTTP response.
+     *
+     * @param name   name of the cookie
+     * @param value  value
+     * @param expiry
+     * @see Cookie#Cookie(String, String)
+     * @see Cookie#setMaxAge(int)
+     */
     public void addCookie(String name, String value, int expiry) {
         Cookie cookie = new Cookie(name, value);
         cookie.setMaxAge(expiry);
         getResponse().addCookie(cookie);
     }
 
+    /**
+     * Adds a cookie to the HTTP response.
+     *
+     * @see Cookie
+     */
     public void addCookie(Cookie cookie) {
         getResponse().addCookie(cookie);
     }
@@ -309,7 +379,8 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Get the caption that describes the type of this component.
+     * Gets the caption that describes the type of this component. Looks up the caption from domainMessages/,
+     * using the class name of this component as the key, for example, com.expressui.sample.SampleApplication.
      *
      * @return caption that describes type of this component
      */
@@ -330,12 +401,13 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Select a new page base on page's class. Does nothing if user does not have permission to access the page.
-     * If the previous page is Page.SCOPE_PAGE, then it is removed from Spring's ApplicationContext and the UI.
-     * If the previous page is WebApplicationContext.SESSION_SCOPE, then it is retained in Spring's ApplicationContext
+     * Selects a new page based on page's class. Does nothing if user does not have permission to access the page.
+     * If the previous page is {@link Page#SCOPE_PAGE}, then it is removed from session storage and the UI tabsheet.
+     * If the previous page is WebApplicationContext.SESSION_SCOPE, then it is retained
      * and in the UI as a hidden component in an unselected tab.
      * </P>
-     * WebApplicationContext.SESSION_SCOPE pages display more quickly at the cost of using more memory.
+     * {@link org.springframework.web.context.WebApplicationContext#SCOPE_SESSION} pages display more quickly at the
+     * cost of using more memory.
      *
      * @param pageClass class of the new page to select
      */
@@ -395,7 +467,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Ask of user is allowed to view page of given type.
+     * Asks if user is allowed to view page of given type.
      *
      * @param pageClass class of type Page
      * @return true if user is allowed.
@@ -497,7 +569,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Show big error box to user.
+     * Shows big error box to user.
      *
      * @param errorMessage message to display
      */
@@ -506,7 +578,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Show big warning box to user.
+     * Shows big warning box to user.
      *
      * @param warningMessage message to display
      */
@@ -515,7 +587,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Should message box to user.
+     * Shows message box to user.
      *
      * @param humanizedMessage message to display
      */
@@ -524,7 +596,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Show notification to user, more customizable that other show* methods.
+     * Shows notification to user, more customizable that other show* methods.
      *
      * @param notification customized notification
      */
@@ -533,7 +605,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Show notification to user, more customizable that other show* methods.
+     * Shows notification to user, more customizable that other show* methods.
      *
      * @param caption   the message to show
      * @param type      type of message
@@ -548,7 +620,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Show message in tray area, bottom right with 5000 milliseconds delay
+     * Shows message in tray area, bottom right with 2000 milliseconds delay.
      *
      * @param message message to display
      */
@@ -557,7 +629,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Show message in tray area
+     * Shows message in tray area.
      *
      * @param delayMSec delay in milliseconds to display message
      * @param message   message to display
@@ -567,11 +639,11 @@ public abstract class MainApplication extends Application implements ViewBean, H
         notification.setPosition(Window.Notification.POSITION_BOTTOM_RIGHT);
         notification.setDelayMsec(delayMSec);
         notification.setHtmlContentAllowed(true);
-        MainApplication.getInstance().showNotification(notification);
+        getInstance().showNotification(notification);
     }
 
     /**
-     * Show a yes/no confirmation dialog box.
+     * Shows a yes/no confirmation dialog box.
      *
      * @param listener listener to capture whether user chooses yes or no
      */
@@ -585,9 +657,9 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Configures various messages to embed ApplicationProperties.restartApplicationUrl when anything goes wrong,
-     * e.g. session expires, communication error, out of sync, etc.
-     * </P>
+     * Configures various messages to embed {@link ApplicationProperties#restartApplicationUrl}
+     * if anything goes wrong, for example if session expires, communication error, out of sync, etc.
+     * <p/>
      * Vaadin automatically calls this method.
      *
      * @return configured SystemMessages
@@ -606,7 +678,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Open separate error Window, useful for showing long stacktraces.
+     * Opens separate error Window, useful for showing long stacktraces.
      *
      * @param message to display in error Window
      */
@@ -627,7 +699,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Logout of application, clear credentials and end user session.
+     * Logs out of application, clear credentials and ends user session.
      */
     public void logout() {
         securityService.logout();
@@ -642,7 +714,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Check if application has access to external Internet, e.g. there is no firewall or proxy interference.
+     * Checks if application has access to external Internet, if there is no firewall or proxy interference.
      *
      * @param testUrl      url to test
      * @param errorMessage error message if test fails
@@ -651,7 +723,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
         try {
             UrlUtil.getContents(testUrl);
         } catch (Exception e) {
-            MainApplication.getInstance().showError(errorMessage);
+            getInstance().showError(errorMessage);
         }
     }
 }

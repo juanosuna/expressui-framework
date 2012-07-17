@@ -8,8 +8,8 @@
 
 /* Application background */
 .v-app {
-	background: rgb(249,249,249);
-	}
+    background: rgb(249, 249, 249);
+}
 
 .v-window,
 .v-popupview-popup,
@@ -18,7 +18,7 @@
 .v-contextmenu,
 .v-Notification,
 .v-menubar-submenu {
-	background-color: rgb(249,249,249);
+    background-color: rgb(249, 249, 249);
 }
 
 body.v-ie6 .v-window,
@@ -47,8 +47,8 @@ body.v-ie7 .v-menubar-submenu,
 .v-accordion-opaque div.v-accordion-item-open,
 .v-table-scrollposition,
 .v-table-body {
-	background-color: rgb(249,249,249);
-	}
+    background-color: rgb(249, 249, 249);
+}
 
 /* Base font size and color */
 .v-app,
@@ -72,39 +72,39 @@ body.v-ie7 .v-menubar-submenu,
 .v-table-header-drag,
 .v-filterselect-select-button .v-filterselect-input,
 .v-drag-element {
-	font-size: 13px;
-	color: rgb(34,34,34);
-	}
+    font-size: 13px;
+    color: rgb(34, 34, 34);
+}
 
 .v-app select,
 .v-window select,
 .v-popupview-popup select,
 .v-datefield-popup select {
-	font-size: 13px;
-	}
+    font-size: 13px;
+}
 
 .v-label,
 .sidebar-menu .v-label,
 .v-table-scrollposition {
-	@optional-generated-shadow@
-	}
+@optional-generated-shadow @
+}
 
 /* Base background color */
 .v-button:active,
 .v-ie .v-button.v-pressed,
 div.v-button-down,
 .v-slider .v-slider-handle-active {
-	background-color: rgb(161,161,161);
-	border-color: rgb(103,103,103);
-	}
+    background-color: rgb(161, 161, 161);
+    border-color: rgb(103, 103, 103);
+}
 
 div.v-button-down:active {
-	background-color: rgb(129,129,129);
-	}
-	
+    background-color: rgb(129, 129, 129);
+}
+
 .v-button:focus {
-	background-color: rgb(161,161,161);
-	}
+    background-color: rgb(161, 161, 161);
+}
 
 /* Base border color */
 .v-button:active .v-button-wrap,
@@ -123,17 +123,16 @@ div.v-table-focus-slot-right,
 input.v-textfield,
 textarea.v-textarea,
 .v-filterselect {
-	border-color: rgb(129,129,129);
-	}
-
+    border-color: rgb(129, 129, 129);
+}
 
 input.v-textfield,
 textarea.v-textarea,
 .v-filterselect {
-	border-bottom-color: rgb(161,161,161);
-	border-left-color: rgb(161,161,161);
-	border-right-color: rgb(161,161,161);
-	}
+    border-bottom-color: rgb(161, 161, 161);
+    border-left-color: rgb(161, 161, 161);
+    border-right-color: rgb(161, 161, 161);
+}
 
 .v-button,
 .v-disabled.v-button:focus,
@@ -161,9 +160,9 @@ td.v-datefield-calendarpanel-month,
 .v-tabsheet-scroller,
 .v-csslayout-toolbar,
 .v-menubar {
-	background-color: rgb(201,201,201);
-	border-color: rgb(129,129,129);
-	}
+    background-color: rgb(201, 201, 201);
+    border-color: rgb(129, 129, 129);
+}
 
 .v-button .v-button-wrap,
 .v-disabled.v-button:focus .v-button-wrap,
@@ -192,20 +191,20 @@ td.v-datefield-calendarpanel-month,
 .v-tabsheet-scroller,
 .v-csslayout-toolbar,
 .v-menubar {
-	
-	}
+
+}
 
 .v-datefield-calendarpanel-weekdays strong,
 .v-splitpanel-hsplitter-small,
 .v-splitpanel-vsplitter-small,
 .v-splitpanel-hsplitter-small-locked,
 .v-splitpanel-vsplitter-small-locked {
-	background-color: rgb(161,161,161);
-	}
+    background-color: rgb(161, 161, 161);
+}
 
 .v-progressindicator-wrapper {
-	border-color: rgb(161,161,161);
-	}
+    border-color: rgb(161, 161, 161);
+}
 
 .v-button,
 .v-disabled.v-button:focus,
@@ -218,8 +217,8 @@ td.v-datefield-calendarpanel-month,
 .v-accordion-item-caption,
 .v-menubar .v-menubar-menuitem,
 .v-filterselect-select-button .v-filterselect-input {
-	text-shadow: 0 1px 0 rgb(223,223,223);
-	}
+    text-shadow: 0 1px 0 rgb(223, 223, 223);
+}
 
 /* Background border color */
 .v-window,
@@ -252,8 +251,8 @@ td.v-datefield-calendarpanel-month,
 .v-accordion-item-caption,
 .v-accordion-item-open,
 .v-menubar-separator span {
-	border-color: rgb(199,199,199);
-	}
+    border-color: rgb(199, 199, 199);
+}
 
 /* Alternate colors */
 .v-label-color,
@@ -266,8 +265,8 @@ td.v-datefield-calendarpanel-month,
 .v-popupview-popup a,
 .v-popupview,
 .sidebar-menu .v-label {
-	color: rgb(40,126,206);
-	}
+    color: rgb(40, 126, 206);
+}
 
 .v-button-default,
 .v-disabled.v-button-default,
@@ -278,13 +277,13 @@ td.v-datefield-calendarpanel-month,
 .sidebar-menu .tab-selected,
 .sidebar-menu .selected,
 .v-horizontallayout-segment-alternate .v-button-down {
-	border-color: rgb(46,90,132);
-	}
+    border-color: rgb(46, 90, 132);
+}
 
 .v-button-default:focus,
 .v-horizontallayout-segment-alternate .v-button-down:active {
-	background-color: rgb(45,107,165);
-	}
+    background-color: rgb(45, 107, 165);
+}
 
 .v-button-default:active .v-button-wrap,
 .v-ie7 .v-button-default.v-pressed .v-button-wrap,
@@ -292,8 +291,8 @@ td.v-datefield-calendarpanel-month,
 .v-progressindicator-indicator,
 .v-datefield-calendarpanel-day:hover,
 .v-horizontallayout-segment-alternate .v-button-down .v-button-wrap {
-	border-color: rgb(45,107,165);
-	}
+    border-color: rgb(45, 107, 165);
+}
 
 .v-button-default,
 .v-disabled.v-button-default,
@@ -314,22 +313,22 @@ td.v-datefield-calendarpanel-month,
 .v-horizontallayout-segment-alternate .v-button-down,
 .v-menubar .v-menubar-menuitem-selected,
 .v-menubar-submenu .v-menubar-menuitem-selected {
-	background-color: rgb(40,126,206);
-	color: rgb(247,248,249);
-	text-shadow: 0 -1px 0 rgb(46,90,132);
-	}
+    background-color: rgb(40, 126, 206);
+    color: rgb(247, 248, 249);
+    text-shadow: 0 -1px 0 rgb(46, 90, 132);
+}
 
 .v-ie6 .v-progressindicator-indicator {
-	background-color: rgb(40,126,206);
-	}
+    background-color: rgb(40, 126, 206);
+}
 
 .v-panel-caption,
 .v-table-striped .v-table-row-odd,
 .sidebar-menu {
-	background: rgb(220,229,238);
-	}
+    background: rgb(220, 229, 238);
+}
 
 .sidebar-menu .tab-selected,
 .sidebar-menu .selected {
-	text-shadow: 0 1px 0 rgb(46,90,132);
-	}
+    text-shadow: 0 1px 0 rgb(46, 90, 132);
+}

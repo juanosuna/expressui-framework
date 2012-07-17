@@ -38,7 +38,6 @@
 package com.expressui.sample.view;
 
 import com.expressui.core.MainApplication;
-import com.expressui.core.entity.security.User;
 import com.expressui.core.security.exception.AuthenticationException;
 import com.expressui.core.view.RootComponent;
 import com.expressui.core.view.menu.MainMenuBar;
@@ -97,7 +96,7 @@ public class LoginPage extends RootComponent implements Page {
 
     @Override
     public void onDisplay() {
-        MainApplication.getInstance().showTrayMessage(5000,
+        getMainApplication().showTrayMessage(5000,
                 "<h3>Feature Tips:</h3>" +
                         "<ul>" +
                         "<li>You may also register as another guest user" +

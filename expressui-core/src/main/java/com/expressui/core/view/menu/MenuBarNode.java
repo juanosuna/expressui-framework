@@ -55,7 +55,7 @@ import java.util.List;
 
 /**
  * A node in the menu bar tree. Each node has a caption and is linked to a Page or action/listener method.
- * Captions may be set programmatically or looked up in messages file residing in resources/domainMessages/.
+ * Captions may be set programmatically or looked up in messages file residing in domainMessages/.
  * See for {@link #getKey()} to understand how captions are looked up.
  */
 public class MenuBarNode {
@@ -136,7 +136,7 @@ public class MenuBarNode {
     }
 
     /**
-     * Gets the key used to look up captions optionally in resources/domainMessages/ files. This key is generated
+     * Gets the key used to look up captions optionally in domainMessages/ files. This key is generated
      * depending on the type of node:
      * <ul>
      * <li>For pages, the key is the package and class name of the page class</li>
@@ -162,7 +162,7 @@ public class MenuBarNode {
 
     /**
      * Sets caption to display to user as menu item, thus overwriting any caption obtained from messages file
-     * in resources/domainMessages/.
+     * in domainMessages/.
      *
      * @param caption caption to display
      */
@@ -223,7 +223,7 @@ public class MenuBarNode {
 
     /**
      * Adds a caption to this node without any page or action associated with caption.
-     * Caption is looked up by the key in messages file in resources/domainMessages/.
+     * Caption is looked up by the key in messages file in domainMessages/.
      *
      * @return newly created node, to which nested nodes may be added
      */

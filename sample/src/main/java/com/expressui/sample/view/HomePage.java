@@ -74,7 +74,7 @@ public class HomePage extends RootComponent implements Page {
             throw new RuntimeException(e);
         }
 
-        MainApplication.getInstance().showTrayMessage(
+        getMainApplication().showTrayMessage(
                 "<h3>Feature Tip:</h3>" +
                         "<ul>" +
                         "<li>This illustrates how to embed any external page into ExpressUI" +

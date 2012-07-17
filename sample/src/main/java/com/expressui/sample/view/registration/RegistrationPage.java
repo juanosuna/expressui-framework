@@ -63,7 +63,7 @@ public class RegistrationPage extends UserOwnedEntityFormPage<Profile> {
     @Override
     public void onDisplay() {
         super.onDisplay();
-        MainApplication.getInstance().showTrayMessage(
+        getMainApplication().showTrayMessage(
                 "<h3>Feature Tips:</h3>" +
                         "<ul>" +
                         "<li>This page shows form for editing a user-owned entity where no search is required" +

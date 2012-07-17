@@ -62,7 +62,7 @@ public class JDKBridgePropertyFormatter extends EnhancedPropertyFormatter {
     /**
      * Constructs with the JDK format to wrap.
      *
-     * @param format      JDK format
+     * @param format                JDK format
      * @param defaultValueWhenEmpty when parsing Strings, returns this value when String is empty
      */
     public JDKBridgePropertyFormatter(Format format, Object defaultValueWhenEmpty) {

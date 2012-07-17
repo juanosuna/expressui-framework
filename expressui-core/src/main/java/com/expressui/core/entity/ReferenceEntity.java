@@ -87,7 +87,7 @@ public abstract class ReferenceEntity implements IdentifiableEntity, NameableEnt
     /**
      * Constructor.
      *
-     * @param id the primary key for this entity
+     * @param id   the primary key for this entity
      * @param name the friendly name intended to displayed to end user
      */
     protected ReferenceEntity(String id, String name) {

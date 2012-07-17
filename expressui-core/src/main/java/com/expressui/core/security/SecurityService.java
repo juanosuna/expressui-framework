@@ -47,7 +47,6 @@ import com.expressui.core.util.assertion.Assert;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import javax.persistence.NoResultException;
@@ -120,6 +119,7 @@ public class SecurityService {
 
     /**
      * Forces a re-loading of current user entity from the database.
+     *
      * @return re-loaded current user entity
      */
     public User refreshCurrentUser() {

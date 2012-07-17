@@ -173,7 +173,7 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
      * Shows confirmation message the items were successfully removed.
      */
     public void showRemoveSuccessful() {
-        MainApplication.getInstance().showMessage(uiMessageSource.getMessage("aggregationRelationship.removed"));
+        getMainApplication().showMessage(uiMessageSource.getMessage("aggregationRelationship.removed"));
     }
 
     /**
@@ -240,7 +240,7 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
     }
 
     public void showAddSuccessful() {
-        MainApplication.getInstance().showMessage(uiMessageSource.getMessage("aggregationRelationship.added"));
+        getMainApplication().showMessage(uiMessageSource.getMessage("aggregationRelationship.added"));
     }
 
     /**

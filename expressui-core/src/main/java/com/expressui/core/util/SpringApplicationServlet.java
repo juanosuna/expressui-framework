@@ -48,7 +48,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import java.net.URL;
 
 /**
  * A servlet for launching Vaadin application with Spring dependency injection.

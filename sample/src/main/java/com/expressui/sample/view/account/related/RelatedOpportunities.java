@@ -47,15 +47,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-
 import java.util.Locale;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
-/**
- * User: Juan
- * Date: 7/7/12
- */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class RelatedOpportunities extends AggregationRelationship<Opportunity> {

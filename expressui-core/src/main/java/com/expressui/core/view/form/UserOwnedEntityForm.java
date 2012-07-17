@@ -39,7 +39,6 @@ package com.expressui.core.view.form;
 
 import com.expressui.core.dao.security.UserDao;
 import com.expressui.core.entity.UserOwnedEntity;
-import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
 
 import javax.annotation.Resource;

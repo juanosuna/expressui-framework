@@ -39,7 +39,6 @@ package com.expressui.core.view.tomanyrelationship;
 
 import com.expressui.core.dao.query.ToManyRelationshipQuery;
 import com.expressui.core.util.BeanPropertyType;
-import com.expressui.core.util.ReflectionUtil;
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.results.CrudResults;
 import org.apache.commons.beanutils.PropertyUtils;

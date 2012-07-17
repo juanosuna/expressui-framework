@@ -98,8 +98,9 @@ public class SpringApplicationContext implements ApplicationContextAware {
 
     /**
      * Looks up a single bean in the context by type.
+     *
      * @param requiredType type to look up
-     * @param <T> type of bean
+     * @param <T>          type of bean
      * @return found bean
      */
     public static <T> T getBean(Class<T> requiredType) {
@@ -120,9 +121,10 @@ public class SpringApplicationContext implements ApplicationContextAware {
 
     /**
      * Looks up a bean in the context by name and type.
+     *
      * @param requiredType type to look up
-     * @param beanName name of the bean to lookup
-     * @param <T> type of bean
+     * @param beanName     name of the bean to lookup
+     * @param <T>          type of bean
      * @return found bean
      */
     public static <T> T getBean(String beanName, Class<T> requiredType) {

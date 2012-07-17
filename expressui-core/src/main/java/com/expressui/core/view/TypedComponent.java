@@ -47,7 +47,7 @@ import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import java.io.Serializable;
 
 /**
- * A visual component associated with of a generic type, usually an entity class.
+ * A visual component associated with of a generic type, often an entity class.
  *
  * @param <T> type this component is associated with
  */
@@ -58,9 +58,9 @@ public abstract class TypedComponent<T> extends RootComponent {
     }
 
     /**
-     * Type of this component.
+     * Gets type of this component.
      *
-     * @return type of business entity for this page
+     * @return type of domain entity for this page
      */
     public Class<T> getType() {
         Class type = ReflectionUtil.getGenericArgumentType(getClass());
@@ -70,27 +70,26 @@ public abstract class TypedComponent<T> extends RootComponent {
     }
 
     /**
-     * Get the caption that describes the type of this component.
+     * Gets the caption that describes the type of this component.
      *
-     * @return caption that describes type of this component
+     * @return caption that describes the type of this component
+     */
+    /**
+     * Gets null. However, overriding methods often lookup the caption from domainMessages/.
+     *
+     * @return caption to tell tje user what type of component this is
      */
     public String getTypeCaption() {
         return null;
     }
 
-    /**
-     * Get the caption from the domainMessageSource bean by using getTypeCaption() as key.
-     * If not defined in domainMessageSource, use getTypeCaption() as the caption.
-     *
-     * @return caption used by Vaadin
-     */
     @Override
     public String getCaption() {
         return getTypeCaption();
     }
 
     /**
-     * Get an entityDao associated with the type of this component, if one exists.
+     * Gets an entityDao associated with the type of this component, if one exists.
      *
      * @return entityDao associated with type, null if none exists
      */
@@ -102,6 +101,11 @@ public abstract class TypedComponent<T> extends RootComponent {
         }
     }
 
+    /**
+     * Asks if user has permission to view this component.
+     *
+     * @return true if user has permission
+     */
     public boolean isViewAllowed() {
         User currentUser = securityService.getCurrentUser();
         return currentUser.isViewAllowed(getType().getName());

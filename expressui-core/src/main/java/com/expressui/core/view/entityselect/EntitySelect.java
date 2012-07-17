@@ -169,6 +169,6 @@ public abstract class EntitySelect<T> extends TypedComponent<T> {
     @Override
     public String getTypeCaption() {
         String typeName = domainMessageSource.getMessage(getType().getName(), getType().getSimpleName());
-        return uiMessageSource.getMessage("entitySelect.typeCaption", new Object[] {typeName});
+        return uiMessageSource.getMessage("entitySelect.typeCaption", new Object[]{typeName});
     }
 }

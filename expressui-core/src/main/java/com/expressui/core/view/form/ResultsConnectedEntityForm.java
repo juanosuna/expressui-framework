@@ -191,6 +191,7 @@ public class ResultsConnectedEntityForm<T> extends CustomComponent {
 
     /**
      * Removes all listeners defined on a given target.
+     *
      * @param target target object from which to remove all listeners
      */
     public void removeListeners(Object target) {

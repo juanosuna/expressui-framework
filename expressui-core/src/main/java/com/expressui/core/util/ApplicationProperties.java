@@ -231,8 +231,8 @@ public class ApplicationProperties {
 
     /**
      * Gets default style for displaying dates, as defined in java.text.DateFormat
-     # Options are: FULL=0, LONG=1, MEDIUM=2, SHORT=3. Default is 3 or SHORT.
-
+     * # Options are: FULL=0, LONG=1, MEDIUM=2, SHORT=3. Default is 3 or SHORT.
+     *
      * @return default date style
      */
     public Integer getDefaultDateStyle() {
@@ -241,8 +241,8 @@ public class ApplicationProperties {
 
     /**
      * Gets default style for displaying times, as defined in java.text.DateFormat
-     # Options are: FULL=0, LONG=1, MEDIUM=2, SHORT=3. Default is 3 or SHORT.
-
+     * # Options are: FULL=0, LONG=1, MEDIUM=2, SHORT=3. Default is 3 or SHORT.
+     *
      * @return default time style
      */
     public Integer getDefaultTimeStyle() {

@@ -41,8 +41,6 @@ import com.expressui.core.dao.security.query.UserQuery;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.view.results.CrudResults;
 import com.expressui.core.view.results.ResultsFieldSet;
-import com.expressui.core.view.results.ResultsTable;
-import com.vaadin.terminal.Sizeable;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 

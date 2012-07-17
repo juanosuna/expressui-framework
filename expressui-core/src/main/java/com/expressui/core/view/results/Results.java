@@ -37,7 +37,6 @@
 
 package com.expressui.core.view.results;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.dao.query.EntityQuery;
 import com.expressui.core.view.TypedComponent;
 import com.expressui.core.view.export.ExportForm;
@@ -53,12 +52,9 @@ import com.vaadin.ui.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
-import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Results component that is bound the results of a query.

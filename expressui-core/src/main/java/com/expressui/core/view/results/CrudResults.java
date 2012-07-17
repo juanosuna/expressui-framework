@@ -349,7 +349,7 @@ public abstract class CrudResults<T> extends Results<T> implements WalkableResul
      * Shows notification message that a delete was successful.
      */
     public void showDeleteSuccessfulMessage() {
-        MainApplication.getInstance().showMessage(uiMessageSource.getMessage("crudResults.deleted"));
+        getMainApplication().showMessage(uiMessageSource.getMessage("crudResults.deleted"));
     }
 
     /**

@@ -41,11 +41,9 @@ import com.expressui.core.MainApplication;
 import com.expressui.core.view.page.SearchPage;
 import com.expressui.sample.entity.Contact;
 import com.vaadin.ui.AbstractOrderedLayout;
-import com.vaadin.ui.Alignment;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import static org.springframework.web.context.WebApplicationContext.SCOPE_SESSION;
@@ -79,7 +77,7 @@ public class ContactPage extends SearchPage<Contact> {
     @Override
     public void onDisplay() {
         super.onDisplay();
-        MainApplication.getInstance().showTrayMessage(
+        getMainApplication().showTrayMessage(
                 "<h3>Feature Tips:</h3>" +
                         "<ul>" +
                         "<li>Two-step query: find and select an account, then find contacts associated with the account" +

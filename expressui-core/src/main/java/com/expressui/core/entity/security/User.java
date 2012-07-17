@@ -150,6 +150,7 @@ public class User extends WritableEntity implements NameableEntity {
 
     /**
      * Gets the password the user re-entered to ensure he/she doesn't make a mistake.
+     *
      * @return re-entered password
      */
     public String getRepeatLoginPassword() {
@@ -158,6 +159,7 @@ public class User extends WritableEntity implements NameableEntity {
 
     /**
      * Sets the password the user re-entered to ensure he/she doesn't make a mistake.
+     *
      * @param repeatLoginPassword re-entered password
      */
     public void setRepeatLoginPassword(String repeatLoginPassword) {
@@ -166,6 +168,7 @@ public class User extends WritableEntity implements NameableEntity {
 
     /**
      * Validation method to check if loginPassword and repeatLoginPassword match.
+     *
      * @return true if passwords match
      */
     @AssertTrueForProperties(errorProperty = "repeatLoginPassword",
@@ -282,6 +285,7 @@ public class User extends WritableEntity implements NameableEntity {
 
     /**
      * Asks if this user has a given role.
+     *
      * @param role to check if it belongs to this user
      * @return true if user has the role
      */
@@ -298,6 +302,7 @@ public class User extends WritableEntity implements NameableEntity {
 
     /**
      * Asks if this user has a given role.
+     *
      * @param role to check if it belongs to this user
      * @return true if user has the role
      */

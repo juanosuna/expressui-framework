@@ -55,7 +55,7 @@ public class DBPropertyInitializer {
     public void initialize() {
         if (System.getProperty("DB") == null) {
             String db = null;
-            Properties properties = new Properties() ;
+            Properties properties = new Properties();
             try {
                 InputStream inputStream = getClass().getResourceAsStream("/application.properties");
                 if (inputStream != null) {

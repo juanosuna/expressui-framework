@@ -46,7 +46,7 @@ import org.springframework.beans.factory.config.Scope;
  * Beans in PageScope live as long as the user remains on a single Page.
  * When user changes Pages, a new PageConversation is started and the previous one is discarded,
  * meaning all beans in the old conversation are also discarded.
- *
+ * <p/>
  * Using SCOPE_PAGE instead of SCOPE_SESSION results in a small delay but lower memory consumption, since
  * page-scoped beans are discarded from the session when the user switches pages.
  */

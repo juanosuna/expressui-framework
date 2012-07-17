@@ -131,6 +131,7 @@ public abstract class AuditableEntity implements IdentifiableEntity {
         /**
          * Called before persist and sets created, lastModified, createBy and modifiedBy
          * properties.
+         *
          * @param auditableEntity entity to set timestamps and username info on
          */
         @PrePersist
@@ -145,6 +146,7 @@ public abstract class AuditableEntity implements IdentifiableEntity {
         /**
          * Called before update and sets lastModified and modifiedBy
          * properties.
+         *
          * @param auditableEntity entity to set timestamps and username info on
          */
         @PreUpdate

@@ -40,7 +40,7 @@ package com.expressui.core.view;
 import javax.annotation.PostConstruct;
 
 /**
- * A bean component that is both displayed to the end user and wired by the IOC container, e.g. Spring.
+ * A bean component that is both displayed to the end user and wired by the IOC container, Spring.
  */
 public interface ViewBean {
     /**

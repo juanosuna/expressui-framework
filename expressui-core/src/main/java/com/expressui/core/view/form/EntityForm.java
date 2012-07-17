@@ -160,21 +160,21 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         if (genericDao.isPersistent(bean)) {
             if (bean instanceof NameableEntity) {
                 return uiMessageSource.getMessage("entityForm.entityCaption.existing",
-                        new Object[] {typeName, ((NameableEntity) bean).getName()});
+                        new Object[]{typeName, ((NameableEntity) bean).getName()});
             } else {
                 return uiMessageSource.getMessage("entityForm.entityCaption.existing",
-                        new Object[] {typeName, bean.toString()});
+                        new Object[]{typeName, bean.toString()});
             }
         } else {
             return uiMessageSource.getMessage("entityForm.entityCaption.new",
-                    new Object[] {typeName});
+                    new Object[]{typeName});
         }
     }
 
     @Override
     public String getTypeCaption() {
         String typeName = domainMessageSource.getMessage(getType().getName(), getType().getSimpleName());
-        return uiMessageSource.getMessage("entityForm.typeCaption", new Object[] {typeName});
+        return uiMessageSource.getMessage("entityForm.typeCaption", new Object[]{typeName});
     }
 
     /**
@@ -774,7 +774,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      * Shows notification message that save was successful.
      */
     public void showSaveSuccessfulMessage() {
-        MainApplication.getInstance().showMessage(
+        getMainApplication().showMessage(
                 "\"" + getEntityCaption()
                         + "\" " + uiMessageSource.getMessage("entityForm.saved")
         );

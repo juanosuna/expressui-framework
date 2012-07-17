@@ -194,10 +194,10 @@ public class StringUtil {
     /**
      * Generates a debug ID that is inserted into the HTML, which can be useful finding elements in a tool like FireBug.
      *
-     * @param prefix prefix to prepend to debug ID
+     * @param prefix        prefix to prepend to debug ID
      * @param mainComponent component to add debug ID to, debug ID contains this component's class name
-     * @param subComponent includes object hashcode from subcomponent to ensure uniqueness
-     * @param suffix suffix to append to debug ID
+     * @param subComponent  includes object hashcode from subcomponent to ensure uniqueness
+     * @param suffix        suffix to append to debug ID
      * @return debug ID
      */
     public static String generateDebugId(String prefix, Object mainComponent, AbstractComponent subComponent, String suffix) {

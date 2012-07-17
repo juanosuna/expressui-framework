@@ -19,8 +19,8 @@ import javax.annotation.Resource;
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
 /**
-* Users related to a role.
-*/
+ * Users related to a role.
+ */
 @Component
 @Scope(SCOPE_PROTOTYPE)
 public class RelatedUsers extends ManyToManyRelationship<User, UserRole> {

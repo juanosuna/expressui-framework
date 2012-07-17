@@ -42,7 +42,9 @@ import com.expressui.sample.entity.Contact;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.criteria.*;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Path;
+import javax.persistence.criteria.Root;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
@@ -72,7 +74,6 @@ public class RecentContactsQuery extends StructuredEntityQuery<Contact> {
 
     @Override
     public String toString() {
-        return "RecentContactsQuery{" +
-                '}';
+        return "RecentContactsQuery{}";
     }
 }

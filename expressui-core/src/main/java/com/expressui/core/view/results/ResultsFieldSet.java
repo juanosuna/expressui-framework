@@ -152,7 +152,7 @@ public class ResultsFieldSet extends FieldSet {
      * Sets column width.
      *
      * @param propertyId id for identify column
-     * @param width column width, null if adjusted automatically
+     * @param width      column width, null if adjusted automatically
      */
     public void setWidth(String propertyId, Integer width) {
         getResultsField(propertyId).setWidth(width);
@@ -160,7 +160,7 @@ public class ResultsFieldSet extends FieldSet {
 
     /**
      * Sets alignment.
-     *
+     * <p/>
      * See constants defined in {@link com.vaadin.ui.Table}
      *
      * @param alignment alignment

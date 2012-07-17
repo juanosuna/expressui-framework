@@ -45,11 +45,23 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import java.util.Locale;
 
 /**
- * Provides access to internationalized messages in messages_* files. Automatically uses
- * the locale set in the user's session.
+ * Provides access to internationalized messages (labels, tooltips, etc.) found in the following locations:
+ * <ul>
+ * <li>uiMessageSource bean (uiMessages/messages_*) - UI messages that are independent of domain entities or
+ * business logic</li>
+ * <li>domainMessageSource bean (domainMessages/messages_*) - messages that pertain to domain entities or business
+ * logic</li>
+ * <li>validationMessageSource bean (ValidationMessages_*) - messages that pertain to validation errors. Note that
+ * Hibernate uses these files directly and ExpressUI also uses them for custom validation error messages as well as
+ * for Vaadin validator errors that don't use JSR 303.</li>
+ * </ul>
  * <p/>
- * Subclasses Spring's ReloadableResourceBundleMessageSource and adds a few convenient
- * overloaded methods.
+ * All methods automatically apply the user's locale stored in the user's session.
+ * <p/>
+ * Note about UTF-8: by inheriting from ReloadableResourceBundleMessageSource, this message source automatically
+ * reads UTF-8 encoded files. However, Hibernate relies on JDK resource bundle for loading the validation message files,
+ * which doesn't support UTF-8. Therefore, all special characters in validation errors read directly by Hibernate must
+ * be escaped. You can use Java's native2ascii command to do this.
  */
 public class MessageSource extends ReloadableResourceBundleMessageSource {
 
@@ -80,6 +92,12 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
         }
     }
 
+    /**
+     * Gets optional message, meaning it may return null without logging any warning.
+     *
+     * @param code property key to look up message
+     * @return message value from messages_* file
+     */
     public String getOptionalMessage(String code) {
         try {
             return super.getMessage(code, null, getLocale());
@@ -103,8 +121,8 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
     /**
      * Gets message.
      *
-     * @param code           property key to look up message
-     * @param args           passed for substitution in the message, {0}, {1}, {2}, etc.
+     * @param code property key to look up message
+     * @param args passed for substitution in the message, {0}, {1}, {2}, etc.
      * @return message value from messages_* file
      */
     public String getMessage(String code, Object[] args) {
@@ -116,6 +134,13 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
         }
     }
 
+    /**
+     * Gets optional message, meaning it may return null without logging any warning.
+     *
+     * @param code property key to look up message
+     * @param args passed for substitution in the message, {0}, {1}, {2}, etc.
+     * @return message value from messages_* file
+     */
     public String getOptionalMessage(String code, Object[] args) {
         try {
             return super.getMessage(code, args, getLocale());
@@ -124,6 +149,13 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
         }
     }
 
+    /**
+     * Gets optional message using the system default locale rather than user locale.
+     *
+     * @param code property key to look up message
+     * @param args passed for substitution in the message, {0}, {1}, {2}, etc.
+     * @return message value from messages_* file
+     */
     public String getOptionalMessageFromDefaultLocale(String code, Object[] args) {
         try {
             return super.getMessage(code, args, Locale.getDefault());
@@ -133,7 +165,7 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
     }
 
     /**
-     * Gets message
+     * Gets message.
      *
      * @param code           property key to look up message
      * @param defaultMessage message if property key not found in messages file
@@ -156,7 +188,7 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
     }
 
     /**
-     * Gets message wrapped with span with express-ui-toolTip style
+     * Gets message wrapped with span with express-ui-toolTip style.
      *
      * @param code key
      * @return message value from messages_* file
@@ -165,6 +197,12 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
         return wrapWithToolTipStyle(getMessage(code));
     }
 
+    /**
+     * Gets message wrapped with span with express-ui-toolTip style. This may return null without logging any warning.
+     *
+     * @param code key
+     * @return message value from messages_* file
+     */
     public String getOptionalToolTip(String code) {
         return wrapWithToolTipStyle(getOptionalMessage(code));
     }
@@ -180,16 +218,31 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
         return wrapWithToolTipStyle(getMessage(code, args));
     }
 
+    /**
+     * Gets message wrapped with span with express-ui-toolTip style. This may return null without logging any warning.
+     *
+     * @param args passed for substitution in the message, {0}, {1}, {2}, etc.
+     * @param code key
+     * @return message value from messages_* file
+     */
     public String getOptionalToolTip(String code, Object[] args) {
         return wrapWithToolTipStyle(getOptionalMessage(code, args));
     }
 
+    /**
+     * Gets message wrapped with span with express-ui-toolTip style, using the system default locale rather
+     * than user locale.
+     *
+     * @param args passed for substitution in the message, {0}, {1}, {2}, etc.
+     * @param code key
+     * @return message value from messages_* file
+     */
     public String getOptionalToolTipFromDefaultLocale(String code, Object[] args) {
         return wrapWithToolTipStyle(getOptionalMessageFromDefaultLocale(code, args));
     }
 
     /**
-     * Gets message wrapped with span with express-ui-toolTip style
+     * Gets message wrapped with span with express-ui-toolTip style.
      *
      * @param code           key
      * @param defaultMessage message if property key not found in messages file
@@ -200,7 +253,7 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
     }
 
     /**
-     * Gets message wrapped with span with express-ui-toolTip style
+     * Gets message wrapped with span with express-ui-toolTip style.
      *
      * @param code key
      * @return message value from messages_* file
@@ -214,8 +267,8 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
     }
 
     /**
-     * Get the locale associated with Vaadin application. If Application has not been
-     * initialized yet, get JDK default locale.
+     * Gets the locale associated with Vaadin application. If Application has not been
+     * initialized yet, gets JDK default locale.
      *
      * @return current locale
      */

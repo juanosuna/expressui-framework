@@ -238,7 +238,8 @@ public abstract class FieldSet {
 
     /**
      * Generates or re-generates label, passing in arguments for interpolation using standard {0}, {1}, {2}
-     * notation. This feature only works with resource bundle messages defined in resources/domainMessages/.
+     * notation. This feature only works with resource bundle messages defined in domainMessages/.
+     *
      * @param propertyId property path in entity tree
      * @param args
      */

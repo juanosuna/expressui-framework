@@ -167,8 +167,8 @@ public abstract class DisplayField {
      * Gets the label used for this field. Generates one automatically, if not already set.
      * Generated one can be derived from the property name in the code, @Label annotation on the bound property
      * or looked up from resource bundle properties file, using the property name as the key.
-     * <P/>
-     * If I18n is required, then define labels in resource bundle properties files resources/domainMessages/.
+     * <p/>
+     * If I18n is required, then define labels in resource bundle properties files domainMessages/.
      * These messages have priority over annotations. Generating a label from the property name in code is done as a
      * last resort.
      *
@@ -193,7 +193,8 @@ public abstract class DisplayField {
 
     /**
      * Generates or re-generates label, passing in arguments for interpolation using standard {0}, {1}, {2}
-     * notation. This feature only works with resource bundle messages defined in resources/domainMessages/.
+     * notation. This feature only works with resource bundle messages defined in domainMessages/.
+     *
      * @param args
      */
     public void setLabelArgs(Object... args) {

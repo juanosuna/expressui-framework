@@ -83,7 +83,7 @@ public class GenericDao {
      * Gets the class type of an entity, which can be a proxy.
      *
      * @param entity the entity to check
-     * @param <T>        type of entity
+     * @param <T>    type of entity
      * @return type of the given entity
      */
     private <T> Class<? extends T> getEntityType(T entity) {
@@ -120,7 +120,7 @@ public class GenericDao {
      * Removes a managed or detached entity.
      *
      * @param entity either attached or detached
-     * @param <T>        type of entity
+     * @param <T>    type of entity
      * @see javax.persistence.EntityManager#remove(Object)
      */
     @Transactional
@@ -133,7 +133,7 @@ public class GenericDao {
      * Merges an entity.
      *
      * @param entity the entity to merge
-     * @param <T>        type of entity
+     * @param <T>    type of entity
      * @return managed entity
      * @see javax.persistence.EntityManager#merge(Object)
      */
@@ -146,7 +146,7 @@ public class GenericDao {
      * Persists an entity.
      *
      * @param entity the entity to persist
-     * @param <T>        type of entity
+     * @param <T>    type of entity
      * @see javax.persistence.EntityManager#persist(Object)
      */
     @Transactional
@@ -158,7 +158,7 @@ public class GenericDao {
      * Persists a collection of entities
      *
      * @param entities the entities to persist
-     * @param <T>        type of entity
+     * @param <T>      type of entity
      */
     @Transactional
     public <T> void persist(Collection<T> entities) {
@@ -171,7 +171,7 @@ public class GenericDao {
      * Saves an entity, persisting it if new and merging it if already persistent.
      *
      * @param entity the entity to save
-     * @param <T>        type of entity
+     * @param <T>    type of entity
      * @return merged entity if entity was merged, else same as argument if persisted
      */
     @Transactional
@@ -188,7 +188,7 @@ public class GenericDao {
      * Refreshes an entity.
      *
      * @param entity the entity to refresh
-     * @param <T>        type of entity
+     * @param <T>    type of entity
      * @see javax.persistence.EntityManager#refresh(Object)
      */
     public <T> void refresh(T entity) {
@@ -201,7 +201,7 @@ public class GenericDao {
      * care about merging it's state.
      *
      * @param entity a possibly detached but persistent entity that contains primary key
-     * @param <T>        type of entity
+     * @param <T>    type of entity
      * @return managed but hollow entity
      * @see javax.persistence.EntityManager#getReference(Class, Object)
      */
@@ -232,7 +232,7 @@ public class GenericDao {
      * Asks if an entity is persistent, that is if it has a primary key.
      *
      * @param entity the entity to check
-     * @param <T>        type of entity
+     * @param <T>    type of entity
      * @return true if entity has a primary key
      */
     public <T> boolean isPersistent(T entity) {
@@ -301,7 +301,7 @@ public class GenericDao {
      * @param entityType    the type of entity
      * @param propertyName  the name of the property in the entity that is marked @NaturalId
      * @param propertyValue the value to search for
-     * @param <T>        type of entity
+     * @param <T>           type of entity
      * @return found entity
      */
     public <T> T findByNaturalId(Class<? extends T> entityType, String propertyName, Object propertyValue) {
@@ -380,7 +380,7 @@ public class GenericDao {
      *
      * @param structuredEntityQuery the structured entity query that can be re-executed
      *                              as paging, sort and other criteria vary
-     * @param <T>        type of entity
+     * @param <T>                   type of entity
      * @return list of found entities
      * @see com.expressui.core.dao.query.StructuredEntityQuery
      */
@@ -395,8 +395,8 @@ public class GenericDao {
      * to-many relationship.
      *
      * @param toManyRelationshipQuery the query that can be re-executed as paging, sort and other criteria vary
-     * @param <T>        type of entity
-     * @param <P>        type of parent entity
+     * @param <T>                     type of entity
+     * @param <P>                     type of parent entity
      * @return list of found entities
      * @see com.expressui.core.dao.query.ToManyRelationshipQuery
      */

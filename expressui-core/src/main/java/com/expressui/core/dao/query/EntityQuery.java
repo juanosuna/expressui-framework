@@ -60,6 +60,7 @@ import java.util.List;
  * The {@link #clear()} method uses reflection to clear all bean property values. This is typically invoked when
  * the user wants to clear all filters and see all results. To set a default filter or order-by property, override
  * {@link #initializeDefaults}, which is called upon construction and {@link #clear()}.
+ *
  * @param <T> type of entity being queried
  */
 public abstract class EntityQuery<T> {

@@ -53,10 +53,6 @@ import javax.annotation.Resource;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
 
-/**
-* User: Juan
-* Date: 7/7/12
-*/
 @Component
 @Scope(SCOPE_PROTOTYPE)
 @SuppressWarnings("rawtypes")

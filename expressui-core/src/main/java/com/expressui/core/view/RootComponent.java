@@ -73,13 +73,13 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
 
     /**
      * Registry that keeps track of all display labels used in the application. Security system
-     * uses this registry to make configuring permissions more user friendly.
+     * uses this registry to link permissions to user-friendly names representing entity and UI components.
      */
     @Resource
     public LabelRegistry labelRegistry;
 
     /**
-     * Defines some default formats, e.g. for dates, times, numbers
+     * Defines some default formats, for dates, times, numbers, currency, etc.
      */
     @Resource
     public DefaultFormats defaultFormats;
@@ -97,19 +97,19 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     public CodePopup codePopup;
 
     /**
-     * Provides messages (display labels) associated with domain-level entities
+     * Provides messages (display labels) associated with domain-level entities.
      */
     @Resource
     public MessageSource domainMessageSource;
 
     /**
-     * Provides messages (display labels) associated with UI elements
+     * Provides messages (display labels) associated with UI elements.
      */
     @Resource
     public MessageSource uiMessageSource;
 
     /**
-     * Provides validation error messages
+     * Provides validation error messages.
      */
     @Resource
     public MessageSource validationMessageSource;
@@ -131,24 +131,67 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     public void postWire() {
     }
 
-    public String getDomainMessage() {
-        return domainMessageSource.getMessage(getClass().getName());
-    }
-
-    public String getDomainMessage(String code) {
-        return domainMessageSource.getMessage(getClass().getName() + "." + code);
-    }
-
-    public String getDomainMessage(Object... args) {
-        return domainMessageSource.getMessage(getClass().getName(), args);
-    }
-
-    public String getDomainMessage(String code, Object... args) {
-        return domainMessageSource.getMessage(getClass().getName() + "." + code, args);
+    /**
+     * Gets code for looking up messages associated with this component, using fully qualified class name.
+     *
+     * @return code
+     */
+    public String getCode() {
+        return getClass().getName();
     }
 
     /**
-     * Get the main application, representing user's session.
+     * Gets code for looking up messages associated with this component, using fully qualified class name plus code arg.
+     *
+     * @param code code to prepend class name
+     * @return code fully qualified code prepended by class name
+     */
+    public String getCode(String code) {
+        return getClass().getName() + "." + code;
+    }
+
+    /**
+     * Gets domain message associated with this component, where the code consists only of the class name.
+     *
+     * @return internationalized domain message
+     */
+    public String getDomainMessage() {
+        return domainMessageSource.getMessage(getCode());
+    }
+
+    /**
+     * Gets domain message associated with this component and given code.
+     *
+     * @param code code to prepend class name
+     * @return internationalized domain message
+     */
+    public String getDomainMessage(String code) {
+        return domainMessageSource.getMessage(getCode(code));
+    }
+
+    /**
+     * Gets domain message associated with this component, where the code consists only of the class name.
+     *
+     * @param args used to interpolate the message
+     * @return internationalized domain message
+     */
+    public String getDomainMessage(Object... args) {
+        return domainMessageSource.getMessage(getCode(), args);
+    }
+
+    /**
+     * Gets domain message associated with this component and given code.
+     *
+     * @param code code to prepend class name
+     * @param args used to interpolate the message
+     * @return internationalized domain message
+     */
+    public String getDomainMessage(String code, Object... args) {
+        return domainMessageSource.getMessage(getCode(code), args);
+    }
+
+    /**
+     * Gets the main application, representing user's session.
      *
      * @return main application
      */
@@ -158,7 +201,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
 
     /**
      * Automatically adds style names (CSS classes) to all visual components. This is automatically called on
-     * postConstruct. CSS class names are derived from Java class names, i.e. simple class name without package
+     * postConstruct. CSS class names are derived from Java class names, that is simple class name without package
      * qualifier. For any given component, CSS classes are generated for each Java class in the inheritance hierarchy
      * up to RootComponent.
      */
@@ -169,6 +212,12 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
         }
     }
 
+    /**
+     * Sets the debug id for this component, useful for finding the generated HTML with a tool like Firebug.
+     *
+     * @param subComponent nested component
+     * @param suffix       friendly suffix
+     */
     public void setDebugId(AbstractComponent subComponent, String suffix) {
         String id = StringUtil.generateDebugId("e", this, subComponent, suffix);
         subComponent.setDebugId(id);
@@ -194,19 +243,24 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     }
 
     /**
-     * Remove all child components.
+     * Removes all child components.
      */
     public void removeAllComponents() {
         Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
         ((AbstractComponentContainer) getCompositionRoot()).removeAllComponents();
     }
 
-    public AbstractOrderedLayout createOrderedLayout() {
+    /**
+     * Creates ordered layout (vertical or horizontal) for this component. Default is vertical. Override to change this.
+     *
+     * @return ordered layout
+     */
+    protected AbstractOrderedLayout createOrderedLayout() {
         return createVerticalLayout();
     }
 
     /**
-     * Set composition root of this component to a VerticalLayout with margins and spacing.
+     * Sets composition root of this component to a VerticalLayout with margins and spacing.
      */
     public VerticalLayout createVerticalLayout() {
         VerticalLayout rootLayout = new VerticalLayout();
@@ -218,7 +272,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     }
 
     /**
-     * Set composition root of this component to a HorizontalLayout with margins and spacing.
+     * Sets composition root of this component to a HorizontalLayout with margins and spacing.
      */
     public HorizontalLayout createHorizontalLayout() {
         HorizontalLayout rootLayout = new HorizontalLayout();
@@ -230,7 +284,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     }
 
     /**
-     * Set width of this component to 100%.
+     * Sets width of this component to 100%.
      */
     public void setWidthSizeFull() {
         Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
@@ -239,7 +293,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     }
 
     /**
-     * Set height of this component to 100%.
+     * Sets height of this component to 100%.
      */
     public void setHeightSizeFull() {
         Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
@@ -248,7 +302,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     }
 
     /**
-     * Set both width and height of this component to 100%.
+     * Sets both width and height of this component to 100%.
      */
     public void setSizeFull() {
         Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
@@ -257,7 +311,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     }
 
     /**
-     * Set width size to undefined.
+     * Sets width size to undefined.
      */
     public void setWidthUndefined() {
         Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
@@ -266,7 +320,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     }
 
     /**
-     * Set height size to undefined.
+     * Sets height size to undefined.
      */
     public void setHeightUndefined() {
         Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
@@ -275,7 +329,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     }
 
     /**
-     * Set size to undefined.
+     * Sets size to undefined.
      */
     public void setSizeUndefined() {
         Assert.PROGRAMMING.notNull(getCompositionRoot(), "Composition root must be set before this method can be called");
@@ -284,7 +338,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     }
 
     /**
-     * Add code popup button next to this component to the right.
+     * Adds code popup button next to this component to the right.
      *
      * @param classes classes for displaying related source code and Javadoc. If
      *                class is within com.expressui.core or com.expressui.domain,
@@ -295,7 +349,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     }
 
     /**
-     * Add code popup button next to this component to the right.
+     * Adds code popup button next to this component to the right.
      *
      * @param alignment alignment for button
      * @param classes   classes for displaying related source code and Javadoc
@@ -323,7 +377,7 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
     }
 
     /**
-     * Ask if code popups should be displayed. Only useful for demo applications.
+     * Asks if code popups should be displayed. Only useful for demo applications.
      *
      * @return true if code popups should be displayed
      */

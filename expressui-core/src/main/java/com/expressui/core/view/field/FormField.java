@@ -115,7 +115,7 @@ public class FormField extends DisplayField {
      * Generated one can be derived from the property name in the code, @Label annotation on the bound property
      * or looked up from resource bundle properties file, using the property name as the key.
      * <p/>
-     * If I18n is required, then define labels in resource bundle properties files resources/domainMessages/.
+     * If I18n is required, then define labels in resource bundle properties files domainMessages/.
      * These messages have priority over annotations. Generating a label from the property name in code is done as a
      * last resort.
      *
@@ -730,7 +730,7 @@ public class FormField extends DisplayField {
 
     /**
      * Generates or re-generates tooltip, passing in arguments for interpolation using standard {0}, {1}, {2}
-     * notation. This feature only works with resource bundle messages defined in resources/domainMessages/.
+     * notation. This feature only works with resource bundle messages defined in domainMessages/.
      *
      * @param args
      */

@@ -50,10 +50,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * Asserts that the annotated method must return true, or else validation error will be thrown
  * for the bean containing the annotated method.
- * <P/>
+ * <p/>
  * This annotation should be used in cases where the assertion method validates multiple properties
  * in a bean.
- * <P/>
+ * <p/>
  * IMPORTANT: the annotated method must conform to the bean standard convention for read methods!
  * This is so that the Validator will automatically invoke the assertion method as if it were just another bean
  * property being validated.

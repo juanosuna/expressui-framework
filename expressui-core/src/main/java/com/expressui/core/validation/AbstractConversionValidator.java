@@ -107,7 +107,8 @@ public abstract class AbstractConversionValidator implements Validator {
     }
 
     /**
-     *  Sets form field that this validator is bound to.
+     * Sets form field that this validator is bound to.
+     *
      * @param formField form field
      */
     public void setFormField(FormField formField) {

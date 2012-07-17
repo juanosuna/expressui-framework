@@ -44,6 +44,7 @@ package com.expressui.core.entity;
 public interface NameableEntity {
     /**
      * Gets the name of this entity.
+     *
      * @return name of this entity
      */
     String getName();

@@ -41,7 +41,6 @@ import com.expressui.core.MainApplication;
 import com.expressui.core.view.field.format.UrlPropertyFormatter;
 import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.form.UserOwnedEntityForm;
-import com.expressui.sample.entity.Contact;
 import com.expressui.sample.entity.Phone;
 import com.expressui.sample.entity.Profile;
 import com.expressui.sample.formatter.PhonePropertyFormatter;
@@ -81,7 +80,7 @@ public class MyProfileForm<T extends Profile> extends UserOwnedEntityForm<Profil
 
         formFields.setWidth("phoneType", 7, Sizeable.UNITS_EM);
         getFormFieldSet().setToolTipArgs("phone", Phone.getExampleNumber(
-                MainApplication.getInstance().getLocale().getCountry()));
+                getMainApplication().getLocale().getCountry()));
 
         formFields.addConversionValidator("phone", new PhoneConversionValidator());
         formFields.setPropertyFormatter("phone", new PhonePropertyFormatter());

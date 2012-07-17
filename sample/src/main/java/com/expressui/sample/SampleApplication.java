@@ -87,13 +87,13 @@ public class SampleApplication extends MainApplication {
     }
 
     public void setEnglish() {
-        MainApplication.getInstance().addCookie("language", Locale.US.toLanguageTag(), 60 * 60 * 24 * 365 * 5);
-        MainApplication.getInstance().logout();
+        addCookie("language", Locale.US.toLanguageTag(), 60 * 60 * 24 * 365 * 5);
+        logout();
     }
 
     public void setGerman() {
-        MainApplication.getInstance().addCookie("language", Locale.GERMANY.toLanguageTag(), 60 * 60 * 24 * 365 * 5);
-        MainApplication.getInstance().logout();
+        addCookie("language", Locale.GERMANY.toLanguageTag(), 60 * 60 * 24 * 365 * 5);
+        logout();
     }
 
     @Override
@@ -105,7 +105,7 @@ public class SampleApplication extends MainApplication {
     public void init() {
         Cookie languageCookie = getCookie("language");
         if (languageCookie != null) {
-            MainApplication.getInstance().setLocale(Locale.forLanguageTag(languageCookie.getValue()));
+            setLocale(Locale.forLanguageTag(languageCookie.getValue()));
         }
 
         super.init();

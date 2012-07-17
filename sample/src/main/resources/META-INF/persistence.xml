@@ -21,8 +21,7 @@ which generates DDL and also for IDEs so they can detect a JPA Facet. -->
         <class>com.expressui.core.entity.security.UserRole</class>
 
         <properties>
-            <!-- Just in case this gets deployed on JBoss, tells JBoss not to manage JPA and let Spring take over.
-             Too bad no such property exists for Weblogic. -->
+            <!-- Just in case this gets deployed on JBoss, tells JBoss not to manage JPA and let Spring take over. -->
             <property name="jboss.as.jpa.managed" value="false"/>
 
             <!-- Required by hibernate3-maven-plugin, which has a bug and ignores this property in database properties file -->

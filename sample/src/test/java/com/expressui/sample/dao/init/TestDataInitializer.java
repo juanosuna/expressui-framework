@@ -50,7 +50,6 @@ import com.expressui.sample.validator.PhoneValidator;
 import com.expressui.sample.view.LoginPage;
 import com.expressui.sample.view.profile.ProfilePage;
 import com.expressui.sample.view.registration.RegistrationPage;
-import net.sf.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

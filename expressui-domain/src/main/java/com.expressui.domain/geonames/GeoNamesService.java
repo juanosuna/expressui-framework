@@ -37,7 +37,6 @@
 
 package com.expressui.domain.geonames;
 
-import com.expressui.core.util.ApplicationProperties;
 import com.expressui.domain.RestClientService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

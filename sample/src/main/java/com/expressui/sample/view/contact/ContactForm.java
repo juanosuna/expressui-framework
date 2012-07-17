@@ -116,7 +116,7 @@ public class ContactForm extends EntityForm<Contact> {
         formFields.setWidth("mainPhoneType", 7, Sizeable.UNITS_EM);
 
         getFormFieldSet().setToolTipArgs("mainPhone", Phone.getExampleNumber(
-                MainApplication.getInstance().getLocale().getCountry()));
+                getMainApplication().getLocale().getCountry()));
 
         formFields.addConversionValidator("mainPhone", new PhoneConversionValidator());
         formFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
@@ -165,7 +165,7 @@ public class ContactForm extends EntityForm<Contact> {
     @Override
     public void onDisplay() {
         super.onDisplay();
-        MainApplication.getInstance().showTrayMessage(
+        getMainApplication().showTrayMessage(
                 "<h3>Feature Tips:</h3>" +
                         "<ul>" +
                         "<li>Right-mouse click on form tabs to add and remove sections" +

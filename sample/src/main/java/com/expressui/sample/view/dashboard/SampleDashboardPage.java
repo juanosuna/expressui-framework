@@ -156,7 +156,7 @@ public class SampleDashboardPage extends DashboardPage {
             recentContactResults.getResultsTable().select(firstItem);
         }
 
-        MainApplication.getInstance().showTrayMessage(
+        getMainApplication().showTrayMessage(
                 "<h3>Feature Tips:</h3>" +
                         "<ul>" +
                         "<li>Click on Java buttons to show code and Javadoc behind each UI component" +

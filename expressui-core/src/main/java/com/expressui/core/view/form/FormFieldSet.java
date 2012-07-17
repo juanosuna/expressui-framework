@@ -665,7 +665,7 @@ public class FormFieldSet extends FieldSet {
 
     /**
      * Generates or re-generates tooltip, passing in arguments for interpolation using standard {0}, {1}, {2}
-     * notation. This feature only works with resource bundle messages defined in resources/domainMessages/.
+     * notation. This feature only works with resource bundle messages defined in domainMessages/.
      *
      * @param propertyId property id to identify field to set
      * @param args
@@ -688,7 +688,7 @@ public class FormFieldSet extends FieldSet {
      *
      * @param propertyId property id to identify field to set
      * @param items      list of items
-     * see com.expressui.core.entity.ReferenceEntity.DISPLAY_PROPERTY
+     *                   see com.expressui.core.entity.ReferenceEntity.DISPLAY_PROPERTY
      */
     public void setSelectItems(String propertyId, List items) {
         getFormField(propertyId).setSelectItems(items);
@@ -846,7 +846,7 @@ public class FormFieldSet extends FieldSet {
      * Adds change listener to field.
      *
      * @param propertyId property id to identify field to set
-     * @param target target of the listener
+     * @param target     target of the listener
      * @param methodName listener method to invoke
      */
     public void addValueChangeListener(String propertyId, Object target, String methodName) {

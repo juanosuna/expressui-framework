@@ -173,7 +173,7 @@ public class AccountForm extends EntityForm<Account> {
     @Override
     public void onDisplay() {
         super.onDisplay();
-        MainApplication.getInstance().showTrayMessage(
+        getMainApplication().showTrayMessage(
                 "<h3>Feature Tips:</h3>" +
                         "<ul>" +
                         "<li>Right-mouse click on form tabs to add and remove sections" +
