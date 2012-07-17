@@ -102,8 +102,6 @@ public abstract class EntitySelect<T> extends TypedComponent<T> {
 
         setWidthSizeFull();
 
-        getResults().selectPageSize(5);
-
         addComponent(getSearchForm());
         addComponent(getResults());
 
@@ -140,7 +138,6 @@ public abstract class EntitySelect<T> extends TypedComponent<T> {
         popupWindow.setClosable(true);
 
         getResults().getEntityQuery().clear();
-        getResults().selectPageSize(5);
         getResults().search();
         configurePopupWindow(popupWindow);
         popupWindow.addComponent(this);

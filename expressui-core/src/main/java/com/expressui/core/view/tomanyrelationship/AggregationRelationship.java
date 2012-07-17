@@ -113,7 +113,7 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
     /**
      * Automatically invoked when user clicks to add an entity to the to-many relationship.
      */
-    protected void add() {
+    public void add() {
         preAdd();
         EntitySelect<T> entitySelect = getEntitySelect();
         entitySelect.setMultiSelect(true);
@@ -126,7 +126,7 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
     /**
      * Automatically invoked when user clicks action to remove selected entities.
      */
-    protected void remove() {
+    public void remove() {
         getMainApplication().showConfirmationDialog(
                 new ConfirmDialog.Listener() {
                     public void onClose(ConfirmDialog dialog) {
