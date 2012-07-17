@@ -105,7 +105,7 @@ public class OpportunityForm extends EntityForm<Opportunity> {
         getMainApplication().showTrayMessage(
                 "<h3>Feature Tips:</h3>" +
                         "<ul>" +
-                        "<li>Change Sales Stage to see how other fields are automatically recalculated" +
+                        "<li>Change Sales Stage or Currency to see how other fields are automatically recalculated" +
                         "<li>Input invalid data and then mouse-over input to see error message" +
                         "</ul>"
         );

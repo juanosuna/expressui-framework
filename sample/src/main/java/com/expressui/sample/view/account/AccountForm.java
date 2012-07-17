@@ -177,8 +177,6 @@ public class AccountForm extends EntityForm<Account> {
                 "<h3>Feature Tips:</h3>" +
                         "<ul>" +
                         "<li>Right-mouse click on form tabs to add and remove sections" +
-                        "<li>Add any number of contacts or opportunities to the one-to-many entity relationship" +
-                        "<li>Open two browsers and modify the same entity concurrently to see handling of optimistic locking" +
                         "<li>Input invalid data and then mouse-over input to see error message" +
                         "</ul>"
         );

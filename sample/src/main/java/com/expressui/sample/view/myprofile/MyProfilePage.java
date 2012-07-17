@@ -67,7 +67,6 @@ public class MyProfilePage extends UserOwnedEntityFormPage<Profile> {
                 "<h3>Feature Tips:</h3>" +
                         "<ul>" +
                         "<li>This page shows form for editing a user-owned entity where no search is required" +
-                        "<li>Password is stored with asymmetrical encryption" +
                         "</ul>"
         );
     }

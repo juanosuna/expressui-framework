@@ -67,8 +67,7 @@ public class RegistrationPage extends UserOwnedEntityFormPage<Profile> {
                 "<h3>Feature Tips:</h3>" +
                         "<ul>" +
                         "<li>This page shows form for editing a user-owned entity where no search is required" +
-                        "<li>Password is stored with asymmetrical encryption" +
-                        "<li>Validation handles login name that already exists" +
+                        "<li>Validation logic ensures that login name does not already exist" +
                         "</ul>"
         );
     }

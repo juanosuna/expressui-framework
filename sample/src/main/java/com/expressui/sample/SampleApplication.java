@@ -59,6 +59,8 @@ import java.util.Locale;
 @SuppressWarnings({"serial"})
 public class SampleApplication extends MainApplication {
 
+    public static int LANGUAGE_COOKIE_EXPIRATION_SECS = 60 * 60 * 24 * 365 * 5; // approximately 5 years
+
     @Override
     public void configureLeftMenuBar(MenuBarNode rootNode) {
         rootNode.addPage(HomePage.class);
@@ -87,12 +89,12 @@ public class SampleApplication extends MainApplication {
     }
 
     public void setEnglish() {
-        addCookie("language", Locale.US.toLanguageTag(), 60 * 60 * 24 * 365 * 5);
+        addCookie("language", Locale.US.toLanguageTag(), LANGUAGE_COOKIE_EXPIRATION_SECS);
         logout();
     }
 
     public void setGerman() {
-        addCookie("language", Locale.GERMANY.toLanguageTag(), 60 * 60 * 24 * 365 * 5);
+        addCookie("language", Locale.GERMANY.toLanguageTag(), LANGUAGE_COOKIE_EXPIRATION_SECS);
         logout();
     }
 

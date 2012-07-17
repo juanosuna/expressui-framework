@@ -146,26 +146,6 @@ public class SampleDashboardPage extends DashboardPage {
         recentContactResults.setPageSizeVisible(false); // restrict page size, since dashboard cells are fixed size
     }
 
-    @Override
-    public void onDisplay() {
-        super.onDisplay();
-
-        recentContactResults.search();
-        if (recentContactResults.getResultsTable().getContainerDataSource().size() > 0) {
-            Object firstItem = recentContactResults.getResultsTable().getContainerDataSource().getIdByIndex(0);
-            recentContactResults.getResultsTable().select(firstItem);
-        }
-
-        getMainApplication().showTrayMessage(
-                "<h3>Feature Tips:</h3>" +
-                        "<ul>" +
-                        "<li>Click on Java buttons to show code and Javadoc behind each UI component" +
-                        "<li>Select different contact to update location map" +
-                        "<li>Click on My Account to update your profile" +
-                        "</ul>"
-        );
-    }
-
     @SuppressWarnings("unchecked")
     public void contactSelectionChanged() {
         Collection<Contact> contacts = (Collection<Contact>) recentContactResults.getSelectedValue();
@@ -188,5 +168,25 @@ public class SampleDashboardPage extends DashboardPage {
 
     private void removeContactLocationMap() {
         removeComponent(1, 2);
+    }
+
+    @Override
+    public void onDisplay() {
+        super.onDisplay();
+
+        recentContactResults.search();
+        if (recentContactResults.getResultsTable().getContainerDataSource().size() > 0) {
+            Object firstItem = recentContactResults.getResultsTable().getContainerDataSource().getIdByIndex(0);
+            recentContactResults.getResultsTable().select(firstItem);
+        }
+
+        getMainApplication().showTrayMessage(
+                "<h3>Feature Tips:</h3>" +
+                        "<ul>" +
+                        "<li>Click on Java buttons to show code and Javadoc behind each UI component" +
+                        "<li>Select different contact to update location map" +
+                        "<li>Click on My Account to update your profile" +
+                        "</ul>"
+        );
     }
 }

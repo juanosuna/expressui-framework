@@ -33,7 +33,7 @@
 
     create table sample.ACCOUNT_TYPE (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         primary key (ID)
     );
@@ -89,7 +89,7 @@
 
     create table sample.COUNTRY (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         COUNTRY_TYPE varchar(255),
         MAX_POSTAL_CODE varchar(255),
@@ -100,21 +100,21 @@
 
     create table sample.CURRENCY (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         primary key (ID)
     );
 
     create table sample.INDUSTRY (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         primary key (ID)
     );
 
     create table sample.LEAD_SOURCE (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         primary key (ID)
     );
@@ -130,17 +130,17 @@
         ACTUAL_CLOSE_DATE date,
         AMOUNT decimal(19,2) check (AMOUNT>=0),
         AMOUNT_INUSD decimal(19,2),
-        AMOUNT_WEIGHTED_INUSD decimal(19,2),
         DESCRIPTION longtext,
         EXPECTED_CLOSE_DATE date,
         NAME varchar(64) not null,
         OPPORTUNITY_TYPE varchar(255),
         PROBABILITY double precision not null,
+        VALUE_WEIGHTED_INUSD decimal(19,2),
         ACCOUNT_ID bigint,
         ASSIGNED_TO_ID bigint,
         CURRENCY_ID varchar(255),
         LEAD_SOURCE_ID varchar(255),
-        SALES_STAGE_ID varchar(255),
+        SALES_STAGE_ID varchar(255) not null,
         primary key (ID)
     );
 
@@ -158,7 +158,7 @@
         FIELD varchar(255),
         TARGET_TYPE varchar(64) not null,
         VIEW_ALLOWED bit not null,
-        ROLE_ID bigint,
+        ROLE_ID bigint not null,
         primary key (ID),
         unique (TARGET_TYPE, FIELD)
     );
@@ -199,7 +199,7 @@
 
     create table sample.SALES_STAGE (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         PROBABILITY double precision not null,
         primary key (ID)
@@ -207,7 +207,7 @@
 
     create table sample.STATE (
         ID varchar(255) not null,
-        DISPLAY_NAME varchar(255),
+        NAME varchar(255),
         SORT_ORDER integer,
         CODE varchar(255),
         STATE_TYPE varchar(255),
@@ -215,7 +215,18 @@
         primary key (ID)
     );
 
-    create table sample.USER (
+    create table sample.USER_ROLE (
+        ROLE_ID bigint not null,
+        USER_ID bigint not null,
+        CREATED datetime not null,
+        CREATED_BY varchar(255) not null,
+        LAST_MODIFIED datetime not null,
+        MODIFIED_BY varchar(255) not null,
+        VERSION integer,
+        primary key (ROLE_ID, USER_ID)
+    );
+
+    create table sample.UZER (
         ID bigint not null auto_increment,
         CREATED datetime not null,
         CREATED_BY varchar(255) not null,
@@ -229,19 +240,7 @@
         ENABLED bit not null,
         LOGIN_NAME varchar(16) not null,
         LOGIN_PASSWORD_ENCRYPTED varchar(255),
-        primary key (ID),
-        unique (LOGIN_NAME)
-    );
-
-    create table sample.USER_ROLE (
-        ROLE_ID bigint not null,
-        USER_ID bigint not null,
-        CREATED datetime not null,
-        CREATED_BY varchar(255) not null,
-        LAST_MODIFIED datetime not null,
-        MODIFIED_BY varchar(255) not null,
-        VERSION integer,
-        primary key (ROLE_ID, USER_ID)
+        primary key (ID)
     );
 
     create index IDX_ACCOUNT_ASSIGNED_TO on sample.ACCOUNT (ASSIGNED_TO_ID);
@@ -276,7 +275,7 @@
         add index FK_ACCOUNT_ASSIGNED_TO (ASSIGNED_TO_ID), 
         add constraint FK_ACCOUNT_ASSIGNED_TO 
         foreign key (ASSIGNED_TO_ID) 
-        references sample.USER (ID);
+        references sample.UZER (ID);
 
     alter table sample.ACCOUNT 
         add index FK_ACCOUNT_BILLING_ADDRESS (BILLING_ADDRESS_ID), 
@@ -340,7 +339,7 @@
         add index FK_CONTACT_ASSIGNED_TO (ASSIGNED_TO_ID), 
         add constraint FK_CONTACT_ASSIGNED_TO 
         foreign key (ASSIGNED_TO_ID) 
-        references sample.USER (ID);
+        references sample.UZER (ID);
 
     alter table sample.CONTACT 
         add index FK_CONTACT_ACCOUNT (ACCOUNT_ID), 
@@ -394,7 +393,7 @@
         add index FK_OPPORTUNITY_USER (ASSIGNED_TO_ID), 
         add constraint FK_OPPORTUNITY_USER 
         foreign key (ASSIGNED_TO_ID) 
-        references sample.USER (ID);
+        references sample.UZER (ID);
 
     alter table sample.OPPORTUNITY 
         add index FK_OPPORTUNITY_ACCOUNT (ACCOUNT_ID), 
@@ -422,7 +421,7 @@
         add index FK_PROFILE_USER (USER_ID), 
         add constraint FK_PROFILE_USER 
         foreign key (USER_ID) 
-        references sample.USER (ID);
+        references sample.UZER (ID);
 
     create index IDX_STATE_COUNTRY on sample.STATE (COUNTRY_ID);
 
@@ -446,4 +445,4 @@
         add index FK_USER_ROLE_USER (USER_ID), 
         add constraint FK_USER_ROLE_USER 
         foreign key (USER_ID) 
-        references sample.USER (ID);
+        references sample.UZER (ID);

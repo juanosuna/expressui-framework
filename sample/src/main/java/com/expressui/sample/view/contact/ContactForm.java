@@ -170,7 +170,6 @@ public class ContactForm extends EntityForm<Contact> {
                         "<ul>" +
                         "<li>Right-mouse click on form tabs to add and remove sections" +
                         "<li>Enter phone as 704.555.1212 and see how it is automatically formatted" +
-                        "<li>Input invalid data and then mouse-over input to see error message" +
                         "<li>Go to an address tab and see how zip codes are validated against selected country" +
                         "</ul>"
         );
