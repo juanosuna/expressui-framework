@@ -40,9 +40,18 @@
     </properties>
 
     <!--
+    This is an example of how you would add a JDBC driver for another database like Oracle.
+    With Oracle, you also need to add the JDBC driver to the Maven repo, since it is proprietary
+    and is not provided by any public repo.
 
-    This is an example of how you would add a JDBC driver for another database like Oracle
+    To install locally:
+    mvn install:install-file -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.3.0 -Dpackaging=jar -Dfile=ojdbc6.jar
 
+    To deploy to corporate repo:
+    mvn deploy:deploy-file -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.3.0 -Dpackaging=jar -Dfile=ojdbc6.jar
+    -->
+
+    <!--
     <dependencies>
         <dependency>
             <groupId>com.oracle</groupId>

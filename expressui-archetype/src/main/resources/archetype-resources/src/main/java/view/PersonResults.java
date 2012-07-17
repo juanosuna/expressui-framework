@@ -31,7 +31,7 @@ public class PersonResults extends CrudResults<Person> {
     }
 
     @Override
-    public PersonForm getEntityForm() {
+    public PersonForm createEntityForm() {
         return personForm;
     }
 

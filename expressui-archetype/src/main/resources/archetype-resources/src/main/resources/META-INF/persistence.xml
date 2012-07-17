@@ -23,10 +23,10 @@ which generates DDL and also for IDEs so they can detect a JPA Facet. -->
         <!--<class>com.expressui.core.entity.security.Permission</class>-->
 
         <properties>
-            <!-- Tells JBoss not to manage JPA and let Spring take over; ignored by other app servers -->
+            <!-- Just in case this gets deployed on JBoss, tells JBoss not to manage JPA and let Spring take over. -->
             <property name="jboss.as.jpa.managed" value="false"/>
 
-            <!-- Required by hibernate3-maven-plugin, which has a bug and ignores this in database properties file -->
+            <!-- Required by hibernate3-maven-plugin, which has a bug and ignores this property in database properties file -->
             <property name="hibernate.ejb.naming_strategy"
                       value="com.expressui.core.util.UpperCaseAndUnderscoresNamingStrategy"/>
 

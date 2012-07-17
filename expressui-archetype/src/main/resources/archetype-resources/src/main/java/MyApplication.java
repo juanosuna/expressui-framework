@@ -11,7 +11,7 @@ public class MyApplication extends MainApplication {
 
     @Override
     public void configureLeftMenuBar(MenuBarNode rootNode) {
-        rootNode.addPage("People", PersonPage.class);
+        rootNode.addPage(PersonPage.class);
     }
 
     @Override

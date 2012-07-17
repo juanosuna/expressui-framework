@@ -3,6 +3,7 @@
 #set( $symbol_escape = '\' )
 package ${package}.entity;
 
+import com.expressui.core.entity.NameableEntity;
 import com.expressui.core.entity.WritableEntity;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -13,7 +14,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table
-public class Person extends WritableEntity {
+public class Person extends WritableEntity implements NameableEntity {
 
     private String firstName;
 
@@ -47,5 +48,23 @@ public class Person extends WritableEntity {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    @Override
+    public String getName() {
+        if (getFirstName() == null && getLastName() != null) {
+            return getFirstName();
+        } else if (getFirstName() != null && getLastName() == null) {
+            return getLastName();
+        } else if (getFirstName() == null && getLastName() == null) {
+            return null;
+        } else {
+            return getLastName() + ", " + getFirstName();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return getName();
     }
 }
