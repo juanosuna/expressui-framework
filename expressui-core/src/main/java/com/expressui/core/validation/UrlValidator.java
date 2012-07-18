@@ -37,10 +37,10 @@
 
 package com.expressui.core.validation;
 
+import com.expressui.core.util.UrlUtil;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  * Validate a URL, making sure it is well-formed.
@@ -59,9 +59,9 @@ public class UrlValidator implements ConstraintValidator<ValidUrl, String> {
             if (!url.toLowerCase().startsWith("http://")) {
                 url = "http://" + url;
             }
-            new URL(url);
+            UrlUtil.checkValid(url);
             return true;
-        } catch (MalformedURLException e) {
+        } catch (Exception e) {
             return false;
         }
     }

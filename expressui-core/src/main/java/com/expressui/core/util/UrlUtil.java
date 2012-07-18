@@ -84,6 +84,18 @@ public class UrlUtil {
     }
 
     /**
+     * Invokes URL and get the contents returned.
+     *
+     * @param urlStr url
+     * @throws IOException
+     */
+    public static void checkValid(String urlStr) throws IOException {
+        URL url = new URL(urlStr);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.connect();
+    }
+
+    /**
      * Only used by sample application to track usage statistics
      *
      * @param container container for adding the embedded iframe to

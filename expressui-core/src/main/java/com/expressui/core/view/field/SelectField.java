@@ -209,6 +209,7 @@ public class SelectField<T, V> extends CustomField {
 
         Property property = field.getPropertyDataSource();
         field.setPropertyDataSource(property);
+        requestRepaintAll();
     }
 
     private V getSelectedValue() {

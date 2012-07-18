@@ -60,17 +60,7 @@ public class PhonePropertyFormatter extends EnhancedPropertyFormatter {
         phoneNumber.setNationalNumber(phone.getPhoneNumber());
 
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-        PhoneNumberUtil.PhoneNumberFormat format;
-        String regionCodeForNumber = phoneUtil.getRegionCodeForNumber(phoneNumber);
-        if (regionCodeForNumber == null || regionCodeForNumber.equals(
-                MainApplication.getInstance().getLocale().getCountry()
-        )) {
-            format = PhoneNumberUtil.PhoneNumberFormat.NATIONAL;
-        } else {
-            format = PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL;
-        }
-
-        return phoneUtil.format(phoneNumber, format);
+        return phoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
     }
 
     @Override

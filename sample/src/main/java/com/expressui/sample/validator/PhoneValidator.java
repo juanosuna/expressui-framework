@@ -125,13 +125,7 @@ public class PhoneValidator implements ConstraintValidator<ValidPhone, Phone> {
         }
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
         Phonenumber.PhoneNumber example = phoneUtil.getExampleNumber(regionCode);
-        PhoneNumberUtil.PhoneNumberFormat format;
-        if (regionCode.equals(defaultRegionCode)) {
-            format = PhoneNumberUtil.PhoneNumberFormat.NATIONAL;
-        } else {
-            format = PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL;
-        }
 
-        return phoneUtil.format(example, format);
+        return phoneUtil.format(example, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
     }
 }

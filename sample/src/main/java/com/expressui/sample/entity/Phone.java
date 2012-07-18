@@ -84,14 +84,7 @@ public class Phone implements Serializable {
         phoneNumber.setNationalNumber(this.phoneNumber);
 
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
-        PhoneNumberUtil.PhoneNumberFormat format;
-        if (phoneUtil.getRegionCodeForNumber(phoneNumber).equals(defaultRegionCode)) {
-            format = PhoneNumberUtil.PhoneNumberFormat.NATIONAL;
-        } else {
-            format = PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL;
-        }
-
-        return phoneUtil.format(phoneNumber, format);
+        return phoneUtil.format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
     }
 
     @NotNull
