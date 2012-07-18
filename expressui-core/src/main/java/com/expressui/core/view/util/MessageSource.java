@@ -39,6 +39,7 @@ package com.expressui.core.view.util;
 
 import com.expressui.core.MainApplication;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
@@ -63,9 +64,16 @@ import java.util.Locale;
  * which doesn't support UTF-8. Therefore, all special characters in validation errors read directly by Hibernate must
  * be escaped. You can use Java's native2ascii command to do this.
  */
-public class MessageSource extends ReloadableResourceBundleMessageSource {
+public class MessageSource extends ReloadableResourceBundleMessageSource implements BeanNameAware {
 
     private final Logger log = Logger.getLogger(getClass());
+
+    private String beanName;
+
+    @Override
+    public void setBeanName(String name) {
+        this.beanName = name;
+    }
 
     /**
      * Gets message, use code itself if message not found.
@@ -87,13 +95,14 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
         try {
             return super.getMessage(code, null, getLocale());
         } catch (NoSuchMessageException e) {
-            log.warn(e);
-            return null;
+            MainApplication.getInstance().showError("Could not find property " + code
+                    + " in " + beanName + ":" + toString());
+            return code;
         }
     }
 
     /**
-     * Gets optional message, meaning it may return null without logging any warning.
+     * Gets optional message, meaning it may return null without error or warning.
      *
      * @param code property key to look up message
      * @return message value from messages_* file
@@ -129,13 +138,14 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
         try {
             return super.getMessage(code, args, getLocale());
         } catch (NoSuchMessageException e) {
-            log.warn(e);
-            return null;
+            MainApplication.getInstance().showError("Could not find property " + code
+                    + " in " + beanName + ":" + toString());
+            return code;
         }
     }
 
     /**
-     * Gets optional message, meaning it may return null without logging any warning.
+     * Gets optional message, meaning it may return null without error or warning.
      *
      * @param code property key to look up message
      * @param args passed for substitution in the message, {0}, {1}, {2}, etc.
@@ -198,7 +208,7 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
     }
 
     /**
-     * Gets message wrapped with span with express-ui-toolTip style. This may return null without logging any warning.
+     * Gets message wrapped with span with express-ui-toolTip style. This may return null without error or warning.
      *
      * @param code key
      * @return message value from messages_* file
@@ -219,7 +229,7 @@ public class MessageSource extends ReloadableResourceBundleMessageSource {
     }
 
     /**
-     * Gets message wrapped with span with express-ui-toolTip style. This may return null without logging any warning.
+     * Gets message wrapped with span with express-ui-toolTip style. This may return null without error or warning.
      *
      * @param args passed for substitution in the message, {0}, {1}, {2}, etc.
      * @param code key
