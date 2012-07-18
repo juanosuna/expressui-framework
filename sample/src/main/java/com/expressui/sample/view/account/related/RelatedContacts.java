@@ -89,8 +89,9 @@ public class RelatedContacts extends AggregationRelationship<Contact> {
                 "title",
                 "mailingAddress.state.code",
                 "mailingAddress.country",
-                "mainPhone"
-        );
+                "mainPhone",
+                "lastModified"
+                );
 
         resultsFields.setSortable("name", false);
         resultsFields.setSortable("mainPhone", false);

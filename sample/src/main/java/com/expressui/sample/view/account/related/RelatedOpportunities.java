@@ -85,7 +85,8 @@ public class RelatedOpportunities extends AggregationRelationship<Opportunity> {
                 "name",
                 "salesStage",
                 "valueWeightedInUSD",
-                "expectedCloseDate"
+                "expectedCloseDate",
+                "lastModified"
         );
 
         resultsFields.setPropertyFormatter("valueWeightedInUSD", defaultFormats.getCurrencyFormat(Locale.US, 0));

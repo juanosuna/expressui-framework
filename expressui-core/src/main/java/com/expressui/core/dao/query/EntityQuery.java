@@ -38,6 +38,7 @@
 package com.expressui.core.dao.query;
 
 import com.expressui.core.dao.GenericDao;
+import com.expressui.core.util.ApplicationProperties;
 import com.expressui.core.util.ReflectionUtil;
 import com.expressui.core.util.assertion.Assert;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -66,11 +67,6 @@ import java.util.List;
 public abstract class EntityQuery<T> {
 
     /**
-     * Default number of result items to be fetched for each page.
-     */
-    public static final Integer DEFAULT_PAGE_SIZE = 10;
-
-    /**
      * Default ORDER BY property, uses lastModified descending so that the most recently modified entities
      * are shown at the top of the results.
      */
@@ -90,6 +86,9 @@ public abstract class EntityQuery<T> {
 
     private PropertyDescriptor[] descriptors;
 
+    @Resource
+    protected ApplicationProperties applicationProperties;
+
     /**
      * Generic DAO that the {@link #execute()} implementation may use to execute the query.
      * Otherwise, it can use a type-specific DAO if needed.
@@ -103,7 +102,7 @@ public abstract class EntityQuery<T> {
     @PostConstruct
     public void postConstruct() {
         descriptors = PropertyUtils.getPropertyDescriptors(this);
-        pageSize = DEFAULT_PAGE_SIZE;
+        pageSize = applicationProperties.getDefaultPageSize();
         clear();
     }
 

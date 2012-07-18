@@ -63,6 +63,13 @@ public abstract class ToManyRelationshipQuery<T, P> extends StructuredEntityQuer
     public abstract void setParent(P parent);
 
     @Override
+    public void postConstruct() {
+        super.postConstruct();
+
+        setPageSize(applicationProperties.getDefaultToManyPageSize());
+    }
+
+    @Override
     public List<T> execute() {
         return genericDao.execute(this);
     }

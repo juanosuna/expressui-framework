@@ -203,7 +203,7 @@ public class FormFieldSet extends FieldSet {
     @Override
     protected FormField createField(String propertyId) {
         Assert.PROGRAMMING.isTrue(!containsPropertyId(propertyId), "Field has already been created for property "
-                + propertyId);
+                + getType().getName() + "." + propertyId);
 
         FormField formField = new FormField(this, propertyId);
         addField(propertyId, formField);
@@ -258,11 +258,14 @@ public class FormFieldSet extends FieldSet {
      * @param columnEnd   column end coordinate, field width is stretched to column end coordinate
      */
     public void setCoordinates(String tabName, String propertyId, int rowStart, int columnStart, Integer rowEnd, Integer columnEnd) {
-        Assert.PROGRAMMING.notNull(tabName);
+        Assert.PROGRAMMING.notNull(tabName,
+                "tab name cannot be null for property " + getType().getName() + "." + propertyId);
         Assert.PROGRAMMING.isTrue(rowStart > 0,
-                "rowStart arg must be greater than 0 for property " + propertyId + (tabName.isEmpty() ? "" : ", for tab " + tabName));
+                "rowStart arg must be greater than 0 for property "
+                        + getType().getName() + "." + propertyId + (tabName.isEmpty() ? "" : ", for tab " + tabName));
         Assert.PROGRAMMING.isTrue(columnStart > 0,
-                "columnStart arg must be greater than 0 for property " + propertyId + (tabName.isEmpty() ? "" : ", for tab " + tabName));
+                "columnStart arg must be greater than 0 for property "
+                        + getType().getName() + "." + propertyId + (tabName.isEmpty() ? "" : ", for tab " + tabName));
 
         FormField formField = createField(propertyId);
         formField.setTabName(tabName);
@@ -378,7 +381,8 @@ public class FormFieldSet extends FieldSet {
      * @return true if this form contains property in the given tab
      */
     public boolean containsPropertyId(String tabName, String propertyId) {
-        Assert.PROGRAMMING.notNull(getFormField(propertyId).getTabName());
+        Assert.PROGRAMMING.notNull(getFormField(propertyId).getTabName(),
+                "tab name cannot be null for " + getType().getName() + "." + propertyId);
         return containsPropertyId(propertyId) && getFormField(propertyId).getTabName().equals(tabName);
     }
 
@@ -861,6 +865,14 @@ public class FormFieldSet extends FieldSet {
      */
     public boolean isEntityForm() {
         return form instanceof EntityForm;
+    }
+
+    @Override
+    public String toString() {
+        return "FormFieldFieldSet{" +
+                "type.name=" + getType().getName() +
+                ", form.type.name=" + getForm().getType().getName() +
+                '}';
     }
 
     /**

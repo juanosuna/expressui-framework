@@ -94,6 +94,10 @@ public abstract class DisplayField {
         return propertyId;
     }
 
+    public String getTypeAndPropertyId() {
+        return getFieldSet().getType().getName() + "." + getPropertyId();
+    }
+
     /**
      * Gets static type information about the property this field is bound to.
      *
@@ -346,7 +350,7 @@ public abstract class DisplayField {
     @Override
     public String toString() {
         return "DisplayField{" +
-                "propertyId='" + getPropertyId() + '\'' +
+                "typeAndPropertyId='" + getTypeAndPropertyId() + '\'' +
                 '}';
     }
 }

@@ -83,6 +83,8 @@ public abstract class EntitySelectResults<T> extends Results<T> {
         getCrudButtons().addComponent(crudButtons, 0);
         getCrudButtons().setComponentAlignment(crudButtons, Alignment.MIDDLE_LEFT);
 
+        getEntityQuery().setPageSize(applicationProperties.getDefaultSelectPageSize());
+
         addCodePopupButtonIfEnabled(EntitySelectResults.class);
     }
 

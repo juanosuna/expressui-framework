@@ -37,7 +37,6 @@
 
 package com.expressui.sample.view;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.security.exception.AuthenticationException;
 import com.expressui.core.view.RootComponent;
 import com.expressui.core.view.menu.MainMenuBar;
@@ -134,6 +133,8 @@ public class LoginPage extends RootComponent implements Page {
                 // Show error notification when user enters bad credentials or account is locked, etc.
                 getMainApplication().showNotification(message, Window.Notification.TYPE_ERROR_MESSAGE,
                         Window.Notification.POSITION_CENTERED_BOTTOM, 2000);
+            } catch (Exception e) {
+                getMainApplication().openErrorWindow(e);
             }
         }
     }

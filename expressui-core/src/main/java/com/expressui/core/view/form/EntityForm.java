@@ -148,7 +148,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
 
     /**
      * Gets caption that describes the entity bean bound to this form. If the bean
-     * implements {@link NameableEntity}, then {@link NameableEntity.getName} is
+     * implements {@link NameableEntity}, then {@link NameableEntity#getName} is
      * used. Otherwise, the bean's toString is used as a caption. Override
      * this method to customize the caption.
      *
@@ -440,7 +440,6 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         if (toManyRelationships.size() > 0) {
             for (ToManyRelationship toManyRelationship : toManyRelationships) {
                 Object parent = getBean();
-                toManyRelationship.getEntityQuery().clear();
                 toManyRelationship.getEntityQuery().setParent(parent);
                 toManyRelationship.search();
                 toManyRelationship.selectionChanged(null);

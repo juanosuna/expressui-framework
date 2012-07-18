@@ -89,7 +89,7 @@ public class ResultsFieldSet extends FieldSet {
     @Override
     protected DisplayField createField(String propertyId) {
         Assert.PROGRAMMING.isTrue(!containsPropertyId(propertyId), "Field has already been created for property "
-                + propertyId);
+                + getType().getName() + "." + propertyId);
 
         ResultsField resultsField = new ResultsField(this, propertyId);
         addField(propertyId, resultsField);
@@ -167,5 +167,12 @@ public class ResultsFieldSet extends FieldSet {
      */
     public void setAlignment(String propertyId, String alignment) {
         getResultsField(propertyId).setAlignment(alignment);
+    }
+
+    @Override
+    public String toString() {
+        return "ResultsFieldFieldSet{" +
+                "type.name=" + getType().getName() +
+                '}';
     }
 }

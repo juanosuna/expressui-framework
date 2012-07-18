@@ -564,8 +564,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
         } else {
             super.terminalError(event);
             log.error("Terminal error: ", rootThrowable);
-            String fullStackTrace = ExceptionUtils.getFullStackTrace(event.getThrowable());
-            openErrorWindow(fullStackTrace);
+            openErrorWindow(rootThrowable);
         }
     }
 
@@ -679,11 +678,15 @@ public abstract class MainApplication extends Application implements ViewBean, H
     }
 
     /**
-     * Opens separate error Window, useful for showing long stacktraces.
+     * Opens a separate error Window with the full stack trace of a throwable
+     * and error box highlighting the root cause message.
      *
-     * @param message to display in error Window
+     * @param throwable full stack trace of this throwable is displayed in error Window
      */
-    public void openErrorWindow(String message) {
+    public void openErrorWindow(Throwable throwable) {
+        showError(ExceptionUtils.getRootCauseMessage(throwable));
+
+        String message = ExceptionUtils.getFullStackTrace(throwable);
         Window errorWindow = new Window(uiMessageSource.getMessage("mainApplication.errorWindowCaption"));
         errorWindow.addStyleName("opaque");
         VerticalLayout layout = (VerticalLayout) errorWindow.getContent();

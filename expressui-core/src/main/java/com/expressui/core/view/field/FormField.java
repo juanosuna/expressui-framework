@@ -171,13 +171,13 @@ public class FormField extends DisplayField {
      */
     public void setTabName(String tabName) {
         Assert.PROGRAMMING.isTrue(!(tabName.isEmpty() && getFormFieldSet().hasTabs()), "tabName arg must not be empty" +
-                " if named tabs already exist");
+                " if named tabs already exist for property " + getTypeAndPropertyId());
 
 
         Set<String> tabNames = getFormFieldSet().getTabNames();
         for (String name : tabNames) {
             Assert.PROGRAMMING.isTrue(tabName.isEmpty() || !name.isEmpty(), "tabName arg must be empty" +
-                    " if empty tabNames already exist");
+                    " if empty tabNames already exist for property " + getTypeAndPropertyId());
         }
 
         this.tabName = tabName;
@@ -259,8 +259,8 @@ public class FormField extends DisplayField {
      * Asserts that column start and row start are not null.
      */
     public void assertValid() {
-        Assert.PROGRAMMING.notNull(columnStart, "columnStart must not be null");
-        Assert.PROGRAMMING.notNull(rowStart, "rowStart must not be null");
+        Assert.PROGRAMMING.notNull(columnStart, "columnStart must not be null for property " + getTypeAndPropertyId());
+        Assert.PROGRAMMING.notNull(rowStart, "rowStart must not be null for property " + getTypeAndPropertyId());
     }
 
     /**
@@ -338,7 +338,7 @@ public class FormField extends DisplayField {
      */
     public void autoAdjustTextFieldWidth() {
         Assert.PROGRAMMING.instanceOf(getField(), AbstractTextField.class,
-                "FormField.autoAdjustWidth can only be called on text fields");
+                "FormField.autoAdjustWidth can only be called on text fields for property " + getTypeAndPropertyId());
 
         if (autoAdjustWidthMode == AutoAdjustWidthMode.NONE) return;
 
@@ -391,7 +391,7 @@ public class FormField extends DisplayField {
      */
     public void autoAdjustSelectWidth() {
         Assert.PROGRAMMING.instanceOf(getField(), AbstractSelect.class,
-                "FormField.autoAdjustSelectWidth can only be called on select fields");
+                "FormField.autoAdjustSelectWidth can only be called on select fields for property " + getTypeAndPropertyId());
 
         if (autoAdjustWidthMode == AutoAdjustWidthMode.NONE) return;
 
@@ -425,7 +425,7 @@ public class FormField extends DisplayField {
 
         Field field = getField();
         Assert.PROGRAMMING.instanceOf(field, AbstractSelect.class,
-                "property " + getPropertyId() + " is not a AbstractSelect field");
+                "property " + getTypeAndPropertyId() + " is not a AbstractSelect field");
         AbstractSelect selectField = (AbstractSelect) field;
         if (selectField.getContainerDataSource() == null
                 || !(selectField.getContainerDataSource() instanceof BeanItemContainer)) {
@@ -468,7 +468,7 @@ public class FormField extends DisplayField {
     public void setSelectItems(Map<Object, String> items, String nullCaption) {
         Field field = getField();
         Assert.PROGRAMMING.instanceOf(field, AbstractSelect.class,
-                "property " + getPropertyId() + " is not a AbstractSelect field");
+                "property " + getTypeAndPropertyId() + " is not a AbstractSelect field");
         AbstractSelect selectField = (AbstractSelect) field;
 
         Object previouslySelectedValue = selectField.getValue();
@@ -502,7 +502,7 @@ public class FormField extends DisplayField {
     public Object getSelectedItems() {
         Field field = getField();
         Assert.PROGRAMMING.instanceOf(field, AbstractSelect.class,
-                "property " + getPropertyId() + " is not a AbstractSelect field");
+                "property " + getTypeAndPropertyId() + " is not a AbstractSelect field");
         AbstractSelect selectField = (AbstractSelect) field;
         return selectField.getValue();
     }
@@ -516,7 +516,7 @@ public class FormField extends DisplayField {
     public void setMultiSelectDimensions(int rows, int columns) {
         Field field = getField();
         Assert.PROGRAMMING.instanceOf(field, ListSelect.class,
-                "property " + getPropertyId() + " is not a AbstractSelect field");
+                "property " + getTypeAndPropertyId() + " is not a AbstractSelect field");
         ListSelect selectField = (ListSelect) field;
         selectField.setRows(rows);
         selectField.setColumns(columns);
@@ -530,7 +530,7 @@ public class FormField extends DisplayField {
      */
     public void setDisplayCaptionPropertyId(String displayCaptionPropertyId) {
         Assert.PROGRAMMING.instanceOf(field, AbstractSelect.class,
-                "property " + getPropertyId() + " is not a Select field");
+                "property " + getTypeAndPropertyId() + " is not a Select field");
 
         ((AbstractSelect) field).setItemCaptionPropertyId(displayCaptionPropertyId);
     }
@@ -846,7 +846,8 @@ public class FormField extends DisplayField {
      */
     public void addError(ErrorMessage errorMessage) {
         Assert.PROGRAMMING.instanceOf(getField(), AbstractComponent.class,
-                "Error message cannot be added to field that is not an AbstractComponent");
+                "Error message cannot be added to field that is not an AbstractComponent for property "
+                        + getTypeAndPropertyId());
 
         AbstractComponent abstractComponent = (AbstractComponent) getField();
         ErrorMessage existingErrorMessage = abstractComponent.getComponentError();

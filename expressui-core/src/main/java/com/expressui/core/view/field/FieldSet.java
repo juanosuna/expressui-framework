@@ -194,7 +194,7 @@ public abstract class FieldSet {
      */
     public DisplayField getField(String propertyId) {
         DisplayField field = fields.get(propertyId);
-        Assert.PROGRAMMING.notNull(field, "no field exists for property " + propertyId);
+        Assert.PROGRAMMING.notNull(field, "no field exists for property " + getType().getName() + "." + propertyId);
 
         return field;
     }
@@ -267,5 +267,12 @@ public abstract class FieldSet {
      */
     public void setPropertyFormatter(String propertyId, PropertyFormatter propertyFormatter) {
         getField(propertyId).setPropertyFormatter(propertyFormatter);
+    }
+
+    @Override
+    public String toString() {
+        return "FieldSet{" +
+                "type=" + getType().getName() +
+                '}';
     }
 }

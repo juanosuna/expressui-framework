@@ -39,6 +39,7 @@ package com.expressui.core.view.field;
 
 import com.expressui.core.dao.GenericDao;
 import com.expressui.core.util.StringUtil;
+import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.entityselect.EntitySelect;
 import com.expressui.core.view.form.TypedForm;
 import com.expressui.core.view.util.MessageSource;
@@ -52,6 +53,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.vaadin.addon.customfield.CustomField;
 
 import javax.persistence.EntityNotFoundException;
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -91,6 +93,7 @@ public class SelectField<T, V> extends CustomField {
         this.entitySelect = entitySelect;
         this.uiMessageSource = typedForm.uiMessageSource;
         this.genericDao = typedForm.genericDao;
+        assertValidPropertyId();
         initialize();
     }
 
@@ -174,6 +177,19 @@ public class SelectField<T, V> extends CustomField {
         Property property = field.getPropertyDataSource();
         field.setPropertyDataSource(property);
         entitySelect.close();
+    }
+
+    private void assertValidPropertyId() {
+        boolean propertyIdFound = false;
+        Class<T> beanType = typedForm.getType();
+        PropertyDescriptor[] propertyDescriptors = PropertyUtils.getPropertyDescriptors(beanType);
+        for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
+            if (propertyDescriptor.getName().equals(getPropertyId())) {
+                propertyIdFound = true;
+            }
+        }
+
+        Assert.PROGRAMMING.isTrue(propertyIdFound, "property not found: " + beanType.getName() + "." + getPropertyId());
     }
 
     /**

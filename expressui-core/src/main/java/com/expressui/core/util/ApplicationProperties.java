@@ -98,6 +98,16 @@ public class ApplicationProperties {
     @Value("${expressui.pageSizeOptions:5,10,25,50,100}")
     private String pageSizeOptions = "5,10,25,50,100";
 
+    @Value("${expressui.defaultPageSize:10}")
+    private Integer defaultPageSize = 10;
+
+    @Value("${expressui.defaultToManyPageSize:5}")
+    private Integer defaultToManyPageSize = 5;
+
+    @Value("${expressui.defaultSelectPageSize:10}")
+    private Integer defaultSelectPageSize = 10;
+
+
     /**
      * Gets the HTTP proxy hostname.
      *
@@ -280,6 +290,30 @@ public class ApplicationProperties {
         }
 
         return pageSizes;
+    }
+
+    /**
+     * Gets default page size for results.
+     * @return default page size for results
+     */
+    public Integer getDefaultPageSize() {
+        return defaultPageSize;
+    }
+
+    /**
+     * Gets default page size for results in to-many relationship.
+     * @return default page size for results in to-many relationship
+     */
+    public Integer getDefaultToManyPageSize() {
+        return defaultToManyPageSize;
+    }
+
+    /**
+     * Gets default page size for results in popup entity select
+     * @return default page size for results in popup entity select
+     */
+    public Integer getDefaultSelectPageSize() {
+        return defaultSelectPageSize;
     }
 
     /**

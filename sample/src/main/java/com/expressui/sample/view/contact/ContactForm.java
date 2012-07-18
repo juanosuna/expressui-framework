@@ -37,7 +37,6 @@
 
 package com.expressui.sample.view.contact;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.form.EntityForm;
