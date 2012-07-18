@@ -95,8 +95,8 @@ public class MessageSource extends ReloadableResourceBundleMessageSource impleme
         try {
             return super.getMessage(code, null, getLocale());
         } catch (NoSuchMessageException e) {
-            MainApplication.getInstance().showError("Could not find property " + code
-                    + " in " + beanName + ":" + toString());
+            MainApplication.getInstance().showError("Could not find property '" + code
+                    + "' in " + beanName + ":" + toString() + ":" + getLocale());
             return code;
         }
     }
@@ -138,8 +138,8 @@ public class MessageSource extends ReloadableResourceBundleMessageSource impleme
         try {
             return super.getMessage(code, args, getLocale());
         } catch (NoSuchMessageException e) {
-            MainApplication.getInstance().showError("Could not find property " + code
-                    + " in " + beanName + ":" + toString());
+            MainApplication.getInstance().showError("Could not find property '" + code
+                    + "' in " + beanName + ":" + toString() + ":" + getLocale());
             return code;
         }
     }

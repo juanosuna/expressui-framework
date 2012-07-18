@@ -123,6 +123,7 @@ public class SampleApplication extends MainApplication {
         displayPage(LoginPage.class);
         mainMenuBar.refresh();
 
-        checkInternetConnectivity(UrlUtil.EXPRESSUI_TEST_PAGE, getDomainMessage("internetConnectivityError"));
+        checkInternetConnectivity(UrlUtil.EXPRESSUI_TEST_PAGE,
+                uiMessageSource.getMessage("sampleApplication.internetConnectivityError"));
     }
 }

@@ -338,9 +338,10 @@ public abstract class MainApplication extends Application implements ViewBean, H
         setTheme(getCustomTheme());
         customizeConfirmDialogStyle();
 
-        Window mainWindow = new Window(getTypeCaption());
-        mainWindow.addStyleName("e-main-window");
+        Window mainWindow = new Window();
         setMainWindow(mainWindow);
+        mainWindow.addStyleName("e-main-window");
+        mainWindow.setCaption(getTypeCaption());
 
         VerticalLayout mainLayout = new VerticalLayout();
         String id = StringUtil.generateDebugId("e", this, mainLayout, "mainLayout");
