@@ -191,7 +191,7 @@
         MODIFIED_BY varchar(255) not null,
         VERSION integer,
         UUID varchar(255) not null unique,
-        ALLOW_OR_DENY_BY_DEFAULT varchar(255),
+        ALLOW_OR_DENY_BY_DEFAULT varchar(255) not null,
         DESCRIPTION clob,
         NAME varchar(64) not null,
         primary key (ID)

@@ -121,7 +121,7 @@ public class LoginPage extends RootComponent implements Page {
                 // Embed login name next to My Account caption
                 mainMenuBar.getRightMenuBarRoot().getChild(MyProfilePage.class.getName()).setCaption(
                         domainMessageSource.getMessage(MyProfilePage.class.getName(),
-                                new Object[]{"(" + securityService.getCurrentUser().getLoginName() + ")"}));
+                                new Object[]{"(" + getCurrentUser().getLoginName() + ")"}));
 
                 // Refresh menu bar so that user can now see everything they have access to
                 getMainApplication().mainMenuBar.refresh();

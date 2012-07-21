@@ -145,7 +145,7 @@ public class ApplicationProperties {
     }
 
     /**
-     * Gets URL for restarting the app and creating a new session, e.g. upon logout or when there is fatal
+     * Gets URL for restarting the app and creating a new session, for example upon logout or when there is fatal
      * communication error.
      *
      * @return URL for restarting the app

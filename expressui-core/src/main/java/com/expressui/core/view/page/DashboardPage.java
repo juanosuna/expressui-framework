@@ -88,6 +88,10 @@ public abstract class DashboardPage extends RootComponent implements Page {
 
     @Override
     public void onDisplay() {
+        Set<ViewBean> viewBeanComponents = findViewBeanComponents();
+        for (ViewBean viewBeanComponent : viewBeanComponents) {
+            viewBeanComponent.onDisplay();
+        }
     }
 
     @Override

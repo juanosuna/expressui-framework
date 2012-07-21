@@ -80,6 +80,7 @@ public abstract class SearchForm<T extends EntityQuery> extends TypedForm<T> {
 
     @Override
     public void onDisplay() {
+        getFormFieldSet().applySecurityToSearchFormFields(); // in case there are any SelectFields in search form
     }
 
     /**

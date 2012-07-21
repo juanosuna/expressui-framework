@@ -106,7 +106,7 @@ public abstract class ManyToManyRelationship<T, A> extends AggregationRelationsh
         }
         searchImpl(false);
         clearSelection();
-        selectionChanged(null);
+        syncCrudActions();
     }
 
     /**

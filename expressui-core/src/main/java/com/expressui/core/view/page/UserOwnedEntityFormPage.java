@@ -60,11 +60,9 @@ public abstract class UserOwnedEntityFormPage<T extends UserOwnedEntity> extends
         setWidthUndefined();
 
         addStyleName("opaque");
-        labelRegistry.putTypeLabel(getType().getName(), getTypeCaption());
 
         getEntityForm().addStyleName("e-entity-form-in-page");
         getEntityForm().addCancelListener(getMainApplication(), "selectPreviousPage");
-        getEntityForm().enableSaveAndCloseButton(false);
 
         if (isViewAllowed()) {
             addComponent(getEntityForm());
@@ -88,7 +86,7 @@ public abstract class UserOwnedEntityFormPage<T extends UserOwnedEntity> extends
 
     @Override
     public void onDisplay() {
-        User user = securityService.getCurrentUser();
+        User user = getCurrentUser();
         T entity = (T) genericDao.findUserOwnedEntity(getType(), user);
 
         if (entity == null) {

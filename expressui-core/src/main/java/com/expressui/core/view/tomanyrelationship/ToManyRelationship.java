@@ -52,8 +52,6 @@ import java.lang.reflect.InvocationTargetException;
  */
 public abstract class ToManyRelationship<T> extends CrudResults<T> {
 
-    private boolean isViewMode;
-
     protected ToManyRelationship() {
         super();
     }
@@ -134,25 +132,6 @@ public abstract class ToManyRelationship<T> extends CrudResults<T> {
     public Class getParentEntityType() {
         BeanPropertyType beanPropertyType = BeanPropertyType.getBeanPropertyType(getType(), getParentPropertyId());
         return beanPropertyType.getType();
-    }
-
-
-    /**
-     * Asks if this component is in view-only mode.
-     *
-     * @return true if in view-only mode
-     */
-    public boolean isViewMode() {
-        return isViewMode;
-    }
-
-    /**
-     * Sets whether or not this component is in view-only mode.
-     *
-     * @param viewMode true to set in view-only mode
-     */
-    public void setViewMode(boolean viewMode) {
-        isViewMode = viewMode;
     }
 
     @Override

@@ -70,8 +70,6 @@ public abstract class SearchPage<T> extends TypedComponent<T> implements Page {
     public void postConstruct() {
         super.postConstruct();
 
-        labelRegistry.putTypeLabel(getType().getName(), getTypeCaption());
-
         if (isViewAllowed()) {
             addComponent(getSearchForm());
             addComponent(getResults());
@@ -90,6 +88,8 @@ public abstract class SearchPage<T> extends TypedComponent<T> implements Page {
 
     @Override
     public void onDisplay() {
+        getResults().search();
+
         getSearchForm().onDisplay();
         getResults().onDisplay();
     }

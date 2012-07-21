@@ -443,7 +443,13 @@ public class FormField extends DisplayField {
             container.addAll(items);
 
             if (!getBeanPropertyType().isCollectionType() && !container.containsId(selectedItems)) {
-                selectField.select(selectField.getNullSelectionItemId());
+                if (selectField.isReadOnly()) {
+                    selectField.setReadOnly(false);
+                    selectField.select(selectField.getNullSelectionItemId());
+                    selectField.setReadOnly(true);
+                } else {
+                    selectField.select(selectField.getNullSelectionItemId());
+                }
             }
         }
         autoAdjustSelectWidth();
@@ -487,7 +493,13 @@ public class FormField extends DisplayField {
             selectField.addItem(item);
             selectField.setItemCaption(item, caption);
             if (previouslySelectedValue != null && previouslySelectedValue.equals(item)) {
-                selectField.setValue(item);
+                if (selectField.isReadOnly()) {
+                    selectField.setReadOnly(false);
+                    selectField.setValue(item);
+                    selectField.setReadOnly(true);
+                } else {
+                    selectField.setValue(item);
+                }
             }
         }
 

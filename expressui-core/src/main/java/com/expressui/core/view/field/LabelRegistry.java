@@ -147,11 +147,13 @@ public class LabelRegistry {
         String propertyPath = type + "." + propertyId;
         String label = "";
         Set<DisplayLabel> displayLabels = labels.get(propertyPath);
-        for (DisplayLabel displayLabel : displayLabels) {
-            if (!label.isEmpty()) {
-                label += ", ";
+        if (displayLabels != null) {
+            for (DisplayLabel displayLabel : displayLabels) {
+                if (!label.isEmpty()) {
+                    label += ", ";
+                }
+                label += displayLabel.getDisplayName();
             }
-            label += displayLabel.getDisplayName();
         }
 
         return label;

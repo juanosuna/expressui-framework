@@ -132,7 +132,7 @@ public class Permission extends WritableEntity implements NameableEntity {
         if (getField() == null) {
             return getTargetType();
         } else {
-            return getTargetTypeLabel() + "." + getFieldLabel();
+            return getTargetType() + "." + getField();
         }
     }
 

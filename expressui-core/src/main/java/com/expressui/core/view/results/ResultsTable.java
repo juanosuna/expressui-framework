@@ -51,6 +51,7 @@ import com.vaadin.data.util.BeanItem;
 import com.vaadin.data.util.BeanItemContainer;
 import com.vaadin.data.util.EnhancedBeanItemContainer;
 import com.vaadin.data.util.PropertyFormatter;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import com.vaadin.ui.themes.BaseTheme;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -128,7 +129,7 @@ public class ResultsTable extends Table {
     }
 
     /**
-     * @see com.vaadin.ui.Table.enableContentRefreshing
+     * @see com.vaadin.ui.Table#enableContentRefreshing
      */
     public void turnOnContentRefreshing() {
         enableContentRefreshing(true);
@@ -303,10 +304,14 @@ public class ResultsTable extends Table {
             FormLink formLink = results.getResultsFieldSet().getField(propertyId.toString()).getFormLink();
 
             if (formLink != null) {
-                BeanItem item = getContainerDataSource().getItem(itemId);
-                Button button = new ButtonLink(item.getItemProperty(propertyId));
-                button.addListener(new ButtonLinkClickListener(formLink, item));
-                return button;
+                boolean isViewAllowed = results.getCurrentUser().isViewAllowed(
+                        formLink.getEntityForm().getType().getName());
+                if (isViewAllowed) {
+                    BeanItem item = getContainerDataSource().getItem(itemId);
+                    Button button = new ButtonLink(item.getItemProperty(propertyId));
+                    button.addListener(new ButtonLinkClickListener(formLink, item));
+                    return button;
+                }
             }
 
             return null;
@@ -326,16 +331,26 @@ public class ResultsTable extends Table {
         public void buttonClick(Button.ClickEvent event) {
             Object parentBean = item.getBean();
             try {
-                Object propertyBean = PropertyUtils.getProperty(parentBean,
-                        formLink.getPropertyId());
                 EntityForm entityForm = formLink.getEntityForm();
+                entityForm.setViewMode(!results.getCurrentUser().isEditAllowed(entityForm.getType().getName()));
+                entityForm.syncCrudActions();
+
                 entityForm.addCancelListener(results, "search");
                 entityForm.addCloseListener(results, "search");
+                Object propertyBean = PropertyUtils.getProperty(parentBean, formLink.getPropertyId());
                 entityForm.load(propertyBean);
+
                 EntityFormWindow entityFormWindow = EntityFormWindow.open(entityForm);
                 entityFormWindow.addCloseListener(results, "search");
-                if (!entityForm.getViewableToManyRelationships().isEmpty()) {
-                    entityFormWindow.setHeight("95%");
+
+                if (entityForm.isPopupWindowHeightFull() == null) {
+                    if (!entityForm.getViewableToManyRelationships().isEmpty()) {
+                        entityFormWindow.setHeight(100, Sizeable.UNITS_PERCENTAGE);
+                    }
+                } else {
+                    if (entityForm.isPopupWindowHeightFull()) {
+                        entityFormWindow.setHeight(100, Sizeable.UNITS_PERCENTAGE);
+                    }
                 }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);

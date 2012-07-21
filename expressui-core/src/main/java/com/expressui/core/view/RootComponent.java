@@ -39,6 +39,7 @@ package com.expressui.core.view;
 
 import com.expressui.core.MainApplication;
 import com.expressui.core.dao.GenericDao;
+import com.expressui.core.entity.security.User;
 import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.ApplicationProperties;
 import com.expressui.core.util.StringUtil;
@@ -197,6 +198,15 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
      */
     public MainApplication getMainApplication() {
         return MainApplication.getInstance();
+    }
+
+    /**
+     * Gets the user entity for the currently logged in user.
+     *
+     * @return user entity with roles and permissions
+     */
+    public User getCurrentUser() {
+        return securityService.getCurrentUser();
     }
 
     /**

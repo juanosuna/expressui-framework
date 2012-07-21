@@ -102,13 +102,39 @@ public abstract class TypedComponent<T> extends RootComponent {
     }
 
     /**
-     * Asks if user has permission to view this component.
+     * Asks if user has permission to create this component's type.
+     *
+     * @return true if user has permission
+     */
+    public boolean isCreateAllowed() {
+        return getCurrentUser().isCreateAllowed(getType().getName());
+    }
+
+    /**
+     * Asks if user has permission to view this component's type.
      *
      * @return true if user has permission
      */
     public boolean isViewAllowed() {
-        User currentUser = securityService.getCurrentUser();
-        return currentUser.isViewAllowed(getType().getName());
+        return getCurrentUser().isViewAllowed(getType().getName());
+    }
+
+    /**
+     * Asks if user has permission to edit this component's type.
+     *
+     * @return true if user has permission
+     */
+    public boolean isEditAllowed() {
+        return getCurrentUser().isEditAllowed(getType().getName()) && isViewAllowed();
+    }
+
+    /**
+     * Asks if user has permission to delete this component's type.
+     *
+     * @return true if user has permission
+     */
+    public boolean isDeleteAllowed() {
+        return getCurrentUser().isDeleteAllowed(getType().getName());
     }
 
     @Override

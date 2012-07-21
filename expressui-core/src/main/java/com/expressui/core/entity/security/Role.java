@@ -67,7 +67,7 @@ public class Role extends WritableEntity implements NameableEntity {
     @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
     private Set<UserRole> userRoles = new HashSet<UserRole>();
 
-    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "role", cascade = CascadeType.REFRESH, orphanRemoval = true)
     private Set<Permission> permissions = new HashSet<Permission>();
 
     public Role() {
@@ -103,6 +103,7 @@ public class Role extends WritableEntity implements NameableEntity {
      *
      * @return AllowOrDeny.ALLOW or AllowOrDeny.DENY
      */
+    @NotNull
     public AllowOrDeny getAllowOrDenyByDefault() {
         return allowOrDenyByDefault;
     }
@@ -260,7 +261,8 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Asks if view access is allowed for given field (property) within given type.
+     * Asks if view access is allowed for given field (property) within given type.  If no permission
+     * exists for field, then defaults to permission of the containing type.
      *
      * @param type  type
      * @param field field
@@ -272,7 +274,8 @@ public class Role extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Asks if edit access is allowed for given field (property) within given type.
+     * Asks if edit access is allowed for given field (property) within given type. If no permission
+     * exists for field, then defaults to permission of the containing type.
      *
      * @param type  type
      * @param field field

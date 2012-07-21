@@ -38,7 +38,7 @@
 package com.expressui.core.util.assertion;
 
 /**
- * Represents error that occurs because some system services is not functioning, e.g.
+ * Represents error that occurs because some system services is not functioning, for example
  * Database or web service is unavailable.
  */
 public class SystemException extends AssertionException {

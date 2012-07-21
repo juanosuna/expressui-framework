@@ -37,10 +37,8 @@
 
 package com.expressui.core.view.tomanyrelationship;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.util.CollectionsUtil;
 import com.expressui.core.view.entityselect.EntitySelect;
-import com.vaadin.data.Property;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
@@ -59,6 +57,7 @@ import java.util.Collection;
  */
 public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
 
+    private HorizontalLayout crudButtons;
     private Button addButton;
     private Button removeButton;
 
@@ -74,7 +73,7 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
     public void postConstruct() {
         super.postConstruct();
 
-        HorizontalLayout crudButtons = new HorizontalLayout();
+        crudButtons = new HorizontalLayout();
         setDebugId(crudButtons, "crudButtons");
         crudButtons.setMargin(false, true, false, false);
         crudButtons.setSpacing(true);
@@ -88,7 +87,6 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
         removeButton = new Button(uiMessageSource.getMessage("aggregationRelationship.remove"), this, "remove");
         removeButton.setDescription(uiMessageSource.getToolTip("aggregationRelationship.remove.toolTip"));
         removeButton.setIcon(new ThemeResource("../expressui/icons/16/delete.png"));
-        removeButton.setEnabled(false);
         removeButton.addStyleName("small default");
         crudButtons.addComponent(removeButton);
 
@@ -166,7 +164,7 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
         searchImpl(false);
 
         clearSelection();
-        selectionChanged(null);
+        syncCrudActions();
     }
 
     /**
@@ -184,49 +182,55 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
     public void preRemove(T entity) {
     }
 
-    /**
-     * Sets this results component to read-only or writable.
-     *
-     * @param isReadOnly true if read only
-     */
     @Override
-    public void setReadOnly(boolean isReadOnly) {
-        super.setReadOnly(isReadOnly);
+    public void syncCrudActions() {
+        super.syncCrudActions();
 
-        addButton.setVisible(!isReadOnly);
-        removeButton.setVisible(!isReadOnly);
-        if (isReadOnly) {
+        crudButtons.setVisible(!isViewMode());
+
+        addButton.setEnabled(
+                getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId()));
+
+        Collection itemIds = (Collection) getSelectedValue();
+        getResultsTable().turnOnContentRefreshing();
+        int selectionItemsCount = itemIds.size();
+
+        if (selectionItemsCount > 0) {
+            actionContextMenu.setActionEnabled("aggregationRelationship.remove",
+                    getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId())
+                            && !isViewMode());
+            getResultsTable().addActionHandler(actionContextMenu);
+            removeButton.setEnabled(
+                    getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId()));
+        } else {
             actionContextMenu.setActionEnabled("aggregationRelationship.remove", false);
             getResultsTable().removeActionHandler(actionContextMenu);
-        } else {
-            actionContextMenu.setActionEnabled("aggregationRelationship.remove", true);
-            getResultsTable().addActionHandler(actionContextMenu);
+            removeButton.setEnabled(false);
         }
     }
 
     @Override
-    public void applySecurity() {
-        super.applySecurity();
-        applySecurityIsEditable();
+    public boolean isViewAllowed() {
+        return super.isViewAllowed() &&
+                getCurrentUser().isViewAllowed(getParentEntityType().getName(), getChildPropertyId());
     }
 
-    /**
-     * Reads current security rules and applies them to this results component, making CRUD buttons (in)visible.
-     */
-    private void applySecurityIsEditable() {
-        boolean isEditable = securityService.getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId());
-        addButton.setVisible(isEditable);
-        removeButton.setVisible(isEditable);
+    @Override
+    public boolean isEditAllowed() {
+        return super.isEditAllowed() &&
+                getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId());
+    }
 
-        if (isEditable) {
-            actionContextMenu.setActionEnabled("aggregationRelationship.remove", true);
-            getResultsTable().addActionHandler(actionContextMenu);
-        } else {
-            actionContextMenu.setActionEnabled("aggregationRelationship.remove", false);
-            getResultsTable().removeActionHandler(actionContextMenu);
-        }
+    @Override
+    public boolean isCreateAllowed() {
+        return super.isCreateAllowed()
+                && getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId());
+    }
 
-        selectionChanged(null);
+    @Override
+    public boolean isDeleteAllowed() {
+        return super.isDeleteAllowed()
+                && getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId());
     }
 
     /**
@@ -239,30 +243,10 @@ public abstract class AggregationRelationship<T> extends ToManyRelationship<T> {
         showAddSuccessful();
     }
 
+    /**
+     * Shows message indicating that add was successful.
+     */
     public void showAddSuccessful() {
         getMainApplication().showMessage(uiMessageSource.getMessage("aggregationRelationship.added"));
-    }
-
-    /**
-     * Invoked whenever user changes selection of rows in results table.
-     */
-    @Override
-    public void selectionChanged(Property.ValueChangeEvent event) {
-        super.selectionChanged(event);
-
-        boolean isEditable = securityService.getCurrentUser().isEditAllowed(getParentEntityType().getName(), getChildPropertyId());
-
-        getResultsTable().turnOnContentRefreshing();
-
-        Collection itemIds = (Collection) getResultsTable().getValue();
-        if (itemIds.size() > 0 && isEditable && !isViewMode()) {
-            actionContextMenu.setActionEnabled("aggregationRelationship.remove", true);
-            getResultsTable().addActionHandler(actionContextMenu);
-            removeButton.setEnabled(true);
-        } else {
-            actionContextMenu.setActionEnabled("aggregationRelationship.remove", false);
-            getResultsTable().removeActionHandler(actionContextMenu);
-            removeButton.setEnabled(false);
-        }
     }
 }

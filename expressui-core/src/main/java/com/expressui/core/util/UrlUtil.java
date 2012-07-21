@@ -61,7 +61,7 @@ public class UrlUtil {
      * Invokes URL and get the contents returned.
      *
      * @param urlStr url
-     * @return contents, e.g. HTML
+     * @return contents, for example HTML
      * @throws IOException
      */
     public static String getContents(String urlStr) throws IOException {

@@ -47,8 +47,6 @@ import com.expressui.core.view.menu.MainMenuBar;
 import com.expressui.core.view.menu.MenuBarNode;
 import com.expressui.core.view.page.Page;
 import com.expressui.core.view.page.PageConversation;
-import com.expressui.core.view.page.SearchPage;
-import com.expressui.core.view.results.CrudResults;
 import com.expressui.core.view.util.MessageSource;
 import com.github.wolfie.sessionguard.SessionGuard;
 import com.vaadin.Application;
@@ -416,14 +414,15 @@ public abstract class MainApplication extends Application implements ViewBean, H
         User currentUser = securityService.getCurrentUser();
 
         if (!currentUser.isViewAllowed(pageClass.getName())) {
-            showError(uiMessageSource.getMessage("mainApplication.notAllowed"));
+            showError(uiMessageSource.getMessage("mainApplication.notAllowed", new Object[]{pageClass.getName()}));
             return;
         }
 
         Page page = loadPageBean(pageClass);
 
         if (page instanceof TypedComponent && !((TypedComponent) page).isViewAllowed()) {
-            showError(uiMessageSource.getMessage("mainApplication.notAllowed"));
+            showError(uiMessageSource.getMessage("mainApplication.notAllowed",
+                    new Object[]{((TypedComponent) page).getType().getName()}));
             return;
         }
 
@@ -454,14 +453,6 @@ public abstract class MainApplication extends Application implements ViewBean, H
             page.postWire();
             pageLayoutTabSheet.addTab(page);
             pageLayoutTabSheet.setSelectedTab(page);
-        }
-
-        if (page instanceof SearchPage) {
-            SearchPage searchPage = (SearchPage) page;
-            searchPage.getResults().search();
-            if (searchPage.getResults() instanceof CrudResults) {
-                ((CrudResults) searchPage.getResults()).applySecurity();
-            }
         }
 
         page.onDisplay();

@@ -79,4 +79,19 @@ public abstract class UserOwnedEntityForm<T extends UserOwnedEntity> extends Ent
         User user = userDao.merge(entity.getUser());
         entity.setUser(user);
     }
+
+    @Override
+    public void onDisplay() {
+        super.onDisplay();
+
+        syncCrudActions();
+    }
+
+    @Override
+    public void syncCrudActions() {
+        super.syncCrudActions();
+
+        getSaveAndCloseButton().setVisible(false);
+        getSaveAndCloseButton().setEnabled(false);
+    }
 }

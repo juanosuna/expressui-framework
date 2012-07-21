@@ -386,7 +386,8 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Asks if view access is allowed for given field (property) within given type.
+     * Asks if view access is allowed for given field (property) within given type.  If no permission
+     * exists for field, then defaults to permission of the containing type.
      *
      * @param type  type to check
      * @param field field to check
@@ -404,7 +405,8 @@ public class User extends WritableEntity implements NameableEntity {
     }
 
     /**
-     * Asks if edit access is allowed for given field (property) within given type.
+     * Asks if edit access is allowed for given field (property) within given type.  If no permission
+     * exists for field, then defaults to permission of the containing type.
      *
      * @param type  type to check
      * @param field field to check

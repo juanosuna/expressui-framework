@@ -43,6 +43,7 @@ import com.expressui.core.entity.security.Role;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.entity.security.UserRole;
 import com.expressui.core.security.exception.*;
+import com.expressui.core.util.StringUtil;
 import com.expressui.core.util.assertion.Assert;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.springframework.context.annotation.Scope;
@@ -186,15 +187,16 @@ public class SecurityService {
     public User login(String loginName, String loginPassword) throws AuthenticationException {
         logout();
 
-        if (loginName == null) loginName = "";
-        if (loginPassword == null) loginPassword = "";
-        loginName = loginName.trim();
+        Assert.PROGRAMMING.notNull(loginName, "login name must not be null");
 
+        loginName = loginName.trim();
         User user = findUser(loginName);
 
-        BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
-        if (!passwordEncryptor.checkPassword(loginPassword, user.getLoginPasswordEncrypted())) {
-            throw new IncorrectCredentialsException();
+        if (!(StringUtil.isEmpty(user.getLoginPasswordEncrypted()) && StringUtil.isEmpty(loginPassword))) {
+            BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+            if (!passwordEncryptor.checkPassword(loginPassword, user.getLoginPasswordEncrypted())) {
+                throw new IncorrectCredentialsException();
+            }
         }
 
         assertLoginAllowed(user);

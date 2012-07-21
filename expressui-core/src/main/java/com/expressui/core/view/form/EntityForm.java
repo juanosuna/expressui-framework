@@ -37,7 +37,6 @@
 
 package com.expressui.core.view.form;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.entity.NameableEntity;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.util.MethodDelegate;
@@ -196,7 +195,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         List<ToManyRelationship> toManyRelationships = getToManyRelationships();
 
         for (ToManyRelationship toManyRelationship : toManyRelationships) {
-            User user = securityService.getCurrentUser();
+            User user = getCurrentUser();
 
             if (user.isViewAllowed(toManyRelationship.getType().getName())
                     && !toManyRelationship.getResultsFieldSet().getViewablePropertyIds().isEmpty()
@@ -273,7 +272,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     /**
      * Sets whether or not this form is in read/view-only mode. Note that this action does not immediately change
      * fields to read-only or restore them to writable. It just sets the mode for the next time
-     * an entity is loaded or {@link #applyViewMode} is called.
+     * an entity is loaded or {@link #syncCrudActions} is called.
      *
      * @param viewMode true if in view-only mode
      */
@@ -286,66 +285,23 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     }
 
     /**
-     * Applies current view mode to form.
+     * Synchronizes the states of CRUD action buttons and context menu items so that they are consistent
+     * with security permissions, the number of rows selected (if any) and whether or not this component
+     * is in view mode. Synchronization is performed on form buttons and any to-many relatonships.
      */
-    public void applyViewMode() {
-        if (isViewMode()) {
-            setReadOnly(true);
-        } else {
-            applySecurityIsEditable();
+    public void syncCrudActions() {
+        getFormFieldSet().setReadOnly(isViewMode());
+        if (!isViewMode()) {
+            getFormFieldSet().applySecurity();
         }
-    }
 
-    /**
-     * Sets entire form to either read-only or writable, including fields, to-many relationships and action buttons.
-     *
-     * @param isReadOnly true to set to read-only, otherwise make writable
-     */
-    @Override
-    public void setReadOnly(boolean isReadOnly) {
-        super.setReadOnly(isReadOnly);
-
-        getFormFieldSet().setReadOnly(isReadOnly);
-
-        saveAndCloseButton.setVisible(!isReadOnly);
-        saveAndStayOpenButton.setVisible(!isReadOnly);
-        refreshButton.setVisible(!isReadOnly);
+        saveAndCloseButton.setVisible(!isViewMode());
+        saveAndStayOpenButton.setVisible(!isViewMode());
+        refreshButton.setVisible(!isViewMode());
 
         List<ToManyRelationship> toManyRelationships = getToManyRelationships();
         for (ToManyRelationship toManyRelationship : toManyRelationships) {
-            toManyRelationship.setReadOnly(isReadOnly);
-        }
-    }
-
-    /**
-     * Restores the read-only settings of the form fields to how they were originally configured,
-     * based on security permissions and programatic settings.
-     */
-    public void restoreIsReadOnly() {
-        getFormFieldSet().restoreIsReadOnly();
-
-        saveAndCloseButton.setVisible(true);
-        saveAndStayOpenButton.setVisible(true);
-        refreshButton.setVisible(true);
-
-        List<ToManyRelationship> toManyRelationships = getToManyRelationships();
-        for (ToManyRelationship toManyRelationship : toManyRelationships) {
-            toManyRelationship.setReadOnly(false);
-        }
-    }
-
-    /**
-     * Applies security permission logic to fields for controlling if each field is editable.
-     */
-    public void applySecurityIsEditable() {
-        saveAndCloseButton.setVisible(true);
-        saveAndStayOpenButton.setVisible(true);
-        refreshButton.setVisible(true);
-        getFormFieldSet().applySecurityIsEditable();
-
-        List<ToManyRelationship> toManyRelationships = getToManyRelationships();
-        for (ToManyRelationship toManyRelationship : toManyRelationships) {
-            toManyRelationship.applySecurity();
+            toManyRelationship.syncCrudActions();
         }
     }
 
@@ -442,7 +398,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
                 Object parent = getBean();
                 toManyRelationship.getEntityQuery().setParent(parent);
                 toManyRelationship.search();
-                toManyRelationship.selectionChanged(null);
+                toManyRelationship.syncCrudActions();
 
             }
             toManyRelationshipTabs.setVisible(true);
@@ -636,7 +592,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         clearAllErrors(true);
         getForm().discard();
         setViewMode(false);
-        applyViewMode();
+        syncCrudActions();
         BeanItem beanItem = (BeanItem) getForm().getItemDataSource();
         if (beanItem == null) {
             clear();
@@ -937,25 +893,6 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         saveAndStayOpenButton.setIcon(saveAndStayOpenButtonIconBackup);
     }
 
-    /**
-     * Sets whether or not to enable and hide cancel button.
-     *
-     * @param isEnabled true if cancel button will be enabled
-     */
-    public void enableCancelButton(Boolean isEnabled) {
-        cancelButton.setEnabled(isEnabled);
-        cancelButton.setVisible(isEnabled);
-    }
-
-    /**
-     * Sets whether or not to enable and hide save-and-close button.
-     *
-     * @param isEnabled true if save-and-close button will be enabled
-     */
-    public void enableSaveAndCloseButton(Boolean isEnabled) {
-        saveAndCloseButton.setEnabled(isEnabled);
-        saveAndCloseButton.setVisible(isEnabled);
-    }
 
     /**
      * Lifecycle method called after new entity is created for this form

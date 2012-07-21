@@ -793,9 +793,9 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Applies security is-editable permissions to all fields.
+     * Applies security permissions to all fields.
      */
-    public void applySecurityIsEditable() {
+    public void applySecurity() {
         Collection<FormField> formFields = getFormFields();
         for (FormField formField : formFields) {
             if (formField.getField() instanceof SelectField) {
@@ -815,11 +815,30 @@ public class FormFieldSet extends FieldSet {
                     formField.restoreIsReadOnly();
                 }
             }
-            if (getForm() instanceof SearchForm
-                    || securityService.getCurrentUser().isViewAllowed(getType().getName(), formField.getPropertyId())) {
+            if (securityService.getCurrentUser().isViewAllowed(getType().getName(), formField.getPropertyId())) {
                 formField.allowView();
             } else {
                 formField.denyView();
+            }
+        }
+    }
+
+    /**
+     * Applies security permissions to SelectFields only in SearchForm
+     */
+    public void applySecurityToSearchFormFields() {
+        Collection<FormField> formFields = getFormFields();
+        for (FormField formField : formFields) {
+            if (formField.getField() instanceof SelectField) {
+                SelectField selectField = (SelectField) formField.getField();
+                String toOneType = selectField.getEntitySelect().getType().getName();
+                if (!securityService.getCurrentUser().isViewAllowed(toOneType)
+                        || selectField.getEntitySelect().getResults().getResultsFieldSet().getViewablePropertyIds().isEmpty()) {
+                    formField.setReadOnly(true);
+                } else {
+                    formField.restoreIsReadOnly();
+                }
+                formField.allowView();
             }
         }
     }

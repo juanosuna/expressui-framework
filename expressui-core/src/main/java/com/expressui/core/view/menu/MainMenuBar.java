@@ -111,7 +111,7 @@ public class MainMenuBar extends RootComponent {
         setComponentAlignment(rightMenuBar, Alignment.MIDDLE_RIGHT);
 
         if (leftMenuBar.getSize() == 0 && rightMenuBar.getSize() == 0) {
-            if (securityService.getCurrentUser().getRoles().isEmpty()) {
+            if (getCurrentUser().getRoles().isEmpty()) {
                 getMainApplication().showError("Menu bar contains no viewable items because current user is not assigned any roles.");
             } else {
                 getMainApplication().showError("Menu bar contains no viewable items, either because none have been coded"

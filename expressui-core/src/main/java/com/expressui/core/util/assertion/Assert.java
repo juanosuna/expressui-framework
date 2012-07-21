@@ -58,7 +58,7 @@ public class Assert {
     public static final Assert CONFIGURATION = new Assert(AssertionExceptionType.CONFIGURATION_EXCEPTION);
 
     /**
-     * Used to assert system correctness. Failure indicates system failure, e.g. database or network down,
+     * Used to assert system correctness. Failure indicates system failure, for example database or network down,
      * and may happen in production. SystemException should be reported to an administrator.
      */
     public static final Assert SYSTEM = new Assert(AssertionExceptionType.SYSTEM_EXCEPTION);

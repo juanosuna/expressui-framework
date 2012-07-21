@@ -39,6 +39,7 @@ package com.expressui.core.view.form;
 
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.TypedComponent;
+import com.expressui.core.view.export.ExportForm;
 import com.expressui.core.view.field.FormField;
 import com.expressui.core.view.field.SelectField;
 import com.expressui.core.view.field.format.DefaultFormats;
@@ -518,7 +519,7 @@ public abstract class TypedForm<T> extends TypedComponent<T> {
             FormFieldSet formFieldSet = getFormFieldSet();
             String currentTabName = getCurrentlySelectedTabName();
             if (formFieldSet.containsPropertyId(currentTabName, propertyId.toString())) {
-                if (TypedForm.this instanceof SearchForm
+                if (TypedForm.this instanceof SearchForm || TypedForm.this instanceof ExportForm
                         || securityService.getCurrentUser().isViewAllowed(TypedForm.this.getType().getName(),
                         propertyId.toString())) {
                     gridLayout.addField(getFormFieldSet().getFormField(propertyId.toString()));
