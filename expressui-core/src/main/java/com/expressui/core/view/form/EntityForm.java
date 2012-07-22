@@ -666,6 +666,11 @@ public abstract class EntityForm<T> extends TypedForm<T> {
             T entity = getBean();
             checkThatToOneSelectionsExist();
             if (genericDao.getId(entity) != null) {
+                T foundEntity = genericDao.find(getType(), genericDao.getId(entity));
+                if (foundEntity == null) {
+                    throw new EntityNotFoundException(entity.toString());
+                }
+
                 T mergedEntity;
                 if (getEntityDao() == null) {
                     mergedEntity = genericDao.merge(entity);

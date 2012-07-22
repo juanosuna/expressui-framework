@@ -56,6 +56,6 @@ public enum OpportunityType implements NameableEntity {
 
     @Override
     public String toString() {
-        return name;
+        return getName();
     }
 }

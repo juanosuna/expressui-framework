@@ -552,7 +552,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
         } else if ((cause = ExceptionUtil.findThrowableInChain(rootThrowable, EntityNotFoundException.class)) != null) {
             log.warn("Terminal error: ", rootThrowable);
             getMainWindow().showNotification(
-                    uiMessageSource.getMessage("mainApplication.entityNotFound", new Object[]{cause.getMessage()}),
+                    uiMessageSource.getMessage("mainApplication.entityNotFound"),
                     Window.Notification.TYPE_ERROR_MESSAGE);
         } else {
             super.terminalError(event);
