@@ -37,7 +37,6 @@
 
 package com.expressui.sample.view.registration;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.view.page.UserOwnedEntityFormPage;
 import com.expressui.sample.entity.Profile;
 import org.springframework.context.annotation.Scope;

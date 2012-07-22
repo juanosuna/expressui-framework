@@ -769,9 +769,7 @@ public class FormField extends DisplayField {
             ((SelectField) getField()).setButtonVisible(!isReadOnly);
         }
 
-        if (!(getField() instanceof ListSelect)) {
-            getField().setReadOnly(isReadOnly);
-        }
+        getField().setReadOnly(isReadOnly);
     }
 
     /**

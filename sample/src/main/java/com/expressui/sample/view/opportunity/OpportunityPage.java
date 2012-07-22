@@ -37,7 +37,6 @@
 
 package com.expressui.sample.view.opportunity;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.view.page.SearchPage;
 import com.expressui.sample.entity.Opportunity;
 import org.springframework.context.annotation.Scope;

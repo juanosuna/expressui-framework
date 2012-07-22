@@ -144,7 +144,7 @@ public abstract class DisplayField {
     /**
      * Generates the default property formatter for this field. Can be overridden to refine the behavior.
      *
-     * @return Vaadin proprety formatter
+     * @return Vaadin property formatter
      */
     protected PropertyFormatter generateDefaultPropertyFormatter() {
         DefaultFormats defaultFormats = getFieldSet().defaultFormats;

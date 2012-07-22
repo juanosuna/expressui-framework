@@ -256,6 +256,21 @@ public class ReflectionUtil {
     }
 
     /**
+     * Creates a default value for a primitive type, false for boolean and 0 for everything else.
+     *
+     * @param primitiveType primitive type to create default value for
+     * @return primitive wrapper with default value
+     */
+    public static Object createDefaultPrimitiveValue(Class primitiveType) {
+        Assert.PROGRAMMING.isTrue(primitiveType.isPrimitive(), "argument must be a primitive type");
+        if (isBooleanType(primitiveType)) {
+            return false;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
      * Asks if given type is a number type.
      *
      * @param type type to check
@@ -270,6 +285,23 @@ public class ReflectionUtil {
         }
 
         return Number.class.isAssignableFrom(clazz);
+    }
+
+    /**
+     * Asks if given type is a boolean type.
+     *
+     * @param type type to check
+     * @return true if a boolean
+     */
+    public static boolean isBooleanType(Class type) {
+        Class clazz;
+        if (type.isPrimitive()) {
+            clazz = ClassUtils.primitiveToWrapper(type);
+        } else {
+            clazz = type;
+        }
+
+        return Boolean.class.isAssignableFrom(clazz);
     }
 
     /**

@@ -221,7 +221,7 @@ public class ContactSelect extends EntitySelect<Contact> {
 
         @Override
         public void addFetchJoins(Root<Contact> contact) {
-            contact.fetch("mailingAddress", JoinType.LEFT).fetch("state", JoinType.LEFT);
+            contact.fetch("mailingAddress", JoinType.LEFT);
             contact.fetch("account", JoinType.LEFT);
         }
 

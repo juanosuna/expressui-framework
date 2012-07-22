@@ -38,7 +38,6 @@
 package com.expressui.core.view;
 
 import com.expressui.core.dao.EntityDao;
-import com.expressui.core.entity.security.User;
 import com.expressui.core.util.ReflectionUtil;
 import com.expressui.core.util.SpringApplicationContext;
 import com.expressui.core.util.assertion.Assert;

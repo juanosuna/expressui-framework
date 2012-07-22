@@ -37,7 +37,6 @@
 
 package com.expressui.sample.view;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.view.RootComponent;
 import com.expressui.core.view.page.Page;
 import com.vaadin.terminal.ExternalResource;

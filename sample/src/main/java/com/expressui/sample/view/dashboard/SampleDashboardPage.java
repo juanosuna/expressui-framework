@@ -37,7 +37,6 @@
 
 package com.expressui.sample.view.dashboard;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.util.UrlUtil;
 import com.expressui.core.view.page.DashboardPage;
 import com.expressui.domain.geocode.MapService;

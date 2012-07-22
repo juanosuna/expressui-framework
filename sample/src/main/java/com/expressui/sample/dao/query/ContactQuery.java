@@ -104,8 +104,10 @@ public class ContactQuery extends StructuredEntityQuery<Contact> {
     public Path buildOrderBy(Root<Contact> contact) {
         if (getOrderByPropertyId().equals("mailingAddress.country")) {
             return contact.join("mailingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
-        } else if (getOrderByPropertyId().equals("mailingAddress.state.code")) {
-            return contact.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
+        } else if (getOrderByPropertyId().equals("mailingAddress.city")) {
+            return contact.join("mailingAddress", JoinType.LEFT).get("city");
+        } else if (getOrderByPropertyId().equals("mailingAddress.state.name")) {
+            return contact.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("name");
         } else if (getOrderByPropertyId().equals("account.name")) {
             return contact.join("account", JoinType.LEFT).get("name");
         } else {
@@ -115,7 +117,7 @@ public class ContactQuery extends StructuredEntityQuery<Contact> {
 
     @Override
     public void addFetchJoins(Root<Contact> contact) {
-        contact.fetch("mailingAddress", JoinType.LEFT).fetch("state", JoinType.LEFT);
+        contact.fetch("mailingAddress", JoinType.LEFT);
         contact.fetch("account", JoinType.LEFT);
     }
 

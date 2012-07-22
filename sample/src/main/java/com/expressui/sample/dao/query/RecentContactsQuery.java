@@ -42,6 +42,7 @@ import com.expressui.sample.entity.Contact;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
@@ -69,7 +70,9 @@ public class RecentContactsQuery extends StructuredEntityQuery<Contact> {
 
     @Override
     public void addFetchJoins(Root<Contact> contact) {
-        contact.fetch("mailingAddress", JoinType.LEFT).fetch("state", JoinType.LEFT);
+        Fetch mailingAddress = contact.fetch("mailingAddress", JoinType.LEFT);
+        mailingAddress.fetch("state", JoinType.LEFT);
+        mailingAddress.fetch("country", JoinType.LEFT);
     }
 
     @Override

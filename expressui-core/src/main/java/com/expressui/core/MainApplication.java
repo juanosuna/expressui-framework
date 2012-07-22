@@ -302,6 +302,7 @@ public abstract class MainApplication extends Application implements ViewBean, H
      */
     public void addCookie(String name, String value) {
         Cookie cookie = new Cookie(name, value);
+        cookie.setPath("/");
         getResponse().addCookie(cookie);
     }
 
@@ -310,13 +311,14 @@ public abstract class MainApplication extends Application implements ViewBean, H
      *
      * @param name   name of the cookie
      * @param value  value
-     * @param expiry
+     * @param maxAge max age
      * @see Cookie#Cookie(String, String)
      * @see Cookie#setMaxAge(int)
      */
-    public void addCookie(String name, String value, int expiry) {
+    public void addCookie(String name, String value, int maxAge) {
         Cookie cookie = new Cookie(name, value);
-        cookie.setMaxAge(expiry);
+        cookie.setMaxAge(maxAge);
+        cookie.setPath("/");
         getResponse().addCookie(cookie);
     }
 

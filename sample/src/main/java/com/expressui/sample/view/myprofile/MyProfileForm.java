@@ -37,7 +37,6 @@
 
 package com.expressui.sample.view.myprofile;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.view.field.format.UrlPropertyFormatter;
 import com.expressui.core.view.form.FormFieldSet;
 import com.expressui.core.view.form.UserOwnedEntityForm;

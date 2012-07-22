@@ -37,7 +37,6 @@
 
 package com.expressui.sample.view.contact;
 
-import com.expressui.core.MainApplication;
 import com.expressui.core.view.page.SearchPage;
 import com.expressui.sample.entity.Contact;
 import com.vaadin.ui.AbstractOrderedLayout;

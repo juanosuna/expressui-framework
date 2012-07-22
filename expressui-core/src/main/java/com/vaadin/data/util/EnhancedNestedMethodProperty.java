@@ -37,6 +37,8 @@
 
 package com.vaadin.data.util;
 
+import com.expressui.core.util.ReflectionUtil;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
@@ -98,6 +100,21 @@ public class EnhancedNestedMethodProperty extends NestedMethodProperty {
         } else {
             super.invokeSetMethod(value);
         }
+    }
+
+    @Override
+    public void setValue(Object newValue) throws ReadOnlyException, ConversionException {
+        if (newValue == null) {
+            List<Method> getMethods = getGetMethods();
+            Method lastGetMethod = getMethods.get(getMethods.size() - 1);
+            Class returnType = lastGetMethod.getReturnType();
+            if (returnType.isPrimitive()) {
+                super.setValue(ReflectionUtil.createDefaultPrimitiveValue(returnType));
+                return;
+            }
+        }
+
+        super.setValue(newValue);
     }
 
     private void fillNullsInPropertyPath() {

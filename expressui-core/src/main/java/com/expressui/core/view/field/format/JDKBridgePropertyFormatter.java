@@ -92,4 +92,13 @@ public class JDKBridgePropertyFormatter extends EnhancedPropertyFormatter {
             return format.parseObject(formattedValue);
         }
     }
+
+    @Override
+    public void setValue(Object newValue) throws ReadOnlyException, ConversionException {
+        if (newValue == null) {
+            super.setValue(getDefaultValueWhenEmpty());
+        } else {
+            super.setValue(newValue);
+        }
+    }
 }
