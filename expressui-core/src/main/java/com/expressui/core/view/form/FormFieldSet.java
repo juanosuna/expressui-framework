@@ -741,13 +741,40 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Sets whether or not this field is required.
+     * Asks if this field is originally required, which is automatically set based on the bound bean's validation
+     * annotations, or can be set programmatically.
+     *
+     * @param propertyId property id
+     * @return true if required
+     */
+    public boolean isOriginallyRequired(String propertyId) {
+        return getFormField(propertyId).isOriginallyRequired();
+    }
+
+    /**
+     * Sets whether or not field is required. This value may also be set programmatically.
      *
      * @param propertyId property id to identify field to set
      * @param isRequired true if required
      */
-    public void setCurrentlyRequired(String propertyId, boolean isRequired) {
-        getFormField(propertyId).setCurrentlyRequired(isRequired);
+    public void setOriginallyRequired(String propertyId, boolean isRequired) {
+        getFormField(propertyId).setOriginallyRequired(isRequired);
+    }
+
+    /**
+     * Sets whether or not this field is dynamically required. Note that this may be false while
+     * {@link #isOriginallyRequired(String)} is true.
+     * This may happen in the case where this field is bound to nested property id where the leaf is required but
+     * one of its ancestors is not required and is dynamically null. For example, street may be required in Address but
+     * contact.mailingAddress is not required and dynamically null. In this scenario, the street field may be currently
+     * not required, since it's ancestor (contact.mailingAddress) is null. If contact.mailingAddress is set,
+     * then the street field becomes required.
+     *
+     * @param propertyId property id to identify field to set
+     * @param isRequired true if required
+     */
+    public void setDynamicallyRequired(String propertyId, boolean isRequired) {
+        getFormField(propertyId).setDynamicallyRequired(isRequired);
     }
 
     /**
@@ -761,29 +788,50 @@ public class FormFieldSet extends FieldSet {
     }
 
     /**
-     * Sets whether or not field is read-only.
+     * Asks if this field is originally read-only, irrespective of view-mode or security permissions.
+     *
+     * @param propertyId property id
+     * @return true if this field is read-only
+     */
+    public boolean isOriginallyReadOnly(String propertyId) {
+        return getFormField(propertyId).isOriginallyReadOnly();
+    }
+
+    /**
+     * Sets whether or not field is read-only, irrespective of view-mode or security permissions.
      *
      * @param propertyId property id to identify field to set
      * @param isReadOnly true if read-only
      */
-    public void setReadOnly(String propertyId, boolean isReadOnly) {
-        getFormField(propertyId).setReadOnly(isReadOnly);
+    public void setOriginalReadOnly(String propertyId, boolean isReadOnly) {
+        getFormField(propertyId).setOriginallyReadOnly(isReadOnly);
     }
 
     /**
-     * Sets whether or not all fields are read-only.
+     * Sets whether or not field is dynamically read-only, based on view-mode or security permissions.
+     *
+     * @param propertyId property id to identify field to set
+     * @param isReadOnly true if read-only
+     */
+    public void setDynamicallyReadOnly(String propertyId, boolean isReadOnly) {
+        getFormField(propertyId).setDynamicallyReadOnly(isReadOnly);
+    }
+
+    /**
+     * Sets whether or not all fields are read-only, based on view-mode or security permissions.
      *
      * @param isReadOnly true if read-only
      */
-    public void setReadOnly(boolean isReadOnly) {
+    public void setDynamicallyReadOnly(boolean isReadOnly) {
         Collection<FormField> formFields = getFormFields();
         for (FormField formField : formFields) {
-            formField.setReadOnly(isReadOnly);
+            formField.setDynamicallyReadOnly(isReadOnly);
         }
     }
 
     /**
-     * Restores read-only setting for all fields, if they were temporarily changed for view-only mode.
+     * Restores original read-only setting for all fields, if they were temporarily changed for view-only mode or
+     * security permissions.
      */
     public void restoreIsReadOnly() {
         Collection<FormField> formFields = getFormFields();
@@ -804,13 +852,13 @@ public class FormFieldSet extends FieldSet {
                 if (!securityService.getCurrentUser().isEditAllowed(getType().getName(), formField.getPropertyId())
                         || !securityService.getCurrentUser().isViewAllowed(toOneType)
                         || selectField.getEntitySelect().getResults().getResultsFieldSet().getViewablePropertyIds().isEmpty()) {
-                    formField.setReadOnly(true);
+                    formField.setDynamicallyReadOnly(true);
                 } else {
                     formField.restoreIsReadOnly();
                 }
             } else {
                 if (!securityService.getCurrentUser().isEditAllowed(getType().getName(), formField.getPropertyId())) {
-                    formField.setReadOnly(true);
+                    formField.setDynamicallyReadOnly(true);
                 } else {
                     formField.restoreIsReadOnly();
                 }
@@ -834,7 +882,7 @@ public class FormFieldSet extends FieldSet {
                 String toOneType = selectField.getEntitySelect().getType().getName();
                 if (!securityService.getCurrentUser().isViewAllowed(toOneType)
                         || selectField.getEntitySelect().getResults().getResultsFieldSet().getViewablePropertyIds().isEmpty()) {
-                    formField.setReadOnly(true);
+                    formField.setDynamicallyReadOnly(true);
                 } else {
                     formField.restoreIsReadOnly();
                 }

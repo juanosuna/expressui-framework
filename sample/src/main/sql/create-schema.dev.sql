@@ -238,7 +238,7 @@
         ACCOUNT_LOCKED boolean not null,
         CREDENTIALS_EXPIRED boolean not null,
         ENABLED boolean not null,
-        LOGIN_NAME varchar(16) not null,
+        LOGIN_NAME varchar(16) not null unique,
         LOGIN_PASSWORD_ENCRYPTED varchar(255),
         primary key (ID)
     );

@@ -290,7 +290,11 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      * is in view mode. Synchronization is performed on form buttons and any to-many relatonships.
      */
     public void syncCrudActions() {
-        getFormFieldSet().setReadOnly(isViewMode());
+        if (isViewMode()) {
+            getFormFieldSet().setDynamicallyReadOnly(true);
+        } else {
+            getFormFieldSet().restoreIsReadOnly();
+        }
         if (!isViewMode()) {
             getFormFieldSet().applySecurity();
         }

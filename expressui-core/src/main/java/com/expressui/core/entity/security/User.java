@@ -58,6 +58,7 @@ import java.util.Set;
 @Table(name = "UZER") // avoid table named user, as this is a reserved word in Oracle
 public class User extends WritableEntity implements NamedEntity {
 
+    @Column(unique=true)
     private String loginName;
 
     private String loginPasswordEncrypted;

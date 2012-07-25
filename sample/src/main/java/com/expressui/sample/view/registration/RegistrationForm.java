@@ -91,14 +91,14 @@ public class RegistrationForm extends MyProfileForm<Profile> {
     public void init(FormFieldSet formFields) {
         super.init(formFields);
 
-        formFields.setReadOnly("user.loginName", false);
+        formFields.setOriginalReadOnly("user.loginName", false);
         formFields.addValidator("user.loginName", uniqueLoginNameValidator);
         // tricky: need to allow committing of non-unique loginName to entity so that entity-level validations are
         // applied against same data as Vaadin Validator
         formFields.getFormField("user.loginName").getField().setInvalidCommitted(true);
 
-        formFields.setCurrentlyRequired("user.loginPassword", true);
-        formFields.setCurrentlyRequired("user.repeatLoginPassword", true);
+        formFields.setOriginallyRequired("user.loginPassword", true);
+        formFields.setOriginallyRequired("user.repeatLoginPassword", true);
     }
 
     @Override

@@ -75,7 +75,7 @@ public class MyProfileForm<T extends Profile> extends UserOwnedEntityForm<Profil
 
         formFields.setPropertyFormatter("companyWebsite", new UrlPropertyFormatter());
 
-        formFields.setReadOnly("user.loginName", true);
+        formFields.setOriginalReadOnly("user.loginName", true);
 
         formFields.setWidth("phoneType", 7, Sizeable.UNITS_EM);
         getFormFieldSet().setToolTipArgs("phone", Phone.getExampleNumber(

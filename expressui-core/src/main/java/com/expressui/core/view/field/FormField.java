@@ -125,7 +125,7 @@ public class FormField extends DisplayField {
         getField(); // make sure field is initialized before label
         if (label == null) {
             String labelText = generateLabelText();
-            if (isRequired()) {
+            if (isOriginallyRequired()) {
                 labelText = "<span class=\"e-required-field-indicator\">*</span>" + labelText;
             }
             label = new com.vaadin.ui.Label(labelText, com.vaadin.ui.Label.CONTENT_XHTML);
@@ -602,17 +602,28 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Asks if this field is required, which is automatically set based on the bound bean's validation annotations.
-     * This value may also be set programmatically.
+     * Asks if this field is originally required, which is automatically set based on the bound bean's validation
+     * annotations, or can be set programmatically.
      *
      * @return true if required
      */
-    public boolean isRequired() {
+    public boolean isOriginallyRequired() {
         return isRequired;
     }
 
     /**
-     * Asks if this field is currently required. Note that this may be false while {@link #isRequired} is true.
+     * Sets whether or not field is required. This value may also be set programmatically.
+     *
+     * @param isRequired true if read-only
+     */
+    public void setOriginallyRequired(boolean isRequired) {
+        setDynamicallyRequired(isRequired);
+        this.isRequired = isRequired;
+    }
+
+    /**
+     * Asks if this field is dynamically required. Note that this may be false while {@link #isOriginallyRequired()}
+     * is true.
      * This may happen in the case where this field is bound to nested property id where the leaf is required but
      * one of its ancestors is not required and is currently null. For example, street may be required in Address but
      * contact.mailingAddress is not required and currently null. In this scenario, the street field may be currently
@@ -621,26 +632,27 @@ public class FormField extends DisplayField {
      *
      * @return true if required
      */
-    public boolean isCurrentlyRequired() {
+    public boolean isDynamicallyRequired() {
         return getField().isRequired();
     }
 
     /**
-     * Sets whether or not this field is currently required. Note that this may be false while {@link #isRequired} is true.
+     * Sets whether or not this field is dynamically required. Note that this may be false while
+     * {@link #isOriginallyRequired()} is true.
      * This may happen in the case where this field is bound to nested property id where the leaf is required but
-     * one of its ancestors is not required and is currently null. For example, street may be required in Address but
-     * contact.mailingAddress is not required and currently null. In this scenario, the street field may be currently
+     * one of its ancestors is not required and is dynamically null. For example, street may be required in Address but
+     * contact.mailingAddress is not required and dynamically null. In this scenario, the street field may be currently
      * not required, since it's ancestor (contact.mailingAddress) is null. If contact.mailingAddress is set,
      * then the street field becomes required.
      *
      * @param isRequired true if required
      */
-    public void setCurrentlyRequired(boolean isRequired) {
+    public void setDynamicallyRequired(boolean isRequired) {
         getField().setRequired(isRequired);
     }
 
     /**
-     * Restore is-required setting to originally statically configured value, as specified in validation annotations.
+     * Restore is-required setting to originally configured value.
      */
     public void restoreIsRequired() {
         getField().setRequired(isRequired);
@@ -767,11 +779,30 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Sets whether or not field is read-only.
+     * Asks if this field is originally read-only, irrespective of view-mode or security permissions.
+     *
+     * @return true if this field is read-only
+     */
+    public boolean isOriginallyReadOnly() {
+        return isReadOnly;
+    }
+
+    /**
+     * Sets whether or not field is read-only, irrespective of view-mode or security permissions.
      *
      * @param isReadOnly true if read-only
      */
-    public void setReadOnly(boolean isReadOnly) {
+    public void setOriginallyReadOnly(boolean isReadOnly) {
+        setDynamicallyReadOnly(isReadOnly);
+        this.isReadOnly = isReadOnly;
+    }
+
+    /**
+     * Sets whether or not field is dynamically read-only, based on view-mode or security permissions.
+     *
+     * @param isReadOnly true if read-only
+     */
+    public void setDynamicallyReadOnly(boolean isReadOnly) {
         if (getField() instanceof SelectField) {
             ((SelectField) getField()).setButtonVisible(!isReadOnly);
         }
@@ -780,13 +811,14 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Restores read-only setting for all fields, if they were temporarily changed for view-only mode.
+     * Restores read-only setting to original value, if they were temporarily changed for view-only mode
+     * or security permissions.
      */
     public void restoreIsReadOnly() {
         if (getField() instanceof SelectField) {
-            ((SelectField) getField()).setButtonVisible(!isReadOnly);
+            ((SelectField) getField()).setButtonVisible(!isOriginallyReadOnly());
         }
-        getField().setReadOnly(isReadOnly);
+        getField().setReadOnly(isOriginallyReadOnly());
     }
 
     /**
@@ -799,9 +831,9 @@ public class FormField extends DisplayField {
     }
 
     /**
-     * Asks if field currently has an error.
+     * Asks if field dynamically has an error.
      *
-     * @return true if field currently has an error
+     * @return true if field dynamically has an error
      */
     public boolean hasError() {
         if (hasConversionError) {
@@ -1012,7 +1044,7 @@ public class FormField extends DisplayField {
             }
         }
 
-        isReadOnly = field.isReadOnly();
+        setOriginallyReadOnly(field.isReadOnly());
         isVisible = field.isVisible();
     }
 
@@ -1045,7 +1077,7 @@ public class FormField extends DisplayField {
             );
         }
 
-        isRequired = field.isRequired();
+        setOriginallyRequired(field.isRequired());
     }
 
     /**

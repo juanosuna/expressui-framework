@@ -210,7 +210,7 @@ public class PermissionForm extends EntityForm<Permission> {
      * @param event not used
      */
     public void syncIsRequiredIndicator(Property.ValueChangeEvent event) {
-        getFormFieldSet().setCurrentlyRequired("field", anotherPermissionHasNullField(getBean().getTargetType()));
+        getFormFieldSet().setDynamicallyRequired("field", anotherPermissionHasNullField(getBean().getTargetType()));
         syncTabAndSaveButtonErrors();
     }
 
