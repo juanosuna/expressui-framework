@@ -37,7 +37,7 @@
 
 package com.expressui.core.entity.security;
 
-import com.expressui.core.entity.NameableEntity;
+import com.expressui.core.entity.NamedEntity;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.util.ObjectUtil;
 import com.expressui.core.validation.AssertTrueForProperties;
@@ -56,7 +56,7 @@ import java.util.Set;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Table(name = "UZER") // avoid table named user, as this is a reserved word in Oracle
-public class User extends WritableEntity implements NameableEntity {
+public class User extends WritableEntity implements NamedEntity {
 
     private String loginName;
 

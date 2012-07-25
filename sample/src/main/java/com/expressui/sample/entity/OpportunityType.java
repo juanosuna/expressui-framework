@@ -37,9 +37,9 @@
 
 package com.expressui.sample.entity;
 
-import com.expressui.core.entity.NameableEntity;
+import com.expressui.core.entity.NamedEntity;
 
-public enum OpportunityType implements NameableEntity {
+public enum OpportunityType implements NamedEntity {
     NEW("New Business"),
     EXISTING("Existing Business");
 

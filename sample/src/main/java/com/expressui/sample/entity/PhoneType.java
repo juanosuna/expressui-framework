@@ -37,9 +37,9 @@
 
 package com.expressui.sample.entity;
 
-import com.expressui.core.entity.NameableEntity;
+import com.expressui.core.entity.NamedEntity;
 
-public enum PhoneType implements NameableEntity {
+public enum PhoneType implements NamedEntity {
     HOME("Home"),
     MOBILE("Mobile"),
     BUSINESS("Business");

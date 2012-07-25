@@ -38,7 +38,7 @@
 package com.expressui.sample.entity;
 
 
-import com.expressui.core.entity.NameableEntity;
+import com.expressui.core.entity.NamedEntity;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
 import com.expressui.sample.validator.ValidPhone;
@@ -56,7 +56,7 @@ import java.util.Date;
 
 @Entity
 @Table
-public class Contact extends WritableEntity implements NameableEntity {
+public class Contact extends WritableEntity implements NamedEntity {
 
     private String firstName;
 

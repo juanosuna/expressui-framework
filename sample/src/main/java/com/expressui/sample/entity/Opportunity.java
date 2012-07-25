@@ -38,7 +38,7 @@
 package com.expressui.sample.entity;
 
 
-import com.expressui.core.entity.NameableEntity;
+import com.expressui.core.entity.NamedEntity;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.validation.AssertTrueForProperties;
@@ -61,7 +61,7 @@ import static com.expressui.core.util.StringUtil.isEmpty;
 
 @Entity
 @Table
-public class Opportunity extends WritableEntity implements NameableEntity {
+public class Opportunity extends WritableEntity implements NamedEntity {
 
     @Resource
     @Transient

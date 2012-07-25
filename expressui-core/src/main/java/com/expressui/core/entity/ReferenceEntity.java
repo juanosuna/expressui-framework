@@ -47,7 +47,7 @@ import javax.persistence.MappedSuperclass;
  */
 @MappedSuperclass
 @Cacheable
-public abstract class ReferenceEntity implements IdentifiableEntity, NameableEntity, Comparable {
+public abstract class ReferenceEntity implements IdentifiableEntity, NamedEntity, Comparable {
 
     /**
      * Name of read-only cache, which should be defined in the application's ehcache.xml.

@@ -37,7 +37,7 @@
 
 package com.expressui.core.view.form;
 
-import com.expressui.core.entity.NameableEntity;
+import com.expressui.core.entity.NamedEntity;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.util.MethodDelegate;
 import com.expressui.core.validation.AssertTrueForProperties;
@@ -147,7 +147,7 @@ public abstract class EntityForm<T> extends TypedForm<T> {
 
     /**
      * Gets caption that describes the entity bean bound to this form. If the bean
-     * implements {@link NameableEntity}, then {@link NameableEntity#getName} is
+     * implements {@link com.expressui.core.entity.NamedEntity}, then {@link com.expressui.core.entity.NamedEntity#getName} is
      * used. Otherwise, the bean's toString is used as a caption. Override
      * this method to customize the caption.
      *
@@ -157,9 +157,9 @@ public abstract class EntityForm<T> extends TypedForm<T> {
         String typeName = domainMessageSource.getMessage(getType().getName(), getType().getSimpleName());
         T bean = getBean();
         if (genericDao.isPersistent(bean)) {
-            if (bean instanceof NameableEntity) {
+            if (bean instanceof NamedEntity) {
                 return uiMessageSource.getMessage("entityForm.entityCaption.existing",
-                        new Object[]{typeName, ((NameableEntity) bean).getName()});
+                        new Object[]{typeName, ((NamedEntity) bean).getName()});
             } else {
                 return uiMessageSource.getMessage("entityForm.entityCaption.existing",
                         new Object[]{typeName, bean.toString()});
@@ -756,8 +756,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
      * Shows notification message that save was unsuccessful because of validation error.
      */
     public void showSaveValidationErrorMessage() {
-        Window.Notification notification = new Window.Notification("\"" + getEntityCaption()
-                + "\" " + uiMessageSource.getMessage("entityForm.saveValidationError"),
+        Window.Notification notification = new Window.Notification(
+                uiMessageSource.getMessage("entityForm.saveValidationError", new Object[]{getEntityCaption()}),
                 Window.Notification.TYPE_ERROR_MESSAGE);
         notification.setDelayMsec(Window.Notification.DELAY_NONE);
         notification.setPosition(Window.Notification.POSITION_CENTERED);

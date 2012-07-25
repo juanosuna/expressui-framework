@@ -38,7 +38,7 @@
 package com.expressui.sample.entity;
 
 
-import com.expressui.core.entity.NameableEntity;
+import com.expressui.core.entity.NamedEntity;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.validation.ValidUrl;
@@ -64,7 +64,7 @@ import static com.expressui.core.util.ObjectUtil.isEqual;
 
 @Entity
 @Table
-public class Account extends WritableEntity implements NameableEntity {
+public class Account extends WritableEntity implements NamedEntity {
 
     @Resource
     @Transient

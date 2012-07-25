@@ -426,32 +426,36 @@ public class FormField extends DisplayField {
         Field field = getField();
         Assert.PROGRAMMING.instanceOf(field, AbstractSelect.class,
                 "property " + getTypeAndPropertyId() + " is not a AbstractSelect field");
-        AbstractSelect selectField = (AbstractSelect) field;
-        if (selectField.getContainerDataSource() == null
-                || !(selectField.getContainerDataSource() instanceof BeanItemContainer)) {
-            BeanItemContainer container;
-            if (getBeanPropertyType().isCollectionType()) {
-                container = new BeanItemContainer(getBeanPropertyType().getCollectionValueType(), items);
-            } else {
-                container = new BeanItemContainer(getPropertyType(), items);
+
+        try {
+            AbstractSelect selectField = (AbstractSelect) field;
+            if (selectField.isReadOnly()) {
+                selectField.setReadOnly(false);
             }
 
-            selectField.setContainerDataSource(container);
-        } else {
-            BeanItemContainer container = (BeanItemContainer) selectField.getContainerDataSource();
-            container.removeAllItems();
-            container.addAll(items);
-
-            if (!getBeanPropertyType().isCollectionType() && !container.containsId(selectedItems)) {
-                if (selectField.isReadOnly()) {
-                    selectField.setReadOnly(false);
-                    selectField.select(selectField.getNullSelectionItemId());
-                    selectField.setReadOnly(true);
+            if (selectField.getContainerDataSource() == null
+                    || !(selectField.getContainerDataSource() instanceof BeanItemContainer)) {
+                BeanItemContainer container;
+                if (getBeanPropertyType().isCollectionType()) {
+                    container = new BeanItemContainer(getBeanPropertyType().getCollectionValueType(), items);
                 } else {
+                    container = new BeanItemContainer(getPropertyType(), items);
+                }
+
+                selectField.setContainerDataSource(container);
+            } else {
+                BeanItemContainer container = (BeanItemContainer) selectField.getContainerDataSource();
+                container.removeAllItems();
+                container.addAll(items);
+
+                if (!getBeanPropertyType().isCollectionType() && !container.containsId(selectedItems)) {
                     selectField.select(selectField.getNullSelectionItemId());
                 }
             }
+        } finally {
+            restoreIsReadOnly();
         }
+
         autoAdjustSelectWidth();
     }
 
@@ -475,32 +479,35 @@ public class FormField extends DisplayField {
         Field field = getField();
         Assert.PROGRAMMING.instanceOf(field, AbstractSelect.class,
                 "property " + getTypeAndPropertyId() + " is not a AbstractSelect field");
-        AbstractSelect selectField = (AbstractSelect) field;
 
-        Object previouslySelectedValue = selectField.getValue();
+        try {
+            AbstractSelect selectField = (AbstractSelect) field;
 
-        selectField.setItemCaptionMode(Select.ITEM_CAPTION_MODE_EXPLICIT);
-        selectField.removeAllItems();
+            if (selectField.isReadOnly()) {
+                selectField.setReadOnly(false);
+            }
 
-        if (nullCaption != null) {
-            selectField.addItem(nullCaption);
-            selectField.setItemCaption(nullCaption, nullCaption);
-            selectField.setNullSelectionItemId(nullCaption);
-        }
+            Object previouslySelectedValue = selectField.getValue();
 
-        for (Object item : items.keySet()) {
-            String caption = items.get(item);
-            selectField.addItem(item);
-            selectField.setItemCaption(item, caption);
-            if (previouslySelectedValue != null && previouslySelectedValue.equals(item)) {
-                if (selectField.isReadOnly()) {
-                    selectField.setReadOnly(false);
-                    selectField.setValue(item);
-                    selectField.setReadOnly(true);
-                } else {
+            selectField.setItemCaptionMode(Select.ITEM_CAPTION_MODE_EXPLICIT);
+            selectField.removeAllItems();
+
+            if (nullCaption != null) {
+                selectField.addItem(nullCaption);
+                selectField.setItemCaption(nullCaption, nullCaption);
+                selectField.setNullSelectionItemId(nullCaption);
+            }
+
+            for (Object item : items.keySet()) {
+                String caption = items.get(item);
+                selectField.addItem(item);
+                selectField.setItemCaption(item, caption);
+                if (previouslySelectedValue != null && previouslySelectedValue.equals(item)) {
                     selectField.setValue(item);
                 }
             }
+        } finally {
+            restoreIsReadOnly();
         }
 
         autoAdjustSelectWidth();

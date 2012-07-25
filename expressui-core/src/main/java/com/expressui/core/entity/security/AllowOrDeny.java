@@ -37,12 +37,12 @@
 
 package com.expressui.core.entity.security;
 
-import com.expressui.core.entity.NameableEntity;
+import com.expressui.core.entity.NamedEntity;
 
 /**
  * Specifies whether a Role {@link Permission} has Deny or Allow default logic.
  */
-public enum AllowOrDeny implements NameableEntity {
+public enum AllowOrDeny implements NamedEntity {
     ALLOW("Allow"),
     DENY("Deny");
 

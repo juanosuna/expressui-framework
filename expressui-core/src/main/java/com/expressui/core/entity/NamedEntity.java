@@ -41,7 +41,7 @@ package com.expressui.core.entity;
  * Any entity that has a name, which is useful for displaying to the user as a
  * caption that describes the entity.
  */
-public interface NameableEntity {
+public interface NamedEntity {
     /**
      * Gets the name of this entity.
      *

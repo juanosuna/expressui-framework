@@ -37,7 +37,7 @@
 
 package com.expressui.core.entity.security;
 
-import com.expressui.core.entity.NameableEntity;
+import com.expressui.core.entity.NamedEntity;
 import com.expressui.core.entity.WritableEntity;
 import com.expressui.core.view.field.LabelRegistry;
 import com.expressui.core.view.util.MessageSource;
@@ -60,7 +60,7 @@ import javax.validation.constraints.Size;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @ValidPermission
 @Table(uniqueConstraints = @UniqueConstraint(columnNames = {"TARGET_TYPE", "FIELD"}))
-public class Permission extends WritableEntity implements NameableEntity {
+public class Permission extends WritableEntity implements NamedEntity {
 
     @Transient
     @Resource
