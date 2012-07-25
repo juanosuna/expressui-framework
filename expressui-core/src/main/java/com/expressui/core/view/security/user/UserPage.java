@@ -68,5 +68,12 @@ public class UserPage extends SearchPage<User> {
     public UserResults getResults() {
         return userResults;
     }
+
+    @Override
+    public void postWire() {
+        super.postWire();
+
+        getMainApplication().loadAllPageBeans();
+    }
 }
 

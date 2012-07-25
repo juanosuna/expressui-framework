@@ -176,7 +176,6 @@ public class LabelRegistry {
             }
             putFieldLabel(fieldSet.getType().getName(), displayField.getPropertyId(),
                     displayField.getLabelSectionDisplayName(), label);
-
         }
     }
 

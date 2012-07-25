@@ -427,9 +427,11 @@ public class FormField extends DisplayField {
         Assert.PROGRAMMING.instanceOf(field, AbstractSelect.class,
                 "property " + getTypeAndPropertyId() + " is not a AbstractSelect field");
 
+        boolean isReadOnly = false;
+        AbstractSelect selectField = (AbstractSelect) field;
         try {
-            AbstractSelect selectField = (AbstractSelect) field;
             if (selectField.isReadOnly()) {
+                isReadOnly = true;
                 selectField.setReadOnly(false);
             }
 
@@ -453,7 +455,9 @@ public class FormField extends DisplayField {
                 }
             }
         } finally {
-            restoreIsReadOnly();
+            if (isReadOnly) {
+                selectField.setReadOnly(true);
+            }
         }
 
         autoAdjustSelectWidth();
@@ -480,10 +484,11 @@ public class FormField extends DisplayField {
         Assert.PROGRAMMING.instanceOf(field, AbstractSelect.class,
                 "property " + getTypeAndPropertyId() + " is not a AbstractSelect field");
 
+        boolean isReadOnly = false;
+        AbstractSelect selectField = (AbstractSelect) field;
         try {
-            AbstractSelect selectField = (AbstractSelect) field;
-
             if (selectField.isReadOnly()) {
+                isReadOnly = true;
                 selectField.setReadOnly(false);
             }
 
@@ -507,7 +512,9 @@ public class FormField extends DisplayField {
                 }
             }
         } finally {
-            restoreIsReadOnly();
+            if (isReadOnly) {
+                selectField.setReadOnly(true);
+            }
         }
 
         autoAdjustSelectWidth();

@@ -101,7 +101,8 @@ public abstract class EntityForm<T> extends TypedForm<T> {
     public void postConstruct() {
         super.postConstruct();
 
-        labelRegistry.putTypeLabel(getType().getName(), getTypeCaption());
+        String typeName = domainMessageSource.getMessage(getType().getName(), getType().getSimpleName());
+        labelRegistry.putTypeLabel(getType().getName(), typeName);
 
         List<ToManyRelationship> toManyRelationships = getViewableToManyRelationships();
         if (toManyRelationships.size() > 0) {
