@@ -109,6 +109,10 @@ public class Phone implements Serializable {
 
         Phonenumber.PhoneNumber phoneNumber = PhoneNumberUtil.getInstance().getExampleNumber(regionCode);
 
+        if (phoneNumber == null) {
+            phoneNumber = PhoneNumberUtil.getInstance().getExampleNumber("US");
+        }
+
         PhoneNumberUtil phoneUtil = PhoneNumberUtil.getInstance();
         PhoneNumberUtil.PhoneNumberFormat format;
         format = PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL;
