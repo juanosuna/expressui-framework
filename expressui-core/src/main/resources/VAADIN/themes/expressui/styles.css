@@ -69,6 +69,10 @@
     background-position: 0 0;
 }
 
+.v-table .v-table-body {
+    overflow: hidden !important;
+}
+
 /* General table style */
 .v-table-cell-content, .v-table-header-cell {
     border-right: none;
@@ -210,7 +214,7 @@
 }
 
 /* background for search/results entity select popup, matches page background */
-.e-entity-select-window {
+.e-entity-select-window, .e-export-form-window {
     background: #e8faee;
 }
 

@@ -158,7 +158,7 @@ public class ExportForm extends TypedForm<ExportParameters> {
      */
     public void open() {
         popupWindow = new Window(getTypeCaption());
-        popupWindow.addStyleName("e-exportForm-window");
+        popupWindow.addStyleName("e-export-form-window");
         popupWindow.addStyleName("opaque");
         VerticalLayout layout = (VerticalLayout) popupWindow.getContent();
         layout.setMargin(true);
