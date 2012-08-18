@@ -56,8 +56,4 @@ public class AccountDisabledException extends AuthenticationException {
     public AccountDisabledException(Throwable cause) {
         super(cause);
     }
-
-    public AccountDisabledException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

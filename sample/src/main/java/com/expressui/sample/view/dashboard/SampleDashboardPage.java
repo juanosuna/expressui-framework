@@ -37,6 +37,7 @@
 
 package com.expressui.sample.view.dashboard;
 
+import com.expressui.core.MainApplication;
 import com.expressui.core.util.UrlUtil;
 import com.expressui.core.view.page.DashboardPage;
 import com.expressui.domain.geocode.MapService;
@@ -96,7 +97,8 @@ public class SampleDashboardPage extends DashboardPage {
                 2, 2);
 
         // Used to track usage statistics only for sample application
-        UrlUtil.addTrackingUrl((AbstractComponentContainer) getCompositionRoot(), "sample");
+        UrlUtil.addTrackingUrl((AbstractComponentContainer) getCompositionRoot(),
+                MainApplication.getRequest().getServerName());
     }
 
     private ColumnChart createOpportunityChartByYear() {

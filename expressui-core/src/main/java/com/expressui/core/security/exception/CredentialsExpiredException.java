@@ -56,8 +56,4 @@ public class CredentialsExpiredException extends AuthenticationException {
     public CredentialsExpiredException(Throwable cause) {
         super(cause);
     }
-
-    public CredentialsExpiredException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

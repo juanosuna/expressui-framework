@@ -56,8 +56,4 @@ public class AccountExpiredException extends AuthenticationException {
     public AccountExpiredException(Throwable cause) {
         super(cause);
     }
-
-    public AccountExpiredException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

@@ -55,7 +55,7 @@ import java.net.URL;
  */
 public class UrlUtil {
 
-    public static String EXPRESSUI_TEST_PAGE = "http://www.expressui.com/?page_id=507&tag=";
+    public static String EXPRESSUI_TEST_PAGE = "http://www.expressui.com/expressui-demo-test-page/?tag=";
 
     /**
      * Invokes URL and get the contents returned.

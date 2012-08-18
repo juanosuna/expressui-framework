@@ -263,6 +263,7 @@ public class ResultsTable extends Table {
      * Clears any selected rows.
      */
     public void clearSelection() {
+        removeAllActionHandlers();
         if (isMultiSelect()) {
             setValue(new HashSet());
         } else {

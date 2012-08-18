@@ -56,8 +56,4 @@ public class AccountLockedException extends AuthenticationException {
     public AccountLockedException(Throwable cause) {
         super(cause);
     }
-
-    public AccountLockedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }

@@ -56,8 +56,4 @@ public class LoginNameNotFoundException extends AuthenticationException {
     public LoginNameNotFoundException(Throwable cause) {
         super(cause);
     }
-
-    public LoginNameNotFoundException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
-    }
 }
