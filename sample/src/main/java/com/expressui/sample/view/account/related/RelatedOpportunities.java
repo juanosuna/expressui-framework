@@ -40,6 +40,7 @@ package com.expressui.sample.view.account.related;
 import com.expressui.core.view.results.ResultsFieldSet;
 import com.expressui.core.view.tomanyrelationship.AggregationRelationship;
 import com.expressui.sample.dao.query.RelatedOpportunitiesQuery;
+import com.expressui.sample.entity.Account;
 import com.expressui.sample.entity.Opportunity;
 import com.expressui.sample.view.opportunity.OpportunityForm;
 import com.expressui.sample.view.select.OpportunitySelect;
@@ -82,23 +83,24 @@ public class RelatedOpportunities extends AggregationRelationship<Opportunity> {
     @Override
     public void init(ResultsFieldSet resultsFields) {
         resultsFields.setPropertyIds(
-                "name",
-                "salesStage",
-                "valueWeightedInUSD",
-                "expectedCloseDate",
-                "lastModified"
+                id(p.getName()),
+                id(p.getSalesStage()),
+                id(p.getValueWeightedInUSD()),
+                id(p.getExpectedCloseDate()),
+                id(p.getLastModified())
         );
 
-        resultsFields.setPropertyFormatter("valueWeightedInUSD", defaultFormats.getCurrencyFormat(Locale.US, 0));
+        resultsFields.setPropertyFormatter(id(p.getValueWeightedInUSD()),
+                defaultFormats.getCurrencyFormat(Locale.US, 0));
     }
 
     @Override
     public String getChildPropertyId() {
-        return "opportunities";
+        return id(newBeanRoot(Account.class).getOpportunities());
     }
 
     @Override
     public String getParentPropertyId() {
-        return "account";
+        return id(p.getAccount());
     }
 }

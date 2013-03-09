@@ -37,6 +37,7 @@
 
 package com.expressui.core.util;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -282,7 +283,7 @@ public class ApplicationProperties {
      * @return available page-size options for results components
      */
     public List<Integer> getPageSizeOptions() {
-        String[] pageSizeStrings = pageSizeOptions.split(",");
+        String[] pageSizeStrings = StringUtils.split(pageSizeOptions, ",");
         List<Integer> pageSizes = new ArrayList<Integer>();
         for (String pageSizeString : pageSizeStrings) {
             Integer pageSize = Integer.parseInt(pageSizeString.trim());

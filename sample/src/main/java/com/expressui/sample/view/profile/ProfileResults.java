@@ -72,13 +72,13 @@ public class ProfileResults extends CrudResults<Profile> {
     @Override
     public void init(ResultsFieldSet resultsFields) {
         resultsFields.setPropertyIds(
-                "user.loginName",
-                "firstName",
-                "lastName",
-                "companyWebsite",
-                "email",
-                "lastModified",
-                "modifiedBy"
+                id(p.getUser().getLoginName()),
+                id(p.getFirstName()),
+                id(p.getLastName()),
+                id(p.getCompanyWebsite()),
+                id(p.getEmail()),
+                id(p.getLastModified()),
+                id(p.getModifiedBy())
         );
     }
 }

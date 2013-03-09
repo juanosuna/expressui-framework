@@ -91,14 +91,14 @@ public class RegistrationForm extends MyProfileForm<Profile> {
     public void init(FormFieldSet formFields) {
         super.init(formFields);
 
-        formFields.setOriginalReadOnly("user.loginName", false);
-        formFields.addValidator("user.loginName", uniqueLoginNameValidator);
+        formFields.setOriginalReadOnly(id(p.getUser().getLoginName()), false);
+        formFields.addValidator(id(p.getUser().getLoginName()), uniqueLoginNameValidator);
         // tricky: need to allow committing of non-unique loginName to entity so that entity-level validations are
         // applied against same data as Vaadin Validator
-        formFields.getFormField("user.loginName").getField().setInvalidCommitted(true);
+        formFields.getFormField(id(p.getUser().getLoginName())).getField().setInvalidCommitted(true);
 
-        formFields.setOriginallyRequired("user.loginPassword", true);
-        formFields.setOriginallyRequired("user.repeatLoginPassword", true);
+        formFields.setOriginallyRequired(id(p.getUser().getLoginPassword()), true);
+        formFields.setOriginallyRequired(id(p.getUser().getRepeatLoginPassword()), true);
     }
 
     @Override
@@ -134,5 +134,4 @@ public class RegistrationForm extends MyProfileForm<Profile> {
     public String getTypeCaption() {
         return getDomainMessage();
     }
-
 }

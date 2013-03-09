@@ -45,6 +45,7 @@ import com.expressui.sample.view.dashboard.SampleDashboardPage;
 import com.expressui.sample.view.myprofile.MyProfilePage;
 import com.expressui.sample.view.registration.RegistrationPage;
 import com.vaadin.ui.*;
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -106,6 +107,8 @@ public class LoginPage extends RootComponent implements Page {
     }
 
     private class LoginHandler implements LoginForm.LoginListener {
+        private final Logger log = Logger.getLogger(getClass());
+
         public void onLogin(LoginForm.LoginEvent event) {
             String userName = event.getLoginParameter("username");
             String password = event.getLoginParameter("password");
@@ -134,6 +137,7 @@ public class LoginPage extends RootComponent implements Page {
                 getMainApplication().showNotification(message, Window.Notification.TYPE_ERROR_MESSAGE,
                         Window.Notification.POSITION_CENTERED_BOTTOM, 2000);
             } catch (Exception e) {
+                log.error("Error initializing application", e);
                 getMainApplication().openErrorWindow(e);
             }
         }

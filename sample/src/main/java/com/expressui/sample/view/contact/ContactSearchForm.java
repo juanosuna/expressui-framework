@@ -60,11 +60,11 @@ public class ContactSearchForm extends SearchForm<ContactQuery> {
 
     @Override
     public void init(FormFieldSet formFields) {
-        formFields.setCoordinates("lastName", 1, 1);
-        formFields.setCoordinates("account.name", 2, 1);
+        formFields.setCoordinates(id(p.getLastName()), 1, 1);
+        formFields.setCoordinates(id(p.getAccount().getName()), 2, 1);
 
         SelectField<ContactQuery, Account> accountField =
-                new SelectField<ContactQuery, Account>(this, "account", accountSelect);
-        formFields.setField("account.name", accountField);
+                new SelectField<ContactQuery, Account>(this, id(p.getAccount()), accountSelect);
+        formFields.setField(id(p.getAccount().getName()), accountField);
     }
 }

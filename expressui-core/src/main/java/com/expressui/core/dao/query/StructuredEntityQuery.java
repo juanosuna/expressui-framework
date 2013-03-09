@@ -37,6 +37,9 @@
 
 package com.expressui.core.dao.query;
 
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.ejb.criteria.BasicPathUsageException;
+
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.io.Serializable;
@@ -114,6 +117,50 @@ public abstract class StructuredEntityQuery<T> extends EntityQuery<T> {
      * @param rootEntity root entity in the from clause
      */
     public void addFetchJoins(Root<T> rootEntity) {
+    }
+
+    public <Y> Path<Y> path(Root<T> rootEntity, Object beanNode) {
+        String propertyPath = id(beanNode);
+
+        Path currentPath = rootEntity;
+        String[] properties = StringUtils.split(propertyPath, ".");
+        for (String property : properties) {
+            currentPath = currentPath.get(property);
+        }
+
+        return currentPath;
+    }
+
+    public <Y> Path<Y> orderByPath(Root<T> rootEntity, Object beanNode) {
+        String propertyPath = id(beanNode);
+
+        Path currentPath = rootEntity;
+        String[] properties = StringUtils.split(propertyPath, ".");
+        for (String property : properties) {
+            if (currentPath instanceof From) {
+                try {
+                    currentPath = ((From) currentPath).join(property, JoinType.LEFT);
+                } catch (BasicPathUsageException e) {
+                    currentPath = currentPath.get(property);
+                }
+            } else {
+                currentPath = currentPath.get(property);
+            }
+        }
+
+        return currentPath;
+    }
+
+    public <X, Y> FetchParent<X, Y> fetch(Root<T> rootEntity, JoinType joinType, Object beanNode) {
+        String propertyPath = id(beanNode);
+
+        FetchParent currentPath = rootEntity;
+        String[] properties = StringUtils.split(propertyPath, ".");
+        for (String property : properties) {
+            currentPath = currentPath.fetch(property, joinType);
+        }
+
+        return (FetchParent<X, Y>) currentPath;
     }
 
     /**

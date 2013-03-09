@@ -74,15 +74,15 @@ public class RecentContactResults extends CrudResults<Contact> {
     @Override
     public void init(ResultsFieldSet resultsFields) {
         resultsFields.setPropertyIds(
-                "lastName",
-                "mailingAddress.street",
-                "mailingAddress.city",
-                "mailingAddress.country",
-                "lastModified"
+                id(p.getLastName()),
+                id(p.getMailingAddress().getStreet()),
+                id(p.getMailingAddress().getCity()),
+                id(p.getMailingAddress().getCountry()),
+                id(p.getLastModified())
         );
 
-        resultsFields.setWidth("lastName", 100);
-        resultsFields.setAlignment("mailingAddress.country", Table.ALIGN_CENTER);
+        resultsFields.setWidth(id(p.getLastName()), 100);
+        resultsFields.setAlignment(id(p.getMailingAddress().getCountry()), Table.ALIGN_CENTER);
     }
 
     @Override

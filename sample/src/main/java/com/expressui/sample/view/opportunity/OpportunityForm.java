@@ -68,34 +68,34 @@ public class OpportunityForm extends EntityForm<Opportunity> {
     public void init(FormFieldSet formFields) {
 
         FormTab overview = formFields.createTab(getDomainMessage("overview"));
-        overview.setCoordinates("name", 1, 1);
-        overview.setCoordinates("opportunityType", 1, 2);
+        overview.setCoordinates(id(p.getName()), 1, 1);
+        overview.setCoordinates(id(p.getOpportunityType()), 1, 2);
 
-        overview.setCoordinates("account.name", 2, 1);
-        overview.setCoordinates("leadSource", 2, 2);
+        overview.setCoordinates(id(p.getAccount().getName()), 2, 1);
+        overview.setCoordinates(id(p.getLeadSource()), 2, 2);
 
-        overview.setCoordinates("salesStage", 3, 1);
-        overview.setCoordinates("assignedTo.loginName", 3, 2);
+        overview.setCoordinates(id(p.getSalesStage()), 3, 1);
+        overview.setCoordinates(id(p.getAssignedTo().getLoginName()), 3, 2);
 
-        overview.setCoordinates("probability", 4, 1);
-        overview.setCoordinates("currency", 4, 2);
+        overview.setCoordinates(id(p.getProbability()), 4, 1);
+        overview.setCoordinates(id(p.getCurrency()), 4, 2);
 
-        overview.setCoordinates("amount", 5, 1);
-        overview.setCoordinates("valueWeightedInUSD", 5, 2);
+        overview.setCoordinates(id(p.getAmount()), 5, 1);
+        overview.setCoordinates(id(p.getValueWeightedInUSD()), 5, 2);
 
-        overview.setCoordinates("expectedCloseDate", 6, 1);
-        overview.setCoordinates("actualCloseDate", 6, 2);
+        overview.setCoordinates(id(p.getExpectedCloseDate()), 6, 1);
+        overview.setCoordinates(id(p.getActualCloseDate()), 6, 2);
 
         FormTab description = formFields.createTab(getDomainMessage("description"));
-        description.setCoordinates("description", 1, 1);
+        description.setCoordinates(id(p.getDescription()), 1, 1);
 
         SelectField<Opportunity, User> assignedToField =
-                new SelectField<Opportunity, User>(this, "assignedTo", userSelect);
-        formFields.setField("assignedTo.loginName", assignedToField);
+                new SelectField<Opportunity, User>(this, id(p.getAssignedTo()), userSelect);
+        formFields.setField(id(p.getAssignedTo().getLoginName()), assignedToField);
 
         SelectField<Opportunity, Account> accountField =
-                new SelectField<Opportunity, Account>(this, "account", accountSelect);
-        formFields.setField("account.name", accountField);
+                new SelectField<Opportunity, Account>(this, id(p.getAmount()), accountSelect);
+        formFields.setField(id(p.getAccount().getName()), accountField);
     }
 
     @Override

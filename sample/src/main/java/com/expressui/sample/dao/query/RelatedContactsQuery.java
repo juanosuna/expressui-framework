@@ -74,7 +74,7 @@ public class RelatedContactsQuery extends ToManyRelationshipQuery<Contact, Accou
 
         if (hasValue(account)) {
             ParameterExpression<Account> accountExp = builder.parameter(Account.class, "account");
-            predicates.add(builder.equal(contact.get("account"), accountExp));
+            predicates.add(builder.equal(this.path(contact, p.getAccount()), accountExp));
         }
 
         return predicates;
@@ -89,10 +89,10 @@ public class RelatedContactsQuery extends ToManyRelationshipQuery<Contact, Accou
 
     @Override
     public Path buildOrderBy(Root<Contact> contact) {
-        if (getOrderByPropertyId().equals("mailingAddress.country")) {
-            return contact.join("mailingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
-        } else if (getOrderByPropertyId().equals("mailingAddress.state.code")) {
-            return contact.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
+        if (getOrderByPropertyId().equals(id(p.getMailingAddress().getCountry()))) {
+            return orderByPath(contact, p.getMailingAddress().getCountry());
+        } else if (getOrderByPropertyId().equals(id(p.getMailingAddress().getState().getCode()))) {
+            return orderByPath(contact, p.getMailingAddress().getState().getCode());
         } else {
             return null;
         }
@@ -100,8 +100,8 @@ public class RelatedContactsQuery extends ToManyRelationshipQuery<Contact, Accou
 
     @Override
     public void addFetchJoins(Root<Contact> contact) {
-        contact.fetch("mailingAddress", JoinType.LEFT);
-        contact.fetch("account", JoinType.LEFT);
+        fetch(contact, JoinType.LEFT, p.getMailingAddress());
+        fetch(contact, JoinType.LEFT, p.getAccount());
     }
 
     @Override

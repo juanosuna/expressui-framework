@@ -38,7 +38,6 @@
 package com.expressui.sample.dao.query;
 
 import com.expressui.core.dao.query.StructuredEntityQuery;
-import com.expressui.core.entity.security.User;
 import com.expressui.sample.entity.Profile;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -71,7 +70,7 @@ public class ProfileQuery extends StructuredEntityQuery<Profile> {
 
         if (hasValue(loginName)) {
             ParameterExpression<String> loginNameExp = builder.parameter(String.class, "loginName");
-            predicates.add(builder.like(builder.upper(profile.<User>get("user").<String>get("loginName")), loginNameExp));
+            predicates.add(builder.like(builder.upper(this.<String>path(profile, p.getUser().getLoginName())), loginNameExp));
         }
 
         return predicates;
@@ -86,8 +85,8 @@ public class ProfileQuery extends StructuredEntityQuery<Profile> {
 
     @Override
     public Path buildOrderBy(Root<Profile> profile) {
-        if (getOrderByPropertyId().equals("user.loginName")) {
-            return profile.join("user", JoinType.LEFT).get("loginName");
+        if (getOrderByPropertyId().equals(id(p.getUser().getLoginName()))) {
+            return orderByPath(profile, p.getUser().getLoginName());
         } else {
             return null;
         }
@@ -95,7 +94,7 @@ public class ProfileQuery extends StructuredEntityQuery<Profile> {
 
     @Override
     public void addFetchJoins(Root<Profile> profile) {
-        profile.fetch("user", JoinType.LEFT);
+        fetch(profile, JoinType.LEFT, p.getUser());
     }
 
     @Override

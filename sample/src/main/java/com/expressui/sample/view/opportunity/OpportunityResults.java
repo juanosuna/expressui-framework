@@ -74,17 +74,17 @@ public class OpportunityResults extends CrudResults<Opportunity> {
     @Override
     public void init(ResultsFieldSet resultsFields) {
         resultsFields.setPropertyIds(
-                "name",
-                "salesStage",
-                "valueWeightedInUSD",
-                "expectedCloseDate",
-                "lastModified",
-                "modifiedBy"
+                id(p.getName()),
+                id(p.getSalesStage()),
+                id(p.getValueWeightedInUSD()),
+                id(p.getExpectedCloseDate()),
+                id(p.getLastModified()),
+                id(p.getModifiedBy())
         );
 
-        resultsFields.setPropertyFormatter("valueWeightedInUSD", defaultFormats.getCurrencyFormat(Locale.US, 0));
+        resultsFields.setPropertyFormatter(id(p.getValueWeightedInUSD()), defaultFormats.getCurrencyFormat(Locale.US, 0));
 
-        resultsFields.setAlignment("valueWeightedInUSD", Table.ALIGN_RIGHT);
-        resultsFields.setAlignment("expectedCloseDate", Table.ALIGN_CENTER);
+        resultsFields.setAlignment(id(p.getValueWeightedInUSD()), Table.ALIGN_RIGHT);
+        resultsFields.setAlignment(id(p.getExpectedCloseDate()), Table.ALIGN_CENTER);
     }
 }

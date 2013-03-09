@@ -35,64 +35,38 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.sample.view.select;
+package com.expressui.core.util;
 
-import com.expressui.core.view.entityselect.EntitySelect;
-import com.expressui.core.view.entityselect.EntitySelectResults;
-import com.expressui.core.view.results.ResultsFieldSet;
-import com.expressui.sample.dao.query.AccountQuery;
-import com.expressui.sample.entity.Account;
-import com.expressui.sample.view.account.AccountSearchForm;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
+import com.expressui.core.test.NestedBean;
+import com.expressui.core.test.RootBean;
+import org.junit.Assert;
+import org.junit.Test;
 
-import javax.annotation.Resource;
+import java.util.Set;
 
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
+public class BeanInvocationInterceptorTest {
 
-@Component
-@Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings({"serial"})
-public class AccountSelect extends EntitySelect<Account> {
+    @Test
+    public void getNestedBean() {
 
-    @Resource
-    private AccountSearchForm accountSearchForm;
+        RootBean rootBean = BeanInvocationInterceptor.newBeanRoot(RootBean.class);
+        BeanRoot beanInvocationTracker = (BeanRoot) rootBean;
 
-    @Resource
-    private AccountSelectResults accountSelectResults;
+        NestedBean nestedBean = rootBean.getNestedBean();
+        Assert.assertNotNull(nestedBean);
+        Assert.assertEquals("nestedBean", beanInvocationTracker.lastInvokedPropertyPath());
 
-    @Override
-    public AccountSearchForm getSearchForm() {
-        return accountSearchForm;
-    }
+        String property = nestedBean.getProperty();
+        Assert.assertNotNull(property);
+        Assert.assertNotNull(beanInvocationTracker.lastInvokedPropertyPath());
+        Assert.assertEquals("nestedBean.property", beanInvocationTracker.lastInvokedPropertyPath());
 
-    @Override
-    public AccountSelectResults getResults() {
-        return accountSelectResults;
-    }
+        property = nestedBean.getProperty();
+        Assert.assertEquals("nestedBean.property", beanInvocationTracker.lastInvokedPropertyPath());
 
-    @Component
-    @Scope(SCOPE_PROTOTYPE)
-    public static class AccountSelectResults extends EntitySelectResults<Account> {
-
-        @Resource
-        private AccountQuery accountQuery;
-
-        @Override
-        public AccountQuery getEntityQuery() {
-            return accountQuery;
-        }
-
-        @Override
-        public void init(ResultsFieldSet resultsFields) {
-            resultsFields.setPropertyIds(
-                    id(p.getName()),
-                    id(p.getTickerSymbol()),
-                    id(p.getWebsite()),
-                    id(p.getBillingAddress().getState().getCode()),
-                    id(p.getBillingAddress().getCountry())
-            );
-        }
+        Set<NestedBean> nestedBeans = rootBean.getNestedBeans();
+        Assert.assertNotNull(nestedBeans);
+        Assert.assertNotNull(beanInvocationTracker.lastInvokedPropertyPath());
+        Assert.assertEquals("nestedBeans", beanInvocationTracker.lastInvokedPropertyPath());
     }
 }
-

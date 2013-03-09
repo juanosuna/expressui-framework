@@ -162,6 +162,15 @@ public class ReflectionUtil {
         return collectionValueType;
     }
 
+    public static boolean hasDefaultConstructor(Class clazz) {
+        try {
+            clazz.getConstructor(new Class[]{});
+            return true;
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+    }
+
     /**
      * Asks if the bean's properties are empty. boolean properties that are false and numbers
      * that are zero are considered empty. String values that are zero-length are considered empty.

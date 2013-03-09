@@ -191,7 +191,7 @@
         MODIFIED_BY varchar(255) not null,
         VERSION integer,
         UUID varchar(255) not null unique,
-        ALLOW_OR_DENY_BY_DEFAULT varchar(255),
+        ALLOW_OR_DENY_BY_DEFAULT varchar(255) not null,
         DESCRIPTION longtext,
         NAME varchar(64) not null,
         primary key (ID)
@@ -238,7 +238,7 @@
         ACCOUNT_LOCKED bit not null,
         CREDENTIALS_EXPIRED bit not null,
         ENABLED bit not null,
-        LOGIN_NAME varchar(16) not null,
+        LOGIN_NAME varchar(16) not null unique,
         LOGIN_PASSWORD_ENCRYPTED varchar(255),
         primary key (ID)
     );

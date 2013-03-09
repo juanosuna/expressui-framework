@@ -91,54 +91,54 @@ public class AccountForm extends EntityForm<Account> {
     public void init(FormFieldSet formFields) {
 
         FormTab overview = formFields.createTab(getDomainMessage("overview"));
-        overview.setCoordinates("name", 1, 1);
-        overview.setCoordinates("assignedTo.loginName", 1, 2);
+        overview.setCoordinates(id(p.getName()), 1, 1);
+        overview.setCoordinates(id(p.getAssignedTo().getLoginName()), 1, 2);
 
-        overview.setCoordinates("website", 2, 1);
-        overview.setCoordinates("accountTypes", 2, 2, 3, 2);
+        overview.setCoordinates(id(p.getWebsite()), 2, 1);
+        overview.setCoordinates(id(p.getAccountTypes()), 2, 2, 3, 2);
 
-        overview.setCoordinates("email", 3, 1);
+        overview.setCoordinates(id(p.getEmail()), 3, 1);
 
         FormTab details = formFields.createTab(getDomainMessage("details"));
-        details.setCoordinates("tickerSymbol", 1, 1);
-        details.setCoordinates("industry", 1, 2);
+        details.setCoordinates(id(p.getTickerSymbol()), 1, 1);
+        details.setCoordinates(id(p.getIndustry()), 1, 2);
 
-        details.setCoordinates("numberOfEmployees", 2, 1);
-        details.setCoordinates("annualRevenue", 2, 2);
-        details.setCoordinates("annualRevenueInUSD", 3, 1);
-        details.setCoordinates("currency", 3, 2);
+        details.setCoordinates(id(p.getNumberOfEmployees()), 2, 1);
+        details.setCoordinates(id(p.getAnnualRevenue()), 2, 2);
+        details.setCoordinates(id(p.getAnnualRevenueInUSD()), 3, 1);
+        details.setCoordinates(id(p.getCurrency()), 3, 2);
 
         FormTab billingAddress = formFields.createTab(getDomainMessage("billingAddress"));
-        billingAddress.setCoordinates("billingAddress.street", 1, 1);
-        billingAddress.setCoordinates("billingAddress.city", 1, 2);
-        billingAddress.setCoordinates("billingAddress.country", 2, 1);
-        billingAddress.setCoordinates("billingAddress.zipCode", 2, 2);
-        billingAddress.setCoordinates("billingAddress.state", 3, 1);
-        billingAddress.setCoordinates("mainPhone", 3, 2);
+        billingAddress.setCoordinates(id(p.getBillingAddress().getStreet()), 1, 1);
+        billingAddress.setCoordinates(id(p.getBillingAddress().getCity()), 1, 2);
+        billingAddress.setCoordinates(id(p.getBillingAddress().getCountry()), 2, 1);
+        billingAddress.setCoordinates(id(p.getBillingAddress().getZipCode()), 2, 2);
+        billingAddress.setCoordinates(id(p.getBillingAddress().getState()), 3, 1);
+        billingAddress.setCoordinates(id(p.getMainPhone()), 3, 2);
 
         FormTab mailingAddress = formFields.createTab(getDomainMessage("mailingAddress"));
-        mailingAddress.setCoordinates("mailingAddress.street", 1, 1);
-        mailingAddress.setCoordinates("mailingAddress.city", 1, 2);
-        mailingAddress.setCoordinates("mailingAddress.country", 2, 1);
-        mailingAddress.setCoordinates("mailingAddress.zipCode", 2, 2);
-        mailingAddress.setCoordinates("mailingAddress.state", 3, 1);
+        mailingAddress.setCoordinates(id(p.getMailingAddress().getStreet()), 1, 1);
+        mailingAddress.setCoordinates(id(p.getMailingAddress().getCity()), 1, 2);
+        mailingAddress.setCoordinates(id(p.getMailingAddress().getCountry()), 2, 1);
+        mailingAddress.setCoordinates(id(p.getMailingAddress().getZipCode()), 2, 2);
+        mailingAddress.setCoordinates(id(p.getMailingAddress().getState()), 3, 1);
         mailingAddress.setOptional(this, "addMailingAddress", this, "removeMailingAddress");
 
-        formFields.setMultiSelectDimensions("accountTypes", 3, 10);
+        formFields.setMultiSelectDimensions(id(p.getAccountTypes()), 3, 10);
 
-        formFields.setPropertyFormatter("website", new UrlPropertyFormatter());
+        formFields.setPropertyFormatter(id(p.getWebsite()), new UrlPropertyFormatter());
 
-        formFields.addConversionValidator("mainPhone", new PhoneConversionValidator());
-        formFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
+        formFields.addConversionValidator(id(p.getMainPhone()), new PhoneConversionValidator());
+        formFields.setPropertyFormatter(id(p.getMainPhone()), new PhonePropertyFormatter());
 
-        formFields.clearSelectItems("billingAddress.state");
-        formFields.addValueChangeListener("billingAddress.country", this, "billingCountryChanged");
+        formFields.clearSelectItems(id(p.getBillingAddress().getState()));
+        formFields.addValueChangeListener(id(p.getBillingAddress().getCountry()), this, "billingCountryChanged");
 
-        formFields.clearSelectItems("mailingAddress.state");
-        formFields.addValueChangeListener("mailingAddress.country", this, "mailingCountryChanged");
+        formFields.clearSelectItems(id(p.getMailingAddress().getState()));
+        formFields.addValueChangeListener(id(p.getMailingAddress().getCountry()), this, "mailingCountryChanged");
 
-        SelectField<Account, User> assignedToField = new SelectField<Account, User>(this, "assignedTo", userSelect);
-        formFields.setField("assignedTo.loginName", assignedToField);
+        SelectField<Account, User> assignedToField = new SelectField<Account, User>(this, id(p.getAssignedTo()), userSelect);
+        formFields.setField(id(p.getAssignedTo().getLoginName()), assignedToField);
     }
 
     public void addMailingAddress() {
@@ -150,21 +150,21 @@ public class AccountForm extends EntityForm<Account> {
     }
 
     public void billingCountryChanged(Property.ValueChangeEvent event) {
-        countryChangedImpl(event, "billingAddress");
+        countryChangedImpl(event, p.getBillingAddress());
     }
 
     public void mailingCountryChanged(Property.ValueChangeEvent event) {
-        countryChangedImpl(event, "mailingAddress");
+        countryChangedImpl(event, p.getMailingAddress());
     }
 
-    private void countryChangedImpl(Property.ValueChangeEvent event, String addressPropertyId) {
+    private void countryChangedImpl(Property.ValueChangeEvent event, Address mockAddress) {
         Country newCountry = (Country) event.getProperty().getValue();
         List<State> states = stateDao.findByCountry(newCountry);
 
-        getFormFieldSet().setVisible(addressPropertyId + ".state", !states.isEmpty());
-        getFormFieldSet().setSelectItems(addressPropertyId + ".state", states);
+        getFormFieldSet().setVisible(id(mockAddress.getState()), !states.isEmpty());
+        getFormFieldSet().setSelectItems(id(mockAddress.getState()), states);
         if (newCountry != null) {
-            getFormFieldSet().setToolTipArgs(addressPropertyId + ".zipCode",
+            getFormFieldSet().setToolTipArgs(id(mockAddress.getZipCode()),
                     newCountry.getMinPostalCode(), newCountry.getMaxPostalCode());
         }
     }

@@ -73,7 +73,7 @@ public class RelatedOpportunitiesQuery extends ToManyRelationshipQuery<Opportuni
 
         if (hasValue(account)) {
             ParameterExpression<Account> accountExp = builder.parameter(Account.class, "account");
-            predicates.add(builder.equal(opportunity.get("account"), accountExp));
+            predicates.add(builder.equal(path(opportunity, p.getAccount()), accountExp));
         }
 
         return predicates;
@@ -88,8 +88,8 @@ public class RelatedOpportunitiesQuery extends ToManyRelationshipQuery<Opportuni
 
     @Override
     public Path buildOrderBy(Root<Opportunity> opportunity) {
-        if (getOrderByPropertyId().equals("account.name")) {
-            return opportunity.join("account", JoinType.LEFT).get("name");
+        if (getOrderByPropertyId().equals(id(p.getAccount().getName()))) {
+            return orderByPath(opportunity, p.getAccount().getName());
         } else {
             return null;
         }
@@ -97,7 +97,7 @@ public class RelatedOpportunitiesQuery extends ToManyRelationshipQuery<Opportuni
 
     @Override
     public void addFetchJoins(Root<Opportunity> opportunity) {
-        opportunity.fetch("account", JoinType.LEFT);
+        fetch(opportunity, JoinType.LEFT, p.getAccount());
     }
 
     @Override

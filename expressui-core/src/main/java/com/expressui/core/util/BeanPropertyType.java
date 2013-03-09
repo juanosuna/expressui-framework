@@ -38,6 +38,7 @@
 package com.expressui.core.util;
 
 import com.expressui.core.util.assertion.Assert;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 
 import javax.persistence.Temporal;
@@ -76,7 +77,7 @@ public class BeanPropertyType {
     }
 
     private static BeanPropertyType getBeanPropertyTypeImpl(Class clazz, String propertyPath) {
-        String[] properties = propertyPath.split("\\.");
+        String[] properties = StringUtils.split(propertyPath, "\\.");
         Class containingType;
         Class currentPropertyType = clazz;
         BeanPropertyType beanPropertyType = null;

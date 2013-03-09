@@ -80,11 +80,11 @@ public class ContactQuery extends StructuredEntityQuery<Contact> {
 
         if (hasValue(lastName)) {
             ParameterExpression<String> lastNameExp = builder.parameter(String.class, "lastName");
-            predicates.add(builder.like(builder.upper(contact.<String>get("lastName")), lastNameExp));
+            predicates.add(builder.like(builder.upper(this.<String>path(contact, p.getLastName())), lastNameExp));
         }
         if (hasValue(account)) {
             ParameterExpression<Account> accountExp = builder.parameter(Account.class, "account");
-            predicates.add(builder.equal(contact.get("account"), accountExp));
+            predicates.add(builder.equal(this.<String>path(contact, p.getAccount()), accountExp));
         }
 
         return predicates;
@@ -102,14 +102,14 @@ public class ContactQuery extends StructuredEntityQuery<Contact> {
 
     @Override
     public Path buildOrderBy(Root<Contact> contact) {
-        if (getOrderByPropertyId().equals("mailingAddress.country")) {
-            return contact.join("mailingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
-        } else if (getOrderByPropertyId().equals("mailingAddress.city")) {
-            return contact.join("mailingAddress", JoinType.LEFT).get("city");
-        } else if (getOrderByPropertyId().equals("mailingAddress.state.name")) {
-            return contact.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("name");
-        } else if (getOrderByPropertyId().equals("account.name")) {
-            return contact.join("account", JoinType.LEFT).get("name");
+        if (getOrderByPropertyId().equals(id(p.getMailingAddress().getCountry()))) {
+            return orderByPath(contact, p.getMailingAddress().getCountry());
+        } else if (getOrderByPropertyId().equals(id(p.getMailingAddress().getCity()))) {
+            return orderByPath(contact, p.getMailingAddress().getCity());
+        } else if (getOrderByPropertyId().equals(id(p.getMailingAddress().getState().getName()))) {
+            return orderByPath(contact, p.getMailingAddress().getState().getName());
+        } else if (getOrderByPropertyId().equals(id(p.getAccount().getName()))) {
+            return orderByPath(contact, p.getAccount().getName());
         } else {
             return null;
         }
@@ -117,8 +117,8 @@ public class ContactQuery extends StructuredEntityQuery<Contact> {
 
     @Override
     public void addFetchJoins(Root<Contact> contact) {
-        contact.fetch("mailingAddress", JoinType.LEFT);
-        contact.fetch("account", JoinType.LEFT);
+        fetch(contact, JoinType.LEFT, p.getMailingAddress());
+        fetch(contact, JoinType.LEFT, p.getAccount());
     }
 
     @Override

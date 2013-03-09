@@ -86,18 +86,18 @@ public class ProfileForm extends EntityForm<Profile> {
 
         myProfileForm.init(formFields);
 
-        SelectField<Profile, User> userField = new SelectField<Profile, User>(this, "user", userSelect);
-        formFields.setField("user.loginName", userField);
-        formFields.addValueChangeListener("user.loginName", this, "userChanged");
+        SelectField<Profile, User> userField = new SelectField<Profile, User>(this, id(p.getUser()), userSelect);
+        formFields.setField(id(p.getUser().getLoginName()), userField);
+        formFields.addValueChangeListener(id(p.getUser().getLoginName()), this, "userChanged");
 
-        getFormFieldSet().setEnabled("user.loginPassword", false);
-        getFormFieldSet().setEnabled("user.repeatLoginPassword", false);
+        getFormFieldSet().setEnabled(id(p.getUser().getLoginPassword()), false);
+        getFormFieldSet().setEnabled(id(p.getUser().getRepeatLoginPassword()), false);
     }
 
     public void userChanged(Property.ValueChangeEvent event) {
         Object value = event.getProperty().getValue();
-        getFormFieldSet().setEnabled("user.loginPassword", !StringUtil.isEmpty(value));
-        getFormFieldSet().setEnabled("user.repeatLoginPassword", !StringUtil.isEmpty(value));
+        getFormFieldSet().setEnabled(id(p.getUser().getLoginPassword()), !StringUtil.isEmpty(value));
+        getFormFieldSet().setEnabled(id(p.getUser().getRepeatLoginPassword()), !StringUtil.isEmpty(value));
     }
 
     @Override

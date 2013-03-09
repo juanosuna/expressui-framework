@@ -85,20 +85,21 @@ public class RelatedContacts extends AggregationRelationship<Contact> {
     @Override
     public void init(ResultsFieldSet resultsFields) {
         resultsFields.setPropertyIds(
-                "name",
-                "title",
-                "mailingAddress.state.code",
-                "mailingAddress.country",
-                "mainPhone",
-                "lastModified"
+                id(p.getName()),
+                id(p.getTitle()),
+                id(p.getMailingAddress().getState().getCode()),
+                id(p.getMailingAddress().getCountry()),
+                id(p.getMainPhone()),
+                id(p.getLastModified())
                 );
 
-        resultsFields.setSortable("name", false);
-        resultsFields.setSortable("mainPhone", false);
-        resultsFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
+        resultsFields.setSortable(id(p.getName()), false);
+        resultsFields.setSortable(id(p.getMainPhone()), false);
+        resultsFields.setPropertyFormatter(id(p.getMainPhone()), new PhonePropertyFormatter());
 
-        resultsFields.setAlignment("mailingAddress.state.code", Table.ALIGN_CENTER);
-        resultsFields.setAlignment("mailingAddress.country", Table.ALIGN_CENTER);
+        resultsFields.setAlignment(id(p.getMailingAddress().getState().getCode()),
+                Table.ALIGN_CENTER);
+        resultsFields.setAlignment(id(p.getMailingAddress().getCountry()), Table.ALIGN_CENTER);
     }
 
     @Override

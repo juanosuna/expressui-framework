@@ -38,8 +38,7 @@
 package com.expressui.core.view;
 
 import com.expressui.core.dao.EntityDao;
-import com.expressui.core.util.ReflectionUtil;
-import com.expressui.core.util.SpringApplicationContext;
+import com.expressui.core.util.*;
 import com.expressui.core.util.assertion.Assert;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
@@ -52,20 +51,39 @@ import java.io.Serializable;
  */
 public abstract class TypedComponent<T> extends RootComponent {
 
+    public T p;
+
     protected TypedComponent() {
         super();
+        if (hasType()) {
+            p = newBeanRoot(getType());
+        }
+    }
+
+    public String id(Object... beanNode) {
+        BeanRoot beanInvocationTracker = (BeanRoot) p;
+        return beanInvocationTracker.lastInvokedPropertyPath();
     }
 
     /**
-     * Gets type of this component.
-     *
-     * @return type of domain entity for this page
-     */
+    * Gets type of this component.
+    *
+    * @return type of domain entity for this page
+    */
     public Class<T> getType() {
         Class type = ReflectionUtil.getGenericArgumentType(getClass());
         Assert.PROGRAMMING.notNull(type, "This component must specify a generic type");
 
         return type;
+    }
+
+    /**
+     * Asks if this component has a generic type.
+     *
+     * @return true if this component has a generic type
+     */
+    public boolean hasType() {
+        return getType() != null;
     }
 
     /**

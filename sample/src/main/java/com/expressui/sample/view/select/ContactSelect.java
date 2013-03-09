@@ -99,15 +99,15 @@ public class ContactSelect extends EntitySelect<Contact> {
         @Override
         public void init(ResultsFieldSet resultsFields) {
             resultsFields.setPropertyIds(
-                    "name",
-                    "title",
-                    "mailingAddress.state.code",
-                    "mailingAddress.country",
-                    "mainPhone"
+                    id(p.getName()),
+                    id(p.getTitle()),
+                    id(p.getMailingAddress().getState().getCode()),
+                    id(p.getMailingAddress().getCountry()),
+                    id(p.getMainPhone())
             );
 
-            resultsFields.setSortable("name", false);
-            resultsFields.setPropertyFormatter("mainPhone", new PhonePropertyFormatter());
+            resultsFields.setSortable(id(p.getName()), false);
+            resultsFields.setPropertyFormatter(id(p.getMainPhone()), new PhonePropertyFormatter());
         }
     }
 
@@ -121,23 +121,23 @@ public class ContactSelect extends EntitySelect<Contact> {
         @Override
         public void init(FormFieldSet formFields) {
 
-            formFields.setCoordinates("lastName", 1, 1);
-            formFields.setCoordinates("country", 1, 2);
-            formFields.setCoordinates("states", 1, 3);
+            formFields.setCoordinates(id(p.getLastName()), 1, 1);
+            formFields.setCoordinates(id(p.getCountry()), 1, 2);
+            formFields.setCoordinates(id(p.getStates()), 1, 3);
 
-            formFields.clearSelectItems("states");
-            formFields.setVisible("states", false);
-            formFields.setMultiSelectDimensions("states", 5, 15);
+            formFields.clearSelectItems(id(p.getStates()));
+            formFields.setVisible(id(p.getStates()), false);
+            formFields.setMultiSelectDimensions(id(p.getStates()), 5, 15);
 
-            formFields.addValueChangeListener("country", this, "countryChanged");
+            formFields.addValueChangeListener(id(p.getCountry()), this, "countryChanged");
         }
 
         public void countryChanged(Property.ValueChangeEvent event) {
             Country newCountry = (Country) event.getProperty().getValue();
             List<State> states = stateDao.findByCountry(newCountry);
 
-            getFormFieldSet().setSelectItems("states", states);
-            getFormFieldSet().setVisible("states", !states.isEmpty());
+            getFormFieldSet().setSelectItems(id(p.getStates()), states);
+            getFormFieldSet().setVisible(id(p.getStates()), !states.isEmpty());
         }
     }
 
@@ -179,15 +179,15 @@ public class ContactSelect extends EntitySelect<Contact> {
 
             if (hasValue(lastName)) {
                 ParameterExpression<String> lastNameExp = builder.parameter(String.class, "lastName");
-                predicates.add(builder.like(builder.upper(contact.<String>get("lastName")), lastNameExp));
+                predicates.add(builder.like(builder.upper(this.<String>path(contact, p.getLastName())), lastNameExp));
             }
             if (hasValue(states)) {
                 ParameterExpression<Set> statesExp = builder.parameter(Set.class, "states");
-                predicates.add(builder.in(contact.get("mailingAddress").get("state")).value(statesExp));
+                predicates.add(builder.in(this.<Set>path(contact, p.getMailingAddress().getState())).value(statesExp));
             }
             if (hasValue(country)) {
                 ParameterExpression<Country> countryExp = builder.parameter(Country.class, "country");
-                predicates.add(builder.equal(contact.get("mailingAddress").get("country"), countryExp));
+                predicates.add(builder.equal(this.<Set>path(contact, p.getMailingAddress().getCountry()), countryExp));
             }
 
             return predicates;
@@ -208,12 +208,12 @@ public class ContactSelect extends EntitySelect<Contact> {
 
         @Override
         public Path buildOrderBy(Root<Contact> contact) {
-            if (getOrderByPropertyId().equals("mailingAddress.country")) {
-                return contact.join("mailingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
-            } else if (getOrderByPropertyId().equals("mailingAddress.state.code")) {
-                return contact.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
-            } else if (getOrderByPropertyId().equals("account.name")) {
-                return contact.join("account", JoinType.LEFT).get("name");
+            if (getOrderByPropertyId().equals(id(p.getMailingAddress().getCountry()))) {
+                return orderByPath(contact, p.getMailingAddress().getCountry());
+            } else if (getOrderByPropertyId().equals(id(p.getMailingAddress().getState().getCode()))) {
+                return orderByPath(contact, p.getMailingAddress().getState().getCode());
+            } else if (getOrderByPropertyId().equals(id(p.getAccount().getName()))) {
+                return orderByPath(contact, p.getAccount().getName());
             } else {
                 return null;
             }
@@ -221,8 +221,8 @@ public class ContactSelect extends EntitySelect<Contact> {
 
         @Override
         public void addFetchJoins(Root<Contact> contact) {
-            contact.fetch("mailingAddress", JoinType.LEFT);
-            contact.fetch("account", JoinType.LEFT);
+            fetch(contact, JoinType.LEFT, p.getMailingAddress());
+            fetch(contact, JoinType.LEFT, p.getAccount());
         }
 
         @Override

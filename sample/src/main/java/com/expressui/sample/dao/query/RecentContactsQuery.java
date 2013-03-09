@@ -42,7 +42,6 @@ import com.expressui.sample.entity.Contact;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.criteria.Fetch;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Root;
@@ -55,14 +54,14 @@ public class RecentContactsQuery extends StructuredEntityQuery<Contact> {
 
     @Override
     public Path buildOrderBy(Root<Contact> contact) {
-        if (getOrderByPropertyId().equals("mailingAddress.country")) {
-            return contact.join("mailingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
-        } else if (getOrderByPropertyId().equals("mailingAddress.street")) {
-            return contact.join("mailingAddress", JoinType.LEFT).get("street");
-        } else if (getOrderByPropertyId().equals("mailingAddress.city")) {
-            return contact.join("mailingAddress", JoinType.LEFT).get("city");
-        } else if (getOrderByPropertyId().equals("mailingAddress.state.code")) {
-            return contact.join("mailingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
+        if (getOrderByPropertyId().equals(id(p.getMailingAddress().getCountry()))) {
+            return orderByPath(contact, p.getMailingAddress().getCountry());
+        } else if (getOrderByPropertyId().equals(id(p.getMailingAddress().getStreet()))) {
+            return orderByPath(contact, p.getMailingAddress().getStreet());
+        } else if (getOrderByPropertyId().equals(id(p.getMailingAddress().getCity()))) {
+            return orderByPath(contact, p.getMailingAddress().getCity());
+        } else if (getOrderByPropertyId().equals(id(p.getMailingAddress().getState().getCode()))) {
+            return orderByPath(contact, p.getMailingAddress().getState().getCode());
         } else {
             return null;
         }
@@ -70,9 +69,7 @@ public class RecentContactsQuery extends StructuredEntityQuery<Contact> {
 
     @Override
     public void addFetchJoins(Root<Contact> contact) {
-        Fetch mailingAddress = contact.fetch("mailingAddress", JoinType.LEFT);
-        mailingAddress.fetch("state", JoinType.LEFT);
-        mailingAddress.fetch("country", JoinType.LEFT);
+        fetch(contact, JoinType.LEFT, p.getMailingAddress().getState().getCountry());
     }
 
     @Override

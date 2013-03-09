@@ -52,9 +52,9 @@ public class OpportunitySearchForm extends SearchForm<OpportunityQuery> {
 
     @Override
     public void init(FormFieldSet formFields) {
-        formFields.setCoordinates("accountName", 1, 1);
-        formFields.setCoordinates("salesStages", 1, 2);
+        formFields.setCoordinates(id(p.getAccountName()), 1, 1);
+        formFields.setCoordinates(id(p.getSalesStages()), 1, 2);
 
-        formFields.setMultiSelectDimensions("salesStages", 3, 10);
+        formFields.setMultiSelectDimensions(id(p.getSalesStages()), 3, 10);
     }
 }

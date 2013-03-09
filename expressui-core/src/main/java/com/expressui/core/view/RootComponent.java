@@ -42,6 +42,7 @@ import com.expressui.core.dao.GenericDao;
 import com.expressui.core.entity.security.User;
 import com.expressui.core.security.SecurityService;
 import com.expressui.core.util.ApplicationProperties;
+import com.expressui.core.util.BeanInvocationInterceptor;
 import com.expressui.core.util.StringUtil;
 import com.expressui.core.util.assertion.Assert;
 import com.expressui.core.view.field.LabelRegistry;
@@ -207,6 +208,10 @@ public abstract class RootComponent extends CustomComponent implements ViewBean 
      */
     public User getCurrentUser() {
         return securityService.getCurrentUser();
+    }
+
+    public static <T> T newBeanRoot(Class<T> type) {
+        return BeanInvocationInterceptor.newBeanRoot(type);
     }
 
     /**

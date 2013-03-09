@@ -59,32 +59,32 @@ public class MyProfileForm<T extends Profile> extends UserOwnedEntityForm<Profil
     @Override
     public void init(FormFieldSet formFields) {
 
-        formFields.setCoordinates("firstName", 1, 1);
-        formFields.setCoordinates("lastName", 1, 2);
+        formFields.setCoordinates(id(p.getFirstName()), 1, 1);
+        formFields.setCoordinates(id(p.getLastName()), 1, 2);
 
-        formFields.setCoordinates("title", 2, 1);
-        formFields.setCoordinates("companyWebsite", 2, 2);
+        formFields.setCoordinates(id(p.getTitle()), 2, 1);
+        formFields.setCoordinates(id(p.getCompanyWebsite()), 2, 2);
 
-        formFields.setCoordinates("email", 3, 1);
-        formFields.setCoordinates("phone", 3, 2);
-        formFields.setCoordinates("phoneType", 3, 2);
+        formFields.setCoordinates(id(p.getEmail()), 3, 1);
+        formFields.setCoordinates(id(p.getPhone()), 3, 2);
+        formFields.setCoordinates(id(p.getPhoneType()), 3, 2);
 
-        formFields.setCoordinates("user.loginName", 4, 1);
-        formFields.setCoordinates("user.loginPassword", 4, 2);
-        formFields.setCoordinates("user.repeatLoginPassword", 5, 2);
+        formFields.setCoordinates(id(p.getUser().getLoginName()), 4, 1);
+        formFields.setCoordinates(id(p.getUser().getLoginPassword()), 4, 2);
+        formFields.setCoordinates(id(p.getUser().getRepeatLoginPassword()), 5, 2);
 
-        formFields.setPropertyFormatter("companyWebsite", new UrlPropertyFormatter());
+        formFields.setPropertyFormatter(id(p.getCompanyWebsite()), new UrlPropertyFormatter());
 
-        formFields.setOriginalReadOnly("user.loginName", true);
+        formFields.setOriginalReadOnly(id(p.getUser().getLoginName()), true);
 
-        formFields.setWidth("phoneType", 7, Sizeable.UNITS_EM);
-        getFormFieldSet().setToolTipArgs("phone", Phone.getExampleNumber(
+        formFields.setWidth(id(p.getPhoneType()), 7, Sizeable.UNITS_EM);
+        getFormFieldSet().setToolTipArgs(id(p.getPhone()), Phone.getExampleNumber(
                 getMainApplication().getLocale().getCountry()));
 
-        formFields.addConversionValidator("phone", new PhoneConversionValidator());
-        formFields.setPropertyFormatter("phone", new PhonePropertyFormatter());
+        formFields.addConversionValidator(id(p.getPhone()), new PhoneConversionValidator());
+        formFields.setPropertyFormatter(id(p.getPhone()), new PhonePropertyFormatter());
 
-        formFields.setField("user.loginPassword", new PasswordField());
-        formFields.setField("user.repeatLoginPassword", new PasswordField());
+        formFields.setField(id(p.getUser().getLoginPassword()), new PasswordField());
+        formFields.setField(id(p.getUser().getRepeatLoginPassword()), new PasswordField());
     }
 }

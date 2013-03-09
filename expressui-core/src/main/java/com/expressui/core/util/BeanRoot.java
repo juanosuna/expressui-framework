@@ -35,64 +35,12 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.sample.view.select;
+package com.expressui.core.util;
 
-import com.expressui.core.view.entityselect.EntitySelect;
-import com.expressui.core.view.entityselect.EntitySelectResults;
-import com.expressui.core.view.results.ResultsFieldSet;
-import com.expressui.sample.dao.query.AccountQuery;
-import com.expressui.sample.entity.Account;
-import com.expressui.sample.view.account.AccountSearchForm;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
-
-import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_PROTOTYPE;
-
-@Component
-@Scope(SCOPE_PROTOTYPE)
-@SuppressWarnings({"serial"})
-public class AccountSelect extends EntitySelect<Account> {
-
-    @Resource
-    private AccountSearchForm accountSearchForm;
-
-    @Resource
-    private AccountSelectResults accountSelectResults;
-
-    @Override
-    public AccountSearchForm getSearchForm() {
-        return accountSearchForm;
-    }
-
-    @Override
-    public AccountSelectResults getResults() {
-        return accountSelectResults;
-    }
-
-    @Component
-    @Scope(SCOPE_PROTOTYPE)
-    public static class AccountSelectResults extends EntitySelectResults<Account> {
-
-        @Resource
-        private AccountQuery accountQuery;
-
-        @Override
-        public AccountQuery getEntityQuery() {
-            return accountQuery;
-        }
-
-        @Override
-        public void init(ResultsFieldSet resultsFields) {
-            resultsFields.setPropertyIds(
-                    id(p.getName()),
-                    id(p.getTickerSymbol()),
-                    id(p.getWebsite()),
-                    id(p.getBillingAddress().getState().getCode()),
-                    id(p.getBillingAddress().getCountry())
-            );
-        }
-    }
+/**
+* User: Juan
+* Date: 10/21/12
+*/
+public interface BeanRoot {
+    String lastInvokedPropertyPath();
 }
-

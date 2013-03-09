@@ -87,13 +87,14 @@ public class OpportunitySelect extends EntitySelect<Opportunity> {
         @Override
         public void init(ResultsFieldSet resultsFields) {
             resultsFields.setPropertyIds(
-                    "name",
-                    "salesStage",
-                    "valueWeightedInUSD",
-                    "expectedCloseDate"
+                    id(p.getName()),
+                    id(p.getSalesStage()),
+                    id(p.getValueWeightedInUSD()),
+                    id(p.getExpectedCloseDate())
             );
 
-            resultsFields.setPropertyFormatter("valueWeightedInUSD", defaultFormats.getCurrencyFormat(Locale.US, 0));
+            resultsFields.setPropertyFormatter(id(p.getValueWeightedInUSD()),
+                    defaultFormats.getCurrencyFormat(Locale.US, 0));
         }
     }
 }

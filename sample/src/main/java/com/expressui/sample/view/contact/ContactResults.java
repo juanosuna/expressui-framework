@@ -77,19 +77,19 @@ public class ContactResults extends CrudResults<Contact> {
     @Override
     public void init(ResultsFieldSet resultsFields) {
         resultsFields.setPropertyIds(
-                "firstName",
-                "lastName",
-                "account.name",
-                "mailingAddress.city",
-                "mailingAddress.state.name",
-                "mailingAddress.country",
-                "lastModified",
-                "modifiedBy"
+                id(p.getFirstName()),
+                id(p.getLastName()),
+                id(p.getAccount().getName()),
+                id(p.getMailingAddress().getCity()),
+                id(p.getMailingAddress().getState().getName()),
+                id(p.getMailingAddress().getCountry()),
+                id(p.getLastModified()),
+                id(p.getModifiedBy())
         );
 
-        resultsFields.setFormLink("account.name", "account", accountForm);
+        resultsFields.setFormLink(id(p.getAccount().getName()), id(p.getAccount()), accountForm);
 
-        resultsFields.setAlignment("mailingAddress.country", Table.ALIGN_CENTER);
+        resultsFields.setAlignment(id(p.getMailingAddress().getCountry()), Table.ALIGN_CENTER);
 
         setPageSize(25);
     }

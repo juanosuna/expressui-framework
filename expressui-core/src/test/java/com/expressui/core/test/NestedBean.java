@@ -35,7 +35,7 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.core.validation;
+package com.expressui.core.test;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;

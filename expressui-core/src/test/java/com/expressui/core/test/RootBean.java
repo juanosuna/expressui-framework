@@ -35,10 +35,11 @@
  * address: juan@brownbagconsulting.com.
  */
 
-package com.expressui.core.validation;
+package com.expressui.core.test;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 public class RootBean {
 
@@ -46,6 +47,8 @@ public class RootBean {
     private NestedBean nestedBean;
 
     private NestedBean ignoredNestedBean;
+
+    private Set<NestedBean> nestedBeans;
 
     @Valid
     @NotNull
@@ -73,5 +76,13 @@ public class RootBean {
 
     public void setNotNullNestedBean(NestedBean notNullNestedBean) {
         this.notNullNestedBean = notNullNestedBean;
+    }
+
+    public Set<NestedBean> getNestedBeans() {
+        return nestedBeans;
+    }
+
+    public void setNestedBeans(Set<NestedBean> nestedBeans) {
+        this.nestedBeans = nestedBeans;
     }
 }

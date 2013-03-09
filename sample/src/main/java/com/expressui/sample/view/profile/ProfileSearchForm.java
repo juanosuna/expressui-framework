@@ -52,6 +52,6 @@ public class ProfileSearchForm extends SearchForm<ProfileQuery> {
 
     @Override
     public void init(FormFieldSet formFields) {
-        formFields.setCoordinates("loginName", 1, 1);
+        formFields.setCoordinates(id(p.getLoginName()), 1, 1);
     }
 }

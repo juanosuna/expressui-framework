@@ -39,6 +39,7 @@ package com.expressui.sample.entity;
 
 
 import com.expressui.core.entity.ReferenceEntity;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ForeignKey;
@@ -80,7 +81,7 @@ public class State extends ReferenceEntity {
 
     private String extractStateCode() {
         if (getId().contains("-")) {
-            String[] codeParts = getId().split("-");
+            String[] codeParts = StringUtils.split(getId(), "-");
             if (codeParts.length == 2 && codeParts[0].equals(getCountry().getId())) {
                 return codeParts[1];
             }

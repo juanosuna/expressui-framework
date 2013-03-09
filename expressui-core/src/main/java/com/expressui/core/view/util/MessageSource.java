@@ -66,8 +66,6 @@ import java.util.Locale;
  */
 public class MessageSource extends ReloadableResourceBundleMessageSource implements BeanNameAware {
 
-    private final Logger log = Logger.getLogger(getClass());
-
     private String beanName;
 
     @Override

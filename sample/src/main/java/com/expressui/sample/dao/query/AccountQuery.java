@@ -92,15 +92,15 @@ public class AccountQuery extends StructuredEntityQuery<Account> {
 
         if (hasValue(name)) {
             ParameterExpression<String> nameExp = builder.parameter(String.class, "name");
-            predicates.add(builder.like(builder.upper(account.<String>get("name")), nameExp));
+            predicates.add(builder.like(builder.upper(this.<String>path(account, p.getName())), nameExp));
         }
         if (hasValue(states)) {
             ParameterExpression<Set> statesExp = builder.parameter(Set.class, "states");
-            predicates.add(builder.in(account.get("billingAddress").get("state")).value(statesExp));
+            predicates.add(builder.in(path(account, p.getBillingAddress().getState())).value(statesExp));
         }
         if (hasValue(country)) {
             ParameterExpression<Country> countryExp = builder.parameter(Country.class, "country");
-            predicates.add(builder.equal(account.get("billingAddress").get("country"), countryExp));
+            predicates.add(builder.equal(path(account, p.getBillingAddress().getCountry()), countryExp));
         }
 
         return predicates;
@@ -121,10 +121,10 @@ public class AccountQuery extends StructuredEntityQuery<Account> {
 
     @Override
     public Path buildOrderBy(Root<Account> account) {
-        if (getOrderByPropertyId().equals("billingAddress.country")) {
-            return account.join("billingAddress", JoinType.LEFT).join("country", JoinType.LEFT);
-        } else if (getOrderByPropertyId().equals("billingAddress.state.code")) {
-            return account.join("billingAddress", JoinType.LEFT).join("state", JoinType.LEFT).get("code");
+        if (getOrderByPropertyId().equals(id(p.getBillingAddress().getCountry()))) {
+            return orderByPath(account, p.getBillingAddress().getCountry());
+        } else if (getOrderByPropertyId().equals(id(p.getBillingAddress().getState().getCode()))) {
+            return orderByPath(account, p.getBillingAddress().getState().getCode());
         } else {
             return null;
         }
@@ -132,7 +132,7 @@ public class AccountQuery extends StructuredEntityQuery<Account> {
 
     @Override
     public void addFetchJoins(Root<Account> account) {
-        account.fetch("billingAddress", JoinType.LEFT);
+        fetch(account, JoinType.LEFT, p.getBillingAddress());
     }
 
     @Override

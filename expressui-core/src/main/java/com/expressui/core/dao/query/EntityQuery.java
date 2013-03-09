@@ -39,6 +39,8 @@ package com.expressui.core.dao.query;
 
 import com.expressui.core.dao.GenericDao;
 import com.expressui.core.util.ApplicationProperties;
+import com.expressui.core.util.BeanInvocationInterceptor;
+import com.expressui.core.util.BeanRoot;
 import com.expressui.core.util.ReflectionUtil;
 import com.expressui.core.util.assertion.Assert;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -89,12 +91,53 @@ public abstract class EntityQuery<T> {
     @Resource
     protected ApplicationProperties applicationProperties;
 
+    public T p;
+
     /**
      * Generic DAO that the {@link #execute()} implementation may use to execute the query.
      * Otherwise, it can use a type-specific DAO if needed.
      */
     @Resource
     public GenericDao genericDao;
+
+    protected EntityQuery() {
+        super();
+        if (hasType()) {
+            p = newBeanRoot(getType());
+        }
+    }
+
+    public static <T> T newBeanRoot(Class<T> type) {
+        Assert.PROGRAMMING.notNull(type);
+        return BeanInvocationInterceptor.newBeanRoot(type);
+    }
+
+    /**
+     * Gets type of this component.
+     *
+     * @return type of domain entity for this page
+     */
+    public Class<T> getType() {
+        Class type = ReflectionUtil.getGenericArgumentType(getClass());
+        Assert.PROGRAMMING.notNull(type, "This component must specify a generic type");
+        Assert.PROGRAMMING.isTrue(!Class.class.isAssignableFrom(type), "Generic type may not be Class");
+
+        return type;
+    }
+
+    /**
+     * Asks if this component has a generic type.
+     *
+     * @return true if this component has a generic type
+     */
+    public boolean hasType() {
+        return getType() != null;
+    }
+
+    public String id(Object... beanNode) {
+        BeanRoot beanInvocationTracker = (BeanRoot) p;
+        return beanInvocationTracker.lastInvokedPropertyPath();
+    }
 
     /**
      * Lifecycle method called after this bean has been constructed.

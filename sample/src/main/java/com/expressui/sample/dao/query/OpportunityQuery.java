@@ -82,11 +82,11 @@ public class OpportunityQuery extends StructuredEntityQuery<Opportunity> {
 
         if (hasValue(accountName)) {
             ParameterExpression<String> accountNameExp = builder.parameter(String.class, "accountName");
-            predicates.add(builder.like(builder.upper(opportunity.get("account").<String>get("name")), accountNameExp));
+            predicates.add(builder.like(builder.upper(this.<String>path(opportunity, p.getAccount().getName())), accountNameExp));
         }
         if (hasValue(salesStages)) {
             ParameterExpression<Set> salesStagesExp = builder.parameter(Set.class, "salesStages");
-            predicates.add(builder.in(opportunity.get("salesStage")).value(salesStagesExp));
+            predicates.add(builder.in(path(opportunity, p.getSalesStage())).value(salesStagesExp));
         }
 
         return predicates;
@@ -104,8 +104,8 @@ public class OpportunityQuery extends StructuredEntityQuery<Opportunity> {
 
     @Override
     public Path buildOrderBy(Root<Opportunity> opportunity) {
-        if (getOrderByPropertyId().equals("account.name")) {
-            return opportunity.join("account", JoinType.LEFT).get("name");
+        if (getOrderByPropertyId().equals(id(p.getAccount().getName()))) {
+            return orderByPath(opportunity, p.getAccount().getName());
         } else {
             return null;
         }
@@ -113,7 +113,7 @@ public class OpportunityQuery extends StructuredEntityQuery<Opportunity> {
 
     @Override
     public void addFetchJoins(Root<Opportunity> opportunity) {
-        opportunity.fetch("account", JoinType.LEFT);
+        fetch(opportunity, JoinType.LEFT, p.getAccount());
     }
 
     @Override

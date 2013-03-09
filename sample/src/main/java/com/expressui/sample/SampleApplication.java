@@ -52,6 +52,7 @@ import com.expressui.sample.view.myprofile.MyProfilePage;
 import com.expressui.sample.view.opportunity.OpportunityPage;
 import com.expressui.sample.view.profile.ProfilePage;
 import com.expressui.sample.view.registration.RegistrationPage;
+import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.Cookie;
 import java.util.Locale;
@@ -107,7 +108,7 @@ public class SampleApplication extends MainApplication {
     public void init() {
         Cookie localeCookie = getCookie("locale");
         if (localeCookie != null) {
-            String[] localeParts = localeCookie.getValue().split("_");
+            String[] localeParts = StringUtils.split(localeCookie.getValue(), "_");
             if (localeParts.length == 2) {
                 setLocale(new Locale(localeParts[0], localeParts[1]));
             }

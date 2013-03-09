@@ -39,6 +39,8 @@ package com.expressui.core.validation;
 
 import com.expressui.core.AbstractCoreTest;
 import com.expressui.core.MainApplication;
+import com.expressui.core.test.NestedBean;
+import com.expressui.core.test.RootBean;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;

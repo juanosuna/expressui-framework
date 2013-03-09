@@ -86,7 +86,7 @@ public class RelatedPermissionsQuery extends ToManyRelationshipQuery<Permission,
 
         if (hasValue(role)) {
             ParameterExpression<Role> roleExp = builder.parameter(Role.class, "role");
-            predicates.add(builder.equal(permission.get("role"), roleExp));
+            predicates.add(builder.equal(this.<String>path(permission, p.getRole()), roleExp));
         }
 
         return predicates;
@@ -101,7 +101,7 @@ public class RelatedPermissionsQuery extends ToManyRelationshipQuery<Permission,
 
     @Override
     public void addFetchJoins(Root<Permission> permission) {
-        permission.fetch("role", JoinType.LEFT);
+        fetch(permission, JoinType.LEFT, p.getRole());
     }
 
     @Override

@@ -67,24 +67,24 @@ public class AccountSearchForm extends SearchForm<AccountQuery> {
     @Override
     public void init(FormFieldSet formFields) {
 
-        formFields.setCoordinates("name", 1, 1);
-        formFields.setCoordinates("country", 1, 2);
-        formFields.setCoordinates("states", 1, 3);
+        formFields.setCoordinates(id(p.getName()), 1, 1);
+        formFields.setCoordinates(id(p.getCountry()), 1, 2);
+        formFields.setCoordinates(id(p.getStates()), 1, 3);
 
-        formFields.setSelectItems("country", countryDao.findCountriesWithStates());
+        formFields.setSelectItems(id(p.getCountry()), countryDao.findCountriesWithStates());
 
-        formFields.clearSelectItems("states");
-        formFields.setVisible("states", false);
-        formFields.setMultiSelectDimensions("states", 5, 15);
+        formFields.clearSelectItems(id(p.getStates()));
+        formFields.setVisible(id(p.getStates()), false);
+        formFields.setMultiSelectDimensions(id(p.getStates()), 5, 15);
 
-        formFields.addValueChangeListener("country", this, "countryChanged");
+        formFields.addValueChangeListener(id(p.getCountry()), this, "countryChanged");
     }
 
     public void countryChanged(Property.ValueChangeEvent event) {
         Country newCountry = (Country) event.getProperty().getValue();
         List<State> states = stateDao.findByCountry(newCountry);
 
-        getFormFieldSet().setSelectItems("states", states);
-        getFormFieldSet().setVisible("states", !states.isEmpty());
+        getFormFieldSet().setSelectItems(id(p.getStates()), states);
+        getFormFieldSet().setVisible(id(p.getStates()), !states.isEmpty());
     }
 }

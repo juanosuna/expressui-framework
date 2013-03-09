@@ -74,23 +74,23 @@ public class AccountResults extends CrudResults<Account> {
     @Override
     public void init(ResultsFieldSet resultsFields) {
         resultsFields.setPropertyIds(
-                "name",
-                "billingAddress.state.code",
-                "billingAddress.country",
-                "mainPhone",
-                "numberOfEmployees",
-                "annualRevenueInUSD",
-                "lastModified",
-                "modifiedBy"
+                id(p.getName()),
+                id(p.getBillingAddress().getState().getCode()),
+                id(p.getBillingAddress().getCountry()),
+                id(p.getMainPhone()),
+                id(p.getNumberOfEmployees()),
+                id(p.getAnnualRevenueInUSD()),
+                id(p.getLastModified()),
+                id(p.getModifiedBy())
         );
 
-        resultsFields.setSortable("mainPhone", false);
+        resultsFields.setSortable(id(p.getMainPhone()), false);
 
-        resultsFields.setPropertyFormatter("annualRevenueInUSD", defaultFormats.getCurrencyFormat(Locale.US, 0));
+        resultsFields.setPropertyFormatter(id(p.getAnnualRevenueInUSD()), defaultFormats.getCurrencyFormat(Locale.US, 0));
 
-        resultsFields.setAlignment("billingAddress.state.code", Table.ALIGN_CENTER);
-        resultsFields.setAlignment("billingAddress.country", Table.ALIGN_CENTER);
-        resultsFields.setAlignment("numberOfEmployees", Table.ALIGN_CENTER);
-        resultsFields.setAlignment("annualRevenueInUSD", Table.ALIGN_RIGHT);
+        resultsFields.setAlignment(id(p.getBillingAddress().getState().getCode()), Table.ALIGN_CENTER);
+        resultsFields.setAlignment(id(p.getBillingAddress().getCountry()), Table.ALIGN_CENTER);
+        resultsFields.setAlignment(id(p.getNumberOfEmployees()), Table.ALIGN_CENTER);
+        resultsFields.setAlignment(id(p.getAnnualRevenueInUSD()), Table.ALIGN_RIGHT);
     }
 }
